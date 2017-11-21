@@ -1,33 +1,34 @@
-{% macro render_deployment_row(deployment, push, selected, canUserPush, pushNow) %}
+{% macro render_deployment_row(target, release, selected, canUserRelease, releaseNow) %}
     {% import 'macros.twig' as macros %}
+    {% import 'macros.git.twig' as git_macros %}
 
-    {% set isSelected = (deployment.id == selected) %}
-    {% set inProgress = push.status in ['Waiting', 'Pushing'] %}
-    {% set needsCredentials = deployment.server.isAWS() and not deployment.credential %}
+    {% set isSelected = (target.id == selected) %}
+    {% set inProgress = target.status in ['pending', 'running', 'deploying'] %}
+    {% set needsCredentials = target.group.isAWS() and not target.credential %}
 
     <tr>
         <td>
-            <span class="hint--right" aria-label="{{ deployment.server.formatHumanType }}: {{ deployment.formatMeta }}">
-                {{ deployment.formatPretty(false) }}
+            <span class="hint--right" aria-label="{{ target.group.format }}: {{ target.format }}">
+                {{ target.format(false) }}
             </span>
         </td>
-        {% if push %}
-            {% set build = push.build %}
+        {% if release %}
+            {% set build = release.build %}
 
             <td>
-                {% set isCurrent = githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, build.branch, build.commit) %}
-                {{ macros.gitref(build, true, isCurrent) }} ({{ macros.gitcommit(build) }})
+                {% set isCurrent = githubCommitIsCurrent(build.application.github.owner, build.application.github.repository, build.reference, build.commit) %}
+                {{ git_macros.gitref(build, true, isCurrent) }} ({{ git_macros.gitcommit(build) }})
             </td>
             <td>
                 {% if inProgress %}
                     Now
                 {% else %}
-                    {{ push.created|html5date }}
+                    {{ release.created|html5date }}
                 {% endif %}
-                ({{ macros.job_status_prefix(push, true, false) }})
+                ({{ macros.job_status_prefix(release, true, false) }})
                 by
-                {% if push.user %}
-                    <a href="{{ uriFor('user', {'user': push.user.id}) }}">{{ push.user.handle }}</a>
+                {% if release.user %}
+                    <a href="{{ uriFor('user', {'user': release.user.id}) }}">{{ release.user.username }}</a>
                 {% else %}
                     Unknown
                 {% endif %}
@@ -47,15 +48,15 @@
             {% elseif needsCredentials %}
                 {{ macros.status('No Credentials', 'error', 'spam-2') }}
 
-            {% elseif canUserPush %}
-                <label class="checkbox-check mrn" for="sel-{{ deployment.id }}">
+            {% elseif canUserRelease %}
+                <label class="checkbox-check mrn" for="sel-{{ target.id }}">
                     <input
                         type="checkbox"
                         class="js-toggle-box"
                         name="deployments[]"
-                        id="sel-{{ deployment.id }}"
-                        value="{{ deployment.id }}"{{ isSelected ? ' checked' : '' }}>
-                    <b class="checkbox-check--tick"></b>{{ pushNow ? 'Push Now' : 'Push When Ready' }}
+                        id="sel-{{ target.id }}"
+                        value="{{ taret.id }}"{{ isSelected ? ' checked' : '' }}>
+                    <b class="checkbox-check--tick"></b>{{ releaseNow ? 'Release Now' : 'Release When Ready' }}
                 </label>
             {% else %}
                 No Access

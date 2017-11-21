@@ -1,5 +1,6 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
+{% import 'macros.git.twig' as git_macros %}
 {% set js_components = ["build.info"] %}
 
 {% set page_title = "Build : " ~ build.application.name %}
@@ -34,13 +35,13 @@
 
             <li>Reference</li>
             <li>
-                {% set isCurrent = githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, build.branch, build.commit) %}
-                {{ macros.gitref(build, false, isCurrent) }}
+                {% set isCurrent = githubCommitIsCurrent(build.application.github.owner, build.application.github.repository, build.reference, build.commit) %}
+                {{ git_macros.gitref(build, false, isCurrent) }}
             </li>
 
             <li>Commit</li>
             <li>
-                <a href="{{ githubCommitUrl(build.application.githubOwner, build.application.githubRepo, build.commit) }}">{{ build.commit|commit }}</a>
+                <a href="{{ githubCommitUrl(build.application.github.owner, build.application.github.repository, build.commit) }}">{{ build.commit|commit }}</a>
                 {{ macros.icon('github') }}
             </li>
 
@@ -99,15 +100,15 @@
                             {% endif %}
                         </td>
                         <td>
-                            {% if child.deployment %}
-                                Push to <a href="{{ uriFor('deployment', {'application': build.application.id, 'deployment': child.deployment.id}) }}">{{ child.deployment.formatPretty }}</a>
+                            {% if child.target %}
+                                Release to <a href="{{ uriFor('target', {'application': build.application.id, 'target': child.target.id}) }}">{{ child.target.format }}</a>
                             {% else %}
                                 Unknown
                             {% endif %}
                         </td>
                         <td>
-                            {% if child.status == 'Launched' and child.push %}
-                                {{ macros.job_status_prefix(child.push, false, false) }} created successfully
+                            {% if child.status == 'Launched' and child.release %}
+                                {{ macros.job_status_prefix(child.release, false, false) }} created successfully
                             {% else %}
                                 {{ child.message }}
                             {% endif %}
@@ -118,23 +119,23 @@
         </table>
     {% endif %}
 
-    {% if canUserBuild(current_user, build.application) %}
-        {% set pushableMessage = 'The build was successful, go ahead and push it!' %}
-        {% set unpushableMessage = 'The build cannot be pushed.' %}
+    {#{% if canUserBuild(current_user, build.application) %}#}
+        {% set pushableMessage = 'The build was successful, go ahead and release it!' %}
+        {% set unpushableMessage = 'The build cannot be released.' %}
 
-        {% if build.status == 'Success' %}
+        {% if build.status == 'success' %}
             <h3>{{ pushableMessage }}</h3>
-            <p><a class="btn btn--action" href="{{ uriFor('push.start', {'build': build.id}) }}">Push Build</a></p>
-        {% elseif build.status in ['Waiting', 'Building'] %}
+            <p><a class="btn btn--action" href="{{ uriFor('release.start', {'build': build.id}) }}">Release Build</a></p>
+        {% elseif build.status in ['pending', 'running'] %}
             <h3 data-success="{{ pushableMessage }}" data-failure="{{ unpushableMessage }}">
                 The build is still pending. Please wait...
             </h3>
-            <p class="js-build-push"><span class="btn btn--disabled js-build-push">Push Build</span></p>
+            <p class="js-build-push"><span class="btn btn--disabled js-build-push">Release Build</span></p>
         {% else %}
             <h3>{{ unpushableMessage }}</h3>
-            <p><span class="btn btn--disabled">Push Build</span></p>
+            <p><span class="btn btn--disabled">Release Build</span></p>
         {% endif %}
-    {% endif %}
+    {#{% endif %}#}
 
     <h2 class="leader">Build Events</h2>
     {% include 'build/partial.event-table.twig' with {logs: logs, canLoad: build.isFinished } only %}

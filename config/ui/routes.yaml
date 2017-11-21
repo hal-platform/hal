@@ -201,8 +201,13 @@ parameters:
                     route: '/permissions/remove'
                     stack: ['middleware.is_owner', 'application.permission_remove.page']
 
-                # are these application routes or build/push routes?
+                # are these application routes or build/release routes?
                 # It's nice to be able to use route groups to nest common url prefixes.
+
+                build.start:
+                    method: ['GET', 'POST']
+                    route: '/build'
+                    stack: ['middleware.signed_in', 'middleware.require_entity', 'build.start.middleware', 'build.start.page']
 
                 build.history.page1:
                     method: 'GET'
@@ -213,14 +218,14 @@ parameters:
                     route: '/builds/{page:%r.digit%}'
                     stack: ['builds.page']
 
-                push.history.page1:
+                release.history.page1:
                     method: 'GET'
-                    route: '/pushes'
-                    stack: ['pushes.page']
-                push.history:
+                    route: '/releases'
+                    stack: ['releases.page']
+                release.history:
                     method: 'GET'
-                    route: '/pushes/page/{page:%r.digit%}'
-                    stack: ['pushes.page']
+                    route: '/releases/page/{page:%r.digit%}'
+                    stack: ['releases.page']
 
                 targets:
                     method: 'GET'
@@ -250,12 +255,12 @@ parameters:
 
                         rollback.page1:
                             method: 'GET'
-                            route: '/pushes'
-                            stack: ['push.rollback.page']
+                            route: '/releases'
+                            stack: ['release.rollback.page']
                         rollback:
                             method: 'GET'
-                            route: '/pushes/page/{page:%r.digit%}'
-                            stack: ['push.rollback.page']
+                            route: '/releases/page/{page:%r.digit%}'
+                            stack: ['release.rollback.page']
 
                 encrypted.configuration:
                     method: 'GET'
@@ -375,18 +380,18 @@ parameters:
             stack: ['middleware.signed_in', 'middleware.require_entity', 'build.start.middleware', 'build.start.page']
 
         ################################################################################################################
-        # PUSH ROUTES
+        # Release ROUTES
         ################################################################################################################
 
-        push:
+        release:
             method: 'GET'
-            route: '/pushes/{push:%r.release%}'
-            stack: ['middleware.signed_in', 'middleware.require_entity', 'push.page']
+            route: '/releases/{release:%r.release%}'
+            stack: ['middleware.signed_in', 'middleware.require_entity', 'release.page']
 
-        push.start:
+        release.start:
             method: ['GET', 'POST']
-            route: '/builds/{build:%r.build%}/push'
-            stack: ['middleware.signed_in', 'middleware.require_entity', 'push.start.middleware', 'push.start.page']
+            route: '/builds/{build:%r.build%}/release'
+            stack: ['middleware.signed_in', 'middleware.require_entity', 'release.start.middleware', 'release.start.page']
 
         ################################################################################################################
         # ADMIN ROUTES

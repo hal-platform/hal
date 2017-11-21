@@ -8,30 +8,24 @@
 namespace Hal\UI\Middleware;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Hal\Core\Entity\{
     Application,
-    // AuditEvent,
     Build,
     Credential,
     EncryptedProperty,
     Environment,
-    // Group,
+    Group,
     JobEvent,
-    // JobMeta,
-    // JobProcess,
     Organization,
     Release,
-    // SystemSetting,
     Target,
     User,
     UserPermission,
-    // UserSettings,
     UserToken
 };
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\MiddlewareInterface;
-use Slim\Route;
 
 /**
  * Automatically look up entities in the route parameters and fetch them from the DB.
@@ -56,6 +50,7 @@ class RequireEntityMiddleware implements MiddlewareInterface
         'application' => Application::class,
 
         'target' => Target::class,
+        'group' => Group::class,
         'encrypted' => EncryptedProperty::class,
 
         'environment' => Environment::class,

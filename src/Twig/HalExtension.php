@@ -8,11 +8,10 @@
 namespace Hal\UI\Twig;
 
 use Hal\UI\Utility\TimeFormatter;
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Type\EnumType\ServerEnum;
+use Hal\Core\Entity\Build;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\Release;
+use Hal\Core\Entity\Group;
 use Twig_Extension;
 use Twig_SimpleFilter;
 use Twig_SimpleFunction;
@@ -100,7 +99,7 @@ class HalExtension extends Twig_Extension
     {
         return [
             new Twig_SimpleTest('build', function ($entity) { return $entity instanceof Build; }),
-            new Twig_SimpleTest('push', function ($entity) { return $entity instanceof Push; })
+            new Twig_SimpleTest('release', function ($entity) { return $entity instanceof Release; })
         ];
     }
 

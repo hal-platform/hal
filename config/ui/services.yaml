@@ -40,14 +40,11 @@ services:
             - '@doctrine.em'
             - '@github'
             - '@permissions'
-            - '@utility.id.generator'
-    push.start.validator:
-        class: 'Hal\UI\Validator\PushValidator'
+    release.start.validator:
+        class: 'Hal\UI\Validator\ReleaseValidator'
         arguments:
             - '@doctrine.em'
             - '@permissions'
-            - '@utility.id.generator'
-            - '@doctrine.random'
 
     server.validator:
         class: 'Hal\UI\Validator\ServerValidator'

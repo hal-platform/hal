@@ -14,6 +14,7 @@ use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Environment;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\UserPermission;
+use Hal\UI\Security\UserAuthorizations;
 use QL\MCP\Cache\CachingTrait;
 use QL\Panthor\Utility\JSON;
 
@@ -70,7 +71,7 @@ class PermissionService
     /**
      * @param User $user
      *
-     * @return UserPerm
+     * @return UserAuthorizations
      */
     public function getUserPermissions(User $user)
     {
@@ -86,7 +87,7 @@ class PermissionService
             $decoded = $this->json->decode($result);
 
             if (is_array($decoded)) {
-                return UserPerm::fromSerialized($decoded);
+                return UserAuthorizations::fromSerialized($decoded);
             }
         }
 
@@ -142,21 +143,24 @@ class PermissionService
             return $cached;
         }
 
-        $perm = $this->getUserPermissions($user);
+        return true;
 
-        if ($perm->isButtonPusher() || $perm->isSuper()) {
-            return $this->setToInternalCache($key, true);
-        }
-
-        if ($perm->isLead() && $perm->isLeadOfApplication($application)) {
-            return $this->setToInternalCache($key, true);
-        }
-
-        if ($perm->canDeployApplicationToNonProd($application)) {
-            return $this->setToInternalCache($key, true);
-        }
-
-        return $this->setToInternalCache($key, false);
+        //TODO::Permissions
+//        $perm = $this->getUserPermissions($user);
+//
+//        if ($perm->isButtonPusher() || $perm->isSuper()) {
+//            return $this->setToInternalCache($key, true);
+//        }
+//
+//        if ($perm->isLead() && $perm->isLeadOfApplication($application)) {
+//            return $this->setToInternalCache($key, true);
+//        }
+//
+//        if ($perm->canDeployApplicationToNonProd($application)) {
+//            return $this->setToInternalCache($key, true);
+//        }
+//
+//        return $this->setToInternalCache($key, false);
     }
 
     /**
@@ -175,26 +179,28 @@ class PermissionService
             return $cached;
         }
 
-        $perm = $this->getUserPermissions($user);
-
-        // Not prod? Same permissions as building
-        if (!$environment->isProduction()) {
-            return $this->canUserBuild($user, $application);
-        }
-
-        if ($perm->isButtonPusher()) {
-            return $this->setToInternalCache($key, true);
-        }
-
-        if ($perm->isSuper() && $this->isSuperApplication($application)) {
-            return $this->setToInternalCache($key, true);
-        }
-
-        if ($perm->canDeployApplicationToProd($application)) {
-            return $this->setToInternalCache($key, true);
-        }
-
-        return $this->setToInternalCache($key, false);
+        //TODO::Permissions
+        return true;
+//        $perm = $this->getUserPermissions($user);
+//
+//        // Not prod? Same permissions as building
+//        if (!$environment->isProduction()) {
+//            return $this->canUserBuild($user, $application);
+//        }
+//
+//        if ($perm->isButtonPusher()) {
+//            return $this->setToInternalCache($key, true);
+//        }
+//
+//        if ($perm->isSuper() && $this->isSuperApplication($application)) {
+//            return $this->setToInternalCache($key, true);
+//        }
+//
+//        if ($perm->canDeployApplicationToProd($application)) {
+//            return $this->setToInternalCache($key, true);
+//        }
+//
+//        return $this->setToInternalCache($key, false);
     }
 
     /**

@@ -5,17 +5,17 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Push;
+namespace Hal\UI\Controllers\Release;
 
+use Hal\Core\Entity\Release;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Service\EventLogService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Push;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
-class PushController implements ControllerInterface
+class ReleaseController implements ControllerInterface
 {
     use TemplatedControllerTrait;
 
@@ -25,9 +25,9 @@ class PushController implements ControllerInterface
     private $template;
 
     /**
-     * @var Push
+     * @var Release
      */
-    private $push;
+    private $release;
 
     /**
      * @var EventLogService
@@ -49,13 +49,13 @@ class PushController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $release = $request->getAttribute(Push::class);
+        $release = $request->getAttribute(Release::class);
 
         // Resolves logs from redis (for in progress jobs) or db (after completed)
         $logs = $this->logService->getLogs($release);
 
         return $this->withTemplate($request, $response, $this->template, [
-            'push' => $release,
+            'release' => $release,
             'logs' => $logs
         ]);
     }

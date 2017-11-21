@@ -128,18 +128,18 @@ Example:
     {% import _self as self_macros %}
     {% set allowUpdates = allowUpdates|default(false) %}
 
-    {% if job.status == 'Success' %}
+    {% if job.status == 'success' %}
         {{ self_macros.status_icon(job.status, 'success') }}
 
-    {% elseif job.status in ['Error'] %}
+    {% elseif job.status in ['failure'] %}
         {{ self_macros.status_icon(job.status, 'error') }}
 
-    {% elseif job.status in ['Removed'] %}
+    {% elseif job.status in ['removed'] %}
         {{ self_macros.status_icon(job.status, 'info') }}
 
     {% elseif allowUpdates %}
-        {% if job is push %}
-            {{ self_macros.status_icon(job.status, 'thinking', {'data-push': job.id, 'data-status': job.status}) }}
+        {% if job is release %}
+            {{ self_macros.status_icon(job.status, 'thinking', {'data-release': job.id, 'data-status': job.status}) }}
         {% else %}
             {{ self_macros.status_icon(job.status, 'thinking', {'data-build': job.id, 'data-status': job.status}) }}
         {% endif %}
@@ -173,16 +173,16 @@ Example:
         {% set allowThinking = true %}
     {% endif %}
 
-    {% if job is push %}
+    {% if job is release %}
 
-        {% set prefix = withoutPrefix ? '' : 'Push ' %}
+        {% set prefix = withoutPrefix ? '' : 'Release ' %}
         {% set push_link = self_macros.job_status_prefix_link(job, prefix) %}
 
-        {% if job.status == 'Success' %}
+        {% if job.status == 'success' %}
             {{ self_macros.status_icon(push_link, 'success') }}
-        {% elseif job.status in ['Error'] %}
+        {% elseif job.status in ['failure'] %}
             {{ self_macros.status_icon(push_link, 'error') }}
-        {% elseif job.status in ['Removed'] %}
+        {% elseif job.status in ['removed'] %}
             {{ self_macros.status_icon(push_link, 'info') }}
         {% elseif allowThinking %}
             {{ self_macros.status_icon(push_link, 'thinking', {'data-push': job.id, 'data-status': job.status}) }}
@@ -195,11 +195,11 @@ Example:
         {% set prefix = withoutPrefix ? '' : 'Build ' %}
         {% set build_link = self_macros.job_status_prefix_link(job, prefix) %}
 
-        {% if job.status == 'Success' %}
+        {% if job.status == 'success' %}
             {{ self_macros.status_icon(build_link, 'success') }}
-        {% elseif job.status in ['Error'] %}
+        {% elseif job.status in ['error'] %}
             {{ self_macros.status_icon(build_link, 'error') }}
-        {% elseif job.status in ['Removed'] %}
+        {% elseif job.status in ['removed'] %}
             {{ self_macros.status_icon(build_link, 'info') }}
         {% elseif allowThinking %}
             {{ self_macros.status_icon(build_link, 'thinking', {'data-build': job.id, 'data-status': job.status}) }}
@@ -221,8 +221,8 @@ Build <a href="/build/123456">123456</a>
 ```
 #}
 {% macro job_status_prefix_link(job, prefix) %}
-    {% if job is push %}
-        {{ prefix }}<a href="{{ uriFor('push', {'push': job.id}) }}">{{ job.id|formatPushId }}</a>
+    {% if job is release %}
+        {{ prefix }}<a href="{{ uriFor('release', {'release': job.id}) }}">{{ job.id|formatPushId }}</a>
     {% else %}
         {{ prefix }}<a href="{{ uriFor('build', {'build': job.id}) }}">{{ job.id|formatBuildId }}</a>
     {% endif %}

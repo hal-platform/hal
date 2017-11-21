@@ -5,7 +5,8 @@
 
 {% set page_title = "Status : " ~ application.name %}
 
-{% set canUserBuild = canUserBuild(current_user, application) %}
+{#{% set canUserBuild = canUserBuild(current_user, application) %}#}
+{% set canUserBuild = true %}
 {% set isBusinessTime = is_serious_business_mode %}
 
 {% block content %}
@@ -26,7 +27,7 @@
         {{ block('page_buttons') }}
     {% else %}
         <h2>Server Status</h2>
-        <p>This application has no deployment targets configured and cannot be pushed.</p>
+        <p>This application has no deployment targets configured and cannot be released.</p>
 
         <h2>Recent Builds</h2>
         {% include '_partial-job/build-table.twig' with {'builds': builds, 'isPushable': isPushable } %}
@@ -66,13 +67,13 @@
         <div>
             <ul class="list--bare cards">
                 {% for status in deployment_statuses %}
-                    <li data-deploy="{{ status.deploy.id }}">{{ page_macros.pushCard(application, status.deploy, status.latest) }}</li>
+                    <li data-deploy="{{ status.target.id }}">{{ page_macros.pushCard(application, status.target, status.latest) }}</li>
                 {% endfor %}
             </ul>
         </div>
 
     {% else %}
-        <p>This application has no deployment targets for <b>{{ selected_environment.name }}</b> and cannot be pushed.</p>
+        <p>This application has no deployment targets for <b>{{ selected_environment.name }}</b> and cannot be released.</p>
     {% endif %}
 {% endblock %}
 
@@ -83,27 +84,28 @@
         {% endif %}
 
         <li><a class="btn" href="{{ uriFor('build.history.page1', {'application': application.id}) }}">All Builds</a></li>
-        <li><a class="btn" href="{{ uriFor('push.history.page1', {'application': application.id}) }}">All Pushes</a></li>
+        <li><a class="btn" href="{{ uriFor('release.history.page1', {'application': application.id}) }}">All Releases</a></li>
         <li><a class="btn" href="{{ uriFor('application', {'application': application.id}) }}">Manage Application</a></li>
     </ul>
 {% endblock %}
 
-{% macro pushCard(application, deployment, active) %}
+{% macro pushCard(application, target, active) %}
     {% import 'macros.twig' as macros %}
+    {% import 'macros.git.twig' as git_macros %}
 
     <article class="card">
         <header class="card__header">
             <h4>
-                <a href="{{ uriFor('server', {'server': deployment.server.id}) }}">{{ deployment.formatPretty }}</a>
+                <a href="{{ uriFor('server', {'server': target.group.id}) }}">{{ target.format }}</a>
 
-                {% if deployment.url %}
-                    <a class="icon--link" href="{{ deployment.url }}">
+                {% if target.url %}
+                    <a class="icon--link" href="{{ target.url }}">
                         {{ macros.icon('outgoing') }}
                     </a>
                 {% endif %}
 
                 {% if active %}
-                    <a class="rollback icon--link" href="{{ uriFor('rollback.page1', {'application': application.id, 'target': deployment.id}) }}" title="View push history or rollback to a successful build">
+                    <a class="rollback icon--link" href="{{ uriFor('rollback.page1', {'application': application.id, 'target': target.id}) }}" title="View push history or rollback to a successful build">
                         {{ macros.icon('revert') }}
                     </a>
                 {% endif %}
@@ -114,16 +116,16 @@
             <ul>
                 {# push details #}
                 <li>
-                    <span>Last push:</span>
+                    <span>Last Release:</span>
                     {% if active %}
                         {{ macros.job_status(active, true) }}
-                        (<a href="{{ uriFor('push', {'push': active.id}) }}">{{ active.id|formatPushId }}</a>)
+                        (<a href="{{ uriFor('release', {'release': active.id}) }}">{{ active.id|formatPushId }}</a>)
                     {% else %}
                         None
                     {% endif %}
                 </li>
                 <li>
-                    <span>Pushed on:</span>
+                    <span>Released on:</span>
                     {% if active.created %}
                         {{ active.created|html5date }}
                     {% else %}
@@ -143,8 +145,8 @@
                 <li>
                     <span>Reference:</span>
                     {% if active %}
-                        {% set isCurrent = githubCommitIsCurrent(application.githubOwner, application.githubRepo, active.build.branch, active.build.commit) %}
-                        {{ macros.gitref(active.build, true, isCurrent, true) }}
+                        {% set isCurrent = githubCommitIsCurrent(application.github.owner, application.github.repository, active.build.reference, active.build.commit) %}
+                        {{ git_macros.gitref(active.build, true, isCurrent, true) }}
 
                     {% else %}
                         Unknown
@@ -153,7 +155,7 @@
                 <li>
                     <span>Commit:</span>
                     {% if active %}
-                        {{ macros.gitcommit(active.build) }}
+                        {{ git_macros.gitcommit(active.build) }}
                     {% else %}
                         Unknown
                     {% endif %}

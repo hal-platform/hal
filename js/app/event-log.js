@@ -1,5 +1,5 @@
 import 'jquery';
-import AnsiUp from 'ansi_up'
+import AU from 'ansi_up'
 import generateIcon from './util/icon';
 import xssFilters from 'xss-filters'
 
@@ -99,8 +99,10 @@ function renderRow(logID, data) {
             if (typeof prop !== 'string') {
                 prop = JSON.stringify(prop, null, 4);
             } else {
+                let ansi_up = new AU;
+
                 prop = xssFilters.inHTMLData(prop);
-                prop = AnsiUp.ansi_to_html(prop);
+                prop = ansi_up.ansi_to_html(prop);
             }
 
             $pre.appendTo($wrapper)

@@ -49,18 +49,18 @@ module.exports = {
 
         return tplBuild.render(context);
     },
-    addPushJob: function(push) {
-        var pushId = String(push.id);
-        var buildId = String(push._embedded.build.id);
+    addReleaseJob: function(release) {
+        var releaseId = String(release.id);
+        var buildId = String(release._embedded.build.id);
         var initiator = 'Unknown';
-        if (push._links.hasOwnProperty('user')) {
-            if (push._links.user !== null) {
-                initiator = push._links.user.title;
+        if (release._links.hasOwnProperty('user')) {
+            if (release._links.user !== null) {
+                initiator = release._links.user.title;
             }
         }
 
         // kinda shitty way to determine server type but whatever
-        var deployment = push._embedded.deployment,
+        var deployment = release._embedded.deployment,
             servername_or_whatever = deployment._links.server.title;
         if (servername_or_whatever.length === 0) {
             if (deployment['eb-environment'].length !== null) {
@@ -75,38 +75,38 @@ module.exports = {
         var context = {
             buildId: buildId,
             buildIdShort: this.formatBuildId(buildId),
-            buildUrl: push._embedded.build._links.page.href,
+            buildUrl: release._embedded.build._links.page.href,
 
-            pushId: pushId,
-            pushIdShort: this.formatPushId(pushId),
-            pushUrl: push._links.page.href,
+            pushId: releaseId,
+            pushIdShort: this.formatPushId(releaseId),
+            pushUrl: release._links.page.href,
 
-            pushStatusStyle: this.determineStatusStyle(push.status),
-            pushStatus: push.status,
+            pushStatusStyle: this.determineStatusStyle(release.status),
+            pushStatus: release.status,
 
-            environmentName: push._embedded.build._links.environment.title,
+            environmentName: release._embedded.build._links.environment.title,
             serverName: servername_or_whatever,
 
-            appName: push._embedded.application.name,
-            appStatusUrl: push._embedded.application._links.status_page.href,
+            appName: release._embedded.application.name,
+            appStatusUrl: release._embedded.application._links.status_page.href,
 
             initiator: initiator,
-            time: this.createTimeElement(push.created)
+            time: this.createTimeElement(release.created)
         };
 
         return tplPush.render(context);
     },
 
-    updatePushJob: function(job) {
+    updateReleaseJob: function(job) {
         var $elem = $('[data-push="' + job.id + '"]');
         var currentStatus = job.status;
 
-        if (currentStatus == 'Waiting' || currentStatus == 'Pushing') {
+        if (currentStatus == 'pending' || currentStatus == 'deploying') {
             $elem
                 .removeClass(this.pendingClass)
                 .addClass(this.thinkingClass);
 
-        } else if (currentStatus == 'Success') {
+        } else if (currentStatus == 'success') {
             $elem
                 .removeClass(this.thinkingClass)
                 .addClass(this.successClass);
@@ -121,12 +121,12 @@ module.exports = {
         var $elem = $('[data-build="' + job.id + '"]');
         var currentStatus = job.status;
 
-        if (currentStatus == 'Waiting' || currentStatus == 'Building') {
+        if (currentStatus == 'pending' || currentStatus == 'running') {
             $elem
                 .removeClass(this.pendingClass)
                 .addClass(this.thinkingClass);
 
-        } else if (currentStatus == 'Success') {
+        } else if (currentStatus == 'success') {
             $elem
                 .removeClass(this.thinkingClass)
                 .addClass(this.successClass);
@@ -152,13 +152,13 @@ module.exports = {
     },
 
     determineStatusStyle: function(status) {
-        if (status == 'Success') {
+        if (status == 'success') {
             return this.successClass;
 
-        } else if (status == 'Error') {
+        } else if (status == 'failure') {
             return this.failureClass;
 
-        } else if (status == 'Waiting' || status == 'Building' || status == 'Pushing') {
+        } else if (status == 'pending' || status == 'runnning' || status == 'deploying') {
             return this.thinkingClass;
         }
 

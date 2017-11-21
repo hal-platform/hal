@@ -80,10 +80,10 @@ module.exports = {
                     this.$queue.prepend(row);
                     this.jobs[job.id] = job.status;
                 }
-            } else if (type == 'push') {
+            } else if (type == 'release') {
                 // only load jobs not already loaded
                 if (typeof this.jobs[job.id] == 'undefined') {
-                    row = jobUpdater.addPushJob(job);
+                    row = jobUpdater.addReleaseJob(job);
 
                     this.$queue.prepend(row);
                     this.jobs[job.id] = job.status;
@@ -120,7 +120,7 @@ module.exports = {
         // - _embedded.jobs.[]._embedded.application.title
         // - _embedded.jobs.[]._embedded.application.url
 
-        // Add Push Job requires these properties:
+        // Add Release Job requires these properties:
         // - _embedded.jobs.[].id
         // - _embedded.jobs.[].url
         // - _embedded.jobs.[].status
@@ -148,7 +148,7 @@ module.exports = {
         // build the list of jobs to update
         for (var id in this.jobs) {
             var currentStatus = this.jobs[id];
-            if (currentStatus == 'Waiting' || currentStatus == 'Building' || currentStatus == 'Pushing') {
+            if (currentStatus == 'pending' || currentStatus == 'running' || currentStatus == 'deploying') {
                 jobsToUpdate.push(id);
             }
         }
@@ -165,7 +165,7 @@ module.exports = {
             // - _embedded.jobs.[].id
             // - _embedded.jobs.[].status
 
-            // Update Push Job requires these properties:
+            // Update Release Job requires these properties:
             // - _embedded.jobs.[].id
             // - _embedded.jobs.[].status
             $.getJSON(endpoint, function(data) {
@@ -175,7 +175,7 @@ module.exports = {
                     if (type == 'build') {
                         jobUpdater.updateBuildJob(data._embedded.jobs[entry]);
                     } else if (type == 'push') {
-                        jobUpdater.updatePushJob(data._embedded.jobs[entry]);
+                        jobUpdater.updateReleaseJob(data._embedded.jobs[entry]);
                     }
                 }
             });
@@ -202,8 +202,8 @@ module.exports = {
 
         if (type === 'B') {
             return 'build';
-        } else if (type === 'P') {
-            return 'push';
+        } else if (type === 'R') {
+            return 'release';
         }
     },
     getUTCTime: function() {

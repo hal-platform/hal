@@ -66,7 +66,7 @@ class UserNormalizer implements ResourceNormalizerInterface
             return null;
         }
 
-        $perm = $this->permissions->getUserPermissions($user);
+        //$perm = $this->permissions->getUserPermissions($user);
 
         $data = [
             'id' => $user->id(),

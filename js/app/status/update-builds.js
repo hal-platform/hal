@@ -47,7 +47,7 @@ module.exports = {
             var $item = $(item);
             var status = $item.data('status').trim();
 
-            if (status == 'Waiting' || status == 'Building') {
+            if (status == 'pending' || status == 'running') {
                 $item
                     .removeClass(_this.pendingClass)
                     .addClass(_this.thinkingClass);
@@ -81,11 +81,11 @@ module.exports = {
 
             // console.log('Build ' + id + ' status: ' + currentStatus);
 
-            if (currentStatus == 'Waiting' || currentStatus == 'Building') {
+            if (currentStatus == 'pending' || currentStatus == 'running') {
                 // If still pending, fire up a countdown for the next callback in the chain.
                 _this.startUpdateTimer($elem);
 
-            } else if (currentStatus == 'Success') {
+            } else if (currentStatus == 'success') {
                 $elem
                     .removeClass(_this.thinkingClass)
                     .addClass(_this.successClass);
@@ -168,7 +168,7 @@ module.exports = {
             return;
         }
 
-        if (status == 'Waiting' || status == 'Building' || status == 'Pushing') {
+        if (status == 'pending' || status == 'running' || status == 'deploying') {
             var $thinking = this.$logTable
                 .find('.js-thinking-row');
 
@@ -195,7 +195,7 @@ module.exports = {
         }
 
         // is finished
-        if (status == 'Success' || status == 'Error') {
+        if (status == 'success' || status == 'failure') {
             // wait 2 seconds so any remaining logs can be loaded
             window.setTimeout(() => {
                 this.$logTable
@@ -220,11 +220,11 @@ module.exports = {
 
         $elem.text($elem.data('status'));
 
-        if (data.status == 'Success') {
+        if (data.status == 'success') {
             // Add push link if present
             if (data._links.hasOwnProperty('start_push_page')) {
                 $('.js-build-push')
-                    .html('<a class="btn btn--action" href="' + data._links.start_push_page.href + '">Push Build</a>');
+                    .html('<a class="btn btn--action" href="' + data._links.start_push_page.href + '">Release Build</a>');
             }
 
             // Replace success messaging
@@ -233,7 +233,7 @@ module.exports = {
                 $hdr.text($hdr.data('success'));
             }
 
-        } else if (data.status == 'Error') {
+        } else if (data.status == 'failure') {
             // Replace success messaging
             $hdr = $('[data-failure]');
             if ($hdr.length == 1) {
@@ -257,20 +257,20 @@ module.exports = {
 
         // favicon
         if (this.favicon !== null) {
-            if (data.status == 'Success') {
+            if (data.status == 'success') {
                 // Unicode: U+2714 U+FE0E, UTF-8: E2 9C 94 EF B8 8E
                 this.favicon.badge("✔︎", {
                     bgColor: '#0eb833',
                     type: 'rectangle'
                 });
-            } else if (data.status == 'Error') {
+            } else if (data.status == 'failure') {
                 // Unicode: U+2718, UTF-8: E2 9C 98
                 this.favicon.badge('✘', {
                     bgColor: '#d63620',
                     type: 'rectangle'
                 });
 
-            } else if (data.status == 'Waiting' || data.status == 'Building') {
+            } else if (data.status == 'pending' || data.status == 'running') {
                 this.favicon.badge("?", {
                     bgColor: '#ff7c00',
                     type: 'circle'
@@ -281,12 +281,12 @@ module.exports = {
     updateTable: function(data, $elem) {
         var $container = $elem.closest('tr');
 
-        if (data.status == 'Success') {
+        if (data.status == 'success') {
             // Add push link if present
             if (data._links.hasOwnProperty('start_push_page')) {
                 $container
                     .children('.js-build-push')
-                    .html('<a class="btn btn--tiny" href="' + data._links.start_push_page.href + '">Push</a>');
+                    .html('<a class="btn btn--tiny" href="' + data._links.start_push_page.href + '">Release</a>');
             }
         }
     },
@@ -302,7 +302,7 @@ module.exports = {
 
     buildEventRow: function(log) {
 
-        var eventRegex = /^(build|push).([a-z]*)$/i,
+        var eventRegex = /^(build|release).([a-z]*)$/i,
             match = null,
             logName = '';
 

@@ -121,6 +121,7 @@ services:
             - '@redis'
             - '@json'
             - '@clock'
+            - '@doctrine.em'
 
     job_queue:
         class: 'Hal\UI\Service\JobQueueService'
@@ -129,13 +130,6 @@ services:
     ####################################################################################################################
     # HELPERS
     ####################################################################################################################
-
-    utility.id.generator:
-        class: 'QL\Hal\Core\JobIdGenerator'
-        arguments:
-            - '%application.major.version%'
-            - '%unique.alphabet%'
-            - '%unique.size%'
 
     utility.time.formatter:
         class: 'Hal\UI\Utility\TimeFormatter'

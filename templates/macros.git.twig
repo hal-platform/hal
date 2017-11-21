@@ -16,7 +16,7 @@ Example:
     {% set sliced = sliced|default(false) %}
     {% set hideTooltip = hideTooltip|default(false) %}
 
-    {% set resolved = build.branch|gitref %}
+    {% set resolved = build.reference|gitref %}
     {% if resolved %}
         {% set type = resolved|first %}
         {% set ref = resolved|last %}
@@ -30,7 +30,7 @@ Example:
             {% set ref = ref[0:20] %}
         {% endif %}
 
-        <a href="{{ githubReferenceUrl(build.application.githubOwner, build.application.githubRepo, build.branch) }}">
+        <a href="{{ githubReferenceUrl(build.application.gitHub.owner, build.application.gitHub.repository, build.reference) }}">
             {% if type == 'pull' %}
                 Pull Request {{ ref }}
             {% elseif type == 'tag' %}
@@ -95,7 +95,7 @@ Example:
     {% if resolved %}
         {% set ref = resolved|last %}
 
-        <a href="{{ githubCommitUrl(build.application.githubOwner, build.application.githubRepo, build.commit) }}">
+        <a href="{{ githubCommitUrl(build.application.gitHub.owner, build.application.gitHub.repository, build.commit) }}">
             {{ ref|commit }}
         </a>
         {{ macros.icon('commit') }}

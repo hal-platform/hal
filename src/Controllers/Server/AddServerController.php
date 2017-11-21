@@ -28,7 +28,7 @@ class AddServerController implements ControllerInterface
     use SessionTrait;
     use TemplatedControllerTrait;
 
-    private const MSG_SUCCESS = 'Server "%s" added.';
+    private const MSG_SUCCESS = 'Group "%s" added.';
 
     private const ERR_NO_ENVIRONMENTS = 'A server requires an environment. Environments must be added before servers.';
 

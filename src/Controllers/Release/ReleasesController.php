@@ -5,14 +5,14 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Build;
+namespace Hal\UI\Controllers\Release;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Application;
-use Hal\Core\Entity\Build;
 use Hal\Core\Entity\Environment;
-use Hal\Core\Repository\BuildRepository;
+use Hal\Core\Entity\Release;
 use Hal\Core\Repository\EnvironmentRepository;
+use Hal\Core\Repository\ReleaseRepository;
 use Hal\UI\Controllers\PaginationTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -20,14 +20,14 @@ use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
-class BuildsController implements ControllerInterface
+class ReleasesController implements ControllerInterface
 {
     use PaginationTrait;
     use TemplatedControllerTrait;
 
     private const MAX_PER_PAGE = 25;
 
-    private const REGEX_ENV = '/(environment|env|e):([a-zA-Z-]+)/';
+    private const REGEX_ENV = '/(?:environment|env|e):([a-zA-Z-]+)/';
 
     /**
      * @var TemplateInterface
@@ -35,9 +35,9 @@ class BuildsController implements ControllerInterface
     private $template;
 
     /**
-     * @var BuildRepository
+     * @var ReleaseRepository
      */
-    private $buildRepo;
+    private $releaseRepo;
 
     /**
      * @var EnvironmentRepository
@@ -57,7 +57,7 @@ class BuildsController implements ControllerInterface
     public function __construct(TemplateInterface $template, EntityManagerInterface $em, callable $notFound)
     {
         $this->template = $template;
-        $this->buildRepo = $em->getRepository(Build::class);
+        $this->releaseRepo = $em->getRepository(Release::class);
         $this->environmentRepo = $em->getRepository(Environment::class);
 
         $this->notFound = $notFound;
@@ -79,12 +79,12 @@ class BuildsController implements ControllerInterface
         if ($environment = $this->getEnvironmentFromSearchFilter($searchFilter)) {
             $sanitizedSearchFilter = trim(preg_replace(self::REGEX_ENV, '', $searchFilter, 1));
 
-            $builds = $this->buildRepo->getByApplicationForEnvironment($application, $environment, self::MAX_PER_PAGE, ($page - 1), $sanitizedSearchFilter);
+            $releases = $this->releaseRepo->getByApplicationForEnvironment($application, $environment, self::MAX_PER_PAGE, ($page - 1), $sanitizedSearchFilter);
         } else {
-            $builds = $this->buildRepo->getByApplication($application, self::MAX_PER_PAGE, ($page - 1), $searchFilter);
+            $releases = $this->releaseRepo->getByApplication($application, self::MAX_PER_PAGE, ($page - 1), $searchFilter);
         }
 
-        $total = count($builds);
+        $total = count($releases);
         $last = ceil($total / self::MAX_PER_PAGE);
 
         return $this->withTemplate($request, $response, $this->template, [
@@ -92,7 +92,7 @@ class BuildsController implements ControllerInterface
             'last' => $last,
 
             'application' => $application,
-            'builds' => $builds,
+            'releases' => $releases,
             'search_filter' => $searchFilter
         ]);
     }

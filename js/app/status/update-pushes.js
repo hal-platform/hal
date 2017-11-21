@@ -24,7 +24,7 @@ module.exports = {
     init: function() {
         var _this = this;
 
-        if (this.mode == 'push') {
+        if (this.mode == 'release') {
             this.favicon = favico({
                 animation: 'none',
                 fontStyle: 'bolder'
@@ -47,7 +47,7 @@ module.exports = {
             var $item = $(item);
             var status = $item.data('status').trim();
 
-            if (status == 'Waiting' || status == 'Pushing') {
+            if (status == 'pending' || status == 'deploying') {
                 $item
                     .removeClass(_this.pendingClass)
                     .addClass(_this.thinkingClass);
@@ -58,9 +58,9 @@ module.exports = {
     },
     generateUrl: function(pushId, type) {
         if (type === 'api-update') {
-            return '/api/pushes/' + pushId;
+            return '/api/releases/' + pushId;
         } else if (type === 'events') {
-            return '/api/pushes/' + pushId + '/events?embed=events';
+            return '/api/releases/' + pushId + '/events?embed=events';
         }
     },
     checkStatus: function($elem) {
@@ -78,13 +78,13 @@ module.exports = {
             var currentStatus = data.status;
             $elem.data('status', currentStatus); // protip: dom is not updated
 
-            // console.log('Push ' + id + ' status: ' + currentStatus);
+            // console.log('Release ' + id + ' status: ' + currentStatus);
 
-            if (currentStatus == 'Waiting' || currentStatus == 'Pushing') {
+            if (currentStatus == 'pending' || currentStatus == 'deploying') {
                 // If still pending, fire up a countdown for the next callback in the chain.
                 _this.startUpdateTimer($elem);
 
-            } else if (currentStatus == 'Success') {
+            } else if (currentStatus == 'success') {
                 $elem
                     .removeClass(_this.thinkingClass)
                     .addClass(_this.successClass);
@@ -95,7 +95,7 @@ module.exports = {
                     .addClass(_this.failureClass);
             }
 
-            if (_this.mode == 'push') {
+            if (_this.mode == 'release') {
                 _this.updatePush(data, $elem);
 
             } else if (_this.mode == 'table') {
@@ -170,7 +170,7 @@ module.exports = {
             return;
         }
 
-        if (status == 'Waiting' || status == 'Building' || status == 'Pushing') {
+        if (status == 'pending' || status == 'running' || status == 'deploying') {
             var $thinking = this.$logTable
                 .find('.js-thinking-row');
 
@@ -197,7 +197,7 @@ module.exports = {
         }
 
         // is finished
-        if (status == 'Success' || status == 'Error') {
+        if (status == 'success' || status == 'failure') {
             // wait 2 seconds so any remaining logs can be loaded
             window.setTimeout(() => {
                 this.$logTable
@@ -237,20 +237,20 @@ module.exports = {
 
         // favicon
         if (this.favicon !== null) {
-            if (data.status == 'Success') {
+            if (data.status == 'success') {
                 // Unicode: U+2714 U+FE0E, UTF-8: E2 9C 94 EF B8 8E
                 this.favicon.badge("✔︎", {
                     bgColor: '#0eb833',
                     type: 'rectangle'
                 });
-            } else if (data.status == 'Error') {
+            } else if (data.status == 'failure') {
                 // Unicode: U+2718, UTF-8: E2 9C 98
                 this.favicon.badge('✘', {
                     bgColor: '#d63620',
                     type: 'rectangle'
                 });
 
-            } else if (data.status == 'Waiting' || data.status == 'Pushing') {
+            } else if (data.status == 'pending' || data.status == 'deploying') {
                 this.favicon.badge("?", {
                     bgColor: '#ff7c00',
                     type: 'circle'
@@ -284,7 +284,7 @@ module.exports = {
 
     buildEventRow: function(log) {
 
-        var eventRegex = /^(build|push).([a-z]*)$/i,
+        var eventRegex = /^(build|release).([a-z]*)$/i,
             match = null,
             logName = '';
 

@@ -7,10 +7,12 @@
 
 namespace Hal\UI\Service;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Predis\Client as Predis;
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\EventLog;
-use QL\Hal\Core\Entity\Push;
+use Hal\Core\Entity\Build;
+use Hal\Core\Entity\JobEvent;
+use Hal\Core\Entity\Release;
 use QL\MCP\Common\Time\Clock;
 use QL\MCP\Common\Time\TimePoint;
 use QL\Panthor\Utility\Json;
@@ -40,42 +42,48 @@ class EventLogService
     private $clock;
 
     /**
+     * @var EntityRepository
+     */
+    private $eventlogsRepository;
+
+    /**
      * @param Predis $predis
      * @param Json $json
      * @param Clock $clock
      */
-    public function __construct(Predis $predis, Json $json, Clock $clock)
+    public function __construct(Predis $predis, Json $json, Clock $clock, EntityManagerInterface $em)
     {
         $this->predis = $predis;
         $this->json = $json;
         $this->clock = $clock;
+        $this->eventlogsRepository = $em->getRepository(JobEvent::class);
     }
 
     /**
-     * @param Build|Push|null $job
+     * @param Build|Release|null $job
      *
-     * @return EventLog[]|null
+     * @return JobEvent[]|null
      */
-    public function getLogs($job)
+    public function getLogs($job): ?array
     {
-        if (!$job instanceof Build && !$job instanceof Push) {
+        if (!$job instanceof Build && !$job instanceof Release) {
             return [];
         }
 
         // if finished, get logs from db
-        if (in_array($job->status(), ['Success', 'Error', 'Removed'], true)) {
-            return $job->logs()->toArray();
+        if (in_array($job->status(), ['success', 'failure', 'removed'], true)) {
+            return $this->eventlogsRepository->findBy(['parent' => $job->id()]);
         }
 
         return $this->getFromRedis($job);
     }
 
     /**
-     * @param Build|Push $job
+     * @param Build|Release $job
      *
-     * @return EventLog[]|null
+     * @return JobEvent[]|null
      */
-    public function getFromRedis($job)
+    public function getFromRedis($job): ?array
     {
         $key = sprintf(self::REDIS_LOG_KEY, $job->id());
 
@@ -92,14 +100,7 @@ class EventLogService
             if (is_array($decoded)) {
                 $log = $this->derez($decoded);
                 $logs[] = $log;
-
-                if ($job instanceof Build) {
-                    $log->withBuild($job);
-                }
-
-                if ($job instanceof Push) {
-                    $log->withPush($job);
-                }
+                $log->withParentID($job->id());
             }
         }
 
@@ -113,24 +114,23 @@ class EventLogService
     /**
      * @param array $data
      *
-     * @return EventLog
+     * @return JobEvent
      */
     private function derez(array $data)
     {
         $data = array_replace([
             'id' => '',
-            'event' => '',
+            'stage' => '',
             'order' => 0,
             'created' => null,
             'message' => '',
             'status' => '',
-            'build' => null,
-            'push' => null,
+            'parent_id' => null,
         ], $data);
 
-        $log = (new Eventlog)
+        $log = (new JobEvent)
             ->withId($data['id'])
-            ->withEvent($data['event'])
+            ->withstage($data['event'])
             ->withOrder($data['order'])
             ->withMessage($data['message'])
             ->withStatus($data['status']);
