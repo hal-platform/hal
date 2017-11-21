@@ -1,12 +1,13 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
+{% import 'macros.git.twig' as git_macros %}
 {% import 'macros.pagination.twig' as pagination %}
 
 {% set page_title = "Release History : " ~ application.name %}
 
 {% block content %}
 
-    {% set server = deployment.formatPretty %}
+    {% set group = target.format %}
 
     <div class="nav--page">
         <h1>Release History - <b>{{ application.name }}</b> to <b>{{ server }}</b></h1>
@@ -16,51 +17,54 @@
         </p>
     </div>
 
-    <h2>Deployment Details</h2>
+    <h2>Target Details</h2>
     <div class="details-box">
         <ul class="mbn">
             <li>Environment</li>
             <li>
-                <a href="{{ uriFor('environment', {'environment': deployment.server.environment.id}) }}">{{ deployment.server.environment.name }}</a>
+                <a href="{{ uriFor('environment', {'environment': target.group.environment.id}) }}">{{ target.group.environment.name }}</a>
             </li>
 
             <li>Server</li>
             <li>
-                <a href="{{ uriFor('server', {'server': deployment.server.id}) }}">{{ server }}</a>
+                <a href="{{ uriFor('server', {'server': target.group.id}) }}">{{ group }}</a>
             </li>
 
             <li>
                 Parameters
             </li>
             <li>
-                {{ deployment.formatParameters }}
+                {{ target.formatParameters }}
             </li>
 
-            {% if deployment.url %}
+            {% if target.url %}
                 <li>URL</li>
                 <li>
-                    <a href="{{ deployment.url }}">{{ deployment.url }}</a>
+                    <a href="{{ target.url }}">{{ target.url }}</a>
                 </li>
             {% endif %}
         </ul>
     </div>
 
     <p>
-        This table shows the push history for this deployment.
-        To rollback, simply choose a build, click <b>rollback</b>, and you'll be able to initate a new push.
+        This table shows the release history for this target.
+        To rollback, simply choose a build, click <b>rollback</b>, and you'll be able to initate a new release.
     </p>
 
-    {% set canRollback = canUserPush(current_user, application, deployment.server.environment) %}
+    {#TODO::permissions#}
+    {#{% set canRollback = canUserPush(current_user, application, target.group.environment) %}#}
+    {% set canRollback = true %}
+
 
     <h2>Release History</h2>
     <table class="table--spacing-medium">
         <thead>
             <tr>
                 <th>Build</th>
-                <th>Push</th>
+                <th>Release</th>
                 <th class="table-priority-45">Reference</th>
                 <th class="table-priority-50">Commit</th>
-                <th>Pushed</th>
+                <th>Released</th>
                 <th>User</th>
                 {% if canRollback %}
                     <th class="t10"></th>
@@ -68,31 +72,31 @@
             </tr>
         </thead>
         <tbody>
-            {% for push in pushes %}
+            {% for release in releases %}
             <tr>
-                <td><a href="{{ uriFor('build', {'build': push.build.id}) }}">{{ push.build.id|formatBuildId }}</a></td>
+                <td><a href="{{ uriFor('build', {'build': release.build.id}) }}">{{ release.build.id|formatBuildId }}</a></td>
                 <td>
                     {% set statusClass = 'status-icon--info' %}
-                    {% if push.status == 'Success' %}
+                    {% if release.status == 'success' %}
                         {% set statusClass = 'status-icon--success' %}
-                    {% elseif push.status == 'Error' %}
+                    {% elseif release.status == 'failure' %}
                         {% set statusClass = 'status-icon--error' %}
                     {% endif %}
                     <span class="{{ statusClass }}">
-                        Push <a href="{{ uriFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a>
+                        Release <a href="{{ uriFor('release', {'release': release.id}) }}">{{ release.id|formatPushId }}</a>
                     </span>
                 </td>
 
                 <td class="table-priority-45">
-                    {{ macros.gitref(push.build, true) }}
+                    {{ git_macros.gitref(release.build, true) }}
                 </td>
                 <td class="table-priority-50">
-                    {{ macros.gitcommit(push.build) }}
+                    {{ git_macros.gitcommit(release.build) }}
                 </td>
-                <td>{{ push.end|html5date }}</td>
+                <td>{{ release.end|html5date }}</td>
                 <td>
-                    {% if push.user %}
-                        <a href="{{ uriFor('user', {'user': push.user.id}) }}">{{ push.user.handle }}</a>
+                    {% if release.user %}
+                        <a href="{{ uriFor('user', {'user': release.user.id}) }}">{{ release.user.username }}</a>
                     {% else %}
                         Unknown
                     {% endif %}
@@ -100,10 +104,10 @@
 
                 {% if canRollback %}
                     <td class="tr">
-                        {% if push.build.status == 'Removed' %}
+                        {% if release.build.status == 'removed' %}
                             Removed
-                        {% elseif push.status == 'Success'%}
-                            <a class="btn btn--tiny" href="{{ uriFor('push.start', {'build': push.build.id}, {'target': deployment.id}) }}">Rollback</a>
+                        {% elseif release.status == 'success'%}
+                            <a class="btn btn--tiny" href="{{ uriFor('release.start', {'build': release.build.id}, {'target': target.id}) }}">Rollback</a>
                         {% endif %}
                     </td>
                 {% endif %}
@@ -111,13 +115,13 @@
             {% else %}
             <tr>
                 <td colspan="{{ canRollback ? 6 : 5 }}">
-                    There is no push history for this deployment.
+                    There is no release history for this target.
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    {{ pagination.pagination(page, last, 'rollback', {'application': application.id, 'target': deployment.id}) }}
+    {{ pagination.pagination(page, last, 'rollback', {'application': application.id, 'target': target.id}) }}
 
 {% endblock %}
