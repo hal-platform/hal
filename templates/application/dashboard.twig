@@ -96,7 +96,7 @@
     <article class="card">
         <header class="card__header">
             <h4>
-                <a href="{{ uriFor('server', {'server': target.group.id}) }}">{{ target.format }}</a>
+                <a href="{{ uriFor('group', {'group': target.group.id}) }}">{{ target.format }}</a>
 
                 {% if target.url %}
                     <a class="icon--link" href="{{ target.url }}">
