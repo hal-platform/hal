@@ -20,12 +20,22 @@ class BuildNormalizer implements ResourceNormalizerInterface
      */
     private $urlBuilder;
 
+
     /**
-     * @param GitHubURLBuilder $urlBuilder
+     * @var EnvironmentNormalizer
      */
-    public function __construct(GitHubURLBuilder $urlBuilder)
-    {
+    private $environmentnormalizer;
+
+    /**
+     * @param GitHubURLBuilder      $urlBuilder
+     * @param EnvironmentNormalizer $environmentNormalizer
+     */
+    public function __construct(
+        GitHubURLBuilder $urlBuilder,
+        EnvironmentNormalizer $environmentNormalizer
+    ) {
         $this->urlBuilder = $urlBuilder;
+        $this->EnvironmentNormalizer = $environmentNormalizer;
     }
 
     /**
@@ -104,6 +114,12 @@ class BuildNormalizer implements ResourceNormalizerInterface
             'self' => $this->link($build),
             'events' => new Hyperlink(['api.build.events', ['build' => $build->id()]]),
         ];
+
+        if ($build->environment()) {
+            $links += [
+                'environment' => $this->environmentNormalizer->link($build->environment())
+            ];
+        }
 
         $pages = [
             'page' => new Hyperlink(

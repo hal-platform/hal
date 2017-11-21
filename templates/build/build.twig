@@ -31,7 +31,7 @@
             </li>
 
             <li>Environment</li>
-            <li>{{ build.environment.name }}</li>
+            <li>{{ build.environment ? build.environment.name : 'global' }}</li>
 
             <li>Reference</li>
             <li>

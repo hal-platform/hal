@@ -195,6 +195,7 @@ class StartBuildController implements ControllerInterface
 
         usort($tags, $this->releaseSorter());
 
+        return array_slice($tags, 0, 25);
         return $tags;
     }
 
@@ -262,6 +263,8 @@ class StartBuildController implements ControllerInterface
         $environment = '';
         if ($env instanceof Environment) {
             $environment = $env;
+        } elseif ($env === 'global') {
+            $environment = null;
         } elseif ($env) {
             $environment = $this->environmentRepository->find($env);
         }

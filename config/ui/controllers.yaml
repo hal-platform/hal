@@ -584,6 +584,16 @@ services:
             - '@release.start.validator'
             - '@sticky.environment'
             - '@uri'
+    release.start.global.page:
+        class: 'Hal\UI\Controllers\Release\StartReleaseGlobalController'
+        arguments:
+            - '@release.start.global.twig'
+            - '@doctrine.em'
+            - '@uri'
+            - '@notFoundHandler'
+    release.start.global.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['release/start.global.twig']]]
 
     release.rollback.page:
         class: 'Hal\UI\Controllers\Release\RollbackController'

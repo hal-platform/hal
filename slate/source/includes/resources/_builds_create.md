@@ -142,8 +142,8 @@ The following fields are submitted to create a build.
 
 Field          | Description
 -------------- | -----------
-environment    | The ID or name of the environment to build
 reference      | The reference from the VCS repository to the code snapshot to build.
+environment    | **Optional** - The ID or name of the environment to build. Exclude this parameter to create a build that can be used in all environments.
 targets        | **Optional** - A list of IDs of deployment targets to automatically deploy if build is successful.
 
 <aside class="notice">

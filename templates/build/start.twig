@@ -1,6 +1,7 @@
 {% extends 'base.twig' %}
 {% import "macros.twig" as macros %}
 {% import 'macros.start-deploy.twig' as deploy_macros %}
+{% import "macros.form.twig" as form_macros %}
 {% import _self as page_macros %}
 
 {% set js_components = ["build.start"] %}
@@ -17,20 +18,17 @@
         </p>
     </div>
 
-    {% if errors %}
-        <ul class="error-list js-backend-error">
-            {% for error in errors %}
-                <li>{{ error }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+
+    {{ form_macros.formErrors(errors) }}
 
     <form method="post" name="start-build">
 
         {% block select_environment %}
             <h2 class="leader">Select Environment</h2>
+            <p class="trailer">
+                Select <b>Global</b> to create a build that can be deployed to any environment.
+            </p>
 
-            {% if environments %}
             <ul class="radio-grid radio-grid--tri">
                 {% for env in environments %}
                     {% set isSelected = form.environment == env.id or environments|length == 1 %}
@@ -39,11 +37,12 @@
                         <label for="env-{{ env.id }}">{{ env.name }}</label>
                     </li>
                 {% endfor %}
+                {% set isSelected = form.environment == 'global' %}
+                <li>
+                    <input class="js-environment-selector" id="env-global" type="radio" name="environment" value="global"{{ isSelected ? ' checked' : '' }}>
+                    <label for="env-global">Global (deploy to any environment)</label>
+                </li>
             </ul>
-            {% else %}
-                {% set alert_message = 'There are no buildable environments for this application. Targets must added.' %}
-                {{ macros.alert('error', alert_message) }}
-            {% endif %}
         {% endblock %}
 
         {% block select_build %}

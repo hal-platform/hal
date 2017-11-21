@@ -19,10 +19,12 @@ use Hal\Core\Entity\User;
 
 class BuildValidator
 {
-    const ERR_NO_APPLICATION = 'Application is required.';
-    const ERR_NO_ENV = 'Environment is required.';
+    use ValidatorErrorTrait;
+    use NewValidatorTrait;
+
     const ERR_NO_PERMISSION = 'You do not have permission to create a build for this application.';
     const ERR_UNKNOWN_REF = 'You must select a valid git reference.';
+    const ERR_UNKNOWN_ENV = 'You must select a valid environment.';
 
     /**
      * Valid entries:
@@ -53,11 +55,6 @@ class BuildValidator
     private $authorizationService;
 
     /**
-     * @var array
-     */
-    private $errors;
-
-    /**
      * @param EntityManagerInterface $em
      * @param GitHubService $github
      * @param AuthorizationService $authorizationService
@@ -72,8 +69,6 @@ class BuildValidator
 
         $this->github = $github;
         $this->authorizationService = $authorizationService;
-
-        $this->errors = [];
     }
 
     /**
@@ -87,7 +82,7 @@ class BuildValidator
      */
     public function isValid(Application $application, User $user, $environmentID, $gitReference, $gitSearch)
     {
-        $this->errors = [];
+        $this->resetErrors();
 
         // gitref,reference
             // pull/*       - pull request
@@ -102,32 +97,41 @@ class BuildValidator
         // 2. "search" - a search query provided by user
         $reference = $this->parseSubmittedRef($gitReference, $gitSearch);
 
-        if (!$this->sanityCheck($environmentID, $reference)) {
+        if (!$this->validateIsRequired($reference) || !$this->validateSanityCheck($reference)) {
+            $this->addError(self::ERR_UNKNOWN_REF, 'reference');
+        }
+
+        if ($this->hasErrors()) {
             return null;
         }
 
-        // no env
-        if (!$env = $this->environmentRepo->find($environmentID)) {
-
+        $env = null;
+        if ($environmentID && !$env = $this->environmentRepo->find($environmentID)) {
             # attempt search by name
             if (!$env = $this->environmentRepo->findOneBy(['name' => $environmentID])) {
-                $this->errors[] = self::ERR_NO_ENV;
+                $this->addError(self::ERR_UNKNOWN_ENV, 'environment');
             }
         }
 
-        if ($this->errors) return;
+        if ($this->hasErrors()) {
+            return null;
+        }
 
         if (!$this->authorizationService->getUserAuthorizations($user)->canBuild($application)) {
-            $this->errors[] = self::ERR_NO_PERMISSION;
+            $this->addError(self::ERR_NO_PERMISSION);
         }
 
-        if ($this->errors) return;
+        if ($this->hasErrors()) {
+            return null;
+        }
 
         if (!$ref = $this->github->resolve($application->github()->owner(), $application->github()->repository(), $reference)) {
-            $this->errors[] = self::ERR_UNKNOWN_REF;
+            $this->addError(self::ERR_UNKNOWN_REF, 'reference');
         }
 
-        if ($this->errors) return;
+        if ($this->hasErrors()) {
+            return null;
+        }
 
         list($reference, $commit) = $ref;
         if ($reference === 'commit') {
@@ -140,18 +144,13 @@ class BuildValidator
             ->withCommit($commit)
 
             ->withUser($user)
-            ->withApplication($application)
-            ->withEnvironment($env);
+            ->withApplication($application);
+
+        if ($env) {
+            $build = $build->withEnvironment($env);
+        }
 
         return $build;
-    }
-
-    /**
-     * @return array
-     */
-    public function errors()
-    {
-        return $this->errors;
     }
 
     /**
@@ -178,26 +177,5 @@ class BuildValidator
         }
 
         return $search;
-    }
-
-    /**
-     * @param string $environmentID
-     * @param string $gitReference
-     *
-     * @return bool
-     */
-    private function sanityCheck($environmentID, $gitReference)
-    {
-        if (!$environmentID) {
-            $this->errors[] = self::ERR_NO_ENV;
-            return false;
-        }
-
-        if (!$gitReference) {
-            $this->errors[] = self::ERR_UNKNOWN_REF;
-            return false;
-        }
-
-        return true;
     }
 }

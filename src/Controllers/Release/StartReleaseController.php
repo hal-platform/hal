@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Build;
 use Hal\Core\Entity\Release;
 use Hal\Core\Entity\Target;
-use Hal\Core\Repository\ReleaseRepository;
+use Hal\Core\Entity\Environment;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
@@ -41,11 +41,8 @@ class StartReleaseController implements ControllerInterface
      */
     private $buildRepository;
     private $targetRepository;
-
-    /**
-     * @var ReleaseRepository
-     */
     private $releaseRepository;
+    private $environmentRepository;
 
     /**
      * @var URI
@@ -67,6 +64,7 @@ class StartReleaseController implements ControllerInterface
         $this->buildRepository = $em->getRepository(Build::class);
         $this->releaseRepository = $em->getRepository(Release::class);
         $this->targetRepository = $em->getRepository(Target::class);
+        $this->environmentRepository = $em->getRepository(Environment::class);
 
         $this->uri = $uri;
     }
@@ -78,7 +76,18 @@ class StartReleaseController implements ControllerInterface
     {
         $build = $request->getAttribute(Build::class);
 
-        if (!$build->isSuccess()) {
+        $params = $request->getQueryParams();
+        $environment = null;
+        if ($build->environment()) {
+            $environment = $build->environment();
+        } elseif (isset($params['target'])) {
+            $target = $this->targetRepository->find($params['target']);
+            $environment = $target->group()->environment();
+        } elseif (isset($params['environment'])) {
+            $environment = $this->environmentRepository->find($params['environment']);
+        }
+
+        if (!$build->isSuccess() || !$environment) {
             $this
                 ->getFlash($request)
                 ->withMessage(Flash::ERROR, self::ERR_NOT_BUILDABLE);
@@ -86,7 +95,7 @@ class StartReleaseController implements ControllerInterface
             return $this->withRedirectRoute($response, $this->uri, 'build', ['build' => $build->id()]);
         }
 
-        $targets = $this->targetRepository->getByApplicationAndEnvironment($build->application(), $build->environment());
+        $targets = $this->targetRepository->getByApplicationAndEnvironment($build->application(), $environment);
         $statuses = [];
         foreach ($targets as $target) {
             $release = $this->releaseRepository->getByTarget($target, 1)->getIterator()->current();
@@ -96,6 +105,7 @@ class StartReleaseController implements ControllerInterface
 
         return $this->withTemplate($request, $response, $this->template, [
             'build' => $build,
+            'environment' => $environment,
             'selected' => $request->getQueryParams()['target'] ?? '',
             'statuses' => $statuses
         ]);

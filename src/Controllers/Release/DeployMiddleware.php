@@ -11,6 +11,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Build;
 use Hal\Core\Entity\Release;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\Environment;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
@@ -43,8 +45,8 @@ class DeployMiddleware implements MiddlewareInterface
     /**
      * @var EntityRepository
      */
-    private $buildRepo;
-    private $pushRepo;
+    private $environmentRepository;
+    private $targetRepository;
 
     /**
      * @var StickyEnvironmentService
@@ -68,8 +70,8 @@ class DeployMiddleware implements MiddlewareInterface
         StickyEnvironmentService $stickyService,
         URI $uri
     ) {
-        $this->buildRepo = $em->getRepository(Build::class);
-        $this->pushRepo = $em->getRepository(Release::class);
+        $this->environmentRepository = $em->getRepository(Environment::class);
+        $this->targetRepository = $em->getRepository(Target::class);
         $this->em = $em;
 
         $this->validator = $validator;
@@ -82,22 +84,26 @@ class DeployMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if ($request->getMethod() !== 'POST') {
+        $build = $request->getAttribute(Build::class);
+
+        if (!$environment = $this->getPushEnvironment($build, $request)) {
+            return $this->withRedirectRoute($response, $this->uri, 'release.start.global', ['build' => $build->id()]);
+        }
+
+        if (!$request->isPost()) {
             return $next($request, $response);
         }
 
-        $build = $request->getAttribute(Build::class);
         if (!$build->isSuccess()) {
             return $next($request, $response);
         }
 
         $user = $this->getUser($request);
-        $deployments = $request->getParsedBody()['deployments'] ?? [];
+        $targets = $request->getParsedBody()['targets'] ?? [];
         $application = $build->application();
-        $environment = $build->environment();
 
         // passed separately, in case one day we support cross-env builds?
-        $releases = $this->validator->isValid($application, $user, $environment, $build, $deployments);
+        $releases = $this->validator->isValid($application, $user, $environment, $build, $targets);
 
         // Pass through to controller if errors
         if (!$releases) {
@@ -128,5 +134,37 @@ class DeployMiddleware implements MiddlewareInterface
             ->withMessage(Flash::SUCCESS, self::WAIT_FOR_IT);
 
         return $this->withRedirectRoute($response, $this->uri, 'application.dashboard', ['application' => $application->id()]);
+    }
+
+    /**
+     * This will try several methods to grab the push environment.
+     *
+     * This will grab the environment from the build if it exists, or use the environment repository to search for
+     * an environment using the provided request argument.
+     *
+     * @param Build                  $build
+     * @param ServerRequestInterface $request
+     *
+     * @return Environment|null
+     */
+    private function getPushEnvironment(Build $build, ServerRequestInterface $request)
+    {
+        if ($build->environment()) {
+            return $build->environment();
+        }
+
+        $params = $request->getQueryParams();
+
+        $targetID = isset($params['target']) ? $params['target'] : null;
+        if ($targetID && $target = $this->targetRepository->find($targetID)) {
+            return $target->group()->environment();
+        }
+
+        $environmentID = isset($params['environment']) ? $params['environment'] : null;
+        if ($environmentID && $environment = $this->environmentRepository->find($environmentID)) {
+            return $environment;
+        }
+
+        return null;
     }
 }

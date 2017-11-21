@@ -147,7 +147,7 @@ class QueueController implements ControllerInterface
     {
         return array_map(function ($item) {
             if ($item instanceof Release) {
-                return $this->releaseNormalizer->resource($item, ['application', 'build', 'target']);
+                return $this->releaseNormalizer->resource($item, ['application', 'build', 'target', 'environment']);
             }
 
             if ($item instanceof Build) {

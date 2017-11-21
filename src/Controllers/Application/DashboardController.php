@@ -100,7 +100,7 @@ class DashboardController implements ControllerInterface
         if ($selectedEnvironment) {
             $deployments = $this->getTargetsForEnvironment($application, $selectedEnvironment);
             $builds = $this->buildRepository->findBy(
-                ['application' => $application, 'environment' => $selectedEnvironment],
+                ['application' => $application, 'environment' => [$selectedEnvironment, null]],
                 ['created' => 'DESC'],
                 10
             );

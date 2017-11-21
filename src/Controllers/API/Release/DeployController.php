@@ -8,7 +8,10 @@
 namespace Hal\UI\Controllers\API\Release;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Build;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\Environment;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
@@ -34,6 +37,11 @@ class DeployController implements ControllerInterface
      * @var EntityManagerInterface
      */
     private $em;
+
+    /**
+     * @var EntityRepository
+     */
+    private $targetRepository;
 
     /**
      * @var ReleaseValidator
@@ -63,6 +71,7 @@ class DeployController implements ControllerInterface
         ProblemRendererInterface $problemRenderer
     ) {
         $this->em = $em;
+        $this->targetRepository = $this->em->getRepository(Target::class);
         $this->releaseValidator = $pushValidator;
 
         $this->formatter = $formatter;
@@ -79,7 +88,8 @@ class DeployController implements ControllerInterface
 
         $targets = $request->getParsedBody()['targets'] ?? [];
 
-        $releases = $this->releaseValidator->isValid($build->application(), $user, $build->environment(), $build, $targets);
+        $environment = $this->getReleaseEnvironment($targets);
+        $releases = $this->releaseValidator->isValid($build->application(), $user, $environment, $build, $targets);
 
         if (!$releases) {
             $problem = new HTTPProblem(400, self::ERR_CHECK_FORM, ['errors' => $this->releaseValidator->errors()]);
@@ -107,5 +117,21 @@ class DeployController implements ControllerInterface
         $body = $this->formatter->buildHypermediaResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $body, 201);
+    }
+
+    /**
+     * @param array $targets
+     *
+     * @return Environment|null
+     */
+    private function getPushEnvironment(aray $targets)
+    {
+        $target = array_shift($targets);
+
+        if (!$target = $this->targetRepository->find($target)) {
+            return null;
+        }
+
+        return $target->group()->environment();
     }
 }

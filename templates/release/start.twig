@@ -62,7 +62,11 @@
             </li>
 
             <li>Environment</li>
-            <li>{{ build.environment.name }}</li>
+            {% if build.environment %}
+                <li>{{ environment.name }}</li>
+            {% else %}
+                <li>{{ environment.name }} <small>(<a href="{{ uriFor('release.start', {build: build.id}) }}">Change environment</a>)</small></li>
+            {% endif %}
         </ul>
     </div>
 

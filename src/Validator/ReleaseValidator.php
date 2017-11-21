@@ -80,7 +80,9 @@ class ReleaseValidator
             }
         }
 
-        if ($this->hasErrors()) return null;
+        if ($this->hasErrors()) {
+            return null;
+        }
 
         $releases = [];
         foreach ($targets as $target) {
@@ -152,10 +154,12 @@ class ReleaseValidator
 
         // Check for invalid requested deployments
         if (!is_array($targets) || count($targets) == 0) {
-            $this->errors[] = self::ERR_NO_DEPS;
+            $this->addError(self::ERR_NO_DEPS);
         }
 
-        if ($this->hasErrors()) return;
+        if ($this->hasErrors()) {
+            return null;
+        }
 
         // Validate permission
         $canUserPush = $this->authorizationService->getUserAuthorizations($user)->canDeploy($application, $environment);
@@ -163,7 +167,9 @@ class ReleaseValidator
             $this->addError(sprintf(self::ERR_NO_PERM, $environment->name()));
         }
 
-        if ($this->hasErrors()) return;
+        if ($this->hasErrors()) {
+            return null;
+        }
 
         // Pull available deploys from DB for this env
         $availableTargets = $this->targetRepository->getByApplicationAndEnvironment($application, $environment);
@@ -171,10 +177,13 @@ class ReleaseValidator
             $this->addError(self::ERR_NO_DEPS);
         }
 
-        if ($this->hasErrors()) return;
+        if ($this->hasErrors()) {
+            return null;
+        }
 
         // Make sure requested deploys are verified against ones from DB
         $targetIDs = array_fill_keys($targets, true);
+
         $selectedReleases = [];
         foreach ($availableTargets as $target) {
             if (isset($targetIDs[(string)$target->id()])) {
@@ -191,7 +200,9 @@ class ReleaseValidator
             $this->addError(self::ERR_BAD_DEP);
         }
 
-        if ($this->hasErrors()) return;
+        if ($this->hasErrors()) {
+            return null;
+        }
 
         return $selectedReleases;
     }

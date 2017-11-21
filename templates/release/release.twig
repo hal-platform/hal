@@ -28,7 +28,7 @@
             <li>Target</li>
             <li>
                 {% if release.target %}
-                    <a href="{{ uriFor('server', {'server': release.target.group.id}) }}">{{ release.target.format }}</a>
+                    <a href="{{ uriFor('group', {'group': release.target.group.id}) }}">{{ release.target.format }}</a>
                 {% else %}
                     Unknown
                 {% endif %}
@@ -68,7 +68,7 @@
             </li>
 
             <li>Environment</li>
-            <li>{{ release.build.environment.name }}</li>
+            <li>{{ release.build.environment ? release.build.environment.name : 'Global' }}</li>
 
             <li>Reference</li>
             <li>
