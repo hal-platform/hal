@@ -6,7 +6,7 @@ parameters:
     env(MCP_LOGGER_SERVICE): 'syslog'
     env(MCP_LOGGER_SERIALIZER): 'line'
 
-    env(MCP_LOGGER_SERIALIZER_LINE_FORMAT): '[%%created%%] %%severity%% : %%message%% (App ID: %%app%%, Group: %%group.host%%)'
+    env(MCP_LOGGER_SERIALIZER_LINE_FORMAT): '[%%created%%] %%severity%% : %%message%% (App ID: %%app%%, Server: %%server.host%%)'
 
     env(MCP_LOGGER_SERIALIZER_JSON_LIMIT): 10000
     env(MCP_LOGGER_SERIALIZER_JSON_OPTIONS): !php/const:QL\MCP\Logger\Service\Serializer\JSONSerializer::DEFAULT_JSON_OPTIONS
