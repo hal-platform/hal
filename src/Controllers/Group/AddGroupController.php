@@ -5,24 +5,26 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Server;
+namespace Hal\UI\Controllers\Group;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Flash;
-use Hal\UI\Validator\ServerValidator;
+use Hal\UI\Validator\GroupValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Repository\EnvironmentRepository;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\Group;
+use Hal\Core\Type\GroupEnum;
+use Hal\Core\Repository\EnvironmentRepository;
+use Hal\Core\AWS\AWSAuthenticator;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\URI;
 
-class AddServerController implements ControllerInterface
+class AddGroupController implements ControllerInterface
 {
     use RedirectableControllerTrait;
     use SessionTrait;
@@ -30,7 +32,7 @@ class AddServerController implements ControllerInterface
 
     private const MSG_SUCCESS = 'Group "%s" added.';
 
-    private const ERR_NO_ENVIRONMENTS = 'A server requires an environment. Environments must be added before servers.';
+    private const ERR_NO_ENVIRONMENTS = 'A group requires an environment. Environments must be added before groups.';
 
     /**
      * @var TemplateInterface
@@ -49,7 +51,7 @@ class AddServerController implements ControllerInterface
     private $environmentRepo;
 
     /**
-     * @var ServerValidator
+     * @var GroupValidator
      */
     private $validator;
 
@@ -61,13 +63,13 @@ class AddServerController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param ServerValidator $validator
+     * @param GroupValidator $validator
      * @param URI $uri
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        ServerValidator $validator,
+        GroupValidator $validator,
         URI $uri
     ) {
         $this->template = $template;
@@ -86,21 +88,23 @@ class AddServerController implements ControllerInterface
     {
         if (!$environments = $this->environmentRepo->getAllEnvironmentsSorted()) {
             $this->withFlash($request, Flash::ERROR, self::ERR_NO_ENVIRONMENTS);
-            return $this->withRedirectRoute($response, $this->uri, 'servers');
+            return $this->withRedirectRoute($response, $this->uri, 'groups');
         }
 
         $form = $this->getFormData($request);
 
-        if ($server = $this->handleForm($form, $request)) {
-            $msg = sprintf(self::MSG_SUCCESS, $server->name() ?: $server->formatHumanType());
+        if ($group = $this->handleForm($form, $request)) {
+            $msg = sprintf(self::MSG_SUCCESS, $group->name() ?: $group->format(true));
             $this->withFlash($request, Flash::SUCCESS, $msg);
-            return $this->withRedirectRoute($response, $this->uri, 'servers');
+            return $this->withRedirectRoute($response, $this->uri, 'groups');
         }
 
         return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
             'errors' => $this->validator->errors(),
-            'environments' => $environments
+            'group_types' => GroupEnum::options(),
+            'environments' => $environments,
+            'aws_regions' => AWSAuthenticator::$awsRegions
         ]);
     }
 
@@ -108,28 +112,28 @@ class AddServerController implements ControllerInterface
      * @param array $data
      * @param ServerRequestInterface $request
      *
-     * @return null|Server
+     * @return null|Group
      */
-    private function handleForm(array $data, ServerRequestInterface $request): ?Server
+    private function handleForm(array $data, ServerRequestInterface $request): ?Group
     {
         if ($request->getMethod() !== 'POST') {
             return null;
         }
 
-        $server = $this->validator->isValid(
-            $data['server_type'],
+        $group = $this->validator->isValid(
+            $data['group_type'],
             $data['environment'],
             $data['hostname'],
             $data['region']
         );
 
-        if ($server) {
+        if ($group) {
             // persist to database
-            $this->em->merge($server);
+            $this->em->merge($group);
             $this->em->flush();
         }
 
-        return $server;
+        return $group;
     }
 
     /**
@@ -140,7 +144,7 @@ class AddServerController implements ControllerInterface
     private function getFormData(ServerRequestInterface $request): array
     {
         $form = [
-            'server_type' => $request->getParsedBody()['server_type'] ?? '',
+            'group_type' => $request->getParsedBody()['group_type'] ?? '',
             'environment' => $request->getParsedBody()['environment'] ?? '',
 
             'hostname' => trim($request->getParsedBody()['hostname'] ?? ''),

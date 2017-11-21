@@ -1,22 +1,22 @@
-# Servers
+# Groups
 
-A **server** can either be an actual physical server as in the case of on-premise deployments,
+A **group** can either be an actual physical server as in the case of on-premise deployments,
 or a **region** for aws-based deployments.
 
 ### Attributes
 
 Attribute       | Description                                         | Type     | Example
 --------------- | --------------------------------------------------- | -------- | -------------
-id              | Unique server ID                                    | number   | `42`
-type            | Type of server                                      | string   | `rsync`, `cd`, `eb`, `s3`, `script`
-name            | Hostname or region, depending on server type        | string   | `localhost`, `us-east-1`
-environment     | **Embedded** - Environment this server belongs to   | resource |
-targets         | **Link** - List of targets for this server          | list     |
+id              | Unique group ID                                    | number   | `42`
+type            | Type of group                                      | string   | `rsync`, `cd`, `eb`, `s3`, `script`
+name            | Hostname or region, depending on group type        | string   | `localhost`, `us-east-1`
+environment     | **Embedded** - Environment this group belongs to   | resource |
+targets         | **Link** - List of targets for this group          | list     |
 
-## Get All Servers
+## Get All Groups
 
 ```http
-GET /api/servers HTTP/1.1
+GET /api/groups HTTP/1.1
 Accept: application/json
 Host: hal.computer
 Authorization: token "HAL_TOKEN"
@@ -29,11 +29,11 @@ $client = new Client([
     'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
-$response = $client->get('/api/servers');
+$response = $client->get('/api/groups');
 ```
 
 ```shell
-curl "https://hal.computer/api/servers"
+curl "https://hal.computer/api/groups"
 ```
 
 > ### Response
@@ -47,35 +47,35 @@ Content-Type: application/hal+json
 {
   "_links": {
     "next": {
-        "href": "https://hal.computer/api/servers/page/2"
+        "href": "https://hal.computer/api/groups/page/2"
     },
     "last": {
-        "href": "https://hal.computer/api/servers/page/2"
+        "href": "https://hal.computer/api/groups/page/2"
     },
-    "servers": [
+    "groups": [
       {
-        "href": "https://hal.computer/api/servers/1",
-        "title": "qltestserver"
+        "href": "https://hal.computer/api/groups/1",
+        "title": "qltestgroup"
       },
       {
-        "href": "https://hal.computer/api/servers/2",
+        "href": "https://hal.computer/api/groups/2",
         "title": "localhost"
       },
       {
-        "href": "https://hal.computer/api/servers/3",
+        "href": "https://hal.computer/api/groups/3",
         "title": "test.example.com"
       },
       {
-        "href": "https://hal.computer/api/servers/4",
+        "href": "https://hal.computer/api/groups/4",
         "title": "S3 (us-east-1)"
       },
       {
-        "href": "https://hal.computer/api/servers/5",
+        "href": "https://hal.computer/api/groups/5",
         "title": "CD (us-east-1)"
       }
     ],
     "self": {
-        "href": "https://hal.computer/api/servers"
+        "href": "https://hal.computer/api/groups"
     }
   },
   "count": 5,
@@ -84,15 +84,15 @@ Content-Type: application/hal+json
 }
 ```
 
-This endpoint retrieves all servers.
+This endpoint retrieves all groups.
 
 <aside class="notice">
-    This endpoint is <b>paged</b>. The maximum size of each page is <b>25 servers</b>.
+    This endpoint is <b>paged</b>. The maximum size of each page is <b>25 groups</b>.
 </aside>
 
 ### HTTP Request
 
-`GET https://hal.computer/api/servers(/page/{page})`
+`GET https://hal.computer/api/groups(/page/{page})`
 
 ### URL Parameters
 
@@ -103,7 +103,7 @@ page        | **Optional** - Page number to retrieve
 ## Get Server
 
 ```http
-GET /api/servers/4 HTTP/1.1
+GET /api/groups/4 HTTP/1.1
 Accept: application/json
 Host: hal.computer
 Authorization: token "HAL_TOKEN"
@@ -116,11 +116,11 @@ $client = new Client([
     'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
-$response = $client->get('/api/servers/4');
+$response = $client->get('/api/groups/4');
 ```
 
 ```shell
-curl "https://hal.computer/api/servers/4"
+curl "https://hal.computer/api/groups/4"
 ```
 
 > ### Response
@@ -134,7 +134,7 @@ Content-Type: application/hal+json
 {
     "_links": {
         "self": {
-            "href": "https://hal.computer/api/servers/4",
+            "href": "https://hal.computer/api/groups/4",
             "title": "S3 (us-east-1)"
         },
         "targets": [
@@ -163,14 +163,14 @@ Content-Type: application/hal+json
 }
 ```
 
-This endpoint retrieves a specific server.
+This endpoint retrieves a specific group.
 
 ### HTTP Request
 
-`GET https://hal.computer/servers/{id}`
+`GET https://hal.computer/groups/{id}`
 
 ### URL Parameters
 
 Parameter   | Description
 ----------- | -----------
-id          | The unique ID of the server
+id          | The unique ID of the group

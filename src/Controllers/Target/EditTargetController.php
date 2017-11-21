@@ -12,9 +12,9 @@ use Doctrine\ORM\EntityRepository;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Credential;
-use QL\Hal\Core\Entity\Deployment;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Credential;
+use Hal\Core\Entity\Target;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -50,7 +50,7 @@ class EditTargetController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $application = $request->getAttribute(Application::class);
-        $target = $request->getAttribute(Deployment::class);
+        $target = $request->getAttribute(Target::class);
 
         return $this->withTemplate($request, $response, $this->template, [
             'form' => $this->getFormData($request, $target),
@@ -63,11 +63,11 @@ class EditTargetController implements ControllerInterface
 
     /**
      * @param ServerRequestInterface $request
-     * @param Deployment $target
+     * @param Target $target
      *
      * @return array
      */
-    private function getFormData(ServerRequestInterface $request, Deployment $target)
+    private function getFormData(ServerRequestInterface $request, Target $target)
     {
         if ($request->getMethod() === 'POST') {
             $form = [
@@ -92,19 +92,19 @@ class EditTargetController implements ControllerInterface
         } else {
             $form = [
                 'name' => $target->name(),
-                'path' => $target->path(),
+                'path' => $target->parameter(Target::PARAM_PATH),
 
-                'cd_name' => $target->cdName(),
-                'cd_group' => $target->cdGroup(),
-                'cd_config' => $target->cdConfiguration(),
+                'cd_name' => $target->parameter(Target::PARAM_APP),
+                'cd_group' => $target->parameter(Target::PARAM_GROUP),
+                'cd_config' => $target->parameter(Target::PARAM_CONFIG),
 
-                'eb_name' => $target->ebName(),
-                'eb_environment' => $target->ebEnvironment(),
+                'eb_name' => $target->parameter(Target::PARAM_APP),
+                'eb_environment' => $target->parameter(Target::PARAM_ENV),
 
-                's3_bucket' => $target->s3bucket(),
-                's3_file' => $target->s3file(),
+                's3_bucket' => $target->parameter(Target::PARAM_BUCKET),
+                's3_file' => $target->parameter(Target::PARAM_SOURCE),
 
-                'script_context' => $target->scriptContext(),
+                'script_context' => $target->parameter(Target::PARAM_CONTEXT),
 
                 'url' => $target->url(),
                 'credential' => $target->credential() ? $target->credential()->id() : ''

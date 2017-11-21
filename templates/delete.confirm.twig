@@ -11,8 +11,8 @@
     {% set entity_type = 'Deployment Target' %}
 {% elseif remove.param == 'encrypted' %}
     {% set entity_type = 'Encrypted Property' %}
-{% elseif remove.param == 'server' %}
-    {% set entity_type = 'Server' %}
+{% elseif remove.param == 'group' %}
+    {% set entity_type = 'Group' %}
 {% elseif remove.param == 'environment' %}
     {% set entity_type = 'Environment' %}
 {% elseif remove.param == 'credential' %}
@@ -40,8 +40,8 @@
     {% elseif remove.param == 'encrypted' %}
         {{ block('encrypted_box') }}
 
-    {% elseif remove.param == 'server' %}
-        {{ block('server_box') }}
+    {% elseif remove.param == 'group' %}
+        {{ block('group_box') }}
     {% elseif remove.param == 'environment' %}
         {{ block('environment_box') }}
     {% elseif remove.param == 'credential' %}
@@ -74,8 +74,8 @@
     {% elseif remove.param == 'encrypted' %}
         <a class="btn" href="{{ uriFor('encrypted', {'encrypted': remove.entity.id, 'application': entities.application.id}) }}">Cancel</a>
 
-    {% elseif remove.param == 'server' %}
-        <a class="btn" href="{{ uriFor('server', {'server': remove.entity.id}) }}">Cancel</a>
+    {% elseif remove.param == 'group' %}
+        <a class="btn" href="{{ uriFor('group', {'group': remove.entity.id}) }}">Cancel</a>
     {% elseif remove.param == 'environment' %}
         <a class="btn" href="{{ uriFor('environment', {'environment': remove.entity.id}) }}">Cancel</a>
     {% elseif remove.param == 'credential' %}
@@ -88,14 +88,14 @@
     {% endif %}
 {% endblock %}
 
-{% block server_box %}
+{% block group_box %}
     {% set name_label =  remove.entity.type == 'rsync' ? 'Hostname' : 'Region' %}
 
     <div class="details-box">
         <ul class="mbn">
             <li>
-                <h6>Server Type</h6>
-                {{ remove.entity.formatHumanType }}
+                <h6>Group Type</h6>
+                {{ remove.entity.format(true) }}
             </li>
 
             <li>
@@ -196,7 +196,7 @@
 
             <li>
                 <h6>Environment</h6>
-                {{ remove.entity.server.environment.name }}
+                {{ remove.entity.group.environment.name }}
             </li>
 
             <li>
@@ -206,7 +206,7 @@
 
             <li>
                 <h6>Type</h6>
-                {{ remove.entity.server.formatHumanType() }}
+                {{ remove.entity.group.format(true) }}
             </li>
         </ul>
     </div>

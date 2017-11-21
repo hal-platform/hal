@@ -9,17 +9,18 @@ namespace Hal\UI\Controllers\Target;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Flash;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Credential;
-use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Core\Utility\SortingTrait;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Credential;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\Group;
+use Hal\Core\Repository\EnvironmentRepository;
+use Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\URI;
@@ -31,7 +32,7 @@ class AddTargetController implements ControllerInterface
     use SortingTrait;
     use TemplatedControllerTrait;
 
-    private const ERR_NO_SERVERS = 'Targets require servers. Servers must be added before targets.';
+    private const ERR_NO_GROUPS = 'Targets require groups. Groups must be added before targets.';
 
     /**
      * @var TemplateInterface
@@ -41,7 +42,7 @@ class AddTargetController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $serverRepo;
+    private $groupRepo;
     private $credentialRepo;
 
     /**
@@ -67,7 +68,7 @@ class AddTargetController implements ControllerInterface
         $this->template = $template;
 
         $this->credentialRepo = $em->getRepository(Credential::class);
-        $this->serverRepo = $em->getRepository(Server::class);
+        $this->groupRepo = $em->getRepository(Group::class);
         $this->environmentRepo = $em->getRepository(Environment::class);
 
         $this->uri = $uri;
@@ -81,15 +82,15 @@ class AddTargetController implements ControllerInterface
         $application = $request->getAttribute(Application::class);
 
         $environments = $this->environmentRepo->getAllEnvironmentsSorted();
-        $servers = $credentials = [];
+        $groups = $credentials = [];
 
         $selected = $request->getQueryParams()['environment'] ?? '';
         $selectedEnvironment = $this->getSelectedEnvironment($environments, $selected);
 
         if ($selectedEnvironment) {
-            // If no servers, throw flash and send back to targets.
-            if (!$servers = $this->getServers($selectedEnvironment)) {
-                $this->withFlash($request, Flash::ERROR, self::ERR_NO_SERVERS);
+            // If no groups, throw flash and send back to targets.
+            if (!$groups = $this->getGroups($selectedEnvironment)) {
+                $this->withFlash($request, Flash::ERROR, self::ERR_NO_GROUPS);
                 return $this->withRedirectRoute($response, $this->uri, 'targets', ['application' => $application->id()]);
             }
 
@@ -105,7 +106,7 @@ class AddTargetController implements ControllerInterface
             'environments' => $environments,
             'selected_environment' => $selectedEnvironment,
 
-            'servers' => $servers,
+            'groups' => $groups,
             'credentials' => $credentials,
 
             'application' => $application
@@ -134,14 +135,14 @@ class AddTargetController implements ControllerInterface
      *
      * @return array
      */
-    private function getServers(Environment $environment)
+    private function getGroups(Environment $environment)
     {
-        $servers = $this->serverRepo->findBy(['environment' => $environment]);
+        $groups = $this->groupRepo->findBy(['environment' => $environment]);
 
-        $sorter = $this->serverSorter();
-        usort($servers, $sorter);
+        $sorter = $this->groupSorter();
+        usort($groups, $sorter);
 
-        return $servers;
+        return $groups;
     }
 
     /**
@@ -152,7 +153,7 @@ class AddTargetController implements ControllerInterface
     private function getFormData(ServerRequestInterface $request)
     {
         $form = [
-            'server' => $request->getParsedBody()['server'] ?? '',
+            'group' => $request->getParsedBody()['group'] ?? '',
 
             'name' => $request->getParsedBody()['name'] ?? '',
             'path' => $request->getParsedBody()['path'] ?? '',

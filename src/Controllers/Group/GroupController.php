@@ -5,19 +5,19 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Server;
+namespace Hal\UI\Controllers\Group;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Repository\DeploymentRepository;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\Group;
+use Hal\Core\Repository\TargetRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
-class ServerController implements ControllerInterface
+class GroupController implements ControllerInterface
 {
     use TemplatedControllerTrait;
 
@@ -26,9 +26,9 @@ class ServerController implements ControllerInterface
      */
     private $template;
     /**
-     * @var DeploymentRepository
+     * @var TargetRepository
      */
-    private $deployRepo;
+    private $targetRepo;
 
     /**
      * @param TemplateInterface $template
@@ -39,7 +39,7 @@ class ServerController implements ControllerInterface
         EntityManagerInterface $em
     ) {
         $this->template = $template;
-        $this->deployRepo = $em->getRepository(Deployment::class);
+        $this->targetRepo = $em->getRepository(Target::class);
     }
 
     /**
@@ -54,10 +54,10 @@ class ServerController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $server = $request->getAttribute(Server::class);
-        $deployments = $this->deployRepo->findBy(['server' => $server]);
+        $group = $request->getAttribute(Group::class);
+        $targets = $this->targetRepo->findBy(['group' => $group]);
 
-        usort($deployments, function ($a, $b) {
+        usort($targets, function ($a, $b) {
             $appA = $a->application()->name();
             $appB = $b->application()->name();
 
@@ -65,8 +65,8 @@ class ServerController implements ControllerInterface
         });
 
         return $this->withTemplate($request, $response, $this->template, [
-            'server' => $server,
-            'deployments' => $deployments
+            'group' => $group,
+            'targets' => $targets
         ]);
     }
 }

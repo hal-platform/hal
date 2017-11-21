@@ -13,18 +13,18 @@
                 <a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a>
             </li>
 
-            <li>Server</li>
-            <li><a href="{{ uriFor('server', {'server': target.server.id}) }}">{{ target.server.formatPretty }}</a></li>
+            <li>Group</li>
+            <li><a href="{{ uriFor('group', {'group': target.group.id}) }}">{{ target.group.format }}</a></li>
 
             <li>Environment</li>
             <li>
-                {{ target.server.environment.name }}
+                {{ target.group.environment.name }}
             </li>
         </ul>
     </div>
 
     <h4>Type</h4>
-    <p>{{ target.server.formatHumanType }}</p>
+    <p>{{ target.group.formatHumanType }}</p>
 
     <div class="form-wrapper">
         {{ form_macros.formErrors(errors) }}
@@ -36,7 +36,7 @@
                     <label for="name">Name</label>
                     <input class="text-input" type="text" name="name" id="name" maxlength="80" value="{{ form.name }}" pattern="^[^\n\t]+">
                     <small class="additional">
-                        Optionally, give a deployment a unique name for easy reference or to avoid confusion with multiple deployments to the same server.
+                        Optionally, give a deployment a unique name for easy reference or to avoid confusion with multiple deployments to the same group.
                     </small>
                 </li>
 
@@ -50,16 +50,16 @@
                     RSYNC
                 #}
                 <li>
-                    {% set isDisabled = (target.server.type == 'rsync') ? '' : ' disabled' %}
+                    {% set isDisabled = (target.group.type == 'rsync') ? '' : ' disabled' %}
                     <label for="path">
                         File path
                         <small class="additional">
-                            <b>Rsync servers only</b><br>
+                            <b>Rsync groups only</b><br>
                         </small>
                     </label>
                     <input class="text-input" type="text" name="path" id="path" maxlength="200" value="{{ form.path }}" pattern="^\/[^\n\t]+"{{ isDisabled }}>
                     <small class="additional">
-                        The absolute path to the file directory on the server.
+                        The absolute path to the file directory on the group.
                         Paths must begin with a forward slash (/).
                     </small>
                 </li>
@@ -82,33 +82,33 @@
                     CodeDeploy
                 #}
                 <li>
-                    {% set isDisabled = (target.server.type == 'cd') ? '' : ' disabled' %}
+                    {% set isDisabled = (target.group.type == 'cd') ? '' : ' disabled' %}
                     <label for="cd_name">
                         CodeDeploy Application Name
                         <small class="additional">
-                            <b>CD servers only</b>
+                            <b>CD groups only</b>
                         </small>
                     </label>
                     <input class="text-input" type="text" name="cd_name" id="cd_name" maxlength="100" value="{{ form.cd_name }}" pattern="^[^\n\t]+"{{ isDisabled }}>
                 </li>
 
                 <li>
-                    {% set isDisabled = (target.server.type == 'cd') ? '' : ' disabled' %}
+                    {% set isDisabled = (target.group.type == 'cd') ? '' : ' disabled' %}
                     <label for="cd_group">
                         CodeDeploy Deployment Group
                         <small class="additional">
-                            <b>CD servers only</b>
+                            <b>CD groups only</b>
                         </small>
                     </label>
                     <input class="text-input" type="text" name="cd_group" id="cd_group" maxlength="100" value="{{ form.cd_group }}" pattern="^[^\n\t]+"{{ isDisabled }}>
                 </li>
 
                 <li>
-                    {% set isDisabled = (target.server.type == 'cd') ? '' : ' disabled' %}
+                    {% set isDisabled = (target.group.type == 'cd') ? '' : ' disabled' %}
                     <label for="cd_config">
                         CodeDeploy Configuration
                         <small class="additional">
-                            <b>CD servers only</b>
+                            <b>CD groups only</b>
                         </small>
                     </label>
                     <input class="text-input" type="text" name="cd_config" id="cd_config" maxlength="100" value="{{ form.cd_config }}" pattern="^[^\n\t]+"{{ isDisabled }}>
@@ -118,22 +118,22 @@
                     Elastic Beanstalk
                 #}
                 <li>
-                    {% set isDisabled = (target.server.type == 'eb') ? '' : ' disabled' %}
+                    {% set isDisabled = (target.group.type == 'eb') ? '' : ' disabled' %}
                     <label for="eb_name">
                         Elastic Beanstalk Application Name
                         <small class="additional">
-                            <b>EB servers only</b>
+                            <b>EB groups only</b>
                         </small>
                     </label>
                     <input class="text-input" type="text" name="eb_name" id="eb_name" maxlength="100" value="{{ form.eb_name }}" pattern="^[^\n\t]+"{{ isDisabled }}>
                 </li>
 
                 <li>
-                    {% set isDisabled = (target.server.type == 'eb') ? '' : ' disabled' %}
+                    {% set isDisabled = (target.group.type == 'eb') ? '' : ' disabled' %}
                     <label for="eb_environment">
                         Elastic Beanstalk Environment Name or ID
                         <small class="additional">
-                            <b>EB servers only</b>
+                            <b>EB groups only</b>
                         </small>
                     </label>
                     <input class="text-input" type="text" name="eb_environment" id="eb_environment" maxlength="100" value="{{ form.eb_environment }}" pattern="^[^\n\t]+"{{ isDisabled }}>
@@ -142,23 +142,23 @@
                 {#
                     S3
                 #}
-                {% set isDisabled = (target.server.type in ['s3', 'eb', 'cd']) ? '' : ' disabled' %}
+                {% set isDisabled = (target.group.type in ['s3', 'eb', 'cd']) ? '' : ' disabled' %}
                 <li>
                     <label for="s3_bucket">
                         S3 Bucket
                         <small class="additional">
-                            <b>S3, CD and EB servers only</b>
+                            <b>S3, CD and EB groups only</b>
                         </small>
                     </label>
                     <input class="text-input" type="text" name="s3_bucket" id="s3_bucket" maxlength="100" value="{{ form.s3_bucket }}" pattern="^[^\n\t]+"{{ isDisabled }}>
                 </li>
 
-                {% set isDisabled = (target.server.type in ['s3', 'eb', 'cd']) ? '' : ' disabled' %}
+                {% set isDisabled = (target.group.type in ['s3', 'eb', 'cd']) ? '' : ' disabled' %}
                 <li>
                     <label for="s3_file">
                         S3 File
                         <small class="additional">
-                            <b>S3, CD and EB servers only</b>
+                            <b>S3, CD and EB groups only</b>
                         </small>
                     </label>
                     <input class="text-input" type="text" name="s3_file" id="s3_file" maxlength="100" value="{{ form.s3_file }}" pattern="^[^\n\t]+"{{ isDisabled }}>

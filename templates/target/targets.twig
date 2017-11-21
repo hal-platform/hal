@@ -14,10 +14,10 @@
     </div>
 
     <p>
-        Deployment targets define what servers your application can be deployed to and where on that server the code will be uploaded.
+        Deployment targets define what groups your application can be deployed to and where on a server the code will be uploaded.
     </p>
 
-    {% set canEdit = isUserAdminOrSuper(current_user) or isUserLeadOf(current_user, application) %}
+    {% set canEdit = current_authorizations.isSuper() or current_authorizations.isAdminOf(application) %}
 
     {% if targets_by_env %}
 
@@ -41,38 +41,38 @@
 
                             <tr>
                                 <td>
-                                    {% if deployment.server.isAWS() and not target.credential %}
+                                    {% if target.group().isAWS() and not target.credential() %}
                                         <span class="hint--right" aria-label="No credentials are assigned.">{{ macros.status_icon('', 'error') }}</span>
                                     {% endif %}
-                                    {{ target.formatPretty }}
+                                    {{ target.format(false) }}
                                 </td>
                                 <td>
-                                    {% if target.server.type == 'eb' %}
+                                    {% if target.group.type == 'eb' %}
 
-                                        Application: <code>{{ target.ebName }}</code>
-                                        <br>Environment: <code>{{ target.ebEnvironment }}</code>
+                                        Application: <code>{{ target.parameter(constant('PARAM_APP', target)) }}</code>
+                                        <br>Environment: <code>{{ target.parameter(constant('PARAM_ENV', target)) }}</code>
 
-                                    {% elseif target.server.type == 'cd' %}
+                                    {% elseif target.group.type == 'cd' %}
 
-                                        Application: <code>{{ target.cdName }}</code>
-                                        <br>Group: <code>{{ target.cdGroup }}</code>
-                                        <br>Config: <code>{{ target.cdConfiguration }}</code>
+                                        Application: <code>{{ target.parameter(constant('PARAM_APP', target)) }}</code>
+                                        <br>Group: <code>{{ target.parameter(constant('PARAM_GROUP', target)) }}</code>
+                                        <br>Config: <code>{{ target.parameter(constant('PARAM_CONFIG', target)) }}</code>
 
-                                    {% elseif target.server.type == 's3' %}
+                                    {% elseif target.group.type == 's3' %}
 
-                                        Bucket: <code>{{ target.s3bucket }}</code>
-                                        <br>File: <code>{{ target.s3file }}</code>
+                                        Bucket: <code>{{ target.parameter(constant('PARAM_BUCKET', target)) }}</code>
+                                        <br>File: <code>{{ target.parameter(constant('PARAM_SOURCE', target)) }}</code>
 
-                                    {% elseif target.server.type == 'script' %}
+                                    {% elseif target.group.type == 'script' %}
 
-                                        Context: <code>{{ target.scriptContext ?: 'N/A' }}</code>
+                                        Context: <code>{{ target.parameter(constant('PARAM_CONTEXT', target)) ?: 'N/A' }}</code>
 
-                                    {% elseif target.server.type == 'rsync' %}
+                                    {% elseif target.group.type == 'rsync' %}
 
-                                        Path: <code>{{ target.path }}</code>
+                                        Path: <code>{{ target.parameter(constant('PARAM_PATH', target)) }}</code>
 
                                     {% else %}
-                                        <code>{{ target.formatMeta }}</code>
+                                        <code>{{ target.format(false) }}</code>
                                     {% endif %}
 
                                 </td>

@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Server;
+namespace Hal\UI\Controllers\Group;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\UI\Controllers\RedirectableControllerTrait;
@@ -13,20 +13,20 @@ use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Flash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Repository\DeploymentRepository;
-use QL\Hal\Core\Type\EnumType\ServerEnum;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\Group;
+use Hal\Core\Repository\TargetRepository;
+use Hal\Core\Type\EnumType\GroupEnum;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
-class RemoveServerController implements ControllerInterface
+class RemoveGroupController implements ControllerInterface
 {
     use RedirectableControllerTrait;
     use SessionTrait;
 
-    private const MSG_SUCCESS = '%s server removed.';
-    private const ERR_DEPLOYMENTS = 'Cannot remove server. All associated deployments must first be removed.';
+    private const MSG_SUCCESS = '%s group removed.';
+    private const ERR_DEPLOYMENTS = 'Cannot remove group. All associated targets must first be removed.';
 
     /**
      * @var EntityManagerInterface
@@ -39,9 +39,9 @@ class RemoveServerController implements ControllerInterface
     private $uri;
 
     /**
-     * @var DeploymentRepository
+     * @var TargetRepository
      */
-    private $deployRepo;
+    private $targetRepo;
 
     /**
      * @param EntityManagerInterface $em
@@ -52,7 +52,7 @@ class RemoveServerController implements ControllerInterface
         $this->em = $em;
         $this->uri = $uri;
 
-        $this->deployRepo = $em->getRepository(Deployment::class);
+        $this->targetRepo = $em->getRepository(Target::class);
     }
 
     /**
@@ -60,17 +60,17 @@ class RemoveServerController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $server = $request->getAttribute(Server::class);
+        $group = $request->getAttribute(Group::class);
 
-        if ($this->deployRepo->findBy(['server' => $server])) {
+        if ($this->targetRepo->findBy(['group' => $group])) {
             $this->withFlash($request, Flash::ERROR, self::ERR_DEPLOYMENTS);
-            return $this->withRedirectRoute($response, $this->uri, 'server', ['server' => $server->id()]);
+            return $this->withRedirectRoute($response, $this->uri, 'group', ['group' => $group->id()]);
         }
 
-        $this->em->remove($server);
+        $this->em->remove($group);
         $this->em->flush();
 
-        $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $server->formatHumanType()));
-        return $this->withRedirectRoute($response, $this->uri, 'servers');
+        $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $group->format(false)));
+        return $this->withRedirectRoute($response, $this->uri, 'groups');
     }
 }

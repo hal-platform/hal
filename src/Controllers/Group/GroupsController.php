@@ -5,19 +5,19 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace HAL\UI\Controllers\Server;
+namespace HAL\UI\Controllers\Group;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Repository\ServerRepository;
-use QL\Hal\Core\Utility\SortingTrait;
+use Hal\Core\Entity\Group;
+use Hal\Core\Repository\GroupRepository;
+use Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
-class ServersController implements ControllerInterface
+class GroupsController implements ControllerInterface
 {
     use SortingTrait;
     use TemplatedControllerTrait;
@@ -33,9 +33,9 @@ class ServersController implements ControllerInterface
     private $em;
 
     /**
-     * @var ServerRepository
+     * @var GroupRepository
      */
-    private $serverRepo;
+    private $groupRepository;
 
     /**
      * @param TemplateInterface $template
@@ -45,7 +45,7 @@ class ServersController implements ControllerInterface
     {
         $this->template = $template;
         $this->em = $em;
-        $this->serverRepo = $em->getRepository(Server::class);
+        $this->groupRepository = $em->getRepository(Group::class);
     }
 
     /**
@@ -53,20 +53,20 @@ class ServersController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $servers = $this->serverRepo->findAll();
+        $groups = $this->groupRepository->findAll();
 
         return $this->withTemplate($request, $response, $this->template, [
-            'server_environments' => $this->sort($servers),
-            'server_count' => count($servers)
+            'group_environments' => $this->sort($groups),
+            'group_count' => count($groups)
         ]);
     }
 
     /**
-     * @param Server[] $servers
+     * @param Group[] $groups
      *
      * @return array
      */
-    private function sort(array $servers)
+    private function sort(array $groups)
     {
         $environments = [
             'dev' => [],
@@ -75,17 +75,17 @@ class ServersController implements ControllerInterface
             'prod' => []
         ];
 
-        foreach ($servers as $server) {
-            $env = $server->environment()->name();
+        foreach ($groups as $group) {
+            $env = $group->environment()->name();
 
             if (!array_key_exists($env, $environments)) {
                 $environments[$env] = [];
             }
 
-            $environments[$env][] = $server;
+            $environments[$env][] = $group;
         }
 
-        $sorter = $this->serverSorter();
+        $sorter = $this->groupSorter();
         foreach ($environments as &$env) {
             usort($env, $sorter);
         }
