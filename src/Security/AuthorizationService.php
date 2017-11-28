@@ -9,7 +9,6 @@ namespace Hal\UI\Security;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\Core\Entity\Application;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\UserPermission;
 use Hal\Core\Type\UserPermissionEnum;
@@ -30,7 +29,7 @@ class AuthorizationService
     /**
      * @var EntityRepository
      */
-    private $userPermissionsRepo;
+    private $userPermissionsRepository;
 
     /**
      * @var JSON
@@ -44,7 +43,7 @@ class AuthorizationService
     public function __construct(EntityManagerInterface $em, JSON $json)
     {
         $this->em = $em;
-        $this->permissionsRepo = $em->getRepository(UserPermission::class);
+        $this->userPermissionsRepository = $em->getRepository(UserPermission::class);
 
         $this->json = $json;
     }
@@ -67,7 +66,7 @@ class AuthorizationService
             }
         }
 
-        $permissions = $this->permissionsRepo->findBy(['user' => $user]);
+        $permissions = $this->userPermissionsRepository->findBy(['user' => $user]);
         $authorizations = $this->parseAuthorizations($permissions);
 
         $this->setToCache($key, $this->json->encode($authorizations));

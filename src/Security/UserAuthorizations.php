@@ -68,7 +68,8 @@ class UserAuthorizations implements JsonSerializable
             return $this->hasEntry(UserPermissionEnum::TYPE_OWNER, $hash);
 
         } elseif ($of instanceof Environment) {
-            // @todo
+            $hash = $this->simpleHash($of);
+            return $this->hasEntry(UserPermissionEnum::TYPE_OWNER, $hash);
         }
 
         return false;
@@ -94,8 +95,7 @@ class UserAuthorizations implements JsonSerializable
      */
     public function isAdmin(): bool
     {
-        $hash = $this->simpleHash(UserAuthorizations::ALL_PERMISSIONS);
-        return $this->hasEntry(UserPermissionEnum::TYPE_ADMIN, $hash);
+        return count($this->tiers[UserPermissionEnum::TYPE_ADMIN]) > 0;
     }
 
     /**
@@ -103,8 +103,7 @@ class UserAuthorizations implements JsonSerializable
      */
     public function isSuper(): bool
     {
-        $hash = $this->simpleHash(UserAuthorizations::ALL_PERMISSIONS);
-        return $this->hasEntry(UserPermissionEnum::TYPE_SUPER, $hash);
+        return count($this->tiers[UserPermissionEnum::TYPE_SUPER]) > 0;
     }
 
     /**
@@ -114,6 +113,23 @@ class UserAuthorizations implements JsonSerializable
      */
     public function canBuild(Application $application): bool
     {
+        $organization = $application->organization();
+
+        if ($this->isMemberOf($application) || $this->isOwnerOf($application)) {
+            return true;
+        } elseif ($this->isMemberOf($organization) || $this->isOwnerOf($organization)) {
+            return true;
+        }
+
+        //admin is only for environments?
+//        if ($this->isAdminOf()) {
+//            return true;
+//        }
+
+        if ($this->isSuper()) {
+            return true;
+        }
+
         return false;
     }
 
@@ -125,6 +141,18 @@ class UserAuthorizations implements JsonSerializable
      */
     public function canDeploy(Application $application, Environment $environment): bool
     {
+        if ($this->canBuild($application) && !$environment->isProduction()) {
+            return true;
+        }
+
+        if ($this->isAdminOf($environment)) {
+            return true;
+        }
+
+        if ($this->isSuper()) {
+            return true;
+        }
+
         return false;
     }
 
