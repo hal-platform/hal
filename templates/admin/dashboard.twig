@@ -11,8 +11,8 @@
     <h2 class="leader">Manage Deployments</h2>
     <ul>
         <li>
-            <a href="{{ uriFor('servers') }}" class="btn">
-                {{ macros.icon('server') }} Servers
+            <a href="{{ uriFor('groups') }}" class="btn">
+                {{ macros.icon('server') }} Groups
             </a>
         </li>
         <li>
@@ -44,7 +44,7 @@
     <h2 class="leader">Security</h2>
     <ul>
         <li>
-            <a href="{{ uriFor('admin.credentials') }}" class="btn btn--primary">
+            <a href="{{ uriFor('credentials') }}" class="btn btn--primary">
                 {{ macros.icon('locked') }} Credentials
             </a>
         </li>
@@ -88,12 +88,12 @@
                 </li>
 
                 <li>
-                    <h6>Hal Push File</h6>
+                    <h6>Hal Release File</h6>
                     <div class="pre-wrapper">
-                        {% if push_file %}
-                            <pre>{{ push_file }}</pre>
+                        {% if release_file %}
+                            <pre>{{ release_file }}</pre>
                         {% else %}
-                            <pre>No push file found. Are you in dev?</pre>
+                            <pre>No release file found. Are you in dev?</pre>
                         {% endif %}
                     </div>
                 </li>

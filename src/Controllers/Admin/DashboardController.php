@@ -35,21 +35,21 @@ class DashboardController implements ControllerInterface
     /**
      * @var string
      */
-    private $halPushFile;
+    private $halReleaseFile;
 
     /**
      * @param TemplateInterface $template
      * @param string $encryptionKey
      * @param string $sessionEncryptionKey
-     * @param string $halPushFile
+     * @param string $halReleaseFile
      */
-    public function __construct(TemplateInterface $template, $encryptionKey, $sessionEncryptionKey, $halPushFile)
+    public function __construct(TemplateInterface $template, $encryptionKey, $sessionEncryptionKey, $halReleaseFile)
     {
         $this->template = $template;
 
         $this->encryptionKey = $encryptionKey;
         $this->sessionEncryptionKey = $sessionEncryptionKey;
-        $this->halPushFile = $halPushFile;
+        $this->halReleaseFile = $halReleaseFile;
     }
 
     /**
@@ -58,13 +58,13 @@ class DashboardController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         # get hal push file if possible.
-        $pushFile = file_exists($this->halPushFile) ? file_get_contents($this->halPushFile) : '';
+        $releaseFile = file_exists($this->halReleaseFile) ? file_get_contents($this->halReleaseFile) : '';
 
         return $this->withTemplate($request, $response, $this->template, [
             'server_name' => gethostname(),
             'encryption_key' => $this->encryptionKey,
             'session_encryption_key' => $this->sessionEncryptionKey,
-            'push_file' => $pushFile
+            'release_file' => $releaseFile
         ]);
     }
 }
