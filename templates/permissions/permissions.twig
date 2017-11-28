@@ -4,12 +4,12 @@
 
 {% set page_title = "Manage Permissions" %}
 
-{% set can_remove = isUserAdminOrSuper(current_user) %}
-{% if isUserAdmin(current_user) and user_types.btn_pusher|length < 2 %}
+{% set can_remove = current_authorizations.isAdmin or current_authorizations.isSuper %}
+{% if current_authorizations.isAdmin and user_types.admin|length < 2 %}
     {% set can_remove = false %}
 {% endif %}
 
-{% set can_remove_super = isUserSuper(current_user) and user_types.super|length > 1 %}
+{% set can_remove_super = current_authorizations.isSuper and user_types.super|length > 1 %}
 
 {% block content %}
 
@@ -41,7 +41,7 @@
                     {% set user = type.user %}
 
                     <tr>
-                        <td><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.handle }}</a></td>
+                        <td><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.username }}</a></td>
                         <td>{{ user.email }}</td>
 
                         <td>
@@ -80,16 +80,13 @@
                     {% set user = permission.user %}
 
                     <tr>
-                        <td><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.handle }}</a></td>
+                        <td><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.username }}</a></td>
                         <td>{{ user.email }}</td>
 
                         <td>
                             <ul>
                             {% for perm in permission.permissions %}
                                 <li>
-                                    {% if perm.isProduction %}
-                                        {{ macros.status('Prod', 'error') }}
-                                    {% endif %}
                                     <a href="{{ uriFor('application', {'application': perm.application.id}) }}">{{ perm.application.name }}</a>
                                     {% if can_remove %}
                                         (<a style="color:red;" href="{{ uriFor('admin.permissions.deployment.remove', {'user': user.id, 'user_permission': perm.id}) }}">Remove</a>)
@@ -146,8 +143,8 @@
                     {% set user = type.user %}
 
                     <tr>
-                        <td><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.id }}</a></td>
-                        <td>{{ user.handle }}</td>
+                        <td><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.username }}</a></td>
+                        <td>{{ user.email }}</td>
 
                         {% if can_remove %}
                             <td class="tr">

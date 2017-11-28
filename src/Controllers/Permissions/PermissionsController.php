@@ -9,12 +9,12 @@ namespace Hal\UI\Controllers\Permissions;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\UserPermission;
+use Hal\Core\Type\UserPermissionEnum;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\UserPermission;
-use QL\Hal\Core\Entity\UserType;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -41,7 +41,6 @@ class PermissionsController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $userTypesRepo;
     private $userPermissionsRepo;
 
     /**
@@ -52,7 +51,6 @@ class PermissionsController implements ControllerInterface
     {
         $this->template = $template;
 
-        $this->userTypesRepo = $em->getRepository(UserType::class);
         $this->userPermissionsRepo = $em->getRepository(UserPermission::class);
     }
 
@@ -61,43 +59,43 @@ class PermissionsController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $types = $this->getTypes();
         $permissions = $this->userPermissionsRepo->findAll();
+        $types = $this->getTypes($permissions);
 
         // sort
         $sorter = $this->permissionSorter();
 
-        usort($types['pleb'], $sorter);
-        usort($types['btn_pusher'], $sorter);
-        usort($types['super'], $sorter);
+        usort($types[UserPermissionEnum::TYPE_MEMBER], $sorter);
+        usort($types[UserPermissionEnum::TYPE_OWNER], $sorter);
+        usort($types[UserPermissionEnum::TYPE_ADMIN], $sorter);
+        usort($types[UserPermissionEnum::TYPE_SUPER], $sorter);
 
         return $this->withTemplate($request, $response, $this->template, [
             'user_types' => $types,
-            'owners' => $this->collateByUser($types['lead']),
+            'owners' => $this->collateByUser($types[UserPermissionEnum::TYPE_OWNER]),
             'deploy' => $this->collateByUser($permissions)
         ]);
     }
 
     /**
-     * Get all user types in the whole db, collated into per-type buckets
+     * Get all bucket all permissions into their types
+     *
+     * @param array $permissions
      *
      * @return array
      */
-    private function getTypes()
+    private function getTypes(array $permissions)
     {
-        $userTypes = $this->userTypesRepo->findAll();
-
         $collated = [
-            'pleb' => [],
-            'lead' => [],
-            'btn_pusher' => [],
-            'super' => []
+            UserPermissionEnum::TYPE_MEMBER => [],
+            UserPermissionEnum::TYPE_OWNER => [],
+            UserPermissionEnum::TYPE_ADMIN => [],
+            UserPermissionEnum::TYPE_SUPER => [],
         ];
 
-        foreach ($userTypes as $userType) {
-            $type = $userType->type();
-
-            $collated[$type][] = $userType;
+        /** @var UserPermission $permission */
+        foreach ($permissions as $permission) {
+            $collated[$permission->type()][] = $permission;
         }
 
         return $collated;
@@ -123,7 +121,7 @@ class PermissionsController implements ControllerInterface
             $users[$t->user()->id()]['permissions'][] = $t;
         }
 
-        usort($users, function($a, $b) {
+        usort($users, function ($a, $b) {
             return strcasecmp($a['user']->handle(), $b['user']->handle());
         });
 
@@ -136,9 +134,9 @@ class PermissionsController implements ControllerInterface
      */
     private function permissionSorter()
     {
-        return function($a, $b) {
-            $a = $a->user()->handle();
-            $b = $b->user()->handle();
+        return function ($a, $b) {
+            $a = $a->user()->username();
+            $b = $b->user()->username();
 
             return strcasecmp($a, $b);
         };
