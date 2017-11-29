@@ -32,6 +32,9 @@ services:
         class: 'Hal\UI\Validator\EncryptedPropertyValidator'
         arguments: ['@doctrine.em', '@encryption']
 
+    validator.permissions:
+        class: 'Hal\UI\Validator\PermissionsValidator'
+        arguments: ['@doctrine.em']
     #
 
     build.start.validator:

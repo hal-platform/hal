@@ -686,10 +686,11 @@ services:
         arguments:
             - '@admin.permissions.add.twig'
             - '@doctrine.em'
-            - '@permissions'
             - '@json'
             - '@uri'
-            - '@doctrine.random'
+            - '@validator.permissions'
+            - '@service.authorization'
+            - '@service.authorization_hydrator'
         calls:
             - ['setCache', ['@cache']]
             - ['setCacheTTL', ['%cache.page.ttl%']]

@@ -54,7 +54,7 @@ class PermissionsController implements ControllerInterface
         $this->userPermissionsRepo = $em->getRepository(UserPermission::class);
     }
 
-    /**
+    /**l
      * @inheritDoc
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
@@ -65,15 +65,15 @@ class PermissionsController implements ControllerInterface
         // sort
         $sorter = $this->permissionSorter();
 
-        usort($types[UserPermissionEnum::TYPE_MEMBER], $sorter);
-        usort($types[UserPermissionEnum::TYPE_OWNER], $sorter);
-        usort($types[UserPermissionEnum::TYPE_ADMIN], $sorter);
-        usort($types[UserPermissionEnum::TYPE_SUPER], $sorter);
+        usort($types['member'], $sorter);
+        usort($types['owner'], $sorter);
+        usort($types['admin'], $sorter);
 
         return $this->withTemplate($request, $response, $this->template, [
             'user_types' => $types,
-            'owners' => $this->collateByUser($types[UserPermissionEnum::TYPE_OWNER]),
-            'deploy' => $this->collateByUser($permissions)
+            'members' => $this->collateByUser($types['member']),
+            'owners' => $this->collateByUser($types['owner'] ?? []),
+            'admins' => $this->collateByUser($types['admin'] ?? [])
         ]);
     }
 
@@ -87,15 +87,22 @@ class PermissionsController implements ControllerInterface
     private function getTypes(array $permissions)
     {
         $collated = [
-            UserPermissionEnum::TYPE_MEMBER => [],
-            UserPermissionEnum::TYPE_OWNER => [],
-            UserPermissionEnum::TYPE_ADMIN => [],
-            UserPermissionEnum::TYPE_SUPER => [],
+            'member' => [],
+            'owner' => [],
+            'admin' => [],
         ];
 
         /** @var UserPermission $permission */
         foreach ($permissions as $permission) {
-            $collated[$permission->type()][] = $permission;
+            if ($permission->type() === UserPermissionEnum::TYPE_ADMIN ||
+                $permission->type() === UserPermissionEnum::TYPE_SUPER
+            ) {
+                $type = 'admin';
+            } else {
+                $type = $permission->type();
+            }
+
+            $collated[$type][] = $permission;
         }
 
         return $collated;
@@ -122,7 +129,7 @@ class PermissionsController implements ControllerInterface
         }
 
         usort($users, function ($a, $b) {
-            return strcasecmp($a['user']->handle(), $b['user']->handle());
+            return strcasecmp($a['user']->username(), $b['user']->username());
         });
 
         return $users;
