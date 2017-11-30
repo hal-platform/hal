@@ -8,7 +8,9 @@
 namespace Hal\UI\Controllers\Credentials;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Credential;
+use Hal\Core\Entity\Target;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Flash;
@@ -35,6 +37,11 @@ class RemoveCredentialController implements ControllerInterface
     private $uri;
 
     /**
+     * @var EntityRepository
+     */
+    private $targetRepository;
+
+    /**
      * @param EntityManagerInterface $em
      * @param URI $uri
      */
@@ -42,6 +49,8 @@ class RemoveCredentialController implements ControllerInterface
     {
         $this->em = $em;
         $this->uri = $uri;
+
+        $this->targetRepository = $em->getRepository(Target::class);
     }
 
     /**
@@ -49,10 +58,32 @@ class RemoveCredentialController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
+        /** @var Credential $credential */
         $credential = $request->getAttribute(Credential::class);
+        $authorizations = $this->getAuthorizations($request);
+
+        if ($credential->isInternal() && (!$authorizations->isAdmin() && !$authorizations->isSuper())) {
+            $message = sprintf('Cannot remove internal credential "%s". Contact the administrator.', $credential->name());
+            $this->withFlash($request, Flash::ERROR, $message);
+
+            return $this->withRedirectRoute($response, $this->uri, 'credential', ['credential' => $credential->id()]);
+        }
+
+        $targets = $this->targetRepository->findBy(['credential' => $credential]);
+
+        if (count($targets) > 0) {
+            $message = sprintf('Cannot remove credential "%s". It is being used by applications.', $credential->name());
+            $this->withFlash($request, Flash::ERROR, $message);
+
+            return $this->withRedirectRoute($response, $this->uri, 'credential', ['credential' => $credential->id()]);
+        }
 
         $this->em->remove($credential);
         $this->em->flush();
+
+        // target caches must be manually flushed here, since they would contain a link to a removed entity
+        $cache = $this->em->getCache();
+        $cache->evictEntityRegion(Target::class);
 
         $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $credential->name()));
         return $this->withRedirectRoute($response, $this->uri, 'credentials');

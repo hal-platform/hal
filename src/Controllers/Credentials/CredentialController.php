@@ -8,9 +8,12 @@
 namespace Hal\UI\Controllers\Credentials;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Exception;
 use Hal\Core\Crypto\Encryption;
 use Hal\Core\Entity\Credential;
+use Hal\Core\Entity\Release;
+use Hal\Core\Entity\Target;
 use Hal\Core\Type\CredentialEnum;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -33,6 +36,11 @@ class CredentialController implements ControllerInterface
     private $encryption;
 
     /**
+     * @var EntityRepository
+     */
+    private $targetRepository;
+
+    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param Encryption $encryption
@@ -44,6 +52,8 @@ class CredentialController implements ControllerInterface
     ) {
         $this->template = $template;
         $this->encryption = $encryption;
+
+        $this->targetRepository = $em->getRepository(Target::class);
     }
 
     /**
@@ -52,6 +62,8 @@ class CredentialController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $credential = $request->getAttribute(Credential::class);
+
+        $targets = $this->targetRepository->findBy(['credential' => $credential]);
 
         $decrypted = false;
         if ($credential->type() === CredentialEnum::TYPE_AWS_STATIC) {
@@ -66,6 +78,7 @@ class CredentialController implements ControllerInterface
         return $this->withTemplate($request, $response, $this->template, [
             'credential' => $credential,
 
+            'targets' => $targets,
             'decrypted' => $decrypted,
             'is_decryption_error' => ($decrypted === null)
         ]);
@@ -80,6 +93,7 @@ class CredentialController implements ControllerInterface
     {
         try {
             $decrypted = $this->encryption->decrypt($encrypted);
+
             return $decrypted;
 
         } catch (Exception $ex) {
