@@ -54,7 +54,7 @@ class PermissionsController implements ControllerInterface
         $this->userPermissionsRepo = $em->getRepository(UserPermission::class);
     }
 
-    /**l
+    /**
      * @inheritDoc
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)

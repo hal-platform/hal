@@ -40,6 +40,8 @@ class UserAuthorizations implements JsonSerializable
      */
     public function isMemberOf($of): bool
     {
+        //if ($this->isSuper()) return true;
+
         if ($of instanceof Application) {
             $hash = $this->simpleHash($of);
             return $this->hasEntry(UserPermissionEnum::TYPE_MEMBER, $hash);
@@ -59,6 +61,8 @@ class UserAuthorizations implements JsonSerializable
      */
     public function isOwnerOf($of): bool
     {
+        //if ($this->isSuper()) return true;
+
         if ($of instanceof Application) {
             $hash = $this->simpleHash($of);
             return $this->hasEntry(UserPermissionEnum::TYPE_OWNER, $hash);
@@ -82,12 +86,30 @@ class UserAuthorizations implements JsonSerializable
      */
     public function isAdminOf($of): bool
     {
+        //if ($this->isSuper()) return true;
+
         if ($of instanceof Environment) {
             $hash = $this->simpleHash($of);
             return $this->hasEntry(UserPermissionEnum::TYPE_ADMIN, $hash);
         }
 
         return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMember(): bool
+    {
+        return count($this->tiers[UserPermissionEnum::TYPE_MEMBER]) > 0;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOwner(): bool
+    {
+        return count($this->tiers[UserPermissionEnum::TYPE_OWNER]) > 0;
     }
 
     /**

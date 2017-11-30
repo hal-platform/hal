@@ -10,11 +10,9 @@
     <h2>Current Permissions - <b>{{ user.handle }}</b></h2>
 
     {% include 'user/partial.user-status.twig' with {
-        showHalStatus: false,
-        userPerm: user_permissions,
-        leadApplications: lead_applications,
-        prodApplications: prod_applications,
-        nonProdApplications: non_prod_applications,
+        user: user,
+        authorizations: userAuthorizations,
+        permissions: userPermissions
     } only %}
 
     <h2>Remove the following permissions</h2>
@@ -23,20 +21,26 @@
 
             <li>User Type</li>
             <li>
-                {% if user_type.type == 'lead' %}
+                {% if permission.type == 'owner' %}
                     {{ macros.status('Owner', 'notice') }}
                 {% endif %}
-                {% if user_type.type == 'btn_pusher' %}
+                {% if permission.type == 'admin' %}
                     {{ macros.status('Admin', 'warning') }}
                 {% endif %}
-                {% if user_type.type == 'super' %}
+                {% if permission.type == 'super' %}
                     {{ macros.status('Super', 'error') }}
                 {% endif %}
             </li>
 
-            {% if user_type.application %}
+            {% if permission.application %}
                 <li>Application</li>
-                <li><a href="{{ uriFor('application', {'application': user_type.application.id}) }}">{{ user_type.application.name }}</a></li>
+                <li><a href="{{ uriFor('application', {'application': permission.application.id}) }}">{{ permission.application.name }}</a></li>
+            {% elseif permssion.organization %}
+                <li>Organization</li>
+                <li><a href="{{ uriFor('organization', {'organization': permission.organization.id}) }}">{{ permission.organization.name }}</a></li>
+            {% elseif permssion.environment %}
+                <li>Environment</li>
+                <li><a href="{{ uriFor('environment', {'environment': permission.environment.id}) }}">{{ permission.environment.name }}</a></li>
             {% endif %}
         </ul>
     </div>

@@ -37,7 +37,6 @@ class PermissionService
     /**
      * @var EntityRepository
      */
-    private $userTypeRepo;
     private $userPermissionsRepo;
     private $applicationRepo;
 
@@ -91,7 +90,6 @@ class PermissionService
             }
         }
 
-        $userTypes = $this->userTypesRepo->findBy(['user' => $user]);
         $userPermissions = $this->userPermissionsRepo->findBy(['user' => $user]);
         $perm = $this->parseUserPermissions($userTypes, $userPermissions);
 

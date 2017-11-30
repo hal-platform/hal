@@ -8,8 +8,12 @@
 
     <h1>{{ page_title }}</h1>
 
-    <h2>Current Permissions - <b>{{ user.handle }}</b></h2>
-    {% include 'user/partial.user-status.twig' %}
+    <h2>Current Permissions - <b>{{ user.username }}</b></h2>
+    {% include 'user/partial.user-status.twig' with {
+        user: user,
+        authorizations: userAuthorizations,
+        permissions: permissions
+    } only %}
 
     <h2>Add Permissions</h2>
 
@@ -21,7 +25,7 @@
                 <li>
                     <label>Permission Type</label>
                     <ul class="radio-grid radio-grid--two">
-                        {% for user_type, human in availableTypes %}
+                        {% for user_type in availableTypes %}
                             {% set checked = '' %}
                             {% if form.type == user_type %}
                                 {% set checked = ' checked' %}
@@ -29,7 +33,7 @@
 
                             <li>
                                 <input id="perm-{{ user_type }}" type="radio" name="type" value="{{ user_type }}"{{ checked }}>
-                                <label for="perm-{{ user_type }}">{{ human }}</label>
+                                <label for="perm-{{ user_type }}">{{ user_type|capitalize }}</label>
                             </li>
                         {% endfor %}
                     </ul>
@@ -56,23 +60,17 @@
                 </li>
 
                 <li>
-                    <label for="perm-app">Allowed Environments</label>
+                    <label for="perm-org">Organizations</label>
                     <small class="additional">
-                        Optional. Give a user access to deploy an application to a specific environment group. Only used for <b>deployment</b> permissions.
+                        Optional.
                     </small>
-
-                    <ul class="radio-grid radio-grid--two">
-                        <li>
-                            {% set isSelected = form.is_production is same as('true') ? true : false %}
-                            <input id="perm-prod-true" type="radio" name="is_production" value="true"{{ isSelected ? ' checked' : '' }}>
-                            <label for="perm-prod-true">Production</label>
-                        </li>
-                        <li>
-                            {% set isSelected = form.is_production is same as('false') ? true : false %}
-                            <input id="perm-prod-false" type="radio" name="is_production" value="false"{{ isSelected ? ' checked' : '' }}>
-                            <label for="perm-prod-false">Non-Production</label>
-                        </li>
-                    </ul>
+                    <select name="organization" id="perm-org">
+                        <option value=""></option>
+                        {% for organization_id, organization_name in availableOrganizations %}
+                            {% set isSelected = (organization_id == form.organization) %}
+                            <option value="{{ organization_id }}"{{ isSelected ? ' selected' : '' }}>{{ organization_name }}</option>
+                        {% endfor %}
+                    </select>
                 </li>
             </ul>
 

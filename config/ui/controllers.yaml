@@ -700,31 +700,32 @@ services:
 
     admin.permissions.remove.handler:
         class: 'Hal\UI\Controllers\Permissions\RemovePermissionsController'
-        arguments: ['@permissions', '@uri']
+        arguments: ['@service.authorization', '@uri']
     admin.permissions.remove.middleware:
         class: 'Hal\UI\Controllers\Permissions\RemovePermissionsMiddleware'
         arguments:
             - '@doctrine.em'
             - '@admin.permissions.remove.twig'
-            - '@permissions'
             - '@uri'
+            - '@service.authorization'
+            - '@service.authorization_hydrator'
     admin.permissions.remove.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['permissions/permission.remove.twig']]]
 
-    admin.permissions.deployment.remove.handler:
-        class: 'Hal\UI\Controllers\Permissions\RemoveDeploymentPermissionsController'
-        arguments: ['@permissions', '@uri']
-    admin.permissions.deployment.remove.middleware:
-        class: 'Hal\UI\Controllers\Permissions\RemoveDeploymentPermissionsMiddleware'
-        arguments: [ '@admin.permissions.deployment.remove.twig', '@permissions']
-    admin.permissions.deployment.remove.twig:
+    admin.permissions.admin.remove.handler:
+        class: 'Hal\UI\Controllers\Permissions\RemoveAdminPermissionsController'
+        arguments: ['@service.authorization', '@uri', '@doctrine.em', '@validator.permissions']
+    admin.permissions.admin.remove.middleware:
+        class: 'Hal\UI\Controllers\Permissions\RemoveAdminPermissionsMiddleware'
+        arguments: [ '@admin.permissions.admin.remove.twig', '@service.authorization', '@service.authorization_hydrator']
+    admin.permissions.admin.remove.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['permissions/deployment.remove.twig']]]
+        calls: [['setTemplate', ['permissions/admin.remove.twig']]]
 
     admin.permissions.refresh.handler:
         class: 'Hal\UI\Controllers\Permissions\RefreshUserPermissionsController'
-        arguments: ['@permissions', '@uri']
+        arguments: ['@service.authorization', '@uri']
 
     ####################################################################################################################
     # SUPER CONTROLLERS

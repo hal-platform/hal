@@ -54,7 +54,7 @@
                                 <li>
                                     <a href="{{ uriFor('application', {'application': perm.application.id}) }}">{{ perm.application.name }}</a>
                                     {% if can_remove %}
-                                        (<a style="color:red;" href="{{ uriFor('admin.permissions.type.remove', {'user': user.id, 'user_type': perm.id}) }}">Remove</a>)
+                                        (<a style="color:red;" href="{{ uriFor('admin.permissions.remove', {'user': user.id, 'user_permission': perm.id}) }}">Remove</a>)
                                     {% endif %}
 
                                 </li>
@@ -94,7 +94,7 @@
                                     <a href="{{ uriFor('application', {'application': perm.application.id}) }}">{{ perm.application.name }}</a>
                                     {% if can_remove %}
                                         {#TODO::remove permssion#}
-                                        (<a style="color:red;" href="{{ uriFor('admin.permissions.deployment.remove', {'user': user.id, 'user_permission': perm.id}) }}">Remove</a>)
+                                        (<a style="color:red;" href="{{ uriFor('admin.permissions.remove', {'user': user.id, 'user_permission': perm.id}) }}">Remove</a>)
                                     {% endif %}
                                 </li>
                             {% endfor %}
@@ -131,7 +131,7 @@
 
                     {% if can_remove %}
                         <td class="tr">
-                            <a style="color:red;" href="{{ uriFor('admin.permissions.type.remove', {'user': user.id, 'user_type': type.id}) }}">Remove</a>
+                            <a style="color:red;" href="{{ uriFor('admin.permissions.remove_other_admins', {'user': user.id}) }}">Remove</a>
                         </td>
                     {% endif %}
 
