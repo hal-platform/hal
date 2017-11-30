@@ -10,8 +10,8 @@ namespace Hal\UI\Controllers\Build;
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\Security\UserAuthorizations;
 use Hal\UI\Service\GitHubService;
-use Hal\UI\Service\PermissionService;
 use Hal\UI\Service\StickyEnvironmentService;
 use Hal\UI\Utility\ReleaseSortingTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -52,11 +52,6 @@ class StartBuildController implements ControllerInterface
     private $github;
 
     /**
-     * @var PermissionService
-     */
-    private $permissionService;
-
-    /**
      * @var StickyEnvironmentService
      */
     private $stickyService;
@@ -65,19 +60,16 @@ class StartBuildController implements ControllerInterface
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param GitHubService $github
-     * @param PermissionService $permissionService
      * @param StickyEnvironmentService $stickyService
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
         GitHubService $github,
-        PermissionService $permissionService,
         StickyEnvironmentService $stickyService
     ) {
         $this->template = $template;
         $this->github = $github;
-        $this->permissionService = $permissionService;
         $this->stickyService = $stickyService;
 
         $this->environmentRepository = $em->getRepository(Environment::class);
@@ -91,6 +83,7 @@ class StartBuildController implements ControllerInterface
     {
         $application = $request->getAttribute(Application::class);
         $user = $this->getUser($request);
+        $userAuthorizations = $this->getAuthorizations($request);
 
         $prSorter = $this->sorterPullRequests($user);
 
@@ -101,7 +94,7 @@ class StartBuildController implements ControllerInterface
 
         $form = $this->getFormData($request, $application);
 
-        $targets = $this->getTargetStatusesForEnvironment($application, $user, $form['environment']);
+        $targets = $this->getTargetStatusesForEnvironment($application, $userAuthorizations, $form['environment']);
 
         return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
@@ -264,7 +257,7 @@ class StartBuildController implements ControllerInterface
      *
      * @return array
      */
-    public function getTargetStatusesForEnvironment(Application $application, User $user, $env)
+    public function getTargetStatusesForEnvironment(Application $application, UserAuthorizations $userAuthorizations, $env)
     {
         $environment = '';
         if ($env instanceof Environment) {
@@ -282,9 +275,7 @@ class StartBuildController implements ControllerInterface
 
         $available = $this->targetRepository->getByApplicationAndEnvironment($application, $environment);
 
-        //TODO::Permissions
-        //$canPush = $this->permissionService->canUserPush($user, $application, $environment);
-        $canPush = true;
+        $canPush = $userAuthorizations->canDeploy($application, $environment);
 
         return [
             'can_deploy' => $canPush,

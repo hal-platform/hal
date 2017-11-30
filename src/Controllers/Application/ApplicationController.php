@@ -67,6 +67,7 @@ class ApplicationController implements ControllerInterface
             $orgPermissions = $this->permissionRepo->findBy(['organization' => $org]);
 
             if ($orgPermissions) {
+                //this what we want?
                 $permissions = array_merge($orgPermissions);
             }
         }

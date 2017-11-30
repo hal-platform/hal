@@ -399,9 +399,8 @@ services:
         arguments:
             - '@application.permission_add.twig'
             - '@doctrine.em'
-            - '@permissions'
+            - '@service.authorization'
             - '@uri'
-            - '@doctrine.random'
     application.permission_add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['application/application.permission.add.twig']]]
@@ -411,7 +410,7 @@ services:
         arguments:
             - '@application.permission_remove.twig'
             - '@doctrine.em'
-            - '@permissions'
+            - '@service.authorization'
             - '@uri'
     application.permission_remove.twig:
         parent: 'twig.template'
@@ -535,7 +534,6 @@ services:
             - '@build.start.twig'
             - '@doctrine.em'
             - '@github'
-            - '@permissions'
             - '@sticky.environment'
     build.start.twig:
         parent: 'twig.template'

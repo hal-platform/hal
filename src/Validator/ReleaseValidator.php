@@ -8,7 +8,6 @@
 namespace Hal\UI\Validator;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\UI\Service\PermissionService;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Build;
 use Hal\Core\Entity\Target;
@@ -17,6 +16,7 @@ use Hal\Core\Entity\JobProcess;
 use Hal\Core\Entity\Release;
 use Hal\Core\Entity\User;
 use Hal\Core\Repository\TargetRepository;
+use Hal\UI\Security\AuthorizationService;
 
 class ReleaseValidator
 {
@@ -36,19 +36,19 @@ class ReleaseValidator
     private $targetRepository;
 
     /**
-     * @var PermissionService
+     * @var AuthorizationService
      */
-    private $permissions;
+    private $authorizationService;
 
     /**
      * @param EntityManagerInterface $em
-     * @param PermissionService $permissions
+     * @param AuthorizationService $authorizationService
      */
     public function __construct(
         EntityManagerInterface $em,
-        PermissionService $permissions
+        AuthorizationService $authorizationService
     ) {
-        $this->permissions = $permissions;
+        $this->authorizationService = $authorizationService;
 
         $this->targetRepository = $em->getRepository(Target::class);
     }
@@ -158,7 +158,7 @@ class ReleaseValidator
         if ($this->hasErrors()) return;
 
         // Validate permission
-        $canUserPush = $this->permissions->canUserPush($user, $application, $environment);
+        $canUserPush = $this->authorizationService->getUserAuthorizations($user)->canDeploy($application, $environment);
         if (!$canUserPush) {
             $this->addError(sprintf(self::ERR_NO_PERM, $environment->name()));
         }

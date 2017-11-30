@@ -93,7 +93,6 @@
                                 <li>
                                     <a href="{{ uriFor('application', {'application': perm.application.id}) }}">{{ perm.application.name }}</a>
                                     {% if can_remove %}
-                                        {#TODO::remove permssion#}
                                         (<a style="color:red;" href="{{ uriFor('admin.permissions.remove', {'user': user.id, 'user_permission': perm.id}) }}">Remove</a>)
                                     {% endif %}
                                 </li>
