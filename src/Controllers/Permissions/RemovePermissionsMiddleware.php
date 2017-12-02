@@ -8,15 +8,17 @@
 namespace Hal\UI\Controllers\Permissions;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\Core\Entity\UserPermission;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Flash;
-use Hal\UI\Service\PermissionService;
+use Hal\UI\Middleware\UserSessionGlobalMiddleware;
+use Hal\UI\Security\AuthorizationHydrator;
+use Hal\UI\Security\AuthorizationService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\User;
-use QL\Hal\Core\Entity\UserType;
+use Hal\Core\Entity\User;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\URI;
@@ -48,30 +50,39 @@ class RemovePermissionsMiddleware implements MiddlewareInterface
     private $template;
 
     /**
-     * @var PermissionService
-     */
-    private $permissions;
-
-    /**
      * @var URI
      */
     private $uri;
 
     /**
+     * @var AuthorizationService
+     */
+    private $authorizationService;
+
+    /**
+     * @var AuthorizationHydrator
+     */
+    private $authorizationHydrator;
+
+    /**
      * @param EntityManagerInterface $em
      * @param TemplateInterface $template
-     * @param PermissionService $permissions
      * @param URI $uri
+     * @param AuthorizationService $authorizationService
+     * @param AuthorizationHydrator $authorizationHydrator
      */
     public function __construct(
         EntityManagerInterface $em,
         TemplateInterface $template,
-        PermissionService $permissions,
-        URI $uri
+        URI $uri,
+        AuthorizationService $authorizationService,
+        AuthorizationHydrator $authorizationHydrator
     ) {
         $this->template = $template;
-        $this->permissions = $permissions;
         $this->uri = $uri;
+
+        $this->authorizationService = $authorizationService;
+        $this->authorizationHydrator = $authorizationHydrator;
 
         $this->setEntityManagerForRemovalPermissions($em);
     }
@@ -81,13 +92,12 @@ class RemovePermissionsMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $currentUser = $this->getUser($request);
-        $currentUserPerms = $this->permissions->getUserPermissions($currentUser);
+        $currentUserAuthorizations = $request->getAttribute(UserSessionGlobalMiddleware::AUTHORIZATIONS_ATTRIBUTE);
 
         $user = $request->getAttribute(User::class);
-        $userType = $request->getAttribute(UserType::class);
+        $permission = $request->getAttribute(UserPermission::class);
 
-        if (!$this->isRemovalAllowed($currentUserPerms, $userType)) {
+        if (!$this->isRemovalAllowed($currentUserAuthorizations, $permission)) {
             $this->withFlash($request, Flash::ERROR, self::ERR_DENIED, $this->getRemovalDeniedReason());
             return $this->withRedirectRoute($response, $this->uri, 'admin.permissions');
         }
@@ -96,17 +106,15 @@ class RemovePermissionsMiddleware implements MiddlewareInterface
             return $next($request, $response);
         }
 
-        $selectedUserPerms = $this->permissions->getUserPermissions($user);
-        $appPerm = $this->permissions->getApplications($selectedUserPerms);
+        $selectedUserAuthorizations = $this->authorizationService->getUserAuthorizations($user);
+        $selectedUserPerms = $this->authorizationHydrator->hydrateAuthorizations($user, $selectedUserAuthorizations);
 
         return $this->withTemplate($request, $response, $this->template, [
             'user' => $user,
-            'user_type' => $userType,
-            'user_permissions' => $selectedUserPerms,
+            'userAuthorizations' => $selectedUserAuthorizations,
+            'userPermissions' => $selectedUserPerms,
 
-            'lead_applications' => $appPerm['lead'],
-            'prod_applications' => $appPerm['prod'],
-            'non_prod_applications' => $appPerm['non_prod'],
+            'permission' => $permission
         ]);
     }
 }

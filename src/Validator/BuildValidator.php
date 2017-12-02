@@ -10,8 +10,8 @@ namespace Hal\UI\Validator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Type\JobStatusEnum;
+use Hal\UI\Security\AuthorizationService;
 use Hal\UI\Service\GitHubService;
-use Hal\UI\Service\PermissionService;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Build;
 use Hal\Core\Entity\Environment;
@@ -48,9 +48,9 @@ class BuildValidator
     private $github;
 
     /**
-     * @var PermissionService
+     * @var AuthorizationService
      */
-    private $permissions;
+    private $authorizationService;
 
     /**
      * @var array
@@ -60,18 +60,18 @@ class BuildValidator
     /**
      * @param EntityManagerInterface $em
      * @param GitHubService $github
-     * @param PermissionService $permissions
+     * @param AuthorizationService $authorizationService
      */
     public function __construct(
         EntityManagerInterface $em,
         GitHubService $github,
-        PermissionService $permissions
+        AuthorizationService $authorizationService
     ) {
         $this->buildRepo = $em->getRepository(Build::class);
         $this->environmentRepo = $em->getRepository(Environment::class);
 
         $this->github = $github;
-        $this->permissions = $permissions;
+        $this->authorizationService = $authorizationService;
 
         $this->errors = [];
     }
@@ -117,9 +117,7 @@ class BuildValidator
 
         if ($this->errors) return;
 
-        // no permission
-        //TODO::Fix when UserAuthorizations is figure out
-        if (!$this->permissions->canUserBuild($user, $application)) {
+        if (!$this->authorizationService->getUserAuthorizations($user)->canBuild($application)) {
             $this->errors[] = self::ERR_NO_PERMISSION;
         }
 

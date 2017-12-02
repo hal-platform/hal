@@ -7,10 +7,11 @@
 
 namespace Hal\UI\Controllers\Permissions;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\UI\Service\UserPerm;
-use QL\Hal\Core\Entity\UserType;
-use QL\Hal\Core\Type\EnumType\UserTypeEnum;
+use Hal\Core\Entity\UserPermission;
+use Hal\Core\Type\UserPermissionEnum;
+use Hal\UI\Security\UserAuthorizations;
 
 trait RemovalPermissionsTrait
 {
@@ -25,17 +26,18 @@ trait RemovalPermissionsTrait
     /**
      * Is the current user allowed to do this?
      *
-     * @param UserPerm $currentUserPerms
-     * @param UserType $removingType
+     * @param UserAuthorizations $currentUserPerms
+     * @param UserPermission $removingType
      *
      * @return bool
      */
-    private function isRemovalAllowed(UserPerm $currentUserPerms, UserType $removingType)
+    private function isRemovalAllowed(UserAuthorizations $currentUserPerms, UserPermission $removingType)
     {
         $this->reason = '';
 
         if (!$this->removalEM) {
             $this->reason = 'Missing entity manager.';
+
             return false;
         }
 
@@ -45,33 +47,30 @@ trait RemovalPermissionsTrait
         if ($currentUserPerms->isSuper()) {
 
             $supers = $this->removalEM
-                ->getRepository(UserType::class)
-                ->findBy(['type' => UserTypeEnum::TYPE_SUPER]);
+                ->getRepository(UserPermission::class)
+                ->findBy(['type' => UserPermissionEnum::TYPE_SUPER]);
 
             // Can only remove supers if at least 2 supers exist.
-            if ($type === UserTypeEnum::TYPE_SUPER && count($supers) < 2) {
-                 $this->reason = $this->ERR_NOPE_THE_LAST_SUPER;
-                 return false;
+            if ($type === UserPermissionEnum::TYPE_SUPER && count($supers) < 2) {
+                $this->reason = $this->ERR_NOPE_THE_LAST_SUPER;
+
+                return false;
             }
 
             return true;
         }
 
-        // Button Pusher can do this
-        if ($currentUserPerms->isButtonPusher()) {
+        // Admin can do this
+        if ($currentUserPerms->isAdmin()) {
 
             $pushers = $this->removalEM
-                ->getRepository(UserType::class)
-                ->findBy(['type' => UserTypeEnum::TYPE_ADMIN]);
+                ->getRepository(UserPermission::class)
+                ->findBy(['type' => UserPermissionEnum::TYPE_ADMIN]);
 
             // Cannot remove supers
-            if ($type === UserTypeEnum::TYPE_SUPER) {
-                 $this->reason = $this->ERR_NOPE_BTN;
-                return false;
+            if ($type === UserPermissionEnum::TYPE_SUPER) {
+                $this->reason = $this->ERR_NOPE_BTN;
 
-            // Can only remove pushers if at least 2 pushers exist.
-            } elseif ($type === UserTypeEnum::TYPE_ADMIN && count($pushers) < 2) {
-                $this->reason = $this->ERR_NOPE_LAST_BTN;
                 return false;
             }
 

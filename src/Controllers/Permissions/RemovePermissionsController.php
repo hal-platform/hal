@@ -7,13 +7,13 @@
 
 namespace Hal\UI\Controllers\Permissions;
 
+use Hal\Core\Entity\UserPermission;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Flash;
-use Hal\UI\Service\PermissionService;
+use Hal\UI\Security\AuthorizationService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\UserType;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
@@ -34,9 +34,9 @@ class RemovePermissionsController implements ControllerInterface
     const MSG_SUCCESS = 'User Permission "%s" revoked from "%s".';
 
     /**
-     * @var PermissionService
+     * @var AuthorizationService
      */
-    private $permissions;
+    private $authorizationService;
 
     /**
      * @var URI
@@ -44,12 +44,12 @@ class RemovePermissionsController implements ControllerInterface
     private $uri;
 
     /**
-     * @param PermissionService $permissions
+     * @param AuthorizationService $authorizationService
      * @param URI $uri
      */
-    public function __construct(PermissionService $permissions, URI $uri)
+    public function __construct(AuthorizationService $authorizationService, URI $uri)
     {
-        $this->permissions = $permissions;
+        $this->authorizationService = $authorizationService;
         $this->uri = $uri;
     }
 
@@ -58,21 +58,15 @@ class RemovePermissionsController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $userType = $request->getAttribute(UserType::class);
+        $permission = $request->getAttribute(UserPermission::class);
 
-        $map = [
-            'pleb' => 'Standard',
-            'lead' => 'Owner',
-            'btn_pusher' => 'Admin',
-            'super' => 'Super'
-        ];
+        $type = $permission->type();
+        $name = $permission->user()->username();
 
-        $type = $map[$userType->type()];
-        $name = $userType->user()->handle();
-
-        $this->permissions->removeUserPermissions($userType);
+        $this->authorizationService->removeUserPermissions($permission);
 
         $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $type, $name));
+
         return $this->withRedirectRoute($response, $this->uri, 'admin.permissions');
     }
 }

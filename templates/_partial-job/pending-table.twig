@@ -23,7 +23,7 @@
                         <td>{{ job.environment.name }}
 
                         <td>{{ git_macros.gitref(job, true) }}</td>
-                        <td class="table-priority-55">{{ job.user ? job.user.handle : 'Unknown' }}</td>
+                        <td class="table-priority-55">{{ job.user ? job.user.username : 'Unknown' }}</td>
                         <td class="table-priority-50">{{ job.created|timepoint('h:i:s A') }}</td>
                     </tr>
                 {% else %}
@@ -38,7 +38,7 @@
                         {% endif %}
 
                         <td>Build <a href="{{ uriFor('build', {'build': job.build.id}) }}">{{ job.build.id|formatBuildId }}</a></td>
-                        <td class="table-priority-55">{{ job.user ? job.user.handle : 'Unknown' }}</td>
+                        <td class="table-priority-55">{{ job.user ? job.user.username : 'Unknown' }}</td>
                         <td class="table-priority-50">{{ job.created|timepoint('h:i:s A') }}</td>
                     </tr>
                 {% endif %}

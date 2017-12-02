@@ -64,7 +64,7 @@ services:
 
     api_normalizer.user:
         class: 'Hal\UI\API\Normalizer\UserNormalizer'
-        arguments: ['@permissions']
+        arguments: ['@service.authorization']
 
     api_normalizer.hyperlink:
         class: 'Hal\UI\API\Normalizer\HyperlinkNormalizer'

@@ -10,18 +10,18 @@ namespace Hal\UI\Controllers\Application;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Type\UserPermissionEnum;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Flash;
-use Hal\UI\Service\PermissionService;
-use Hal\UI\Service\UserPerm;
+use Hal\UI\Security\AuthorizationService;
+use Hal\UI\Security\UserAuthorizations;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\User;
-use QL\Hal\Core\Entity\UserPermission;
-use QL\Hal\Core\Entity\UserType;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\User;
+use Hal\Core\Entity\UserPermission;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\URI;
@@ -36,11 +36,9 @@ class AddApplicationPermissionController implements ControllerInterface
 
     const ERR_INVALID_TYPE = 'Please select a valid permission type.';
     const ERR_SELECT_A_USER = 'Please select at least one user.';
-    const ERR_CANNOT_ADD_LEAD = 'Nice try, but you are not allowed to add owner permissions.';
-    const ERR_CANNOT_ADD_PROD = 'Nice try, but you are not allowed to add prod permissions.';
 
     const ERR_USER_NOT_FOUND = 'User "%s" not found in database. Users must sign-in to Hal before permissions can be granted.';
-    const ERR_DUPE_PERM = 'User "%s" already has permissions.';
+    const ERR_DUPE_PERM = 'User "%s" already has this permission.';
 
     /**
      * @var TemplateInterface
@@ -53,9 +51,9 @@ class AddApplicationPermissionController implements ControllerInterface
     private $em;
 
     /**
-     * @var PermissionService
+     * @var AuthorizationService
      */
-    private $permissions;
+    private $authorizationService;
 
     /**
      * @var URI
@@ -72,7 +70,6 @@ class AddApplicationPermissionController implements ControllerInterface
      */
     private $userRepo;
     private $permissionRepo;
-    private $typeRepo;
 
     /**
      * @var array
@@ -82,27 +79,22 @@ class AddApplicationPermissionController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param PermissionService $permissions
+     * @param AuthorizationService $authorizationService
      * @param URI $uri
-     * @param callable $random
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        PermissionService $permissions,
-        URI $uri,
-        callable $random
+        AuthorizationService $authorizationService,
+        URI $uri
     ) {
         $this->template = $template;
         $this->em = $em;
-        $this->permissions = $permissions;
+        $this->authorizationService = $authorizationService;
         $this->uri = $uri;
-
-        $this->random = $random;
 
         $this->userRepo = $em->getRepository(User::class);
         $this->permissionRepo = $em->getRepository(UserPermission::class);
-        $this->typeRepo = $em->getRepository(UserType::class);
     }
 
     /**
@@ -113,7 +105,7 @@ class AddApplicationPermissionController implements ControllerInterface
         $application = $request->getAttribute(Application::class);
         $user = $this->getUser($request);
 
-        $currentUserPerms = $this->permissions->getUserPermissions($user);
+        $currentAuthorizations = $this->getAuthorizations($request);
 
         $form = [];
 
@@ -124,37 +116,25 @@ class AddApplicationPermissionController implements ControllerInterface
                 'type' => $request->getParsedBody()['type'] ?? ''
             ];
 
-            if ($permissions = $this->handleForm($form, $application, $currentUserPerms)) {
+            if ($permissions = $this->handleForm($form, $application, $currentAuthorizations)) {
                 $this->withFlash($request, Flash::SUCCESS, self::MSG_SUCCESS);
                 return $this->withRedirectRoute($response, $this->uri, 'application', ['application' => $application->id()]);
             }
         }
 
-        $availableTypes = $this->getAvailableTypes($currentUserPerms);
+        // @todo combine this with the main add permission handler
 
         return $this->withTemplate($request, $response, $this->template, [
             'application' => $application,
-            'availableTypes' => $availableTypes,
-            'users' => $this->userRepo->findBy(['isActive' => true], ['handle' => 'ASC']),
+            'availableTypes' => [
+                UserPermissionEnum::TYPE_MEMBER,
+                UserPermissionEnum::TYPE_OWNER
+            ],
+            'users' => $this->userRepo->findBy(['isDisabled' => false], ['username' => 'ASC']),
 
             'form' => $form,
             'errors' => $this->errors
         ]);
-    }
-
-    /**
-     * @param UserPerm $perm
-     *
-     * @return array
-     */
-    private function getAvailableTypes(UserPerm $perm)
-    {
-        // Just show all the types, we validate who can add what when the form is submitted.
-        return [
-            'deploy_nonprod' => 'Deployment - Non-prod',
-            'deploy_prod' => 'Deployment - Prod',
-            'lead' => 'Owner',
-        ];
     }
 
     /**
@@ -184,38 +164,23 @@ class AddApplicationPermissionController implements ControllerInterface
     /**
      * @param array $data
      * @param Application $application
-     * @param UserPerm $currentPerm
+     * @param UserAuthorizations $currentAuthorizations
      *
      * @return array|null
      */
-    private function handleForm(array $data, Application $application, UserPerm $currentPerm)
+    private function handleForm(array $data, Application $application, UserAuthorizations $currentAuthorizations)
     {
-        $isAdmin = ($currentPerm->isSuper() || $currentPerm->isButtonPusher());
+        $isAdmin = ($currentAuthorizations->isSuper() || $currentAuthorizations->isAdmin());
 
         $users = $this->parseSubmittedUsers($data['users']);
         $type = $data['type'];
-        $isProd = ($type === 'deploy_prod');
-
-        if (in_array($type, ['deploy_prod', 'deploy_nonprod'])) {
-            $type = 'deploy';
-        }
-
-        if (!in_array($type, ['lead', 'deploy'])) {
-            $this->errors[] = self::ERR_INVALID_TYPE;
-        }
-
-        // Only btn can add prod
-        if (!$currentPerm->isButtonPusher() && $isProd) {
-            $this->errors[] = self::ERR_CANNOT_ADD_PROD;
-        }
-
-        // Only admins can add leads
-        if (!$isAdmin && $type === 'lead') {
-            $this->errors[] = self::ERR_CANNOT_ADD_LEAD;
-        }
 
         if (!$users) {
             $this->errors[] = self::ERR_SELECT_A_USER;
+        }
+
+        if (!in_array($type, [UserPermissionEnum::TYPE_MEMBER, UserPermissionEnum::TYPE_OWNER])) {
+            $this->errors[] = self::ERR_INVALID_TYPE;
         }
 
         if ($this->errors) return null;
@@ -226,20 +191,14 @@ class AddApplicationPermissionController implements ControllerInterface
         if ($this->errors) return null;
 
         // verify no dupe permissions
-        $this->ValidateDuplicatePermissions($verified, $application, $type, $isProd);
+        $this->validateDuplicatePermissions($verified, $application, $type);
 
         if ($this->errors) return null;
 
         // save
         $perms = [];
-        if ($type === 'deploy') {
-            foreach ($verified as $user) {
-                $perms[] = $this->savePermissions($application, $user, $isProd);
-            }
-        } else {
-            foreach ($verified as $user) {
-                $perms[] = $this->saveType($application, $user, 'lead');
-            }
+        foreach ($verified as $user) {
+            $perms[] = $this->savePermissions($application, $user, $type);
         }
 
         $this->em->flush();
@@ -255,13 +214,13 @@ class AddApplicationPermissionController implements ControllerInterface
     private function validateUsers(array $users)
     {
         // Note: this is case insensitive
-        $criteria = (new Criteria)->where(Criteria::expr()->in('handle', $users));
+        $criteria = (new Criteria)->where(Criteria::expr()->in('username', $users));
         $verifiedUsers = $this->userRepo
             ->matching($criteria)
             ->toArray();
 
         $verifiedUsernames = array_map(function($u) {
-            return strtolower($u->handle());
+            return strtolower($u->username());
         }, $verifiedUsers);
 
         foreach ($users as $u) {
@@ -285,92 +244,53 @@ class AddApplicationPermissionController implements ControllerInterface
      * @param array $users
      * @param Application $application
      * @param string $type
-     * @param bool $isProduction
      *
      * @return void
      */
-    private function validateDuplicatePermissions(array $users, Application $application, $type, $isProduction)
+    private function validateDuplicatePermissions(array $users, Application $application, $type)
     {
-        $dupePermissions = [];
+        $dupePermissions = $this->matching($application, $users, $type);
 
-        if ($type === 'lead') {
-            $criteria = (new Criteria)
-                ->where(Criteria::expr()->in('user', $users))
-                ->andWhere(Criteria::expr()->eq('application', $application))
-                ->andWhere(Criteria::expr()->eq('type', $type));
-
-            $dupePermissions = $this->typeRepo
-                ->matching($criteria)
-                ->toArray();
-
-        } elseif ($type === 'deploy') {
-
-            $criteria = (new Criteria)
-                ->where(Criteria::expr()->in('user', $users))
-                ->andWhere(Criteria::expr()->eq('isProduction', $isProduction))
-                ->andWhere(Criteria::expr()->eq('application', $application));
-
-            $dupePermissions = $this->permissionRepo
-                ->matching($criteria)
-                ->toArray();
+        foreach ($dupePermissions as $permission) {
+            $this->errors[] = sprintf(self::ERR_DUPE_PERM, $permission->user()->username());
         }
-
-        $dupePermissions = array_map(function($u) {
-            return $u->user()->handle();
-        }, $dupePermissions);
-
-        foreach ($dupePermissions as $username) {
-            $this->errors[] = sprintf(self::ERR_DUPE_PERM, $username);
-        }
-
-        return $dupePermissions;
     }
 
     /**
      * @param Application $application
      * @param User $user
-     * @param bool $isProd
      *
      * @return UserPermission
      */
-    private function savePermissions(Application $application, User $user, $isProd)
+    private function savePermissions(Application $application, User $user, $type)
     {
-        $id = call_user_func($this->random);
-
         $permissions = (new UserPermission)
-            ->withId($id)
-            ->withIsProduction($isProd)
             ->withApplication($application)
-            ->withUser($user);
+            ->withUser($user)
+            ->withType($type);
 
         // Clear cache
-        $this->permissions->clearUserCache($user);
-        $this->em->persist($permissions);
+        $this->authorizationService->addUserPermissions($permissions, true);
 
         return $permissions;
     }
 
     /**
      * @param Application $application
-     * @param User $user
-     * @param string $type
+     * @param array $users
+     * @param string $permissionType
      *
-     * @return UserType
+     * @return array
      */
-    private function saveType(Application $application, User $user, $type)
+    private function matching(Application $application, array $users, $permissionType)
     {
-        $id = call_user_func($this->random);
+        $criteria = (new Criteria)
+            ->where(Criteria::expr()->in('user', $users))
+            ->andWhere(Criteria::expr()->eq('application', $application))
+            ->andWhere(Criteria::expr()->eq('type', $permissionType));
 
-        $permissions = (new UserType)
-            ->withId($id)
-            ->withType($type)
-            ->withApplication($application)
-            ->withUser($user);
-
-        // Clear cache
-        $this->permissions->clearUserCache($user);
-        $this->em->persist($permissions);
-
-        return $permissions;
+        return $this->permissionRepo
+            ->matching($criteria)
+            ->toArray();
     }
 }

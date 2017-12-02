@@ -10,22 +10,25 @@ namespace Hal\UI\API\Normalizer;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResourceNormalizerInterface;
-use Hal\UI\Service\PermissionService;
 use Hal\Core\Entity\User;
+use Hal\UI\Controllers\SessionTrait;
+use Hal\UI\Security\AuthorizationService;
 
 class UserNormalizer implements ResourceNormalizerInterface
 {
-    /**
-     * @var PermissionService
-     */
-    private $permissions;
+    use SessionTrait;
 
     /**
-     * @param PermissionService $permissions
+     * @var AuthorizationService
      */
-    public function __construct(PermissionService $permissions)
+    private $authorizationService;
+
+    /**
+     * @param AuthorizationService $authorizationService
+     */
+    public function __construct(AuthorizationService $authorizationService)
     {
-        $this->permissions = $permissions;
+        $this->authorizationService = $authorizationService;
     }
 
     /**
@@ -66,7 +69,7 @@ class UserNormalizer implements ResourceNormalizerInterface
             return null;
         }
 
-        //$perm = $this->permissions->getUserPermissions($user);
+        $authorizations = $this->authorizationService->getUserAuthorizations($user);
 
         $data = [
             'id' => $user->id(),
@@ -75,11 +78,10 @@ class UserNormalizer implements ResourceNormalizerInterface
             'email' => $user->email(),
             'is_disabled' => $user->isDisabled(),
             'permissions' => [
-                //TODO::User Permissions
-//                'standard' => $perm->isPleb(),
-//                'lead' => $perm->isLead(),
-//                'admin' => $perm->isButtonPusher(),
-//                'super' => $perm->isSuper()
+                'member' => $authorizations->isMember(),
+                'owner' => $authorizations->isOwner(),
+                'admin' => $authorizations->isAdmin(),
+                'super' => $authorizations->isSuper()
             ]
         ];
 

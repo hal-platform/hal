@@ -32,6 +32,9 @@ services:
         class: 'Hal\UI\Validator\EncryptedPropertyValidator'
         arguments: ['@doctrine.em', '@encryption']
 
+    validator.permissions:
+        class: 'Hal\UI\Validator\PermissionsValidator'
+        arguments: ['@doctrine.em']
     #
 
     build.start.validator:
@@ -39,12 +42,12 @@ services:
         arguments:
             - '@doctrine.em'
             - '@github'
-            - '@permissions'
+            - '@service.authorization'
     release.start.validator:
         class: 'Hal\UI\Validator\ReleaseValidator'
         arguments:
             - '@doctrine.em'
-            - '@permissions'
+            - '@service.authorization'
 
     group.validator:
         class: 'Hal\UI\Validator\GroupValidator'

@@ -29,9 +29,7 @@
         {{ form_macros.formErrors(errors) }}
 
         {% set pushables = 0 %}
-        {#TODO::Permissions#}
-        {% set canUserPush = true %}
-        {#{% set canUserPush = canUserPush(current_user, build.application, build.environment) %}#}
+        {% set canUserPush = current_authorizations(build.application, build.environment) %}
 
         {% for status in statuses %}
             {% set inProgress = status.latest.status in ['pending', 'running', 'deploying'] %}

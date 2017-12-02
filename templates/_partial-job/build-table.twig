@@ -40,14 +40,13 @@
             {% set canPushNow = false %}
 
             {% if is_pushable %}
-                {#TODO::fix permissons#}
-                {#{% if canUserPush(current_user, build.application, build.environment) %}#}
+                {% if current_authorizations.canDeploy(current_user, build.application, build.environment) %}
                     {% if build.status in ['pending', 'running'] %}
                         {% set canPushSoon = true %}
                     {% elseif build.status in ['success'] %}
                         {% set canPushNow = true %}
                     {% endif %}
-                {#{% endif %}#}
+                {% endif %}
             {% endif %}
 
             <td class="tr{{ canPushSoon ? ' js-build-push' : '' }}">

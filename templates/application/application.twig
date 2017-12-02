@@ -3,7 +3,7 @@
 
 {% set page_title = 'Application - ' ~ application.name %}
 
-{% set is_admin = current_authorizations.isSuper() %}
+{% set is_admin = current_authorizations.isSuper() or current_authorizations.isAdmin() %}
 {% set can_edit = is_admin or current_authorizations.isOwnerOf(application) %}
 {% set can_remove = can_edit %}
 

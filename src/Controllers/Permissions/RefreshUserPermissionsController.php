@@ -7,13 +7,13 @@
 
 namespace Hal\UI\Controllers\Permissions;
 
+use Hal\Core\Entity\User;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Flash;
-use Hal\UI\Service\PermissionService;
+use Hal\UI\Security\AuthorizationService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\User;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
@@ -25,9 +25,9 @@ class RefreshUserPermissionsController implements ControllerInterface
     const MSG_SUCCESS = 'Permission Cache refreshed for "%s".';
 
     /**
-     * @var PermissionService
+     * @var AuthorizationService
      */
-    private $permissions;
+    private $authorizationService;
 
     /**
      * @var URI
@@ -35,12 +35,12 @@ class RefreshUserPermissionsController implements ControllerInterface
     private $uri;
 
     /**
-     * @param PermissionService $permissions
+     * @param AuthorizationService $authorizationService
      * @param URI $uri
      */
-    public function __construct(PermissionService $permissions, URI $uri)
+    public function __construct(AuthorizationService $authorizationService, URI $uri)
     {
-        $this->permissions = $permissions;
+        $this->authorizationService = $authorizationService;
         $this->uri = $uri;
     }
 
@@ -51,9 +51,10 @@ class RefreshUserPermissionsController implements ControllerInterface
     {
         $user = $request->getAttribute(User::class);
 
-        $this->permissions->clearUserCache($user);
+        $this->authorizationService->clearUserCache($user);
 
-        $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $user->handle()));
+        $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $user->username()));
+
         return $this->withRedirectRoute($response, $this->uri, 'user', ['user' => $user->id()]);
     }
 }

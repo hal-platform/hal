@@ -258,7 +258,7 @@
                         <br />
 
                         {% set label_style = "github__pr" %}
-                        {% if pull.head.user.login|lower == current_user.handle|lower %}
+                        {% if pull.head.user.login|lower == current_user.username|lower %}
                             {% set label_style = label_style ~ " github__pr--owner" %}
                         {% endif %}
 
@@ -304,7 +304,7 @@
                         <br />
 
                         {% set label_style = "github__pr" %}
-                        {% if pull.head.user.login|lower == current_user.handle|lower %}
+                        {% if pull.head.user.login|lower == current_user.username|lower %}
                             {% set label_style = label_style ~ " github__pr--owner" %}
                         {% endif %}
 

@@ -469,14 +469,10 @@ parameters:
                             method: ['GET', 'POST']
                             route: '/add'
                             stack: ['admin.permissions.add.page']
-                        admin.permissions.type.remove:
+                        admin.permissions.remove:
                             method: ['GET', 'POST']
-                            route: '/permission-type/{user_type:%r.guid%}/remove'
+                            route: '/permission/{user_permission:%r.guid%}/remove'
                             stack: ['admin.permissions.remove.middleware', 'admin.permissions.remove.handler']
-                        admin.permissions.deployment.remove:
-                            method: ['GET', 'POST']
-                            route: '/permission-deployment/{user_permission:%r.guid%}/remove'
-                            stack: ['admin.permissions.deployment.remove.middleware', 'admin.permissions.deployment.remove.handler']
 
         ################################################################################################################
         # SUPER ROUTES
