@@ -40,8 +40,6 @@ class UserAuthorizations implements JsonSerializable
      */
     public function isMemberOf($of): bool
     {
-        //if ($this->isSuper()) return true;
-
         if ($of instanceof Application) {
             $hash = $this->simpleHash($of);
             return $this->hasEntry(UserPermissionEnum::TYPE_MEMBER, $hash);
@@ -61,8 +59,6 @@ class UserAuthorizations implements JsonSerializable
      */
     public function isOwnerOf($of): bool
     {
-        //if ($this->isSuper()) return true;
-
         if ($of instanceof Application) {
             $hash = $this->simpleHash($of);
             return $this->hasEntry(UserPermissionEnum::TYPE_OWNER, $hash);
@@ -86,8 +82,6 @@ class UserAuthorizations implements JsonSerializable
      */
     public function isAdminOf($of): bool
     {
-        //if ($this->isSuper()) return true;
-
         if ($of instanceof Environment) {
             $hash = $this->simpleHash($of);
             return $this->hasEntry(UserPermissionEnum::TYPE_ADMIN, $hash);
@@ -126,6 +120,21 @@ class UserAuthorizations implements JsonSerializable
     public function isSuper(): bool
     {
         return count($this->tiers[UserPermissionEnum::TYPE_SUPER]) > 0;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTiers(): array
+    {
+        $tiers = [];
+
+        if ($this->isMember()) $tiers[] = UserPermissionEnum::TYPE_MEMBER;
+        if ($this->isOwner()) $tiers[] = UserPermissionEnum::TYPE_OWNER;
+        if ($this->isAdmin()) $tiers[] = UserPermissionEnum::TYPE_ADMIN;
+        if ($this->isSuper()) $tiers[] = UserPermissionEnum::TYPE_SUPER;
+
+        return $tiers;
     }
 
     /**

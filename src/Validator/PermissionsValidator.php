@@ -89,96 +89,54 @@ class PermissionsValidator
             $this->addError(self::ERR_APPLICATION_AND_ORGANIZATION);
         }
 
-        if ($this->hasErrors()) return null;
-
         // If we're making an owner and no appId is passed
-        if ($type === UserPermissionEnum::TYPE_OWNER && (!$applicationID && !$organizationID)) {
-            $this->errors[] = self::ERR_OWNER_DEPENDENCY_REQUIRED;
+        $scoped = [UserPermissionEnum::TYPE_MEMBER, UserPermissionEnum::TYPE_OWNER];
+
+        if (in_array($type, $scoped, true) && (!$applicationID && !$organizationID)) {
+            $this->errors[] = self::ERR_SCOPE_REQUIRED;
         }
 
         if ($this->hasErrors()) return null;
 
-        if ($type === UserPermissionEnum::TYPE_OWNER && $applicationID) {
+        $organization = $application = null;
+
+        if (in_array($type, $scoped, true) && $applicationID) {
             if (!$application = $this->applicationRepository->find($applicationID)) {
                 $this->addError(self::ERR_APPLICATION_NOT_FOUND);
             }
         }
 
-        if ($this->hasErrors()) return null;
-
-        if ($type === UserPermissionEnum::TYPE_OWNER && $organizationID) {
+        if (in_array($type, $scoped, true) && $organizationID) {
             if (!$organization = $this->organizationRepository->find($organizationID)) {
                 $this->addError(self::ERR_ORGANIZATION_NOT_FOUND);
             }
-        } else {
-            $organization = null;
         }
 
-        // User is already a owner of the application
-        if ($selectedAuthorizations->isOwnerOf($application)) {
-            $this->addError(self::ERR_DUPLICATE_LEAD);
+        if ($this->hasErrors()) return null;
+
+        // User is already a member
+        if (
+            $type === UserPermissionEnum::TYPE_MEMBER &&
+            ($selectedAuthorizations->isMemberOf($application) || $selectedAuthorizations->isMemberOf($organization))
+        ) {
+            $this->addError(self::ERR_DUPLICATE_PERMISSION);
         }
 
-        if ($selectedAuthorizations->isOwnerOf($organization)) {
-            $this->addError(self::ERR_DUPLICATE_LEAD);
+        // User is already an owner
+        if (
+            $type === UserPermissionEnum::TYPE_OWNER &&
+            ($selectedAuthorizations->isOwnerOf($application) || $selectedAuthorizations->isOwnerOf($organization))
+        ) {
+            $this->addError(self::ERR_DUPLICATE_PERMISSION);
         }
 
         if ($this->hasErrors()) return null;
 
         $permissions = (new UserPermission)
-            ->withUser($selectedUser);
-
-        if ($application) {
-            $permissions->withApplication($application);
-        } elseif ($organization) {
-            $permissions->withOrganization($organization);
-        }
+            ->withUser($selectedUser)
+            ->withApplication($application)
+            ->withOrganization($organization);
 
         return $permissions;
-    }
-
-    /**
-     * TODO::This will need to be built out more
-     *
-     * @param UserAuthorizations $currentUserAuthorizations
-     * @param array $permissionsToRemove
-     * @param array $superPermissions
-     * @param array $adminPermissions
-     *
-     * @return bool|string
-     */
-    public function isAdminRemovalValid(
-        UserAuthorizations $currentUserAuthorizations,
-        array $permissionsToRemove,
-        array $superPermissions,
-        array $adminPermissions
-    ) {
-        if ($currentUserAuthorizations->isAdmin() && count($superPermissions) > 0) {
-            return self::ERR_CANNOT_REMOVE_SUPER;
-        }
-
-        $adminRemovals = [];
-        foreach ($permissionsToRemove as $permission) {
-            if ($permission->type() === UserPermissionEnum::TYPE_ADMIN) {
-                $adminRemovals[] = $permission;
-            }
-        }
-
-        $superRemovals = [];
-        foreach ($permissionsToRemove as $permission) {
-            if ($permission->type() === UserPermissionEnum::TYPE_SUPER) {
-                $superRemovals[] = $permission;
-            }
-        }
-
-        if ($currentUserAuthorizations->isAdmin() && count($adminPermissions) <= count($adminRemovals)) {
-            return self::ERR_LAST_ADMIN;
-        }
-
-        if ($currentUserAuthorizations->isSuper() && count($superPermissions) <= count($superRemovals)) {
-            return self::ERR_LAST_SUPER;
-        }
-
-        return true;
     }
 }

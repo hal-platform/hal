@@ -92,11 +92,10 @@ class PermissionsController implements ControllerInterface
             'admin' => [],
         ];
 
-        /** @var UserPermission $permission */
+        $admins = [UserPermissionEnum::TYPE_ADMIN, UserPermissionEnum::TYPE_SUPER];
+
         foreach ($permissions as $permission) {
-            if ($permission->type() === UserPermissionEnum::TYPE_ADMIN ||
-                $permission->type() === UserPermissionEnum::TYPE_SUPER
-            ) {
+            if (in_array($permission->type(), $admins, true)) {
                 $type = 'admin';
             } else {
                 $type = $permission->type();

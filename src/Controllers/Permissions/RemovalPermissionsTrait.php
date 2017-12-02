@@ -60,7 +60,7 @@ trait RemovalPermissionsTrait
             return true;
         }
 
-        // Button Pusher can do this
+        // Admin can do this
         if ($currentUserPerms->isAdmin()) {
 
             $pushers = $this->removalEM
@@ -70,12 +70,6 @@ trait RemovalPermissionsTrait
             // Cannot remove supers
             if ($type === UserPermissionEnum::TYPE_SUPER) {
                 $this->reason = $this->ERR_NOPE_BTN;
-
-                return false;
-
-                // Can only remove pushers if at least 2 pushers exist.
-            } elseif ($type === UserPermissionEnum::TYPE_ADMIN && count($pushers) < 2) {
-                $this->reason = $this->ERR_NOPE_LAST_BTN;
 
                 return false;
             }

@@ -473,10 +473,6 @@ parameters:
                             method: ['GET', 'POST']
                             route: '/permission/{user_permission:%r.guid%}/remove'
                             stack: ['admin.permissions.remove.middleware', 'admin.permissions.remove.handler']
-                        admin.permissions.remove_other_admins:
-                            method: ['GET', 'POST']
-                            route: '/administrator/remove'
-                            stack: ['admin.permissions.admin.remove.middleware', 'admin.permissions.admin.remove.handler']
 
         ################################################################################################################
         # SUPER ROUTES

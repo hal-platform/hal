@@ -711,16 +711,6 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['permissions/permission.remove.twig']]]
 
-    admin.permissions.admin.remove.handler:
-        class: 'Hal\UI\Controllers\Permissions\RemoveAdminPermissionsController'
-        arguments: ['@service.authorization', '@uri', '@doctrine.em', '@validator.permissions']
-    admin.permissions.admin.remove.middleware:
-        class: 'Hal\UI\Controllers\Permissions\RemoveAdminPermissionsMiddleware'
-        arguments: [ '@admin.permissions.admin.remove.twig', '@service.authorization', '@service.authorization_hydrator']
-    admin.permissions.admin.remove.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['permissions/admin.remove.twig']]]
-
     admin.permissions.refresh.handler:
         class: 'Hal\UI\Controllers\Permissions\RefreshUserPermissionsController'
         arguments: ['@service.authorization', '@uri']

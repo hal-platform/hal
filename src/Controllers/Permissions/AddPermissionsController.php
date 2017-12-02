@@ -206,12 +206,11 @@ class AddPermissionsController implements ControllerInterface
         }
 
         $type = $data['type'];
-        $appId = $data['application'];
-        $orgId = $data['organization'];
+        $appID = $data['application'];
+        $orgID = $data['organization'];
 
-        return $this->permissionsValidator->isValid($type, $currentAuthorizations, $selectedPerm, $user, $appId, $orgId);
+        return $this->permissionsValidator->isValid($type, $currentAuthorizations, $selectedPerm, $user, $appID, $orgID);
     }
-
 
     /**
      * @return array
