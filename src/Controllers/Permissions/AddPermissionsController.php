@@ -228,15 +228,22 @@ class AddPermissionsController implements ControllerInterface
 
         $applications = $this->applicationRepository->findBy([], ['name' => 'ASC']);
 
-        $data = [];
+        $data = $noOrg = [];
         foreach ($applications as $app) {
-            $organization = $app->organization()->name();
-
-            if (!isset($data[$organization])) {
-                $data[$organization] = [];
+            if (!$org = $app->organization()) {
+                $noOrg[$app->id()] = $app->name();
+                continue;
             }
 
-            $data[$organization][$app->id()] = $app->name();
+            if (!isset($data[$org->name()])) {
+                $data[$org->name()] = [];
+            }
+
+            $data[$org->name()][$app->id()] = $app->name();
+        }
+
+        if ($noOrg) {
+            $data['X'] = $noOrg;
         }
 
         uksort($data, function ($a, $b) {

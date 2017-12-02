@@ -50,15 +50,19 @@
 
                         <td>
                             <ul>
-                            {% for perm in type.permissions %}
+                                {% for perm in type.permissions %}
                                 <li>
-                                    <a href="{{ uriFor('application', {'application': perm.application.id}) }}">{{ perm.application.name }}</a>
+                                    {% if perm.application %}
+                                        <a href="{{ uriFor('application', {'application': perm.application.id}) }}">{{ perm.application.name }}</a>
+                                    {% elseif perm.organization %}
+                                        <a href="{{ uriFor('organization', {'organization': perm.organization.id}) }}">{{ perm.organization.name }}</a>
+                                    {% endif %}
+
                                     {% if can_remove %}
                                         (<a style="color:red;" href="{{ uriFor('admin.permissions.remove', {'user': user.id, 'user_permission': perm.id}) }}">Remove</a>)
                                     {% endif %}
-
                                 </li>
-                            {% endfor %}
+                                {% endfor %}
                             </ul>
                         </td>
                     </tr>
@@ -89,14 +93,19 @@
 
                         <td>
                             <ul>
-                            {% for perm in permission.permissions %}
+                                {% for perm in permission.permissions %}
                                 <li>
-                                    <a href="{{ uriFor('application', {'application': perm.application.id}) }}">{{ perm.application.name }}</a>
+                                    {% if perm.application %}
+                                        <a href="{{ uriFor('application', {'application': perm.application.id}) }}">{{ perm.application.name }}</a>
+                                    {% elseif perm.organization %}
+                                        <a href="{{ uriFor('organization', {'organization': perm.organization.id}) }}">{{ perm.organization.name }}</a>
+                                    {% endif %}
+
                                     {% if can_remove %}
                                         (<a style="color:red;" href="{{ uriFor('admin.permissions.remove', {'user': user.id, 'user_permission': perm.id}) }}">Remove</a>)
                                     {% endif %}
                                 </li>
-                            {% endfor %}
+                                {% endfor %}
                             </ul>
                         </td>
                     </tr>
@@ -121,25 +130,33 @@
             </tr>
             </thead>
             <tbody>
-            {% for admin in admins %}
-                {% set user = admin.user %}
+            {% for permission in admins %}
+                {% set user = permission.user %}
 
                 <tr>
                     <td><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.username }}</a></td>
                     <td>{{ user.email }}</td>
+                    <td>
+                        <ul>
+                            {% for perm in permission.permissions %}
+                            <li>
+                                {% if perm.type == 'admin' %}
+                                    Admin
+                                {% endif %}
 
-                    {% if can_remove %}
-                        <td class="tr">
-                            <a style="color:red;" href="{{ uriFor('admin.permissions.remove_other_admins', {'user': user.id}) }}">Remove</a>
-                        </td>
-                    {% endif %}
-
+                                {% if can_remove %}
+                                    (<a style="color:red;" href="{{ uriFor('admin.permissions.remove', {'user': user.id, 'user_permission': perm.id}) }}">Remove</a>)
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
     {% else %}
-        There are no hal administrators.
+        There are no Hal administrators.
     {% endif %}
 
     <h2>User Types</h2>

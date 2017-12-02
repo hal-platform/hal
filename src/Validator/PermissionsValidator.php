@@ -25,11 +25,10 @@ class PermissionsValidator
     private const ERR_CANNOT_ADD_SUPER = 'You are not allowed to add super permissions.';
     private const ERR_CANNOT_ADD_ADMIN = 'You are not allowed to add admin permissions.';
     private const ERR_DUPLICATE_PERMISSION = 'Cannot add permissions. This user already has this permission.';
-    private const ERR_DUPLICATE_LEAD = 'This user already has owner permissions for this application.';
-    private const ERR_OWNER_DEPENDENCY_REQUIRED = 'Application and/or Organization required for owner permissions.';
+    private const ERR_SCOPE_REQUIRED = 'Please select an Application or Organization.';
     private const ERR_APPLICATION_NOT_FOUND = 'Application not found.';
     private const ERR_ORGANIZATION_NOT_FOUND = 'Organization not found.';
-    private const ERR_APPLICATION_AND_ORGANIZATION = 'You can only add an organization or application at the same time. Not both';
+    private const ERR_APPLICATION_AND_ORGANIZATION = 'Please select only an organization or application.';
 
     private const ERR_CANNOT_REMOVE_SUPER = 'You are not allowed to remove super admins.';
     private const ERR_LAST_ADMIN = 'There must be at least one admin left.';
@@ -73,22 +72,15 @@ class PermissionsValidator
         }
 
         // Only supers can add supers
-        if (!$userAuthorizations->isSuper() && $type === UserPermissionEnum::TYPE_SUPER) {
+        if ($type === UserPermissionEnum::TYPE_SUPER && !$userAuthorizations->isSuper()) {
             $this->addError(self::ERR_CANNOT_ADD_SUPER);
         }
 
-        // Only admins can add admins
-        if (!$userAuthorizations->isAdmin() && $type === UserPermissionEnum::TYPE_ADMIN) {
+        // Only (admins, supers) can add admins
+        if ($type === UserPermissionEnum::TYPE_ADMIN && !($userAuthorizations->isAdmin() || $userAuthorizations->isSuper())) {
             $this->errors[] = self::ERR_CANNOT_ADD_ADMIN;
         }
 
-        // If already member, admin, super. reject.
-        if ($type === UserPermissionEnum::TYPE_MEMBER && $selectedAuthorizations->isMember()) {
-            $this->addError(self::ERR_DUPLICATE_PERMISSION);
-        }
-        if ($type === UserPermissionEnum::TYPE_ADMIN && $selectedAuthorizations->isAdmin()) {
-            $this->addError(self::ERR_DUPLICATE_PERMISSION);
-        }
         if ($type === UserPermissionEnum::TYPE_SUPER && $selectedAuthorizations->isSuper()) {
             $this->addError(self::ERR_DUPLICATE_PERMISSION);
         }

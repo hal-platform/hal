@@ -109,6 +109,17 @@ class AuthorizationService
     }
 
     /**
+     * @param User $user
+     *
+     * @return void
+     */
+    public function clearUserCache(User $user)
+    {
+        $key = $this->cacheKey($user);
+        $this->setToCache($key, null);
+    }
+
+    /**
      * @param UserPermission[] $permissions
      *
      * @return UserAuthorizations
@@ -137,17 +148,6 @@ class AuthorizationService
         }
 
         return new UserAuthorizations($tiers);
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return void
-     */
-    public function clearUserCache(User $user)
-    {
-        $key = $this->cacheKey($user);
-        $this->setToCache($key, null);
     }
 
     /**

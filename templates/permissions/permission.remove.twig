@@ -7,7 +7,7 @@
 
     <h1>{{ page_title }}</h1>
 
-    <h2>Current Permissions - <b>{{ user.handle }}</b></h2>
+    <h2>Current Permissions - <b>{{ user.username }}</b></h2>
 
     {% include 'user/partial.user-status.twig' with {
         user: user,
@@ -21,6 +21,9 @@
 
             <li>User Type</li>
             <li>
+                {% if permission.type == 'member' %}
+                    {{ macros.status('Member', 'info') }}
+                {% endif %}
                 {% if permission.type == 'owner' %}
                     {{ macros.status('Owner', 'notice') }}
                 {% endif %}

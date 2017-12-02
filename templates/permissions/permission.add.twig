@@ -41,14 +41,14 @@
                 <li>
                     <label for="perm-app">Application</label>
                     <small class="additional">
-                        Optional. Only required when adding Application <b>owner</b> or <b>deployment</b> permissions.
+                        Optional. Only used for <b>member</b> or <b>owner</b> permissions.
                     </small>
 
                     <select name="application" id="perm-app">
                         <option value=""></option>
 
-                        {% for group_name, applications in availableApplications %}
-                            <optgroup label="{{ group_name }}">
+                        {% for org_name, applications in availableApplications %}
+                            <optgroup label="{{ org_name == 'X' ? 'No Organization' : org_name }}">
                                 {% for application_id, application_name in applications %}
                                     {% set isSelected = (application_id == form.application) %}
                                     <option value="{{ application_id }}"{{ isSelected ? ' selected' : '' }}>{{ application_name }}</option>
@@ -62,7 +62,7 @@
                 <li>
                     <label for="perm-org">Organizations</label>
                     <small class="additional">
-                        Optional.
+                        Optional. Only used for <b>member</b> or <b>owner</b> permissions.
                     </small>
                     <select name="organization" id="perm-org">
                         <option value=""></option>

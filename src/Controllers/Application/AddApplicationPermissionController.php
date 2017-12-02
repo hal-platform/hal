@@ -174,13 +174,12 @@ class AddApplicationPermissionController implements ControllerInterface
         $users = $this->parseSubmittedUsers($data['users']);
         $type = $data['type'];
 
-        // Only admins can add leads
-        if (!$isAdmin && $type === 'lead') {
-            $this->errors[] = self::ERR_CANNOT_ADD_LEAD;
-        }
-
         if (!$users) {
             $this->errors[] = self::ERR_SELECT_A_USER;
+        }
+
+        if (!in_array($type, [UserPermissionEnum::TYPE_MEMBER, UserPermissionEnum::TYPE_OWNER])) {
+            $this->errors[] = self::ERR_INVALID_TYPE;
         }
 
         if ($this->errors) return null;
