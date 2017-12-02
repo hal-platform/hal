@@ -9,13 +9,13 @@ namespace Hal\UI\Validator;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Type\JobStatusEnum;
+use Hal\UI\Security\AuthorizationService;
 use Hal\UI\Service\GitHubService;
-use Hal\UI\Service\PermissionService;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\User;
-use QL\Hal\Core\JobIdGenerator;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Build;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\User;
 
 class BuildValidator
 {
@@ -48,14 +48,9 @@ class BuildValidator
     private $github;
 
     /**
-     * @var PermissionService
+     * @var AuthorizationService
      */
-    private $permissions;
-
-    /**
-     * @var JobIdGenerator
-     */
-    private $unique;
+    private $authorizationService;
 
     /**
      * @var array
@@ -65,21 +60,18 @@ class BuildValidator
     /**
      * @param EntityManagerInterface $em
      * @param GitHubService $github
-     * @param PermissionService $permissions
-     * @param JobIdGenerator $unique
+     * @param AuthorizationService $authorizationService
      */
     public function __construct(
         EntityManagerInterface $em,
         GitHubService $github,
-        PermissionService $permissions,
-        JobIdGenerator $unique
+        AuthorizationService $authorizationService
     ) {
         $this->buildRepo = $em->getRepository(Build::class);
         $this->environmentRepo = $em->getRepository(Environment::class);
 
         $this->github = $github;
-        $this->permissions = $permissions;
-        $this->unique = $unique;
+        $this->authorizationService = $authorizationService;
 
         $this->errors = [];
     }
@@ -125,14 +117,13 @@ class BuildValidator
 
         if ($this->errors) return;
 
-        // no permission
-        if (!$this->permissions->canUserBuild($user, $application)) {
+        if (!$this->authorizationService->getUserAuthorizations($user)->canBuild($application)) {
             $this->errors[] = self::ERR_NO_PERMISSION;
         }
 
         if ($this->errors) return;
 
-        if (!$ref = $this->github->resolve($application->githubOwner(), $application->githubRepo(), $reference)) {
+        if (!$ref = $this->github->resolve($application->github()->owner(), $application->github()->repository(), $reference)) {
             $this->errors[] = self::ERR_UNKNOWN_REF;
         }
 
@@ -143,10 +134,9 @@ class BuildValidator
             $reference = $commit;
         }
 
-        $id = $this->unique->generateBuildId();
-        $build = (new Build($id))
-            ->withStatus('Waiting')
-            ->withBranch($reference)
+        $build = (new Build())
+            ->withStatus(JobStatusEnum::TYPE_PENDING)
+            ->withReference($reference)
             ->withCommit($commit)
 
             ->withUser($user)

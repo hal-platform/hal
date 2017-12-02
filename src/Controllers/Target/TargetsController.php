@@ -12,13 +12,13 @@ use Doctrine\ORM\EntityRepository;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Core\Type\EnumType\ServerEnum;
-use QL\Hal\Core\Utility\SortingTrait;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\Group;
+use Hal\Core\Repository\EnvironmentRepository;
+use Hal\Core\Type\EnumType\GroupEnum;
+use Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -35,9 +35,9 @@ class TargetsController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $serverRepo;
+    private $groupRepo;
     private $applicationRepo;
-    private $deploymentRepo;
+    private $targetRepo;
 
     /**
      * @var EnvironmentRepository
@@ -52,8 +52,8 @@ class TargetsController implements ControllerInterface
     {
         $this->template = $template;
         $this->environmentRepo = $em->getRepository(Environment::class);
-        $this->serverRepo = $em->getRepository(Server::class);
-        $this->deploymentRepo = $em->getRepository(Deployment::class);
+        $this->groupRepo = $em->getRepository(Group::class);
+        $this->targetRepo = $em->getRepository(Target::class);
     }
 
     /**
@@ -69,7 +69,7 @@ class TargetsController implements ControllerInterface
             'environments' => $environments,
             'application' => $application,
 
-            'targets_by_env' => $this->environmentalizeDeployments($application, $environments)
+            'targets_by_env' => $this->environmentalizeTargets($application, $environments)
         ]);
     }
 
@@ -94,20 +94,20 @@ class TargetsController implements ControllerInterface
      *
      * @return array
      */
-    private function environmentalizeDeployments(Application $application, array $environments)
+    private function environmentalizeTargets(Application $application, array $environments)
     {
-        $deployments = $this->deploymentRepo->findBy(['application' => $application]);
-        $sorter = $this->deploymentSorter();
-        usort($deployments, $sorter);
+        $targets = $this->targetRepo->findBy(['application' => $application]);
+        $sorter = $this->targetSorter();
+        usort($targets, $sorter);
 
         $env = [];
         foreach ($environments as $environment) {
             $env[$environment->name()] = [];
         }
 
-        foreach ($deployments as $deployment) {
-            $name = $deployment->server()->environment()->name();
-            $env[$name][] = $deployment;
+        foreach ($targets as $target) {
+            $name = $target->group()->environment()->name();
+            $env[$name][] = $target;
         }
 
         return $env;

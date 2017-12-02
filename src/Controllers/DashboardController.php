@@ -10,14 +10,13 @@ namespace Hal\UI\Controllers;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\UserSettings;
+use Hal\Core\Entity\User;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Service\JobQueueService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Entity\User;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -39,9 +38,7 @@ class DashboardController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $buildRepo;
-    private $pushRepo;
-    private $appRepo;
+    private $applicationRepo;
 
     /**
      * @param TemplateInterface $template
@@ -56,9 +53,7 @@ class DashboardController implements ControllerInterface
         $this->template = $template;
         $this->queue = $queue;
 
-        $this->buildRepo = $em->getRepository(Build::class);
-        $this->pushRepo = $em->getRepository(Push::class);
-        $this->appRepo = $em->getRepository(Application::class);
+        $this->applicationRepo = $em->getRepository(Application::class);
     }
 
     /**
@@ -66,42 +61,29 @@ class DashboardController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $recentBuilds = $recentPushes = $stuck = $favorites = [];
-
-        if ($user = $this->getUser($request)) {
-            $recentBuilds = $this->buildRepo->findBy(['user' => $user], ['created' => 'DESC'], 5);
-            $recentPushes = $this->pushRepo->findBy(['user' => $user], ['created' => 'DESC'], 5);
-
-            $favorites = $this->findFavorites($user);
-        }
+        $user = $this->getUser($request);
 
         return $this->withTemplate($request, $response, $this->template, [
-            'favorites' => $favorites,
-            'pending' => $this->queue->getPendingJobs(),
-            'builds' => $recentBuilds,
-            'pushes' => $recentPushes
+            'favorites' => $this->findFavorites($user),
+            'pending' => $this->queue->getPendingJobs()
         ]);
     }
 
     /**
      * @param User $user
      *
-     * @return Application[]
+     * @return array
      */
-    private function findFavorites(User $user)
+    private function findFavorites(User $user): array
     {
-        if (!$settings = $user->settings()) {
-            return [];
-        }
-
-        if (!$fav = $settings->favoriteApplications()) {
+        if (!$favorites = $user->settings()->favoriteApplications()) {
             return [];
         }
 
         $criteria = (new Criteria)
-            ->where(Criteria::expr()->in('id', $fav));
+            ->where(Criteria::expr()->in('id', $favorites));
 
-        $apps = $this->appRepo->matching($criteria);
+        $apps = $this->applicationRepo->matching($criteria);
 
         return $apps->toArray();
     }

@@ -7,12 +7,12 @@
 
 namespace Hal\UI\Controllers\API\Organization;
 
+use Hal\Core\Entity\Organization;
 use Hal\UI\API\Normalizer\OrganizationNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Group;
 use QL\Panthor\ControllerInterface;
 
 class OrganizationController implements ControllerInterface
@@ -44,7 +44,7 @@ class OrganizationController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $organization = $request->getAttribute(Group::class);
+        $organization = $request->getAttribute(Organization::class);
 
         $resource = $this->normalizer->resource($organization);
         $body = $this->formatter->buildHypermediaResponse($request, $resource);

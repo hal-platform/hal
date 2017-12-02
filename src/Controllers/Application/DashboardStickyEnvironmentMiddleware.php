@@ -9,12 +9,12 @@ namespace Hal\UI\Controllers\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Environment;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Service\StickyEnvironmentService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Environment;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
 

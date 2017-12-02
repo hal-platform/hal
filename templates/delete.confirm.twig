@@ -1,5 +1,6 @@
 {% extends 'base.twig' %}
-{% import "macros.twig" as macros %}
+{% import 'macros.twig' as macros %}
+{% import 'macros.git.twig' as git_macros %}
 
 {% set entity_type = 'Unknown Entity' %}
 {% if remove.param == 'organization' %}
@@ -10,8 +11,8 @@
     {% set entity_type = 'Deployment Target' %}
 {% elseif remove.param == 'encrypted' %}
     {% set entity_type = 'Encrypted Property' %}
-{% elseif remove.param == 'server' %}
-    {% set entity_type = 'Server' %}
+{% elseif remove.param == 'group' %}
+    {% set entity_type = 'Group' %}
 {% elseif remove.param == 'environment' %}
     {% set entity_type = 'Environment' %}
 {% elseif remove.param == 'credential' %}
@@ -23,7 +24,7 @@
 {% block content %}
     <h1>
         {% if remove.param %}
-            Confirm {{ entity_type }} Removal
+            Remove {{ entity_type }}
         {% else %}
             Confirm Removal
         {% endif %}
@@ -39,8 +40,8 @@
     {% elseif remove.param == 'encrypted' %}
         {{ block('encrypted_box') }}
 
-    {% elseif remove.param == 'server' %}
-        {{ block('server_box') }}
+    {% elseif remove.param == 'group' %}
+        {{ block('group_box') }}
     {% elseif remove.param == 'environment' %}
         {{ block('environment_box') }}
     {% elseif remove.param == 'credential' %}
@@ -51,7 +52,7 @@
     {% endif %}
 
     <h3>Are you sure?</h3>
-    <p>You're about to permanently remove this {{ entity_type }}. Do you want to continue?</p>
+    <p>You're about to permanently remove this <b>{{ entity_type }}</b>. Do you want to continue?</p>
 
     <form class="form-wrapper" method="post">
         <ul>
@@ -73,12 +74,12 @@
     {% elseif remove.param == 'encrypted' %}
         <a class="btn" href="{{ uriFor('encrypted', {'encrypted': remove.entity.id, 'application': entities.application.id}) }}">Cancel</a>
 
-    {% elseif remove.param == 'server' %}
-        <a class="btn" href="{{ uriFor('server', {'server': remove.entity.id}) }}">Cancel</a>
+    {% elseif remove.param == 'group' %}
+        <a class="btn" href="{{ uriFor('group', {'group': remove.entity.id}) }}">Cancel</a>
     {% elseif remove.param == 'environment' %}
         <a class="btn" href="{{ uriFor('environment', {'environment': remove.entity.id}) }}">Cancel</a>
     {% elseif remove.param == 'credential' %}
-        <a class="btn" href="{{ uriFor('admin.credential', {'credential': remove.entity.id}) }}">Cancel</a>
+        <a class="btn" href="{{ uriFor('credential', {'credential': remove.entity.id}) }}">Cancel</a>
 
     {% elseif remove.param == 'token' %}
         <a class="btn" href="{{ uriFor('user', {'user': entities.user.id}) }}">Cancel</a>
@@ -87,19 +88,24 @@
     {% endif %}
 {% endblock %}
 
-{% block server_box %}
+{% block group_box %}
     {% set name_label =  remove.entity.type == 'rsync' ? 'Hostname' : 'Region' %}
 
     <div class="details-box">
         <ul class="mbn">
-            <li>Server Type</li>
-            <li>{{ remove.entity.formatHumanType }}</li>
+            <li>
+                <h6>Group Type</h6>
+                {{ remove.entity.format(true) }}
+            </li>
 
-            <li>{{ name_label }}</li>
-            <li>{{ remove.entity.type == 'script' ? 'N/A' : remove.entity.name }}</li>
+            <li>
+                <h6>{{ name_label }}</h6>
+                {{ remove.entity.type == 'script' ? 'N/A' : remove.entity.name }}
+            </li>
 
-            <li>Environment</li>
-            <li>{{ remove.entity.environment.name}}</li>
+            <li>
+                <h6>Environment</h6>
+                {{ remove.entity.environment.name}}</li>
         </ul>
     </div>
 
@@ -108,11 +114,15 @@
 {% block environment_box %}
     <div class="details-box">
         <ul class="mbn">
-            <li>Name</li>
-            <li>{{ remove.entity.name }}</li>
+            <li>
+                <h6>Name</h6>
+                {{ remove.entity.name }}
+            </li>
 
-            <li>Is Production Environment?</li>
-            <li>{{ remove.entity.isProduction ? 'Yes' : 'No' }}</li>
+            <li>
+                <h6>Is Production Environment?</h6>
+                {{ remove.entity.isProduction ? 'Yes' : 'No' }}
+            </li>
         </ul>
     </div>
 {% endblock %}
@@ -120,13 +130,17 @@
 {% block credential_box %}
     <div class="details-box">
         <ul class="mbn">
-            <li>Name</li>
-            <li>{{ remove.entity.name }}</li>
-
-            <li>Type</li>
             <li>
-                {% if remove.entity.type == 'aws' %}
-                    AWS
+                <h6>Name</h6>
+                {{ remove.entity.name }}
+            </li>
+
+            <li>
+                <h6>Type</h6>
+                {% if remove.entity.type == 'aws_static' %}
+                    AWS Static Token
+                {% elseif remove.entity.type == 'aws_role' %}
+                    AWS STS Role
                 {% elseif remove.entity.type == 'privatekey' %}
                     Private Key
                 {% endif %}
@@ -138,11 +152,15 @@
 {% block organization_box %}
     <div class="details-box">
         <ul class="mbn">
-            <li>Identifier</li>
-            <li>{{ remove.entity.key }}</li>
+            <li>
+                <h6>Name</h6>
+                {{ remove.entity.identifier }}
+            </li>
 
-            <li>Name</li>
-            <li>{{ remove.entity.name }}</li>
+            <li>
+                <h6>Description</h6>
+                {{ remove.entity.name }}
+            </li>
         </ul>
     </div>
 {% endblock %}
@@ -150,14 +168,20 @@
 {% block application_box %}
     <div class="details-box">
         <ul>
-            <li>Identifier</li>
-            <li>{{ remove.entity.key }}</li>
+            <li>
+                <h6>Name</h6>
+                {{ remove.entity.identifier }}
+            </li>
 
-            <li>Name</li>
-            <li>{{ remove.entity.name }}</li>
+            <li>
+                <h6>Description</h6>
+                {{ remove.entity.name }}
+            </li>
 
-            <li>GitHub Source</li>
-            <li>{{ macros.gitsource(remove.entity) }}</li>
+            <li>
+                <h6>GitHub Source</h6>
+                {{ git_macros.gitsource(remove.entity) }}
+            </li>
         </ul>
     </div>
 {% endblock %}
@@ -165,17 +189,25 @@
 {% block target_box %}
     <div class="details-box">
         <ul>
-            <li>Application</li>
-            <li>{{ remove.entity.application.name }}</li>
+            <li>
+                <h6>Application</h6>
+                {{ remove.entity.application.name }}
+            </li>
 
-            <li>Environment</li>
-            <li>{{ remove.entity.server.environment.name }}</li>
+            <li>
+                <h6>Environment</h6>
+                {{ remove.entity.group.environment.name }}
+            </li>
 
-            <li>Name</li>
-            <li>{{ remove.entity.name ?: 'None' }}</li>
+            <li>
+                <h6>Name</h6>
+                {{ remove.entity.name ?: 'None' }}
+            </li>
 
-            <li>Type</li>
-            <li>{{ remove.entity.server.formatHumanType() }}</li>
+            <li>
+                <h6>Type</h6>
+                {{ remove.entity.group.format(true) }}
+            </li>
         </ul>
     </div>
 {% endblock %}
@@ -183,11 +215,13 @@
 {% block encrypted_box %}
     <div class="details-box">
         <ul class="mbn">
-            <li>Application</li>
-            <li>{{ remove.entity.application.name }}</li>
-
-            <li>Environment</li>
             <li>
+                <h6>Application</h6>
+                {{ remove.entity.application.name }}
+            </li>
+
+            <li>
+                <h6>Environment</h6>
                 {% if remove.entity.environment %}
                     {{ remove.entity.environment.name }}
                 {% else %}
@@ -195,8 +229,10 @@
                 {% endif %}
             </li>
 
-            <li>Property Name</li>
-            <li><code>{{ remove.entity.name }}</code></li>
+            <li>
+                <h6>Property Name</h6>
+                <code>{{ remove.entity.name }}</code>
+            </li>
         </ul>
     </div>
 {% endblock %}
@@ -204,8 +240,10 @@
 {% block token_box %}
     <div class="details-box">
         <ul>
-            <li>Name</li>
-            <li>{{ remove.entity.label }}</li>
+            <li>
+                <h6>Name</h6>
+                {{ remove.entity.name }}
+            </li>
         </ul>
     </div>
 {% endblock %}

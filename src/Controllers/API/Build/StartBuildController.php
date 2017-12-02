@@ -8,21 +8,21 @@
 namespace Hal\UI\Controllers\API\Build;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\UI\Controllers\APITrait;
-use Hal\UI\Controllers\SessionTrait;
+use Hal\Core\Entity\Application;
 use Hal\UI\API\Normalizer\BuildNormalizer;
 use Hal\UI\API\ResponseFormatter;
+use Hal\UI\Controllers\APITrait;
+use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Validator\BuildValidator;
-use Hal\UI\Validator\PushValidator;
+use Hal\UI\Validator\ReleaseValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\HTTPProblem\HTTPProblem;
 use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 
 /**
- * Permission checking is handled by BuildValidator and PushValidator
+ * Permission checking is handled by BuildValidator and ReleaseValidator
  */
 class StartBuildController implements ControllerInterface
 {
@@ -43,7 +43,7 @@ class StartBuildController implements ControllerInterface
     private $buildValidator;
 
     /**
-     * @var PushValidator
+     * @var ReleaseValidator
      */
     private $pushValidator;
 
@@ -65,7 +65,7 @@ class StartBuildController implements ControllerInterface
     /**
      * @param EntityManagerInterface $em
      * @param BuildValidator $buildValidator
-     * @param PushValidator $pushValidator
+     * @param ReleaseValidator $pushValidator
      * @param ResponseFormatter $formatter
      * @param BuildNormalizer $normalizer
      * @param ProblemRendererInterface $problemRenderer
@@ -73,7 +73,7 @@ class StartBuildController implements ControllerInterface
     public function __construct(
         EntityManagerInterface $em,
         BuildValidator $buildValidator,
-        PushValidator $pushValidator,
+        ReleaseValidator $pushValidator,
         ResponseFormatter $formatter,
         BuildNormalizer $normalizer,
         ProblemRendererInterface $problemRenderer
@@ -103,6 +103,7 @@ class StartBuildController implements ControllerInterface
 
         if (!$build) {
             $problem = new HTTPProblem(400, self::ERR_CHECK_FORM, ['errors' => $this->buildValidator->errors()]);
+
             return $this->renderProblem($response, $this->problemRenderer, $problem);
         }
 
@@ -111,6 +112,7 @@ class StartBuildController implements ControllerInterface
             $children = $this->pushValidator->isProcessValid($application, $user, $build->environment(), $build, $targets);
             if (!$children) {
                 $problem = new HTTPProblem(400, self::ERR_INVALID_DEPLOY, ['errors' => $this->pushValidator->errors()]);
+
                 return $this->renderProblem($response, $this->problemRenderer, $problem);
             }
         }

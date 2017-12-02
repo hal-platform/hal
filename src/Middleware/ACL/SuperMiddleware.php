@@ -7,9 +7,9 @@
 
 namespace Hal\UI\Middleware\ACL;
 
-use Hal\UI\Service\PermissionService;
+use Hal\Core\Entity\User;
+use Hal\UI\Security\UserAuthorizations;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\User;
 
 /**
  * Note: Supers also pass this middleware bouncer.
@@ -19,11 +19,9 @@ class SuperMiddleware extends AbstractPermissionMiddleware
     /**
      * @inheritDoc
      */
-    protected function isAllowed(ServerRequestInterface $request, PermissionService $permissions, User $user): bool
+    protected function isAllowed(ServerRequestInterface $request, User $user, UserAuthorizations $authorizations): bool
     {
-        $permissions = $permissions->getUserPermissions($user);
-
-        if ($permissions->isSuper()) {
+        if ($authorizations->isSuper()) {
             return true;
         }
 

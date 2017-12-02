@@ -7,12 +7,12 @@
 
 namespace Hal\UI\Controllers\API;
 
+use Hal\Core\Entity\JobEvent;
 use Hal\UI\API\Normalizer\EventNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\EventLog;
 use QL\Panthor\ControllerInterface;
 
 class EventController implements ControllerInterface
@@ -44,7 +44,7 @@ class EventController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $event = $request->getAttribute(EventLog::class);
+        $event = $request->getAttribute(JobEvent::class);
 
         $resource = $this->normalizer->resource($event, ['data']);
         $body = $this->formatter->buildHypermediaResponse($request, $resource);

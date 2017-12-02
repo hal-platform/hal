@@ -7,12 +7,12 @@
 
 namespace Hal\UI\Controllers\API\Target;
 
-use Hal\UI\API\ResponseFormatter;
+use Hal\Core\Entity\Target;
 use Hal\UI\API\Normalizer\TargetNormalizer;
+use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Deployment;
 use QL\Panthor\ControllerInterface;
 
 class TargetController implements ControllerInterface
@@ -44,7 +44,7 @@ class TargetController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $target = $request->getAttribute(Deployment::class);
+        $target = $request->getAttribute(Target::class);
 
         $resource = $this->normalizer->resource($target, ['server']);
         $body = $this->formatter->buildHypermediaResponse($request, $resource);

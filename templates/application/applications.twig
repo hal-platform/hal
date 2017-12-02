@@ -7,6 +7,21 @@
 
 {% block content %}
     <h1>{{ page_title }}</h1>
+    {{ block('favs') }}
+
+    <h2>Organizations</h2>
+    {{ block('orgs_grid') }}
+
+    <h2>Applications</h2>
+    {{ block('apps_table') }}
+
+    <ul>
+        <li><a class="btn" href="{{ uriFor('application.add') }}">Add Application</a></li>
+        <li><a class="btn" href="{{ uriFor('organization.add') }}">Add Organization</a></li>
+    </ul>
+{% endblock %}
+
+{% block favs %}
 
     {% if favorites %}
         <h2>Favorites</h2>
@@ -27,69 +42,92 @@
 
     {% endif %}
 
-    <h2>Organizations</h2>
+{% endblock %}
 
-    <ul>
-        {% for group_id, group_applications in applications %}
-            {% set group = groups[group_id] %}
-            {% if group_applications %}
-                <li><a href="#org-{{ group_id }}">{{ group.name }}</a></li>
+{% block orgs_grid %}
+
+    {% if organizations %}
+        <ul>
+            {% for organization in organizations %}
+                <li><a href="#org-{{ organization.id }}">{{ organization.name }}</a></li>
+            {% endfor %}
+
+            {% if applications.none %}
+                <li><a href="#org-none">Not in organization</a></li>
             {% endif %}
-        {% endfor %}
-    </ul>
+        </ul>
+    {% else %}
+        <p>There are no organizations.</p>
+    {% endif %}
 
-    <h2>Applications</h2>
+{% endblock %}
 
-<input id="js-search-input" class="text-input" type="text" name="search" autocomplete="off" placeholder="Search for an application or repository..." maxlength="100">
+{% block apps_table %}
 
-    <table class="table--spacing-medium js-collapsible js-search-table">
-        <thead>
-            <tr>
-                <th>Application</th>
-                <th class="t50">GitHub Source</th>
-                <th class="t10 tr js-collapsible-global"></th>
-            </tr>
-        </thead>
+    {% if applications %}
 
-        {% set hasApplications = false %}
+        <input
+            id="js-search-input"
+            class="text-input"
+            type="text"
+            name="search"
+            autocomplete="off"
+            placeholder="Search for an application or repository..."
+            maxlength="100">
 
-        {% for group_id, group_applications in applications %}
-            <tbody class="js-search-group">
-                {% set group = groups[group_id] %}
+        <table class="table--spacing-medium js-collapsible js-search-table">
+            <thead>
                 <tr>
-                    <th colspan="4" class="table-mid-header" id="org-{{ group_id}}">
-                        <a href="{{ uriFor('organization', {'organization': group.id}) }}">{{ group.name }}</a>
-                    </th>
+                    <th>Application</th>
+                    <th class="t40">GitHub Source</th>
+                    <th class="t15 js-collapsible-global"></th>
                 </tr>
+            </thead>
 
-                {% if group_applications %}
-                    {% set hasApplications = true %}
-                    {% for application in group_applications %}
-                        {{ page_macros.app_row(current_user, application, true) }}
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <td colspan="4">No applications found.</td>
-                    </tr>
-                {% endif %}
-            </tbody>
-        {% endfor %}
+            {% set hasApplications = false %}
 
-        {% if not hasApplications %}
-            <tr>
-                <td colspan="4">There are no groups.</td>
-            </tr>
-        {% endif %}
-    </table>
+            {% for org_id, organization_apps in applications %}
+                <tbody class="js-search-group">
+                    {% set organization = organizations[org_id] %}
 
-    <ul>
-        <li><a class="btn" href="{{ uriFor('application.add') }}">Add Application</a></li>
-        <li><a class="btn" href="{{ uriFor('organization.add') }}">Add Organization</a></li>
-    </ul>
+                    {% if organization %}
+                        <tr>
+                            <th colspan="3" class="table-mid-header" id="org-{{ org_id }}">
+                                <a href="{{ uriFor('organization', {'organization': organization.id}) }}">{{ organization.name }}</a>
+                            </th>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <th colspan="3" class="table-mid-header" id="org-none">
+                                None
+                            </th>
+                        </tr>
+
+                    {% endif %}
+
+                    {% if organization_apps %}
+                        {% set hasApplications = true %}
+                        {% for application in organization_apps %}
+                            {{ page_macros.app_row(current_user, application, true) }}
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3">No applications found.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            {% endfor %}
+        </table>
+
+    {% else %}
+        <p>There are no applications.</p>
+    {% endif %}
+
 {% endblock %}
 
 {% macro app_row(currentUser, application, allow_collapse) %}
     {% import "macros.twig" as macros %}
+    {% import "macros.git.twig" as git_macros %}
 
     {% if allow_collapse %}
         <tr class="js-collapsible-row js-search-item">
@@ -118,14 +156,16 @@
                     </label>
                 </form>
             {% endif %}
-            <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">{{ application.name }}</a>
+
+            {{ application.name }}
         </td>
         <td>
-            {{ macros.gitsource(application) }}
+            {{ git_macros.gitsource(application) }}
             <span class="js-search-query">{{ application.name }}</span>
-            <span class="js-search-query">{{ application.githubOwner ~ '/' ~ application.githubRepo }}</span>
+            <span class="js-search-query">{{ application.gitHub.owner ~ '/' ~ application.gitHub.repository }}</span>
         </td>
-        <td class="tr">
+        <td>
+            <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Dashboard</a>
             <a href="{{ uriFor('application', {'application': application.id}) }}">Manage</a>
         </td>
     </tr>

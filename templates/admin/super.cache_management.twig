@@ -1,0 +1,200 @@
+{% extends 'base.twig' %}
+{% import "macros.twig" as macros %}
+
+{% set page_title = "Cache Management" %}
+
+{% block content %}
+
+    {% if clear_result %}
+        {% if clear_result == 'success' %}
+            {{ macros.alert('success', clear_message) }}
+        {% else %}
+            {{ macros.alert('error', clear_message) }}
+        {% endif %}
+    {% endif %}
+
+    <div class="nav--page">
+        <h1>{{ page_title }}</h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('admin') }}">Back to Admin Dashboard</a>
+        </p>
+    </div>
+
+    <ul class="trailer">
+        <li>
+            <form method="post">
+                <input name="cache_type" type="hidden" value="doctrine">
+                <input type="submit" class="btn btn--action" value="Clear doctrine cache">
+            </form>
+        </li>
+
+        <li>
+            <form method="post">
+                <input name="cache_type" type="hidden" value="permissions">
+                <input type="submit" class="btn btn--action" value="Clear permissions cache">
+            </form>
+        </li>
+        <li>
+            <form method="post">
+                <input name="cache_type" type="hidden" value="opcache">
+                <input type="submit" class="btn btn--action" value="Clear OP cache">
+            </form>
+        </li>
+
+    </ul>
+
+    <h3>Permissions Cache</h3>
+    <section class="trailer">
+
+        <div class="details-box">
+            {% if permissions %}
+                <table class="table--spacing-small">
+                    <thead>
+                        <tr>
+                            <th class="t70">Key</th>
+                            <th>TTL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key, ttl in permissions %}
+                            <tr>
+                                <td>
+                                    <div class="code_fixed">
+                                        <code>{{ key }}</code>
+                                    </div>
+                                </td>
+                                <td>{{ ttl }} seconds</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No cached data found.</p>
+            {% endif %}
+        </div>
+
+    </section>
+
+    <h3>Doctrine Cache</h3>
+    <section class="trailer">
+
+        <div class="details-box">
+            {% if doctrine_cached %}
+                <table class="table--spacing-small">
+                    <thead>
+                        <tr>
+                            <th>Key</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key in doctrine_cached %}
+                            <tr>
+                                <td>
+                                    <div class="code_fixed">
+                                        <code>{{ key }}</code>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No cached data found.</p>
+            {% endif %}
+        </div>
+
+    </section>
+
+    <h3>OP Cache {{ opcache.version }}</h3>
+    <section class="trailer">
+        {% if not opcache %}
+            <p>Zend OP Cache is not installed.</p>
+        {% else %}
+
+            <div class="details-box">
+                <ul>
+                    <li>
+                        <h6>Status</h6>
+                        {% set opcEnabledStatus = opcache.enabled ? 'success' : 'error' %}
+                        {% set opcEnabledText = opcache.enabled ? 'Enabled' : 'Disabled' %}
+                        {% set opcEnabledIcon = opcache.enabled ? 'tick' : 'cross' %}
+
+                        {% set opcFullStatus = opcache.cache_full ? 'error' : 'success' %}
+                        {% set opcFullText = opcache.cache_full ? 'Cache Full' : 'Cache Not Full' %}
+                        {% set opcFullIcon = opcache.cache_full ? 'cross' : 'tick' %}
+
+                        {{ macros.status(opcEnabledText, opcEnabledStatus, opcEnabledIcon) }}
+                        {{ macros.status(opcFullText, opcFullStatus, opcFullIcon) }}
+
+                    </li>
+
+                    <li>
+                        <h6>Hits</h6>
+                        <b>{{ opcache.hits }}</b> hits, <b>{{ opcache.misses }}</b> misses
+                    </li>
+
+                    <li>
+                        <h6>Hit Rate</h6>
+                        {{ opcache.opcache_hit_rate }}%
+                    </li>
+
+                    <li>
+                        <h6>Memory</h6>
+                        {{ opcache.used_memory }} / {{ opcache.total_memory }}
+                    </li>
+
+                    <li>
+                        <h6>Buffer</h6>
+                        {{ opcache.used_buffer }} / {{ opcache.total_buffer }}
+                    </li>
+
+                    <li>
+                        <h6>Cached</h6>
+                        {{ opcache.cached_scripts }} scripts, {{ opcache.cached_keys }} keys
+                    </li>
+
+                </ul>
+            </div>
+
+            <h4>Configuration</h4>
+            <div class="details-box">
+                <ul>
+                    {% for key, data in opcache.configuration %}
+                        <li>
+                            <h6>{{ key }}</h6>
+                            <code>{{ data|e }}</code>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <h4>Cached Scripts</h4>
+            <div class="details-box">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="t70">File</th>
+                            <th class="t15">Hits</th>
+                            <th>Memory</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for script in opcache.scripts %}
+                            <tr>
+                                <td>
+                                    <div class="code_fixed">
+                                        <code title="{{ script.path }}">{{ script.path }}</code>
+                                    </div>
+                                </td>
+                                <td>{{ script.hits }}</td>
+                                <td>{{ script.memory_consumption }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </section>
+
+{% endblock %}

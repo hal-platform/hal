@@ -1,15 +1,15 @@
 {% extends 'base.twig' %}
-{% import "macros.twig" as macros %}
+{% import 'macros.git.twig' as git_macros %}
 
-{% set page_title = 'Application : ' ~ application.name %}
+{% set page_title = 'Application - ' ~ application.name %}
 
-{% set isAdmin = isUserAdminOrSuper(current_user) %}
-{% set canEdit = isUserAdminOrSuper(current_user) or isUserLeadOf(current_user, application) %}
-{% set canRemove = isAdmin and not has_jobs %}
+{% set is_admin = current_authorizations.isSuper() or current_authorizations.isAdmin() %}
+{% set can_edit = is_admin or current_authorizations.isOwnerOf(application) %}
+{% set can_remove = can_edit %}
 
 {% block content %}
     <div class="nav--page">
-        <h1>Application - <b>{{ application.name }}</b></h1>
+        <h1>Application</h1>
 
         <p class="nav--page__back">
             <a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Go to Application Dashboard</a>
@@ -17,77 +17,105 @@
     </div>
 
     {{ block('meta') }}
+    {{ block('actions') }}
 
-    <ul>
-        <li><a class="btn" href="{{ uriFor('encrypted.configuration', {'application': application.id}) }}">Encrypted Configuration</a></li>
-        <li><a class="btn" href="{{ uriFor('targets', {'application': application.id}) }}">Deployment Targets</a></li>
-    </ul>
-
-    {% if canEdit or canRemove %}
-        <ul class="leader">
-            {% if canEdit %}
-                <li><a class="btn btn--action" href="{{ uriFor('application.edit', {'application': application.id}) }}">Edit Application</a></li>
-            {% endif %}
-
-            {% if canRemove %}
-                <li><a class="btn btn--destructive" href="{{ uriFor('application.remove', {'application': application.id}) }}">Remove Application</a></li>
-            {% endif %}
-        </ul>
-    {% endif %}
-
-    {{ block('deployment_access') }}
+    <h2>Authorization and Permissions</h2>
+    {{ block('authorization_and_permissions') }}
 
 {% endblock %}
 
 {% block meta %}
     <div class="details-box">
         <ul>
-            <li>Identifier</li>
-            <li>{{ application.key }}</li>
+            <li>
+                <h6>Name</h6>
+                {{ application.identifier }}
+            </li>
 
-            <li>Name</li>
-            <li>{{ application.name }}</li>
+            <li>
+                <h6>Description</h6>
+                {{ application.name }}
+            </li>
 
-            <li>GitHub Source</li>
-            <li>{{ macros.gitsource(application) }}</li>
+            <li>
+                <h6>GitHub Source</h6>
+                {{ git_macros.gitsource(application) }}
+            </li>
         </ul>
     </div>
 {% endblock %}
 
-{% block deployment_access %}
-    <h2>Deployment Access</h2>
+{% block actions %}
+    <ul class="list--bare">
+        <li><a class="btn" href="{{ uriFor('encrypted.configuration', {'application': application.id}) }}">Encrypted Configuration</a></li>
+        <li><a class="btn" href="{{ uriFor('targets', {'application': application.id}) }}">Deployment Targets</a></li>
+        <li>
+            {% if can_edit %}
+                <a class="btn btn--action" href="{{ uriFor('application.edit', {'application': application.id}) }}">Edit Application</a>
+            {% else %}
+                <button class="btn btn--disabled">Edit Applications</button>
+            {% endif %}
+        </li>
+        <li>
+            {% if can_remove %}
+                <a class="btn btn--destructive" href="{{ uriFor('application.remove', {'application': application.id}) }}">Remove Application</a>
+            {% else %}
+                <button class="btn btn--disabled">Remove Applications</button>
+            {% endif %}
+        </li>
+    </ul>
+{% endblock %}
+
+{% block authorization_and_permissions %}
     <div class="details-box">
-        <p>Owners can manage this application, deploy to non-production environments, and grant others deployment access.</p>
+        <small>
+            Owners can
+                manage this application,
+                deploy to non-production environments, and
+                grant others access.
+
+            Administrators can also manage and deploy this application.
+        </small>
 
         {% if permissions %}
-            <div class="fav-box-wrapper">
-                {% for perm in permissions %}
-
-                    {% set alt = '' %}
-                    {% if perm.permission == 'prod' %}{% set alt = ' fav-box-alt' %}{% endif %}
-                    {% if perm.permission == 'lead' %}{% set alt = ' fav-box-alt-2' %}{% endif %}
-
-                    <div class="fav-box{{ alt }}">
-                        <h5>
-                            <a href="{{ uriFor('user', {'user': perm.id }) }}">{{ perm.username|lower }}</a>
-                        </h5>
-                        <p>
-                            {% if perm.permission == 'lead' %}Owner, {% endif %}{{ perm.permission == 'prod' ? 'Production' : 'Non-prod' }}
-                        </p>
-                    </div>
+            <ul class="list--bullet">
+                {% for permission in permissions %}
+                    {% set from_org = permission.organization ? '- organization' : '' %}
+                    <li>
+                        <a href="{{ uriFor('user', {'user': permission.user.id }) }}">
+                            {{ permission.user.username|lower }}
+                        </a>
+                        ({{ permission.type }}{{ from_org }})
+                    </li>
                 {% endfor %}
-
-            </div>
+            </ul>
         {% else %}
             <hr>
-            No users currently have deployment or management permissions. Deployment permissions are only handled by GitHub.
-            Contact an administratorif you would like to self-service and manage your application.
+            <p>
+                No users currently have deployment or management permissions.
+                This application can be managed by administrators only. Contact an administrator
+                if you would like to self-service and manage your application.
+            </p>
         {% endif %}
 
-        <hr>
-        <p>
-            Administrators can also manage and deploy this application.
-        </p>
+        <ul class="list--bare">
+            <li>
+                {% if can_edit %}
+                    <a class="btn" href="{{ uriFor('application_permission.add', {'application': application.id})}}">Grant access to other users</a>
+                {% else %}
+                    <button class="btn btn--disabled">Grant access to other users</button>
+                {% endif %}
+            </li>
+
+            <li>
+                {% if can_edit and permissions %}
+                    <a href="{{ uriFor('application_permission.remove', {'application': application.id}) }}">Manage or revoke permissions</a>
+                {% else %}
+                    <button class="btn--disabled">Manage or revoke permissions</button>
+                {% endif %}
+            </li>
+
+        </ul>
 
         {% if canEdit %}
             <a class="btn" href="{{ uriFor('application_permission.add', {'application': application.id})}}">Grant access to other users</a>

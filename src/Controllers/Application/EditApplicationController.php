@@ -9,16 +9,16 @@ namespace Hal\UI\Controllers\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Organization;
+use Hal\Core\Utility\SortingTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Flash;
-use Hal\UI\Service\GitHubService;
-use Hal\UI\Utility\ValidatorTrait;
+use Hal\UI\Validator\ApplicationValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Group;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\URI;
@@ -27,15 +27,10 @@ class EditApplicationController implements ControllerInterface
 {
     use RedirectableControllerTrait;
     use SessionTrait;
+    use SortingTrait;
     use TemplatedControllerTrait;
-    use ValidatorTrait;
 
-    const MSG_SUCCESS = 'Application updated successfully.';
-
-    const ERR_DUPLICATE_IDENTIFIER = 'An application with this identifier already exists.';
-
-    const ERR_GITHUB_INVALID_OWNER = 'Invalid GitHub Enterprise user or organization.';
-    const ERR_GITHUB_INVALID_REPO = 'Invalid GitHub Enterprise Repository';
+    const MSG_SUCCESS = 'Application "%s" was updated.';
 
     /**
      * @var TemplateInterface
@@ -45,8 +40,8 @@ class EditApplicationController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $groupRepo;
     private $applicationRepo;
+    private $organizationRepo;
 
     /**
      * @var EntityManagerInterface
@@ -54,9 +49,9 @@ class EditApplicationController implements ControllerInterface
     private $em;
 
     /**
-     * @var GitHubService
+     * @var ApplicationValidator
      */
-    private $github;
+    private $applicationValidator;
 
     /**
      * @var URI
@@ -64,41 +59,25 @@ class EditApplicationController implements ControllerInterface
     private $uri;
 
     /**
-     * @var string
-     */
-    private $githubEnterprisePrefix;
-
-    /**
-     * @var array
-     */
-    private $errors;
-
-    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param GitHubService $github
+     * @param ApplicationValidator $applicationValidator
      * @param URI $uri
-     * @param string $githubEnterprisePrefix
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        GitHubService $github,
-        URI $uri,
-        $githubEnterprisePrefix
+        ApplicationValidator $applicationValidator,
+        URI $uri
     ) {
         $this->template = $template;
 
-        $this->groupRepo = $em->getRepository(Group::class);
         $this->applicationRepo = $em->getRepository(Application::class);
+        $this->organizationRepo = $em->getRepository(Organization::class);
         $this->em = $em;
 
-        $this->github = $github;
+        $this->applicationValidator = $applicationValidator;
         $this->uri = $uri;
-
-        $this->githubEnterprisePrefix = $githubEnterprisePrefix;
-
-        $this->errors = [];
     }
 
     /**
@@ -111,16 +90,18 @@ class EditApplicationController implements ControllerInterface
         $form = $this->getFormData($request, $application);
 
         if ($modified = $this->handleForm($form, $request, $application)) {
-            $this->withFlash($request, Flash::SUCCESS, self::MSG_SUCCESS);
+            $message = sprintf(self::MSG_SUCCESS, $application->name());
+
+            $this->withFlash($request, Flash::SUCCESS, $message);
             return $this->withRedirectRoute($response, $this->uri, 'application', ['application' => $modified->id()]);
         }
 
         return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
-            'errors' => $this->errors,
+            'errors' => $this->applicationValidator->errors(),
 
             'application' => $application,
-            'groups' => $this->groupRepo->findAll()
+            'organizations' => $this->getOrganizations()
         ]);
     }
 
@@ -137,110 +118,31 @@ class EditApplicationController implements ControllerInterface
             return null;
         }
 
-        $identifier = strtolower($data['identifier']);
-        $github = strtolower($data['github']);
-
-        $this->errors = array_merge(
-            $this->validateSimple($identifier, 'Identifier', 24, true),
-            $this->validateText($data['name'], 'Name', 64, true),
-
-            $this->validateText($data['group'], 'Group', 128, true),
-            $this->validateText($github, 'GitHub Repository', 100, true)
+        $application = $this->applicationValidator->isEditValid(
+            $application,
+            $data['name'],
+            $data['description'],
+            $data['github'],
+            $data['organization']
         );
 
-        if ($this->errors) return null;
-
-        if (!$group = $this->groupRepo->find($data['group'])) {
-            $this->errors[] = 'Please select a group.';
+        if ($application) {
+            $this->em->persist($application);
+            $this->em->flush();
         }
-
-        if ($this->errors) return null;
-
-        if ($github !== sprintf('%s/%s', $application->githubOwner(), $application->githubRepo())) {
-            $github = $this->formatGitHubFromURL($github);
-
-            $parts = explode('/', $github);
-            if (count($parts) === 2) {
-                $githubOwner = $parts[0];
-                $githubRepo = $parts[1];
-            } else {
-                $this->errors[] = self::ERR_GITHUB_INVALID_REPO;
-            }
-
-            if ($this->errors) return null;
-            $this->validateGithubRepo($githubOwner, $githubRepo);
-        }
-
-        if ($this->errors) return null;
-
-        // Only check for duplicate identifier if it is being changed
-        if (!$this->errors && $identifier != $application->key()) {
-            if ($repo = $this->applicationRepo->findOneBy(['key' => $identifier])) {
-                $this->errors[] = self::ERR_DUPLICATE_IDENTIFIER;
-            }
-        }
-
-        if ($this->errors) return null;
-
-        $application
-            ->withKey($identifier)
-            ->withName($data['name'])
-            ->withGroup($group);
-
-        if (isset($githubOwner)) {
-            $application
-                ->withGithubOwner($githubOwner)
-                ->withGithubRepo($githubRepo);
-        }
-
-        // persist to database
-        $this->em->merge($application);
-        $this->em->flush();
 
         return $application;
     }
 
     /**
-     * @param string $owner
-     * @param string $repo
-     *
-     * @return void
+     * @return array
      */
-    private function validateGithubRepo($owner, $repo)
+    private function getOrganizations()
     {
-        if (!$this->github->user($owner)) {
-            $this->errors[] = self::ERR_GITHUB_INVALID_OWNER;
+        $orgs = $this->organizationRepo->findAll();
+        usort($orgs, $this->organizationSorter());
 
-        // elseif here so we dont bother making 2 github calls if the first one failed
-        } elseif (!$this->github->repository($owner, $repo)) {
-            $this->errors[] = self::ERR_GITHUB_INVALID_REPO;
-        }
-    }
-
-    /**
-     * Parse user/repo from the provided input which may or may not be a full github URL.
-     *
-     * @param string $github
-     *
-     * @return string
-     */
-    private function formatGitHubFromURL($github)
-    {
-        if (stripos($github, 'https?://') === 0) {
-            // is URL
-            if (stripos($github, $this->githubEnterprisePrefix) === 0) {
-                $github = substr($github, strlen($this->githubEnterprisePrefix));
-
-                if (substr($github, -4) === '.git') {
-                    $github = substr($github, 0, -4);
-                }
-
-            } else {
-                $this->errors[] = self::ERR_GITHUB_INVALID_REPO;
-            }
-        }
-
-        return $github;
+        return $orgs;
     }
 
     /**
@@ -251,21 +153,22 @@ class EditApplicationController implements ControllerInterface
      */
     private function getFormData(ServerRequestInterface $request, Application $application)
     {
-        if ($request->getMethod() === 'POST') {
-            $form = [
-                'identifier' => $request->getParsedBody()['identifier'] ?? '',
-                'name' => $request->getParsedBody()['name'] ?? '',
-                'group' => $request->getParsedBody()['group'] ?? '',
-                'github' => $request->getParsedBody()['github'] ?? ''
-            ];
-        } else {
-            $form = [
-                'identifier' => $application->key(),
-                'name' => $application->name(),
-                'group' => $application->group()->id(),
-                'github' => sprintf('%s/%s', $application->githubOwner(), $application->githubRepo())
-            ];
-        }
+        $isPost = ($request->getMethod() === 'POST');
+
+        $name = $request->getParsedBody()['name'] ?? '';
+        $description = $request->getParsedBody()['description'] ?? '';
+        $organization = $request->getParsedBody()['organization'] ?? '';
+        $github = $request->getParsedBody()['github'] ?? '';
+
+        $originalOrganizationID = $application->organization() ? $application->organization()->id() : '';
+        $originalGitHub = sprintf('%s/%s', $application->gitHub()->owner(), $application->gitHub()->repository());
+
+        $form = [
+            'name' => $isPost ? $name : $application->identifier(),
+            'description' => $isPost ? $description : $application->name(),
+            'organization' => $isPost ? $organization : $originalOrganizationID,
+            'github' => $isPost ? $github : $originalGitHub,
+        ];
 
         return $form;
     }

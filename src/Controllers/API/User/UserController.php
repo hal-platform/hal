@@ -7,12 +7,12 @@
 
 namespace Hal\UI\Controllers\API\User;
 
+use Hal\Core\Entity\User;
 use Hal\UI\API\Normalizer\UserNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\User;
 use QL\Panthor\ControllerInterface;
 
 class UserController implements ControllerInterface

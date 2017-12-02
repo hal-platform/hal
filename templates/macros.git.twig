@@ -1,0 +1,105 @@
+
+{#
+Link to github for a branch, pull request, or commit
+
+Example:
+```
+<a href="https://github.com/example/repo/pull/42">Pull Request 42</a>
+<span class="hint--top" aria-label="This commit is update to date with HEAD">
+    <svg class="icon icon--success"><use xlink:href="/icons.svg#pull"></use></svg>
+</span>
+```
+#}
+{% macro gitref(build, sliced, isCurrent, hideTooltip) %}
+    {% import 'macros.twig' as macros %}
+
+    {% set sliced = sliced|default(false) %}
+    {% set hideTooltip = hideTooltip|default(false) %}
+
+    {% set resolved = build.reference|gitref %}
+    {% if resolved %}
+        {% set type = resolved|first %}
+        {% set ref = resolved|last %}
+
+        {% set icontype = 'branch' %}
+        {% if (type == 'pull') %}{% set icontype = 'pull' %}{% endif %}
+        {% if (type == 'tag') %}{% set icontype = 'tag' %}{% endif %}
+        {% if (type == 'commit') %}{% set icontype = 'commit' %}{% endif %}
+
+        {% if type in ['branch', 'tag'] and sliced and ref.length > 20 %}
+            {% set ref = ref[0:20] %}
+        {% endif %}
+
+        <a href="{{ githubReferenceUrl(build.application.gitHub.owner, build.application.gitHub.repository, build.reference) }}">
+            {% if type == 'pull' %}
+                Pull Request {{ ref }}
+            {% elseif type == 'tag' %}
+                Release {{ ref }}
+            {% elseif type == 'commit' %}
+                Commit {{ ref|commit }}
+            {% elseif type == 'branch' %}
+                {{ ref }}
+            {% endif %}
+        </a>
+
+        {% set iconcolor = '' %}
+        {% if (isCurrent is same as(true)) %}{% set iconcolor = 'icon--success' %}{% endif %}
+        {% if (isCurrent is same as(false)) %}{% set iconcolor = 'icon--warning' %}{% endif %}
+
+        {% if not hideTooltip and isCurrent is not same as(null) %}
+            {% if isCurrent is same as(true) %}
+
+                <span class="hint--top" aria-label="This commit is update to date with HEAD">
+                    {{ macros.icon(icontype, iconcolor) }}
+                </span>
+            {% elseif isCurrent is same as(false) %}
+                <span class="hint--top" aria-label="This commit is behind HEAD">
+                    {{ macros.icon(icontype, iconcolor) }}
+                </span>
+            {% endif %}
+        {% else %}
+            {{ macros.icon(icontype, iconcolor) }}
+        {% endif %}
+
+    {% endif %}
+
+{% endmacro %}
+
+{#
+Link to github repository
+
+Example:
+```
+<a href="https://github.com/example/repo">example/repo</a>
+<svg class="icon"><use xlink:href="/icons.svg#github"></use></svg>
+```
+#}
+{% macro gitsource(application) %}
+    {% import 'macros.twig' as macros %}
+    <a href="{{ githubRepoUrl(application.gitHub.owner, application.gitHub.repository) }}">{{ application.gitHub.owner }}/{{ application.gitHub.repository }}</a> {{ macros.icon('github') }}
+{% endmacro %}
+
+{#
+Link to github repository
+
+Example:
+```
+<a href="https://github.com/example/repo/commit/6a903f476aa00d155ffbdf4ef2b94f6a754eafb4">6a903f4</a>
+<svg class="icon"><use xlink:href="/icons.svg#commit"></use></svg>
+```
+#}
+{% macro gitcommit(build) %}
+    {% import 'macros.twig' as macros %}
+
+    {% set resolved = build.commit|gitref %}
+    {% if resolved %}
+        {% set ref = resolved|last %}
+
+        <a href="{{ githubCommitUrl(build.application.gitHub.owner, build.application.gitHub.repository, build.commit) }}">
+            {{ ref|commit }}
+        </a>
+        {{ macros.icon('commit') }}
+
+    {% endif %}
+
+{% endmacro %}

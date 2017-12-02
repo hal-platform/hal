@@ -1,6 +1,9 @@
 imports:
     - resource: '../../vendor/ql/mcp-panthor/configuration/*.yml'
 
+parameters:
+    error_handling.html_template: 'error.twig'
+
 services:
 
     panthor.cookie.encryption:

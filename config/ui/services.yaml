@@ -12,23 +12,45 @@ services:
     # VALIDATORS
     ######################################################################################################################
 
+    validator.organization:
+        class: 'Hal\UI\Validator\OrganizationValidator'
+        arguments: ['@doctrine.em']
+
+    validator.environment:
+        class: 'Hal\UI\Validator\EnvironmentValidator'
+        arguments: ['@doctrine.em']
+
+    validator.application:
+        class: 'Hal\UI\Validator\ApplicationValidator'
+        arguments: ['@doctrine.em', '@github']
+
+    validator.credential:
+        class: 'Hal\UI\Validator\CredentialValidator'
+        arguments: ['@doctrine.em', '@encryption']
+
+    validator.encrypted_property:
+        class: 'Hal\UI\Validator\EncryptedPropertyValidator'
+        arguments: ['@doctrine.em', '@encryption']
+
+    validator.permissions:
+        class: 'Hal\UI\Validator\PermissionsValidator'
+        arguments: ['@doctrine.em']
+    #
+
     build.start.validator:
         class: 'Hal\UI\Validator\BuildValidator'
         arguments:
             - '@doctrine.em'
             - '@github'
-            - '@permissions'
-            - '@utility.id.generator'
-    push.start.validator:
-        class: 'Hal\UI\Validator\PushValidator'
+            - '@service.authorization'
+    release.start.validator:
+        class: 'Hal\UI\Validator\ReleaseValidator'
         arguments:
             - '@doctrine.em'
-            - '@permissions'
-            - '@utility.id.generator'
-            - '@doctrine.random'
+            - '@service.authorization'
 
-    server.validator:
-        class: 'Hal\UI\Validator\ServerValidator'
+    group.validator:
+        class: 'Hal\UI\Validator\GroupValidator'
         arguments: ['@doctrine.em']
 
     target.validator:
@@ -42,18 +64,12 @@ services:
     twig.extension.hal:
         class: 'Hal\UI\Twig\HalExtension'
         arguments:
-            - '@global.message'
             - '@utility.time.formatter'
-            - '@utility.name.formatter'
             - '%gravatar.fallback%'
 
     twig.extension.hal.global:
         class: 'Hal\UI\Twig\GlobalExtension'
         arguments: ['%twig.globals%']
-
-    twig.extension.permissions:
-        class: 'Hal\UI\Twig\PermissionsExtension'
-        arguments: ['@permissions']
 
     twig.extension.github:
         class: 'Hal\UI\Twig\GitHubExtension'
@@ -73,6 +89,5 @@ services:
         calls:
             - ['addExtension', ['@twig.extension.hal']]
             - ['addExtension', ['@twig.extension.hal.global' ]]
-            - ['addExtension', ['@twig.extension.permissions']]
             - ['addExtension', ['@twig.extension.github']]
             - ['addExtension', ['@twig.extension.status']]

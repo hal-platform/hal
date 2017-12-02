@@ -8,15 +8,15 @@
 namespace Hal\UI\Controllers\Build;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Build;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Repository\BuildRepository;
+use Hal\Core\Repository\EnvironmentRepository;
 use Hal\UI\Controllers\PaginationTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Repository\BuildRepository;
-use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -79,9 +79,9 @@ class BuildsController implements ControllerInterface
         if ($environment = $this->getEnvironmentFromSearchFilter($searchFilter)) {
             $sanitizedSearchFilter = trim(preg_replace(self::REGEX_ENV, '', $searchFilter, 1));
 
-            $builds = $this->buildRepo->getByApplicationForEnvironment($application, $environment, self::MAX_PER_PAGE, ($page-1), $sanitizedSearchFilter);
+            $builds = $this->buildRepo->getByApplicationForEnvironment($application, $environment, self::MAX_PER_PAGE, ($page - 1), $sanitizedSearchFilter);
         } else {
-            $builds = $this->buildRepo->getByApplication($application, self::MAX_PER_PAGE, ($page-1), $searchFilter);
+            $builds = $this->buildRepo->getByApplication($application, self::MAX_PER_PAGE, ($page - 1), $searchFilter);
         }
 
         $total = count($builds);
@@ -106,6 +106,7 @@ class BuildsController implements ControllerInterface
     {
         if (preg_match(self::REGEX_ENV, $search, $matches) === 1) {
             $name = strtolower(array_pop($matches));
+
             return $this->environmentRepo->findOneBy(['name' => $name]);
         }
 

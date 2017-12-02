@@ -7,15 +7,34 @@
 
 namespace Hal\UI\Api\Normalizer;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Build;
+use Hal\Core\Entity\JobEvent;
+use Hal\Core\Entity\Release;
 use Hal\UI\Api\Hyperlink;
 use Hal\UI\Api\HypermediaResource;
 use Hal\UI\Api\ResourceNormalizerInterface;
-use QL\Hal\Core\Entity\EventLog;
 
 class EventNormalizer implements ResourceNormalizerInterface
 {
     /**
-     * @param EventLog $input
+     * @var EntityRepository
+     */
+    private $buildRepository;
+    private $releaseRepository;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->buildRepository = $entityManager->getRepository(Build::class);
+        $this->releaseRepository = $entityManager->getRepository(Release::class);
+    }
+
+    /**
+     * @param JobEvent $input
      *
      * @return mixed
      */
@@ -25,13 +44,13 @@ class EventNormalizer implements ResourceNormalizerInterface
     }
 
     /**
-     * @param EventLog|null $event
+     * @param JobEvent|null $event
      *
      * @return Hyperlink|null
      */
     public function link($event): ?Hyperlink
     {
-        if (!$event instanceof EventLog) {
+        if (!$event instanceof JobEvent) {
             return null;
         }
 
@@ -44,20 +63,20 @@ class EventNormalizer implements ResourceNormalizerInterface
     }
 
     /**
-     * @param EventLog|null $event
+     * @param JobEvent|null $event
      * @param array $embed
      *
      * @return HypermediaResource|null
      */
     public function resource($event, array $embed = []): ?HypermediaResource
     {
-        if (!$event instanceof EventLog) {
+        if (!$event instanceof JobEvent) {
             return null;
         }
 
         $data = [
             'id' => $event->id(),
-            'name' => $event->event(),
+            'name' => $event->stage(),
             'order' => $event->order(),
             'message' => $event->message(),
             'status' => $event->status(),
@@ -66,16 +85,26 @@ class EventNormalizer implements ResourceNormalizerInterface
         ];
 
         if (in_array('data', $embed)) {
-            $data['data'] = $event->data();
+            $data['data'] = $event->parameters();
         }
 
         $links = [
             'self' => $this->link($event)
         ];
 
+        $build = null;
+        if (mb_substr($event->parentID(), 0, 1)  == 'b') {
+            $build = $this->buildRepository->find($event->parentID());
+        }
+
+        $release = null;
+        if (mb_substr($event->parentID(), 0, 1)  == 'r') {
+            $release = $this->releaseRepository->find($event->parentID());
+        }
+
         $resource = new HypermediaResource($data, $links, [
-            'build' => $event->build(),
-            'push' => $event->push()
+            'build' => $build,
+            'release' => $release
         ]);
 
         $resource->withEmbedded($embed);

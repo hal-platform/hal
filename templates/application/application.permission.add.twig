@@ -1,5 +1,6 @@
 {% extends 'base.twig' %}
 {% import "macros.twig" as macros %}
+{% import "macros.git.twig" as git_macros %}
 {% import "macros.form.twig" as form_macros %}
 {% set js_components = ["app.permissions.multi"] %}
 
@@ -38,7 +39,7 @@
 
                     <datalist id="users-datalist">
                         {% for u in users %}
-                            <option value="{{ u.handle|lower }}">{{ u.name }}{% if u.handle ends with '-' %} (dash){% endif %}</option>
+                            <option value="{{ u.username|lower }}">{{ u.name }}{% if u.username ends with '-' %} (dash){% endif %}</option>
                         {% endfor %}
                     </datalist>
                 </li>
@@ -47,22 +48,22 @@
                     <label>Permission Type</label>
                     {% if availableTypes|length > 1 %}
                         <ul class="radio-grid radio-grid--two">
-                            {% for user_type, human in availableTypes %}
+                            {% for user_type in availableTypes %}
 
                                 {% set isSelected = form.type == user_type ? true : false %}
 
                                 <li>
                                     <input id="perm-{{ user_type }}" type="radio" name="type" value="{{ user_type }}"{{ isSelected ? ' checked' : '' }}>
-                                    <label for="perm-{{ user_type }}">{{ human }}</label>
+                                    <label for="perm-{{ user_type }}">{{ user_type|capitalize }}</label>
                                 </li>
                             {% endfor %}
                         </ul>
                     {% else %}
                         <ul class="radio-grid radio-grid--two">
-                            {% for user_type, human in availableTypes %}
+                            {% for user_type in availableTypes %}
                                 <li>
                                     <input id="perm-{{ user_type }}" type="radio" name="type" value="{{ user_type }}" checked>
-                                    <label for="perm-{{ user_type }}">{{ human }}</label>
+                                    <label for="perm-{{ user_type }}">{{ user_type|capitalize }}</label>
                                 </li>
                             {% endfor %}
                         </ul>
@@ -92,7 +93,7 @@
             <li>{{ application.key }}</li>
 
             <li>GitHub Source</li>
-            <li>{{ macros.gitsource(application) }}</li>
+            <li>{{ git_macros.gitsource(application) }}</li>
         </ul>
     </div>
 {% endblock %}
@@ -104,11 +105,11 @@
     <section class="details-box">
         <ul class="list--bare mbn">
             <li class="list--legend">
-                <p class="mbn mrs">{{ macros.status('Deployment', 'info') }}</p>
-                <p class="mbn">Users granted deployment permissions can deploy an application to non-prod or prod environments (or both).</p>
+                <p class="mbn mrs">{{ macros.status('Member', 'info') }}</p>
+                <p class="mbn">Users granted member access can create builds and push to non-prod environments</p>
             </li>
             <li class="list--legend">
-                <p class="mbn mrs">{{ macros.status('Lead', 'notice') }}</p>
+                <p class="mbn mrs">{{ macros.status('Owner', 'notice') }}</p>
                 <p class="mbn">
                     Leads can manage their application, its environments, and encrypted configuration. They can deploy to non-prod environments and grant non-prod access to others.
                 </p>

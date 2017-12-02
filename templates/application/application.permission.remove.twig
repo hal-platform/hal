@@ -1,5 +1,6 @@
 {% extends 'base.twig' %}
 {% import "macros.twig" as macros %}
+{% import "macros.git.twig" as git_macros %}
 {% import "macros.form.twig" as form_macros %}
 
 {% set page_title = 'Manage Application Permissions : ' ~ application.name %}
@@ -28,15 +29,15 @@
                     <ul class="list--bare">
                         {% for perm in permissions %}
                             <li>
-                                <label class="checkbox--switch">
-                                    <input type="checkbox" name="permissions[]" value="{{ perm.original.id }}" {{ perm.original.id in form.permissions ? ' checked' : '' }}>
-                                    <b class="checkbox--switch__pill"></b>
-                                    {% if perm.type == 'prod' %}
-                                        {{ perm.original.user.handle|lower }} {{ macros.status('Prod', 'error') }}
-                                    {% elseif perm.type == 'lead' %}
-                                        {{ perm.original.user.handle|lower }} {{ macros.status('Owner', 'notice') }}
+                                <label class="checkbox-toggle">
+                                    <input type="checkbox" name="permissions[]" value="{{ perm.id }}" {{ perm.id in form.permissions ? ' checked' : '' }}>
+                                    <b class="checkbox-toggle--pill"></b>
+                                    {% if perm.type == 'admin' or perm.type == 'super' %}
+                                        {{ perm.user.username|lower }} {{ macros.status('Prod', 'error') }}
+                                    {% elseif perm.type == 'owner' %}
+                                        {{ perm.user.username|lower }} {{ macros.status('Owner', 'notice') }}
                                     {% else %}
-                                        {{ perm.original.user.handle|lower }}
+                                        {{ perm.user.username|lower }} {{ macros.status('Member', 'info') }}
                                     {% endif %}
                                 </label>
                             </li>
@@ -64,10 +65,10 @@
             <li>{{ application.name }}</li>
 
             <li>Identifier</li>
-            <li>{{ application.key }}</li>
+            <li>{{ application.identifier }}</li>
 
             <li>GitHub Source</li>
-            <li>{{ macros.gitsource(application) }}</li>
+            <li>{{ git_macros.gitsource(application) }}</li>
         </ul>
     </div>
 {% endblock %}
@@ -79,18 +80,18 @@
     <section class="details-box">
         <ul class="list--bare mbn">
             <li class="list--legend">
-                <p class="mbn mrs">{{ macros.status('Deployment', 'info') }}</p>
-                <p class="mbn">Users granted deployment permissions can deploy an application to non-prod or prod environments (or both).</p>
+                <p class="mbn mrs">{{ macros.status('Member', 'info') }}</p>
+                <p class="mbn">Users granted member permissions can release an application to non-prod</p>
             </li>
             <li class="list--legend">
                 <p class="mbn mrs">{{ macros.status('Owner', 'notice') }}</p>
                 <p class="mbn">
-                    Owners can manage their application, its environments, and encrypted configuration. They can deploy to non-prod environments and grant non-prod access to others.
+                    Owners can manage their application, its environments, and encrypted configuration. They can release to non-prod environments and grant non-prod access to others.
                 </p>
             </li>
             <li class="list--legend">
                 <p class="mbn mrs">{{ macros.status('Prod', 'error') }}</p>
-                <p class="mbn">Users granted prod deployment permissions can deploy an application to prod environments.</p>
+                <p class="mbn">Users granted prod release permissions can release an application to prod environments.</p>
             </li>
         </ul>
     </section>

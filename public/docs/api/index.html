@@ -231,7 +231,7 @@
       <div class="content">
         <h1 id="introduction">Introduction</h1>
 
-<p>This is documentation for the Hal API. You can use the API to access resources such as Applications, Servers, Deployments, Builds and Pushes.</p>
+<p>This is documentation for the Hal API. You can use the API to access resources such as Applications, Groups, Deployments, Builds and Pushes.</p>
 
 <aside class="notice">
     <b>Please Note</b> -
@@ -513,12 +513,12 @@ standards for the hypermedia standard and <strong>is not unique to the Hal appli
 <td>An environment such as <strong>staging</strong> or <strong>production</strong></td>
 </tr>
 <tr>
-<td>Server</td>
+<td>Group</td>
 <td>Physical server or AWS region</td>
 </tr>
 <tr>
 <td>target</td>
-<td>Server + application + metadata pairing</td>
+<td>Group + application + metadata pairing</td>
 </tr>
 <tr>
 <td>User</td>
@@ -580,8 +580,8 @@ standards for the hypermedia standard and <strong>is not unique to the Hal appli
         </span><span class="s2">"environments"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
             </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/environments"</span><span class="w">
         </span><span class="p">},</span><span class="w">
-        </span><span class="s2">"servers"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/servers"</span><span class="w">
+        </span><span class="s2">"groups"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/groups"</span><span class="w">
         </span><span class="p">},</span><span class="w">
         </span><span class="s2">"users"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
             </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/users"</span><span class="w">
@@ -1085,9 +1085,9 @@ these environments are usually more sensitive.</p>
 </tr>
 </tbody></table>
 
-          <h1 id="servers">Servers</h1>
+          <h1 id="groups">Groups</h1>
 
-<p>A <strong>server</strong> can either be an actual physical server as in the case of on-premise deployments,
+<p>A <strong>group</strong> can either be an actual physical server as in the case of on-premise deployments,
 or a <strong>region</strong> for aws-based deployments.</p>
 
 <h3 id="attributes">Attributes</h3>
@@ -1102,38 +1102,38 @@ or a <strong>region</strong> for aws-based deployments.</p>
 </thead><tbody>
 <tr>
 <td>id</td>
-<td>Unique server ID</td>
+<td>Unique group ID</td>
 <td>number</td>
 <td><code class="prettyprint">42</code></td>
 </tr>
 <tr>
 <td>type</td>
-<td>Type of server</td>
+<td>Type of group</td>
 <td>string</td>
 <td><code class="prettyprint">rsync</code>, <code class="prettyprint">cd</code>, <code class="prettyprint">eb</code>, <code class="prettyprint">s3</code>, <code class="prettyprint">script</code></td>
 </tr>
 <tr>
 <td>name</td>
-<td>Hostname or region, depending on server type</td>
+<td>Hostname or region, depending on group type</td>
 <td>string</td>
 <td><code class="prettyprint">localhost</code>, <code class="prettyprint">us-east-1</code></td>
 </tr>
 <tr>
 <td>environment</td>
-<td><strong>Embedded</strong> - Environment this server belongs to</td>
+<td><strong>Embedded</strong> - Environment this group belongs to</td>
 <td>resource</td>
 <td></td>
 </tr>
 <tr>
 <td>targets</td>
-<td><strong>Link</strong> - List of targets for this server</td>
+<td><strong>Link</strong> - List of targets for this group</td>
 <td>list</td>
 <td></td>
 </tr>
 </tbody></table>
 
-<h2 id="get-all-servers">Get All Servers</h2>
-<pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/servers</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<h2 id="get-all-groups">Get All Groups</h2>
+<pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/groups</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
 <span class="na">Host</span><span class="p">:</span> <span class="s">hal.computer</span>
 <span class="na">Authorization</span><span class="p">:</span> <span class="s">token "HAL_TOKEN"</span>
@@ -1143,8 +1143,8 @@ or a <strong>region</strong> for aws-based deployments.</p>
     <span class="s1">'headers'</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">'token %s'</span><span class="p">,</span> <span class="nb">getenv</span><span class="p">(</span><span class="s1">'HAL_TOKEN'</span><span class="p">))]</span>
 <span class="p">]);</span>
 
-<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$client</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'/api/servers'</span><span class="p">);</span>
-</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://hal.computer/api/servers"</span>
+<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$client</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'/api/groups'</span><span class="p">);</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://hal.computer/api/groups"</span>
 </code></pre>
 <blockquote>
 <h3 id="response">Response</h3>
@@ -1154,35 +1154,35 @@ or a <strong>region</strong> for aws-based deployments.</p>
 </code></pre><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
   </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"next"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/servers/page/2"</span><span class="w">
+        </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/groups/page/2"</span><span class="w">
     </span><span class="p">},</span><span class="w">
     </span><span class="s2">"last"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/servers/page/2"</span><span class="w">
+        </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/groups/page/2"</span><span class="w">
     </span><span class="p">},</span><span class="w">
-    </span><span class="s2">"servers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="s2">"groups"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
       </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/servers/1"</span><span class="p">,</span><span class="w">
-        </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"qltestserver"</span><span class="w">
+        </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/groups/1"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"qltestgroup"</span><span class="w">
       </span><span class="p">},</span><span class="w">
       </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/servers/2"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/groups/2"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"localhost"</span><span class="w">
       </span><span class="p">},</span><span class="w">
       </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/servers/3"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/groups/3"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"test.example.com"</span><span class="w">
       </span><span class="p">},</span><span class="w">
       </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/servers/4"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/groups/4"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"S3 (us-east-1)"</span><span class="w">
       </span><span class="p">},</span><span class="w">
       </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/servers/5"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/groups/5"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CD (us-east-1)"</span><span class="w">
       </span><span class="p">}</span><span class="w">
     </span><span class="p">],</span><span class="w">
     </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/servers"</span><span class="w">
+        </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/groups"</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">},</span><span class="w">
   </span><span class="s2">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
@@ -1190,15 +1190,15 @@ or a <strong>region</strong> for aws-based deployments.</p>
   </span><span class="s2">"page"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
-<p>This endpoint retrieves all servers.</p>
+<p>This endpoint retrieves all groups.</p>
 
 <aside class="notice">
-    This endpoint is <b>paged</b>. The maximum size of each page is <b>25 servers</b>.
+    This endpoint is <b>paged</b>. The maximum size of each page is <b>25 groups</b>.
 </aside>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">GET https://hal.computer/api/servers(/page/{page})</code></p>
+<p><code class="prettyprint">GET https://hal.computer/api/groups(/page/{page})</code></p>
 
 <h3 id="url-parameters">URL Parameters</h3>
 
@@ -1214,8 +1214,8 @@ or a <strong>region</strong> for aws-based deployments.</p>
 </tr>
 </tbody></table>
 
-<h2 id="get-server">Get Server</h2>
-<pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/servers/4</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<h2 id="get-group">Get Group</h2>
+<pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/groups/4</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
 <span class="na">Host</span><span class="p">:</span> <span class="s">hal.computer</span>
 <span class="na">Authorization</span><span class="p">:</span> <span class="s">token "HAL_TOKEN"</span>
@@ -1225,8 +1225,8 @@ or a <strong>region</strong> for aws-based deployments.</p>
     <span class="s1">'headers'</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">'token %s'</span><span class="p">,</span> <span class="nb">getenv</span><span class="p">(</span><span class="s1">'HAL_TOKEN'</span><span class="p">))]</span>
 <span class="p">]);</span>
 
-<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$client</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'/api/servers/4'</span><span class="p">);</span>
-</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://hal.computer/api/servers/4"</span>
+<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$client</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'/api/groups/4'</span><span class="p">);</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://hal.computer/api/groups/4"</span>
 </code></pre>
 <blockquote>
 <h3 id="response">Response</h3>
@@ -1236,7 +1236,7 @@ or a <strong>region</strong> for aws-based deployments.</p>
 </code></pre><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
     </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/servers/4"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/groups/4"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"S3 (us-east-1)"</span><span class="w">
         </span><span class="p">},</span><span class="w">
         </span><span class="s2">"targets"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
@@ -1264,11 +1264,11 @@ or a <strong>region</strong> for aws-based deployments.</p>
     </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"us-east-1"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
-<p>This endpoint retrieves a specific server.</p>
+<p>This endpoint retrieves a specific group.</p>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">GET https://hal.computer/servers/{id}</code></p>
+<p><code class="prettyprint">GET https://hal.computer/groups/{id}</code></p>
 
 <h3 id="url-parameters">URL Parameters</h3>
 
@@ -1280,7 +1280,7 @@ or a <strong>region</strong> for aws-based deployments.</p>
 </thead><tbody>
 <tr>
 <td>id</td>
-<td>The unique ID of the server</td>
+<td>The unique ID of the group</td>
 </tr>
 </tbody></table>
 
@@ -1288,11 +1288,11 @@ or a <strong>region</strong> for aws-based deployments.</p>
 
 <p>A deployment target in the <strong>Hal domain model</strong> is not an action, but a resource.</p>
 
-<p>For example, a <strong>server</strong> + a <strong>path</strong> is a target. This allows multiple applications to be deployed to the same server.
-For AWS-based deployments, <strong>servers</strong> are regions, so targets are the deployment details such as the AWS service
+<p>For example, a <strong>group</strong> + a <strong>path</strong> is a target. This allows multiple applications to be deployed to the same group.
+For AWS-based deployments, <strong>groups</strong> are regions, so targets are the deployment details such as the AWS service
 (such as Elastic Beanstalk application name, or CodeDeploy source S3 bucket, etc).</p>
 
-<p>Targets are unique pairings between a server and an application.</p>
+<p>Targets are unique pairings between a group and an application.</p>
 
 <h3 id="attributes">Attributes</h3>
 
@@ -1306,7 +1306,7 @@ For AWS-based deployments, <strong>servers</strong> are regions, so targets are 
 </thead><tbody>
 <tr>
 <td>id</td>
-<td>Unique server ID</td>
+<td>Unique group ID</td>
 <td>number</td>
 <td><code class="prettyprint">502</code></td>
 </tr>
@@ -1320,7 +1320,7 @@ For AWS-based deployments, <strong>servers</strong> are regions, so targets are 
 <td>url</td>
 <td><strong>Optional</strong> - Full URL to access application</td>
 <td>string</td>
-<td><code class="prettyprint">http://server1.example.com</code></td>
+<td><code class="prettyprint">http://group1.example.com</code></td>
 </tr>
 <tr>
 <td>configuration</td>
@@ -1332,7 +1332,7 @@ For AWS-based deployments, <strong>servers</strong> are regions, so targets are 
 <td>pretty_name</td>
 <td>Pretty name formatted for humans</td>
 <td>string</td>
-<td><code class="prettyprint">qltestserver</code></td>
+<td><code class="prettyprint">qltestgroup</code></td>
 </tr>
 <tr>
 <td>detail</td>
@@ -1341,8 +1341,8 @@ For AWS-based deployments, <strong>servers</strong> are regions, so targets are 
 <td><code class="prettyprint">Internal (Rsync): /test/path</code></td>
 </tr>
 <tr>
-<td>server</td>
-<td><strong>Embedded</strong> - Server this target belongs to</td>
+<td>group</td>
+<td><strong>Embedded</strong> - Group this target belongs to</td>
 <td>resource</td>
 <td></td>
 </tr>
@@ -1502,7 +1502,7 @@ For AWS-based deployments, <strong>servers</strong> are regions, so targets are 
 <td>script_context</td>
 <td>Context data passed to deploy scripts</td>
 <td>string,null</td>
-<td><code class="prettyprint">server-pool1</code></td>
+<td><code class="prettyprint">group-pool1</code></td>
 </tr>
 </tbody></table>
 
@@ -1591,9 +1591,9 @@ For AWS-based deployments, <strong>servers</strong> are regions, so targets are 
         </span><span class="p">}</span><span class="w">
     </span><span class="p">},</span><span class="w">
     </span><span class="s2">"_embedded"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"server"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"group"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
             </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1234</span><span class="w">
-            </span><span class="err">//server</span><span class="w">
+            </span><span class="err">//group</span><span class="w">
         </span><span class="p">}</span><span class="w">
     </span><span class="p">},</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">502</span><span class="p">,</span><span class="w">

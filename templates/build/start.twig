@@ -27,22 +27,23 @@
 
     <form method="post" name="start-build">
 
-        <input type="hidden" name="environment" value="{{ form.environment }}">
-
         {% block select_environment %}
             <h2 class="leader">Select Environment</h2>
 
+            {% if environments %}
             <ul class="radio-grid radio-grid--tri">
                 {% for env in environments %}
+                    {% set isSelected = form.environment == env.id or environments|length == 1 %}
                     <li>
-                        {% if form.environment == env.id or environments|length == 1 %}
-                            <label class="radio-grid--fake-selected-item">{{ env.name }}</label>
-                        {% else %}
-                            <a class="radio-grid--fake-item" href="{{ uriFor('build.start', {'application': application.id, 'environment': env.id}) }}">{{ env.name }}</a>
-                        {% endif %}
+                        <input class="js-environment-selector" id="env-{{ env.id }}" type="radio" name="environment" value="{{ env.id }}"{{ isSelected ? 'checked' : '' }}>
+                        <label for="env-{{ env.id }}">{{ env.name }}</label>
                     </li>
                 {% endfor %}
             </ul>
+            {% else %}
+                {% set alert_message = 'There are no buildable environments for this application. Targets must added.' %}
+                {{ macros.alert('error', alert_message) }}
+            {% endif %}
         {% endblock %}
 
         {% block select_build %}
@@ -116,22 +117,22 @@
 {% block start_deploy %}
 
     {% if environments %}
-        <h2 class="leader mbn">Select Deployment <small>(optional)</small></h2>
-        <p class="trailer"><span>Deployments will only be triggered if the build succeeds. Alternatively, you can manually deploy builds once finished.</span></p>
+        <h2 class="leader mbn">Select Target <small>(optional)</small></h2>
+        <p class="trailer"><span>Targets will only be triggered if the build succeeds. Alternatively, you can manually deploy builds once finished.</span></p>
 
         <table class="table--spacing-large table--striped">
             <thead>
                 <tr>
                     <th>Deployment</th>
                     <th>Code Reference</th>
-                    <th>Last Pushed</th>
+                    <th>Last Released</th>
                     <th class="js-toggle-container mvn tr"></th>
                 </tr>
             </thead>
 
             <tbody>
                 {% for target in available_targets %}
-                    {{ deploy_macros.render_deployment_row(target, target.push, '', can_deploy) }}
+                    {{ deploy_macros.render_deployment_row(target, target.release, '', can_deploy) }}
                 {% endfor %}
             </tbody>
         </table>
@@ -221,7 +222,7 @@
                         {{ macros.icon('tag') }}
                         {{ tag.name }} <br />
 
-                        <a href="{{ githubReleaseUrl(application.githubOwner, application.githubRepo, tag.name) }}">{{ tag.object.sha|commit }}</a>
+                        <a href="{{ githubReleaseUrl(application.github.owner, application.github.repository, tag.name) }}">{{ tag.object.sha|commit }}</a>
                         {{ macros.icon('github') }}
                     </label>
                 </li>
@@ -257,7 +258,7 @@
                         <br />
 
                         {% set label_style = "github__pr" %}
-                        {% if pull.head.user.login|lower == current_user.handle|lower %}
+                        {% if pull.head.user.login|lower == current_user.username|lower %}
                             {% set label_style = label_style ~ " github__pr--owner" %}
                         {% endif %}
 
@@ -303,7 +304,7 @@
                         <br />
 
                         {% set label_style = "github__pr" %}
-                        {% if pull.head.user.login|lower == current_user.handle|lower %}
+                        {% if pull.head.user.login|lower == current_user.username|lower %}
                             {% set label_style = label_style ~ " github__pr--owner" %}
                         {% endif %}
 

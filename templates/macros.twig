@@ -1,3 +1,20 @@
+
+{#
+Alert banners
+
+Example:
+```
+<div class="alert-bar--error">
+    <div class="alert-bar-icon">
+        <svg class="icon"><use xlink:href="/icons.svg#cross-2"></use></svg>
+    </div>
+    <div class="alert-bar-contents">
+        <h4>This is an alert</h4>
+        <p>More detail is included here.</p>
+    </div>
+</div>
+```
+#}
 {% macro alert(type, title, details, isRaw) %}
     {% set isRaw = isRaw|default(false) %}
 
@@ -28,83 +45,14 @@
     </div>
 {% endmacro %}
 
-{% macro gitref(build, sliced, isCurrent, hideTooltip) %}
-    {% import _self as self_macros %}
+{#
+An svg icon
 
-    {% set sliced = sliced|default(false) %}
-    {% set hideTooltip = hideTooltip|default(false) %}
-
-    {% set resolved = build.branch|gitref %}
-    {% if resolved %}
-        {% set type = resolved|first %}
-        {% set ref = resolved|last %}
-
-        {% set icontype = 'branch' %}
-        {% if (type == 'pull') %}{% set icontype = 'pull' %}{% endif %}
-        {% if (type == 'tag') %}{% set icontype = 'tag' %}{% endif %}
-        {% if (type == 'commit') %}{% set icontype = 'commit' %}{% endif %}
-
-        {% if type in ['branch', 'tag'] and sliced and ref.length > 20 %}
-            {% set ref = ref[0:20] %}
-        {% endif %}
-
-        <a href="{{ githubReferenceUrl(build.application.githubOwner, build.application.githubRepo, build.branch) }}">
-            {% if type == 'pull' %}
-                Pull Request {{ ref }}
-            {% elseif type == 'tag' %}
-                Release {{ ref }}
-            {% elseif type == 'commit' %}
-                Commit {{ ref|commit }}
-            {% elseif type == 'branch' %}
-                {{ ref }}
-            {% endif %}
-        </a>
-
-        {% set iconcolor = '' %}
-        {% if (isCurrent is same as(true)) %}{% set iconcolor = 'icon--success' %}{% endif %}
-        {% if (isCurrent is same as(false)) %}{% set iconcolor = 'icon--warning' %}{% endif %}
-
-        {% if not hideTooltip and isCurrent is not same as(null) %}
-            {% if isCurrent is same as(true) %}
-
-                <span class="hint--top" aria-label="This commit is update to date with HEAD">
-                    {{ self_macros.icon(icontype, iconcolor) }}
-                </span>
-            {% elseif isCurrent is same as(false) %}
-                <span class="hint--top" aria-label="This commit is behind HEAD">
-                    {{ self_macros.icon(icontype, iconcolor) }}
-                </span>
-            {% endif %}
-        {% else %}
-            {{ self_macros.icon(icontype, iconcolor) }}
-        {% endif %}
-
-    {% endif %}
-
-{% endmacro %}
-
-{% macro gitsource(application) %}
-    {% import _self as self_macros %}
-    <a href="{{ githubRepoUrl(application.githubOwner, application.githubRepo) }}">{{ application.githubOwner }}/{{ application.githubRepo }}</a> {{ self_macros.icon('github') }}
-{% endmacro %}
-
-{% macro gitcommit(build) %}
-    {% import _self as self_macros %}
-
-    {% set resolved = build.commit|gitref %}
-    {% if resolved %}
-        {% set ref = resolved|last %}
-
-        <a href="{{ githubCommitUrl(build.application.githubOwner, build.application.githubRepo, build.commit) }}">
-            {{ ref|commit }}
-        </a>
-        {{ self_macros.icon('commit') }}
-
-    {% endif %}
-
-{% endmacro %}
-
-{# Icon #}
+Example:
+```
+<svg class="icon"><use xlink:href="/icons.svg#tick"></use></svg>
+```
+#}
 {% macro icon(icon, class, title) %}
     {% set class = class|default('') %}
     {% set title = title|default('') %}
@@ -117,7 +65,18 @@
 
 {% endmacro %}
 
-{# Status Block - Colorize message with icon #}
+{#
+Status Block
+- Icon is optional
+
+Example:
+```
+<span class="status-block--info">
+    <svg class="icon"><use xlink:href="/icons.svg#dashboard"></use></svg>
+    Disabled
+</span>
+```
+#}
 {% macro status(msg, type, icon) %}
     {% import _self as self_macros %}
 
@@ -136,7 +95,14 @@
 
 {% endmacro %}
 
-{# Status Icon - icon prefix for a message #}
+{#
+Status Icon
+
+Example:
+```
+<span class="status-icon--warning">Disabled</span>
+```
+#}
 {% macro status_icon(contents, type, extra_attributes) %}
     {% set type = type|default('info') %}
     {% set extra = extra_attributes|default({}) %}
@@ -150,22 +116,30 @@
 
 {% endmacro %}
 
+{#
+Job Status
+
+Example:
+```
+<span class="status-icon--success" data-build="123456" data-status="success">Success</span>
+```
+#}
 {% macro job_status(job, allowUpdates) %}
     {% import _self as self_macros %}
     {% set allowUpdates = allowUpdates|default(false) %}
 
-    {% if job.status == 'Success' %}
+    {% if job.status == 'success' %}
         {{ self_macros.status_icon(job.status, 'success') }}
 
-    {% elseif job.status in ['Error'] %}
+    {% elseif job.status in ['failure'] %}
         {{ self_macros.status_icon(job.status, 'error') }}
 
-    {% elseif job.status in ['Removed'] %}
+    {% elseif job.status in ['removed'] %}
         {{ self_macros.status_icon(job.status, 'info') }}
 
     {% elseif allowUpdates %}
-        {% if job is push %}
-            {{ self_macros.status_icon(job.status, 'thinking', {'data-push': job.id, 'data-status': job.status}) }}
+        {% if job is release %}
+            {{ self_macros.status_icon(job.status, 'thinking', {'data-release': job.id, 'data-status': job.status}) }}
         {% else %}
             {{ self_macros.status_icon(job.status, 'thinking', {'data-build': job.id, 'data-status': job.status}) }}
         {% endif %}
@@ -176,6 +150,17 @@
 
 {% endmacro %}
 
+{#
+Job Status Prefix
+- Prefix the status dot to the job ID
+
+Example:
+```
+<span class="status-icon--success" data-build="123456" data-status="success">
+    Build <a href="/build/123456">123456</a>
+</span>
+```
+#}
 {% macro job_status_prefix(job, withoutPrefix, allowThinking) %}
     {% import _self as self_macros %}
 
@@ -188,16 +173,16 @@
         {% set allowThinking = true %}
     {% endif %}
 
-    {% if job is push %}
+    {% if job is release %}
 
-        {% set prefix = withoutPrefix ? '' : 'Push ' %}
+        {% set prefix = withoutPrefix ? '' : 'Release ' %}
         {% set push_link = self_macros.job_status_prefix_link(job, prefix) %}
 
-        {% if job.status == 'Success' %}
+        {% if job.status == 'success' %}
             {{ self_macros.status_icon(push_link, 'success') }}
-        {% elseif job.status in ['Error'] %}
+        {% elseif job.status in ['failure'] %}
             {{ self_macros.status_icon(push_link, 'error') }}
-        {% elseif job.status in ['Removed'] %}
+        {% elseif job.status in ['removed'] %}
             {{ self_macros.status_icon(push_link, 'info') }}
         {% elseif allowThinking %}
             {{ self_macros.status_icon(push_link, 'thinking', {'data-push': job.id, 'data-status': job.status}) }}
@@ -210,11 +195,11 @@
         {% set prefix = withoutPrefix ? '' : 'Build ' %}
         {% set build_link = self_macros.job_status_prefix_link(job, prefix) %}
 
-        {% if job.status == 'Success' %}
+        {% if job.status == 'success' %}
             {{ self_macros.status_icon(build_link, 'success') }}
-        {% elseif job.status in ['Error'] %}
+        {% elseif job.status in ['error'] %}
             {{ self_macros.status_icon(build_link, 'error') }}
-        {% elseif job.status in ['Removed'] %}
+        {% elseif job.status in ['removed'] %}
             {{ self_macros.status_icon(build_link, 'info') }}
         {% elseif allowThinking %}
             {{ self_macros.status_icon(build_link, 'thinking', {'data-build': job.id, 'data-status': job.status}) }}
@@ -226,9 +211,18 @@
 
 {% endmacro %}
 
+{#
+Job Status Prefix Link
+- Link to the job page
+
+Example:
+```
+Build <a href="/build/123456">123456</a>
+```
+#}
 {% macro job_status_prefix_link(job, prefix) %}
-    {% if job is push %}
-        {{ prefix }}<a href="{{ uriFor('push', {'push': job.id}) }}">{{ job.id|formatPushId }}</a>
+    {% if job is release %}
+        {{ prefix }}<a href="{{ uriFor('release', {'release': job.id}) }}">{{ job.id|formatPushId }}</a>
     {% else %}
         {{ prefix }}<a href="{{ uriFor('build', {'build': job.id}) }}">{{ job.id|formatBuildId }}</a>
     {% endif %}

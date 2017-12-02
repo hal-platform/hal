@@ -1,0 +1,42 @@
+{% extends 'base.twig' %}
+{% import 'macros.pagination.twig' as pagination %}
+{% set js_components = ["job.updater"] %}
+
+{% set page_title = "Release History : " ~ application.name %}
+
+{% block content %}
+
+    <div class="nav--page">
+        <h1>Release History - <b>{{ application.name }}</b></h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Back to Application Dashboard</a>
+        </p>
+    </div>
+
+    {{ block('search') }}
+
+    {% include '_partial-job/release-table.twig' with {'releases': releases} only %}
+
+    {{ pagination.pagination(page, last, 'release.history', {'application': application.id}, {search: search_filter}) }}
+
+{% endblock %}
+
+{% block search %}
+    <h3>Search by reference:</h3>
+    <form method="get" class="search-filter">
+        <input
+            class="text-input"
+            type="text"
+            name="search"
+            autocomplete="off"
+            value="{{ search_filter }}"
+            placeholder="Examples: Branch name, commit SHA, pull/#, tag/# or env:$ENV_NAME">
+
+        <input class="btn" type="submit" value="Filter">
+
+        {% if search_filter %}
+            <a class="btn btn--action" href="{{ uriFor('release.history.page1', {'application': application.id}) }}">Reset</a>
+        {% endif %}
+    </form>
+{% endblock %}

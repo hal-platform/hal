@@ -4,12 +4,12 @@
 
 {% set page_title = "Manage Permissions" %}
 
-{% set can_remove = isUserAdminOrSuper(current_user) %}
-{% if isUserAdmin(current_user) and user_types.btn_pusher|length < 2 %}
+{% set can_remove = current_authorizations.isAdmin or current_authorizations.isSuper %}
+{% if current_authorizations.isAdmin and user_types.admin|length < 2 %}
     {% set can_remove = false %}
 {% endif %}
 
-{% set can_remove_super = isUserSuper(current_user) and user_types.super|length > 1 %}
+{% set can_remove_super = current_authorizations.isSuper and user_types.super|length > 1 %}
 
 {% block content %}
 
@@ -24,16 +24,20 @@
 
     <p>Permissions can be granted to a user on the <b>Users</b> page, or to a user for an application on the <b>Manage Application</b> page.</p>
 
-    {{ block('anchor_nav') }}
+    <ul>
+        <li><a href="#app-owners">Application Owners</a></li>
+        <li><a href="#app-members">Application Members</a></li>
+        <li><a href="#super">Hal Administrators</a></li>
+    </ul>
 
-    <h2 id="app-owners">Application Owners</h2>
+    <h2 id="app-owners">Owners</h2>
     {% if owners %}
         <table class="table--spacing-medium table--striped">
             <thead>
                 <tr>
                     <th class="t20">Username</th>
                     <th>Email</th>
-                    <th>Applications</th>
+                    <th>Scope</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,20 +45,24 @@
                     {% set user = type.user %}
 
                     <tr>
-                        <td><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.handle }}</a></td>
+                        <td><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.username }}</a></td>
                         <td>{{ user.email }}</td>
 
                         <td>
                             <ul>
-                            {% for perm in type.permissions %}
+                                {% for perm in type.permissions %}
                                 <li>
-                                    <a href="{{ uriFor('application', {'application': perm.application.id}) }}">{{ perm.application.name }}</a>
-                                    {% if can_remove %}
-                                        (<a style="color:red;" href="{{ uriFor('admin.permissions.type.remove', {'user': user.id, 'user_type': perm.id}) }}">Remove</a>)
+                                    {% if perm.application %}
+                                        <a href="{{ uriFor('application', {'application': perm.application.id}) }}">{{ perm.application.name }}</a>
+                                    {% elseif perm.organization %}
+                                        <a href="{{ uriFor('organization', {'organization': perm.organization.id}) }}">{{ perm.organization.name }}</a>
                                     {% endif %}
 
+                                    {% if can_remove %}
+                                        (<a style="color:red;" href="{{ uriFor('admin.permissions.remove', {'user': user.id, 'user_permission': perm.id}) }}">Remove</a>)
+                                    {% endif %}
                                 </li>
-                            {% endfor %}
+                                {% endfor %}
                             </ul>
                         </td>
                     </tr>
@@ -65,37 +73,39 @@
         <p>There are no application owners.</p>
     {% endif %}
 
-    <h2 id="deploy">Deployment Permissions</h2>
-    {% if deploy %}
+    <h2 id="app-members">Members</h2>
+    {% if members %}
         <table class="table--spacing-medium table--striped">
             <thead>
                 <tr>
                     <th class="t20">Username</th>
                     <th>Email</th>
-                    <th>Applications</th>
+                    <th>Scope</th>
                 </tr>
             </thead>
             <tbody>
-                {% for permission in deploy %}
+                {% for permission in members %}
                     {% set user = permission.user %}
 
                     <tr>
-                        <td><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.handle }}</a></td>
+                        <td><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.username }}</a></td>
                         <td>{{ user.email }}</td>
 
                         <td>
                             <ul>
-                            {% for perm in permission.permissions %}
+                                {% for perm in permission.permissions %}
                                 <li>
-                                    {% if perm.isProduction %}
-                                        {{ macros.status('Prod', 'error') }}
+                                    {% if perm.application %}
+                                        <a href="{{ uriFor('application', {'application': perm.application.id}) }}">{{ perm.application.name }}</a>
+                                    {% elseif perm.organization %}
+                                        <a href="{{ uriFor('organization', {'organization': perm.organization.id}) }}">{{ perm.organization.name }}</a>
                                     {% endif %}
-                                    <a href="{{ uriFor('application', {'application': perm.application.id}) }}">{{ perm.application.name }}</a>
+
                                     {% if can_remove %}
-                                        (<a style="color:red;" href="{{ uriFor('admin.permissions.deployment.remove', {'user': user.id, 'user_permission': perm.id}) }}">Remove</a>)
+                                        (<a style="color:red;" href="{{ uriFor('admin.permissions.remove', {'user': user.id, 'user_permission': perm.id}) }}">Remove</a>)
                                     {% endif %}
                                 </li>
-                            {% endfor %}
+                                {% endfor %}
                             </ul>
                         </td>
                     </tr>
@@ -103,65 +113,52 @@
             </tbody>
         </table>
     {% else %}
-        <p>No users have deployment permissions.</p>
+        <p>No users have member permissions.</p>
     {% endif %}
-
-    <h2 id="admin">Deployment Adminstrators</h2>
-    {{ page_macros.userTable(user_types.btn_pusher, 'btn_pusher', can_remove) }}
 
     <h2 id="super">Hal Administrators</h2>
-    {{ page_macros.userTable(user_types.super, 'super', can_remove_super) }}
-
-    <h2>User Types</h2>
-    {% include 'user/partial.user-legend.twig' %}
-
-{% endblock %}
-
-{% block anchor_nav %}
-    <ul>
-        <li><a href="#app-owners">Application Owners</a></li>
-        <li><a href="#deploy">Deployment Permissions</a></li>
-        <li><a href="#admin">Deployment Adminstrators (prod)</a></li>
-        <li><a href="#super">Hal Adminstrators (non-prod)</a></li>
-    </ul>
-{% endblock %}
-
-{% macro userTable(users_by_type, can_remove) %}
-    {% import "macros.twig" as macros %}
-
-    {% if users_by_type %}
+    {% if admins %}
         <table class="table--spacing-medium table--striped">
             <thead>
-                <tr>
-                    <th class="t20">Username</th>
-                    <th>Email</th>
+            <tr>
+                <th class="t20">Username</th>
+                <th>Email</th>
 
-                    {% if can_remove %}
-                        <th></th>
-                    {% endif %}
-                </tr>
+                {% if can_remove %}
+                    <th></th>
+                {% endif %}
+            </tr>
             </thead>
             <tbody>
-                {% for type in users_by_type %}
-                    {% set user = type.user %}
+            {% for permission in admins %}
+                {% set user = permission.user %}
 
-                    <tr>
-                        <td><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.id }}</a></td>
-                        <td>{{ user.handle }}</td>
+                <tr>
+                    <td><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.username }}</a></td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <ul>
+                            {% for perm in permission.permissions %}
+                            <li>
+                                {% if perm.type == 'admin' %}
+                                    Admin
+                                {% endif %}
 
-                        {% if can_remove %}
-                            <td class="tr">
-                                <a style="color:red;" href="{{ uriFor('admin.permissions.type.remove', {'user': user.id, 'user_type': type.id}) }}">Remove</a>
-                            </td>
-                        {% endif %}
-
-                    </tr>
-                {% endfor %}
+                                {% if can_remove %}
+                                    (<a style="color:red;" href="{{ uriFor('admin.permissions.remove', {'user': user.id, 'user_permission': perm.id}) }}">Remove</a>)
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
             </tbody>
         </table>
-
     {% else %}
-        <p>There are no users of this type.</p>
+        There are no Hal administrators.
     {% endif %}
 
-{% endmacro %}
+    <h2>User Types</h2>
+    {% include 'user/partial.user-types.twig' %}
+{% endblock %}

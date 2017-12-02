@@ -12,9 +12,9 @@ use Doctrine\ORM\EntityRepository;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\EncryptedProperty;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Utility\SortingTrait;
+use Hal\Core\Entity\EncryptedProperty;
+use Hal\Core\Entity\Application;
+use Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 

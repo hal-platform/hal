@@ -9,13 +9,13 @@ namespace Hal\UI\Controllers\API\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Application;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\PaginationTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 

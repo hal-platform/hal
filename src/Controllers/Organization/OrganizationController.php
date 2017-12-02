@@ -9,11 +9,11 @@ namespace Hal\UI\Controllers\Organization;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Organization;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Group;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -46,9 +46,10 @@ class OrganizationController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $organization = $request->getAttribute(Group::class);
+        $organization = $request->getAttribute(Organization::class);
 
-        $applications = $this->applicationRepo->findBy(['group' => $organization], ['key' => 'ASC']);
+        $applications = $this->applicationRepo
+            ->findBy(['organization' => $organization], ['identifier' => 'ASC']);
 
         return $this->withTemplate($request, $response, $this->template, [
             'organization' => $organization,

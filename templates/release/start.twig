@@ -1,0 +1,136 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+{% import 'macros.git.twig' as git_macros %}
+{% import 'macros.form.twig' as form_macros %}
+{% import 'macros.start-deploy.twig' as deploy_macros %}
+
+{% set js_components = ["push.start"] %}
+
+{% set page_title = "Start Release : " ~ build.id %}
+
+{% block content %}
+    <div class="nav--page">
+        <h1>Start Release - <b>{{ build.application.name }}</b></h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': build.application.id}) }}">Back to Application Dashboard</a>
+        </p>
+    </div>
+
+    {{ block('meta_details') }}
+
+    {% if statuses %}
+
+        <p>
+            This build can be released to the following servers. Please review the current status of each server below
+            before selecting which servers you wish to deploy to.
+        </p>
+
+        {{ form_macros.formErrors(errors) }}
+
+        {% set pushables = 0 %}
+        {% set canUserPush = current_authorizations(build.application, build.environment) %}
+
+        {% for status in statuses %}
+            {% set inProgress = status.latest.status in ['pending', 'running', 'deploying'] %}
+            {% set needsCredentials = status.target.group.isAWS and not status.target.credential %}
+
+            {% if canUserPush and not inProgress and not needsCredentials %}
+                {% set pushables = pushables + 1 %}
+            {% endif %}
+        {% endfor %}
+
+        {{ block('push_form_table') }}
+
+    {% else %}
+        {{ macros.alert('error', 'This build cannot be deployed!', 'There are no deployments assigned to this environment.') }}
+
+        <p>
+            <a class="btn btn--secondary" href="{{ uriFor('application.dashboard', {'application': build.application.id}) }}">Cancel</a>
+        </p>
+
+    {% endif %}
+
+{% endblock %}
+
+{% block meta_details %}
+    <div class="details-box">
+        <ul class="mbn">
+            <li>Application</li>
+            <li>
+                <a href="{{ uriFor('application', {'application': build.application.id}) }}">{{ build.application.name }}</a>
+            </li>
+
+            <li>Environment</li>
+            <li>{{ build.environment.name }}</li>
+        </ul>
+    </div>
+
+    <h2>Build</h2>
+
+    <div class="details-box">
+        <ul class="mbn">
+            <li>Build Id</li>
+            <li>
+                <a href="{{ uriFor('build', {'build': build.id}) }}">{{ build.id|formatBuildId }}</a>
+            </li>
+
+            <li>User</li>
+            <li>
+                {% if build.user %}
+                    <a href="{{ uriFor('user', {'user': build.user.id}) }}">{{ build.user.name }}</a>
+                {% else %}
+                    Unknown
+                {% endif %}
+            </li>
+
+            <li>Time</li>
+            <li>{{ build.end|html5date }}</li>
+        </ul>
+    </div>
+
+    <h2>Git Reference</h2>
+
+    <div class="details-box">
+        <ul class="mbn">
+            <li>Reference</li>
+            <li>
+                {% set isCurrent = githubCommitIsCurrent(build.application.github.owner, build.application.github.repository, build.reference, build.commit) %}
+                {{ git_macros.gitref(build, false, isCurrent) }}
+            </li>
+
+            <li>Commit</li>
+            <li>{{ git_macros.gitcommit(build) }}</li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block push_form_table %}
+    <form method="post">
+        <table class="table--spacing-large table--striped">
+            <thead>
+                <tr>
+                    <th>Deployment</th>
+                    <th>Code Reference</th>
+                    <th>Last Released</th>
+                    <th class="js-toggle-container mvn tr"></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for status in statuses %}
+                    {{ deploy_macros.render_deployment_row(status.target, status.release, selected, canUserPush, true) }}
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <ul>
+            {% if pushables %}
+                <li><input class="btn btn--action" type="submit" value="Release To Selected Servers" name="submit">
+            {% endif %}
+            <li><a class="btn" href="{{ uriFor('application.dashboard', {'application': build.application.id}) }}">Cancel</a></li>
+        </ul>
+
+    </form>
+{% endblock %}
+

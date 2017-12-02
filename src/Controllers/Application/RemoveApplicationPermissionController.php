@@ -7,19 +7,17 @@
 
 namespace Hal\UI\Controllers\Application;
 
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Flash;
-use Hal\UI\Service\PermissionService;
+use Hal\UI\Security\AuthorizationService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\UserPermission;
-use QL\Hal\Core\Entity\UserType;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\UserPermission;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\URI;
@@ -46,9 +44,9 @@ class RemoveApplicationPermissionController implements ControllerInterface
     private $em;
 
     /**
-     * @var PermissionService
+     * @var AuthorizationService
      */
-    private $permissions;
+    private $authorizationService;
 
     /**
      * @var URI
@@ -58,7 +56,7 @@ class RemoveApplicationPermissionController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $permissionRepo;
+    private $userPermissionsRepository;
     private $typeRepo;
 
     /**
@@ -69,22 +67,21 @@ class RemoveApplicationPermissionController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param PermissionService $permissions
+     * @param AuthorizationService $authorizationService
      * @param URI $uri
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        PermissionService $permissions,
+        AuthorizationService $authorizationService,
         URI $uri
     ) {
         $this->template = $template;
         $this->em = $em;
-        $this->permissions = $permissions;
+        $this->authorizationService = $authorizationService;
         $this->uri = $uri;
 
-        $this->permissionRepo = $em->getRepository(UserPermission::class);
-        $this->typeRepo = $em->getRepository(UserType::class);
+        $this->userPermissionsRepository = $em->getRepository(UserPermission::class);
     }
 
     /**
@@ -117,7 +114,7 @@ class RemoveApplicationPermissionController implements ControllerInterface
         } else {
             $form['permissions'] = [];
             foreach ($permissions as $p) {
-                $form['permissions'][] = $p['original']->id();
+                $form['permissions'][] = $p->id();
             }
         }
 
@@ -151,37 +148,17 @@ class RemoveApplicationPermissionController implements ControllerInterface
      */
     private function getPermissions(Application $application)
     {
-        $deployPermissions = $this->em
+        $applicationPermissions = $this->em
             ->getRepository(UserPermission::class)
             ->findBy(['application' => $application]);
 
-        $leadPermissions = $this->em
-            ->getRepository(UserType::class)
-            ->findBy(['application' => $application]);
-
-        $permissions = [];
-
-        foreach ($deployPermissions as $p) {
-            $permissions[] = [
-                'type' => $p->isProduction() ? 'prod' : 'non-prod',
-                'original' => $p
-            ];
-        }
-
-        foreach ($leadPermissions as $p) {
-            $permissions[] = [
-                'type' => 'lead',
-                'original' => $p
-            ];
-        }
-
-        usort($permissions, function($a, $b) {
-            $a = $a['original']->user()->handle();
-            $b = $b['original']->user()->handle();
+        usort($applicationPermissions, function($a, $b) {
+            $a = $a->user()->username();
+            $b = $b->user()->username();
             return strcasecmp($a, $b);
         });
 
-        return $permissions;
+        return $applicationPermissions;
     }
 
     /**
@@ -193,8 +170,7 @@ class RemoveApplicationPermissionController implements ControllerInterface
     private function handleForm(array $existingPermissions, array $permissions)
     {
         $toRemove = [];
-        foreach ($existingPermissions as $p) {
-            $perm = $p['original'];
+        foreach ($existingPermissions as $perm) {
 
             if (!in_array($perm->id(), $permissions)) {
                 $toRemove[] = $perm;
@@ -209,8 +185,7 @@ class RemoveApplicationPermissionController implements ControllerInterface
 
         # remove and flush cache
         foreach ($toRemove as $perm) {
-            $this->permissions->clearUserCache($perm->user());
-            $this->em->remove($perm);
+            $this->authorizationService->removeUserPermissions($perm, true);
         }
 
         $this->em->flush();

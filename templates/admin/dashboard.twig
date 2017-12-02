@@ -3,14 +3,16 @@
 
 {% set page_title = "Admin Dashboard" %}
 
+{% set is_admin = current_authorizations.isSuper() %}
+
 {% block content %}
     <h1>{{ page_title }}</h1>
 
     <h2 class="leader">Manage Deployments</h2>
     <ul>
         <li>
-            <a href="{{ uriFor('servers') }}" class="btn">
-                {{ macros.icon('server') }} Servers
+            <a href="{{ uriFor('groups') }}" class="btn">
+                {{ macros.icon('server') }} Groups
             </a>
         </li>
         <li>
@@ -42,7 +44,7 @@
     <h2 class="leader">Security</h2>
     <ul>
         <li>
-            <a href="{{ uriFor('admin.credentials') }}" class="btn btn--primary">
+            <a href="{{ uriFor('credentials') }}" class="btn btn--primary">
                 {{ macros.icon('locked') }} Credentials
             </a>
         </li>
@@ -53,45 +55,45 @@
         </li>
     </ul>
 
-    {% if isUserSuper(current_user) %}
+    {% if is_admin %}
         <h2 class="leader">Manage Hal System</h2>
         <ul>
-            <li><a href="{{ uriFor('super.system') }}" class="btn">Build System Status</a></li>
+            <li><a href="{{ uriFor('super.system') }}" class="btn">System Dashboard</a></li>
             <li><a href="{{ uriFor('super.caches') }}" class="btn">Cache Management</a></li>
-            <li><a href="{{ uriFor('super.message') }}" class="btn">Global Message</a></li>
+            <li><a href="{{ uriFor('super.banner') }}" class="btn">Global Banner</a></li>
         </ul>
 
         <h3>Server Information</h3>
         <div class="details-box">
-            <ul class="mbn">
-                <li><b>Hostname</b></li>
+            <ul>
                 <li>
+                    <h6>Hostname</h6>
                     <div class="pre-wrapper">
                         <pre>{{ server_name }}</pre>
                     </div>
                 </li>
 
-                <li><b>Encryption key</b></li>
                 <li>
+                    <h6>Encryption key</h6>
                     <div class="pre-wrapper">
                         <pre>{{ encryption_key }}</pre>
                     </div>
                 </li>
 
-                <li><b>Session Encryption key</b></li>
                 <li>
+                    <h6>Session Encryption key</h6>
                     <div class="pre-wrapper">
                         <pre>{{ session_encryption_key }}</pre>
                     </div>
                 </li>
 
-                <li><b>Hal Push File</b></li>
                 <li>
+                    <h6>Hal Release File</h6>
                     <div class="pre-wrapper">
-                        {% if push_file %}
-                            <pre>{{ push_file }}</pre>
+                        {% if release_file %}
+                            <pre>{{ release_file }}</pre>
                         {% else %}
-                            <pre>No push file found. Are you in dev?</pre>
+                            <pre>No release file found. Are you in dev?</pre>
                         {% endif %}
                     </div>
                 </li>

@@ -51,7 +51,10 @@ services:
         arguments: ['@cookie.handler', '%session.lifetime%']
     slim.global_middleware.user_session:
         class: 'Hal\UI\Middleware\UserSessionGlobalMiddleware'
-        arguments: ['@doctrine.em', '@uri']
+        arguments:
+            - '@doctrine.em'
+            - '@service.authorization'
+            - '@uri'
         calls:
             - ['setLoggerMessageFactory', ['@mcp.logger.factory']]
     slim.global_middleware.flash:
@@ -63,65 +66,9 @@ services:
     slim.global_middleware.srs_business:
         class: 'Hal\UI\Middleware\SrsBusinessGlobalMiddleware'
         arguments: ['@cookie.handler']
-
-    ####################################################################################################################
-    # ERROR & EXCEPTION HANDLING
-    ####################################################################################################################
-
-    logger:
-        parent: 'mcp.logger'
-
-    content_handler:
-        class: 'QL\Panthor\ErrorHandling\ContentHandler\LoggingContentHandler'
-        arguments:
-            - '@panthor.content_handler'
-            - '@logger'
-            - { error: 'critical' }
-
-    ####################################################################################################################
-    # CACHING
-    ####################################################################################################################
-
-    cache:
-        class: 'QL\MCP\Cache\CacheInterface'
-        factory: ['@service_container', 'get']
-        arguments: ['cache.%cache.type.main%']
-
-    cache.github:
-        class: 'QL\MCP\Cache\CacheInterface'
-        factory: ['@service_container', 'get']
-        arguments: ['cache.%cache.type.github%']
-
-    cache.memory:
-        class: 'QL\MCP\Cache\MemoryCache'
-
-    cache.redis:
-        class: 'QL\MCP\Cache\PredisCache'
-        arguments: ['@redis']
-
-    cache.redis_github:
-        class: 'QL\MCP\Cache\PredisCache'
-        parent: 'cache.redis'
-        calls:
-            - ['setMaximumTtl', ['%cache.github.default.ttl%']]
-
-    redis:
-        class: 'Predis\Client'
-        arguments:
-            - '%redis.server%'
-            - { prefix: '%redis.prefix%:' }
-
-    ####################################################################################################################
-    # DOCTRINE-SPECIFIC SERVICES
-    ####################################################################################################################
-
-    doctrine.cache.redis:
-        class: 'QL\Hal\Core\Utility\DoctrinePredisCache'
-        arguments: ['@redis', '%doctrine.cache.ttl%']
-
-    doctrine.utility.lazy.user:
-        class: 'Hal\UI\Utility\LazyUserRetriever'
-        arguments: ['@twig.context']
+    slim.global_middleware.global_banner:
+        class: 'Hal\UI\Middleware\SystemSettingsGlobalMiddleware'
+        arguments: ['@banner']
 
     ####################################################################################################################
     # DOMAIN-SPECIFIC SERVICES
@@ -149,16 +96,17 @@ services:
         class: 'Hal\UI\Service\PermissionService'
         arguments:
             - '@doctrine.em'
-            - '@github'
             - '@json'
-            - '%permissions.check.github%'
         calls:
             - ['setCache', ['@cache']]
             - ['setCacheTTL', ['%cache.permissions.ttl%']]
 
-    global.message:
-        class: 'Hal\UI\Service\GlobalMessageService'
-        arguments: ['@redis']
+    banner:
+        class: 'Hal\UI\System\GlobalBannerService'
+        arguments:
+            - '@doctrine.em'
+            - '@clock'
+            - '@json'
 
     sticky.environment:
         class: 'Hal\UI\Service\StickyEnvironmentService'
@@ -167,22 +115,13 @@ services:
             - '@json'
             - '%cookie.preferences.ttl%'
 
-    stats:
-        class: 'Hal\UI\Service\StatsService'
-        arguments:
-            - '@doctrine.em'
-            - '@clock'
-            - '%date.timezone%'
-        calls:
-            - ['setCache', ['@cache']]
-            - ['setCacheTTL', ['%cache.stats.ttl%']]
-
     service.event_logs:
         class: 'Hal\UI\Service\EventLogService'
         arguments:
             - '@redis'
             - '@json'
             - '@clock'
+            - '@doctrine.em'
 
     job_queue:
         class: 'Hal\UI\Service\JobQueueService'
@@ -192,39 +131,6 @@ services:
     # HELPERS
     ####################################################################################################################
 
-    utility.name.formatter:
-        class: 'Hal\UI\Utility\NameFormatter'
-
-    utility.id.generator:
-        class: 'QL\Hal\Core\JobIdGenerator'
-        arguments:
-            - '%application.major.version%'
-            - '%unique.alphabet%'
-            - '%unique.size%'
-
     utility.time.formatter:
         class: 'Hal\UI\Utility\TimeFormatter'
         arguments: ['@clock', '%date.timezone%']
-
-    ####################################################################################################################
-    # Crypto
-    ####################################################################################################################
-
-    encrypter:
-        class: 'QL\Hal\Core\Crypto\Encrypter'
-        arguments: ['%encrypter.publickey%']
-
-    decrypter:
-        class: 'QL\Hal\Core\Crypto\Decrypter'
-        factory: ['@decrypter.factory', 'getAsymmetricDecrypter']
-        lazy: true
-
-    decrypter.factory:
-        class: 'QL\Hal\Core\Crypto\CryptoFactory'
-        arguments: ['@encrypter.encryptedkey.squished', '%encrypter.secret.path%']
-
-    encrypter.encryptedkey.squished:
-        class: 'stdClass'
-        factory: ['Hal\UI\Application\Stringify', 'squish']
-        arguments: ['%encrypter.encryptedkey%']
-

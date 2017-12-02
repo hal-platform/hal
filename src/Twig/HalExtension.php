@@ -7,14 +7,9 @@
 
 namespace Hal\UI\Twig;
 
-use Hal\UI\Service\GlobalMessageService;
-use Hal\UI\Utility\NameFormatter;
 use Hal\UI\Utility\TimeFormatter;
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Type\EnumType\ServerEnum;
+use Hal\Core\Entity\Build;
+use Hal\Core\Entity\Release;
 use Twig_Extension;
 use Twig_SimpleFilter;
 use Twig_SimpleFunction;
@@ -25,19 +20,9 @@ class HalExtension extends Twig_Extension
     const NAME = 'hal';
 
     /**
-     * @var GlobalMessageService
-     */
-    private $messageService;
-
-    /**
      * @var TimeFormatter
      */
     private $time;
-
-    /**
-     * @var NameFormatter
-     */
-    private $name;
 
     /**
      * @var string
@@ -45,21 +30,14 @@ class HalExtension extends Twig_Extension
     private $gravatarFallbackImageURL;
 
     /**
-     * @param GlobalMessageService $messageService
      * @param TimeFormatter $time
-     * @param NameFormatter $name
      * @param string $gravatarFallbackImageURL
      */
     public function __construct(
-        GlobalMessageService $messageService,
         TimeFormatter $time,
-        NameFormatter $name,
         $gravatarFallbackImageURL
     ) {
-        $this->messageService = $messageService;
         $this->time = $time;
-        $this->name = $name;
-
         $this->gravatarFallbackImageURL = $gravatarFallbackImageURL;
     }
 
@@ -85,17 +63,8 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFunction('html5duration', [$this->time, 'html5duration'], ['is_safe' => ['html']]),
             new Twig_SimpleFunction('hash', [$this, 'hash']),
 
-            // name
-            new Twig_SimpleFunction('getUsersName', [$this->name, 'getUsersName']),
-            new Twig_SimpleFunction('getUsersFirstName', [$this->name, 'getUsersFirstName']),
-            new Twig_SimpleFunction('getUsersActualName', [$this->name, 'getUsersActualName']),
-            new Twig_SimpleFunction('getUsersFreudianName', [$this->name, 'getUsersFreudianName']),
+            // user
             new Twig_SimpleFunction('getAvatarLink', [$this, 'getAvatarLink']),
-
-            // services
-            new Twig_SimpleFunction('globalMessage', [$this->messageService, 'load']),
-            new Twig_SimpleFunction('isUpdateTickOn', [$this->messageService, 'isUpdateTickOn']),
-
         ];
     }
 
@@ -110,14 +79,12 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFilter('reldate', [$this->time, 'relative']),
             new Twig_SimpleFilter('html5date', [$this->time, 'html5'], ['is_safe' => ['html']]),
 
-            new Twig_SimpleFilter('jsonPretty', [$this, 'jsonPretty']),
+            new Twig_SimpleFilter('jsonPretty', [$this, 'jsonPretty'], ['is_safe' => ['html']]),
 
             new Twig_SimpleFilter('formatBuildId', [$this, 'formatBuildId']),
             new Twig_SimpleFilter('formatPushId', [$this, 'formatPushId']),
             new Twig_SimpleFilter('formatEvent', [$this, 'formatEvent']),
-            new Twig_SimpleFilter('sliceString', [$this, 'sliceString']),
-
-            new Twig_SimpleFilter('formatDeploymentDetailsLabel', [$this, 'formatDeploymentDetailsLabel']),
+            new Twig_SimpleFilter('shortGUID', [$this, 'shortGUID']),
         ];
     }
 
@@ -130,7 +97,7 @@ class HalExtension extends Twig_Extension
     {
         return [
             new Twig_SimpleTest('build', function ($entity) { return $entity instanceof Build; }),
-            new Twig_SimpleTest('push', function ($entity) { return $entity instanceof Push; })
+            new Twig_SimpleTest('release', function ($entity) { return $entity instanceof Release; })
         ];
     }
 
@@ -197,19 +164,17 @@ class HalExtension extends Twig_Extension
     }
 
     /**
-     * @param string $value
-     * @param int $size
+     * @param string $entity
      *
      * @return string
      */
-    public function sliceString($value, $size = 20)
+    public function shortGUID($entity)
     {
-        $len = mb_strlen($value);
-        if ($len <= $size + 3) {
-            return $value;
-        } else {
-            return substr($value, 0, $size) . '...';
+        if (is_object($entity) && is_callable([$entity, 'id'])) {
+            $entity = $entity->id();
         }
+
+        return substr($entity, 0, 8);
     }
 
     /**
@@ -226,37 +191,6 @@ class HalExtension extends Twig_Extension
         }
 
         return md5($data);
-    }
-
-    /**
-     * Format a deployment details label
-     *
-     * @param Deployment|null $deployment
-     *
-     * @return string
-     */
-    public function formatDeploymentDetailsLabel(Deployment $deployment = null)
-    {
-        if (!$deployment) {
-            return 'Path';
-        }
-
-        $type = $deployment->server()->type();
-
-        if ($type === ServerEnum::TYPE_EB) {
-            return 'EB Environment';
-
-        } elseif ($type === ServerEnum::TYPE_S3) {
-            return 'S3 Bucket';
-
-        } elseif ($type === ServerEnum::TYPE_CD) {
-            return 'CodeDeploy Group';
-
-        } elseif ($type === ServerEnum::TYPE_SCRIPT) {
-            return 'Context';
-        }
-
-        return 'Path';
     }
 
     /**
@@ -279,6 +213,5 @@ class HalExtension extends Twig_Extension
             $size,
             urlencode($default)
         );
-
     }
 }

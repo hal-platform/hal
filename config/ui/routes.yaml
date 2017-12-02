@@ -16,6 +16,16 @@ parameters:
         #     route:  '/settings/remove-github-authorization'
         #     stack:  ['middleware.login', 'github.authorization.remove.page']
 
+        maintenance:
+            method: 'GET'
+            route:  '/maintenance.html'
+            stack:  ['maintenance.page']
+
+        denied:
+            method: 'GET'
+            route:  '/denied.html'
+            stack:  ['denied.page']
+
         ####################################################################################################################
         # SIGN-IN CONTROLLERS
         ####################################################################################################################
@@ -54,7 +64,7 @@ parameters:
         help.scripting:
             method: 'GET'
             route: '/help/deployment-scripting'
-            stack: ['help.deployment.page']
+            stack: ['help.deployment_scripting.page']
 
         help.setup:
             method: 'GET'
@@ -75,7 +85,7 @@ parameters:
             stack: ['middleware.signed_in', 'users.page']
 
         user.management:
-            route: '/users/{user:%r.digit%}'
+            route: '/users/{user:%r.guid%}'
             stack: ['middleware.signed_in', 'middleware.require_entity']
             routes:
                 user:
@@ -129,7 +139,7 @@ parameters:
             stack: ['middleware.signed_in', 'organization.add.page']
 
         organization.management:
-            route: '/organizations/{organization:%r.digit%}'
+            route: '/organizations/{organization:%r.guid%}'
             stack: ['middleware.signed_in', 'middleware.require_entity']
             routes:
                 organization:
@@ -160,7 +170,7 @@ parameters:
             stack: ['middleware.signed_in', 'application.add.page']
 
         application.management:
-            route: '/applications/{application:%r.digit%}'
+            route: '/applications/{application:%r.guid%}'
             stack: ['middleware.signed_in', 'middleware.require_entity']
             routes:
                 application:
@@ -191,8 +201,13 @@ parameters:
                     route: '/permissions/remove'
                     stack: ['middleware.is_owner', 'application.permission_remove.page']
 
-                # are these application routes or build/push routes?
+                # are these application routes or build/release routes?
                 # It's nice to be able to use route groups to nest common url prefixes.
+
+                build.start:
+                    method: ['GET', 'POST']
+                    route: '/build'
+                    stack: ['middleware.signed_in', 'middleware.require_entity', 'build.start.middleware', 'build.start.page']
 
                 build.history.page1:
                     method: 'GET'
@@ -203,14 +218,14 @@ parameters:
                     route: '/builds/{page:%r.digit%}'
                     stack: ['builds.page']
 
-                push.history.page1:
+                release.history.page1:
                     method: 'GET'
-                    route: '/pushes'
-                    stack: ['pushes.page']
-                push.history:
+                    route: '/releases'
+                    stack: ['releases.page']
+                release.history:
                     method: 'GET'
-                    route: '/pushes/page/{page:%r.digit%}'
-                    stack: ['pushes.page']
+                    route: '/releases/page/{page:%r.digit%}'
+                    stack: ['releases.page']
 
                 targets:
                     method: 'GET'
@@ -222,7 +237,7 @@ parameters:
                     stack: ['middleware.is_owner', 'target.add.middleware', 'target.add.page']
 
                 target.management:
-                    route: '/targets/{target:%r.digit%}'
+                    route: '/targets/{target:%r.guid%}'
                     stack: ['middleware.nested_entity']
                     routes:
                         target:
@@ -240,12 +255,12 @@ parameters:
 
                         rollback.page1:
                             method: 'GET'
-                            route: '/pushes'
-                            stack: ['push.rollback.page']
+                            route: '/releases'
+                            stack: ['release.rollback.page']
                         rollback:
                             method: 'GET'
-                            route: '/pushes/page/{page:%r.digit%}'
-                            stack: ['push.rollback.page']
+                            route: '/releases/page/{page:%r.digit%}'
+                            stack: ['release.rollback.page']
 
                 encrypted.configuration:
                     method: 'GET'
@@ -273,32 +288,32 @@ parameters:
         # SERVER Routes
         ################################################################################################################
 
-        servers:
+        groups:
             method: 'GET'
-            route: '/servers'
-            stack: ['middleware.signed_in', 'servers.page']
+            route: '/groups'
+            stack: ['middleware.signed_in', 'groups.page']
 
-        server.add:
+        group.add:
             method: ['GET', 'POST']
-            route: '/servers/add'
-            stack: ['middleware.is_admin', 'server.add.page']
+            route: '/groups/add'
+            stack: ['middleware.is_admin', 'group.add.page']
 
-        server.management:
-            route: '/servers/{server:%r.digit%}'
+        group.management:
+            route: '/groups/{group:%r.guid%}'
             stack: ['middleware.signed_in', 'middleware.require_entity']
             routes:
-                server:
+                group:
                     method: 'GET'
                     route: ''
-                    stack: ['server.page']
-                server.edit:
+                    stack: ['group.page']
+                group.edit:
                     method: ['GET', 'POST']
                     route: '/edit'
-                    stack: ['middleware.is_admin', 'server.edit.page']
-                server.remove:
+                    stack: ['middleware.is_admin', 'group.edit.page']
+                group.remove:
                     method: ['GET', 'POST']
                     route: '/remove'
-                    stack: ['middleware.is_admin', 'middleware.removal_confirmation.server', 'server.remove.handler']
+                    stack: ['middleware.is_admin', 'middleware.removal_confirmation.group', 'group.remove.handler']
 
         ################################################################################################################
         # ENVIRONMENT ROUTES
@@ -315,7 +330,7 @@ parameters:
             stack: ['middleware.is_admin', 'environment.add.page']
 
         environment.management:
-            route: '/environments/{environment:%r.digit%}'
+            route: '/environments/{environment:%r.guid%}'
             stack: ['middleware.signed_in', 'middleware.require_entity']
             routes:
                 environment:
@@ -365,18 +380,18 @@ parameters:
             stack: ['middleware.signed_in', 'middleware.require_entity', 'build.start.middleware', 'build.start.page']
 
         ################################################################################################################
-        # PUSH ROUTES
+        # Release ROUTES
         ################################################################################################################
 
-        push:
+        release:
             method: 'GET'
-            route: '/pushes/{push:%r.release%}'
-            stack: ['middleware.signed_in', 'middleware.require_entity', 'push.page']
+            route: '/releases/{release:%r.release%}'
+            stack: ['middleware.signed_in', 'middleware.require_entity', 'release.page']
 
-        push.start:
+        release.start:
             method: ['GET', 'POST']
-            route: '/builds/{build:%r.build%}/push'
-            stack: ['middleware.signed_in', 'middleware.require_entity', 'push.start.middleware', 'push.start.page']
+            route: '/builds/{build:%r.build%}/release'
+            stack: ['middleware.signed_in', 'middleware.require_entity', 'release.start.middleware', 'release.start.page']
 
         ################################################################################################################
         # ADMIN ROUTES
@@ -404,29 +419,34 @@ parameters:
                 # CREDENTIAL ROUTES
                 ################################################################################################################
 
-                admin.credentials:
+                credentials:
                     method: 'GET'
                     route: '/credentials'
-                    stack: ['admin.credentials.page']
+                    stack: ['credentials.page']
 
-                admin.credential.add:
+                credential.add:
                     method: ['GET', 'POST']
                     route: '/credentials/add'
-                    stack: ['middleware.is_super', 'admin.credential.add.page']
+                    stack: ['middleware.is_super', 'credential.add.page']
 
                 credential.management:
                     route: '/credentials/{credential:%r.guid%}'
                     stack: ['middleware.require_entity']
                     routes:
-                        admin.credential:
+                        credential:
                             method: 'GET'
                             route: ''
-                            stack: ['admin.credential.page']
+                            stack: ['credential.page']
 
-                        admin.credential.remove:
+                        credential.edit:
+                            method: ['GET', 'POST']
+                            route: '/edit'
+                            stack: ['credential.edit.page']
+
+                        credential.remove:
                             method: ['GET', 'POST']
                             route: '/remove'
-                            stack: ['middleware.is_super', 'middleware.removal_confirmation.credential', 'admin.credential.remove.handler']
+                            stack: ['middleware.is_super', 'middleware.removal_confirmation.credential', 'credential.remove.handler']
 
                 ################################################################################################################
                 # PERMISSION ROUTES
@@ -438,7 +458,7 @@ parameters:
                     stack: ['admin.permissions.page']
 
                 user_permissions.management:
-                    route: '/users/{user:%r.digit%}'
+                    route: '/users/{user:%r.guid%}'
                     stack: ['middleware.require_entity', 'middleware.nested_entity']
                     routes:
                         admin.permissions.refresh:
@@ -449,14 +469,10 @@ parameters:
                             method: ['GET', 'POST']
                             route: '/add'
                             stack: ['admin.permissions.add.page']
-                        admin.permissions.type.remove:
+                        admin.permissions.remove:
                             method: ['GET', 'POST']
-                            route: '/permission-type/{user_type:%r.guid%}/remove'
+                            route: '/permission/{user_permission:%r.guid%}/remove'
                             stack: ['admin.permissions.remove.middleware', 'admin.permissions.remove.handler']
-                        admin.permissions.deployment.remove:
-                            method: ['GET', 'POST']
-                            route: '/permission-deployment/{user_permission:%r.guid%}/remove'
-                            stack: ['admin.permissions.deployment.remove.middleware', 'admin.permissions.deployment.remove.handler']
 
         ################################################################################################################
         # SUPER ROUTES
@@ -479,9 +495,9 @@ parameters:
                 super.caches:
                     method: ['GET', 'POST']
                     route: '/caches'
-                    stack: ['super.caches.page']
+                    stack: ['super.caches.handler', 'super.caches.page']
 
-                super.message:
+                super.banner:
                     method: ['GET', 'POST']
-                    route: '/message'
-                    stack: ['super.message.page']
+                    route: '/banner'
+                    stack: ['super.banner.page']

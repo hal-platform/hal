@@ -8,13 +8,13 @@
 namespace Hal\UI\Controllers\User\Token;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\Core\Entity\User;
+use Hal\Core\Entity\UserToken;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Flash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Token;
-use QL\Hal\Core\Entity\User;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
@@ -60,33 +60,33 @@ class AddTokenController implements ControllerInterface
     {
         $user = $request->getAttribute(User::class);
 
-        $label = $request->getParsedBody()['label'] ?? '';
+        $name = $request->getParsedBody()['label'] ?? '';
 
-        if (!$label) {
+        if (!$name) {
             $this->withFlash($request, Flash::ERROR, self::ERR_NAME_REQUIRED);
             return $this->withRedirectRoute($response, $this->uri, 'settings');
         }
 
-        $token = $this->generateToken($user, $label);
+        $token = $this->generateToken($user, $name);
 
-        $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $token->label()));
+        $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $token->name()));
         return $this->withRedirectRoute($response, $this->uri, 'settings');
     }
 
     /**
      * @param User $user
-     * @param string $label
+     * @param string $name
      *
-     * @return Token
+     * @return UserToken
      */
-    private function generateToken(User $user, $label): Token
+    private function generateToken(User $user, $name): UserToken
     {
-        $hash = sha1(call_user_func($this->random));
+        // @todo encrypt
+        $secret = call_user_func($this->random);
 
-        $id = call_user_func($this->random);
-        $token = (new Token($id))
-            ->withLabel($label)
-            ->withValue($hash)
+        $token = (new UserToken)
+            ->withName($name)
+            ->withValue($secret)
             ->withUser($user);
 
         $this->em->persist($token);

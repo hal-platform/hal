@@ -7,13 +7,14 @@
 
 namespace Hal\UI\Controllers;
 
+use Hal\Core\Entity\User;
 use Hal\UI\Flash;
 use Hal\UI\SessionInterface;
 use Hal\UI\Middleware\FlashGlobalMiddleware;
 use Hal\UI\Middleware\SessionGlobalMiddleware;
 use Hal\UI\Middleware\UserSessionGlobalMiddleware;
+use Hal\UI\Security\UserAuthorizations;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\User;
 
 trait SessionTrait
 {
@@ -45,6 +46,16 @@ trait SessionTrait
     private function getUser(ServerRequestInterface $request): ?User
     {
         return $request->getAttribute(UserSessionGlobalMiddleware::USER_ATTRIBUTE);
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     *
+     * @return UserAuthorizations|null
+     */
+    private function getAuthorizations(ServerRequestInterface $request): ?UserAuthorizations
+    {
+        return $request->getAttribute(UserSessionGlobalMiddleware::AUTHORIZATIONS_ATTRIBUTE);
     }
 
     /**

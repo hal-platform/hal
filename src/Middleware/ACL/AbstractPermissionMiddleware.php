@@ -7,12 +7,12 @@
 
 namespace Hal\UI\Middleware\ACL;
 
+use Hal\Core\Entity\User;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Service\PermissionService;
+use Hal\UI\Security\UserAuthorizations;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\User;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -32,24 +32,13 @@ abstract class AbstractPermissionMiddleware implements MiddlewareInterface
     private $template;
 
     /**
-     * @var PermissionService
-     */
-    private $permissions;
-
-    /**
      * @param SignedInMiddleware $signedInMiddleware
      * @param TemplateInterface $template
-     * @param PermissionService $permissions
      */
-    public function __construct(
-        SignedInMiddleware $signedInMiddleware,
-        TemplateInterface $template,
-        PermissionService $permissions
-    ) {
+    public function __construct(SignedInMiddleware $signedInMiddleware, TemplateInterface $template)
+    {
         $this->signedInMiddleware = $signedInMiddleware;
-
         $this->template = $template;
-        $this->permissions = $permissions;
     }
 
     /**
@@ -57,11 +46,11 @@ abstract class AbstractPermissionMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $requireAdmin = function(ServerRequestInterface $request, ResponseInterface $response) use ($next) {
+        $requreAuthorization = function(ServerRequestInterface $request, ResponseInterface $response) use ($next) {
             return $this->deferredMiddleware($request, $response, $next);
         };
 
-        return ($this->signedInMiddleware)($request, $response, $requireAdmin);
+        return ($this->signedInMiddleware)($request, $response, $requreAuthorization);
     }
 
     /**
@@ -74,8 +63,9 @@ abstract class AbstractPermissionMiddleware implements MiddlewareInterface
     public function deferredMiddleware(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         $user = $this->getUser($request);
+        $authorizations = $this->getAuthorizations($request);
 
-        if ($this->isAllowed($request, $this->permissions, $user)) {
+        if ($user && $authorizations && $this->isAllowed($request, $user, $authorizations)) {
             return $next($request, $response);
         }
 
@@ -87,10 +77,10 @@ abstract class AbstractPermissionMiddleware implements MiddlewareInterface
 
     /**
      * @param ServerRequestInterface $request
-     * @param PermissionService $permissions
      * @param User $user
+     * @param UserAuthorizations $authorizations
      *
      * @return bool
      */
-    abstract protected function isAllowed(ServerRequestInterface $request, PermissionService $permissions, User $user): bool;
+    abstract protected function isAllowed(ServerRequestInterface $request, User $user, UserAuthorizations $authorizations): bool;
 }

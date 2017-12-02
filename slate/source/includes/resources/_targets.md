@@ -2,23 +2,23 @@
 
 A deployment target in the **Hal domain model** is not an action, but a resource.
 
-For example, a **server** + a **path** is a target. This allows multiple applications to be deployed to the same server.
-For AWS-based deployments, **servers** are regions, so targets are the deployment details such as the AWS service
+For example, a **group** + a **path** is a target. This allows multiple applications to be deployed to the same group.
+For AWS-based deployments, **groups** are regions, so targets are the deployment details such as the AWS service
 (such as Elastic Beanstalk application name, or CodeDeploy source S3 bucket, etc).
 
-Targets are unique pairings between a server and an application.
+Targets are unique pairings between a group and an application.
 
 ### Attributes
 
 Attribute            | Description                                      | Type        | Example
 -------------------- | ------------------------------------------------ | ----------- | -------------
-id                   | Unique server ID                                 | number      | `502`
+id                   | Unique group ID                                  | number      | `502`
 name                 | **Optional** - Name given to this target         | string,null | `test-target`
-url                  | **Optional** - Full URL to access application    | string      | `http://server1.example.com`
+url                  | **Optional** - Full URL to access application    | string      | `http://group1.example.com`
 configuration        | Configuration properties                         | object      |
-pretty_name          | Pretty name formatted for humans                 | string      | `qltestserver`
+pretty_name          | Pretty name formatted for humans                 | string      | `qltestgroup`
 detail               | Pretty name formatted with details               | string      | `Internal (Rsync): /test/path`
-server               | **Embedded** - Server this target belongs to     | resource    |
+group                | **Embedded** - Group this target belongs to      | resource    |
 application          | **Link** - Application for this target           |             |
 pushes               | **Link** - List of pushes to this target         | list        |
 current_release      | **Link** - Currently deployed release            | list        |
@@ -62,7 +62,7 @@ s3_file              | File name (may include directories)              | string
 
 Attribute            | Description                                      | Type        | Example
 -------------------- | ------------------------------------------------ | ----------- | -------------
-script_context       | Context data passed to deploy scripts            | string,null | `server-pool1`
+script_context       | Context data passed to deploy scripts            | string,null | `group-pool1`
 
 ## Get All Targets
 
@@ -174,9 +174,9 @@ Content-Type: application/hal+json
         }
     },
     "_embedded": {
-        "server": {
+        "group": {
             "id": 1234
-            //server
+            //group
         }
     },
     "id": 502,

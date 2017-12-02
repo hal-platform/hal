@@ -27,9 +27,9 @@
 {% block navigation_pref %}
     <form method="post">
 
-        <label class="checkbox--switch">
+        <label class="checkbox-toggle">
             <input type="checkbox" name="seriousbusiness" value="1" {{ is_serious_business_mode ? ' checked' : '' }}>
-            <b class="checkbox--switch__pill"></b>Use <b>Serious Business&trade;</b> mode
+            <b class="checkbox-toggle--pill"></b>Use <b>Serious Business&trade;</b> mode
         </label>
 
         <p>
@@ -51,18 +51,20 @@
         <table class="table--spacing-medium">
             <thead>
                 <tr>
+                    <th class="t10">ID</th>
                     <th>Name</th>
-                    <th>Token</th>
-                    <th></th>
+                    <th>Token Secret</th>
+                    <th class="t10"></th>
                 </tr>
             </thead>
             <tbody>
                 {% for token in tokens %}
                     <tr>
-                        <td>{{ token.label }}</td>
+                        <td>{{ token|shortGUID }}</td>
+                        <td>{{ token.name }}</td>
                         <td><code>{{ token.value }}</code></td>
-                        <td class="tr">
-                            <a class="btn btn--tiny btn--destructive" href="{{ uriFor('user.token.remove', {'user': user.id, 'token': token.id}) }}">
+                        <td>
+                            <a href="{{ uriFor('user.token.remove', {'user': user.id, 'token': token.id}) }}">
                                 Revoke
                             </a>
                         </td>
@@ -78,8 +80,8 @@
         <h3>Add new personal access token</h3>
 
         <div class="form-wrapper">
-            <label for="token-label">Token Name</label>
-            <input type="text" name="label" id="token-label" maxlength="50" class="text-input" required>
+            <label for="token-name">Token Name</label>
+            <input type="text" class="text-input" name="name" id="token-name" maxlength="50" required>
 
             <p class="leader">
                 <input class="btn btn--action btn--small" type="submit" value="Generate Token">

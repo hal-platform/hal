@@ -9,12 +9,12 @@ namespace Hal\UI\Controllers\API\Environment;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Environment;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Environment;
 use QL\Panthor\ControllerInterface;
 
 class EnvironmentsController implements ControllerInterface

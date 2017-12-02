@@ -1,92 +1,57 @@
 {% extends 'base.twig' %}
-{% import _self as page_macros %}
+{% import "macros.twig" as macros %}
 {% import 'macros.pagination.twig' as pagination %}
 
-{% set page_title = "Users" %}
-
-{% set is_admin = isUserAdminOrSuper(current_user) %}
+{% set page_title = 'Users' %}
 
 {% block content %}
     <h1>{{ page_title }}</h1>
 
     {{ pagination.pagination(page, last, 'users', {}, {}, 'previous', 'next') }}
 
-    {{ page_macros.user_table(users, user_permissions, true, is_admin, is_serious_business_mode) }}
+    {{ block('user_table') }}
 
     {{ pagination.pagination(page, last, 'users', {}, {}, 'previous', 'next') }}
 
-    <h2>User Types</h2>
-    {% include 'user/partial.user-legend.twig' %}
-
 {% endblock %}
 
-{% macro user_table(users, user_permissions, show_types, is_admin, is_srs) %}
-    {% import "macros.twig" as macros %}
+{% block user_table %}
 
     {% if users %}
         <table class="table--spacing-medium table--striped">
             <thead>
                 <tr>
                     <th>User ID</th>
-                    <th>Username</th>
                     <th>Name</th>
+                    <th>Username</th>
                     <th>Email</th>
-                    {% if show_types %}
-                        <th></th>
-                    {% endif %}
                 </tr>
             </thead>
             <tbody>
-            {% for user in users %}
-                {% set user_types = user_permissions[user.id] %}
-
-                <tr>
-                    <td>
-                        <a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.id }}</a>
-                        {% if not user.isActive %}
-                            {{ macros.status('Disabled', 'error') }}
-                        {% endif %}
-                    </td>
-                    <td>{{ user.handle }}</td>
-                    <td>
-                        {% if is_srs %}
-                            {{ user.name }}
-                        {% else %}
-                            {{ getUsersActualName(user) }}
-                        {% endif %}
-                    </td>
-                    <td>{{ user.email }}</td>
-
-                    {% if show_types %}
-                        <td class="tr">
-                            {% if user_types.hasType %}
-                                <ul class="inline-list--space">
-                                    {% if user_types.isLead %}
-                                        <li>{{ macros.status('Owner', 'notice') }}</li>
-                                    {% endif %}
-                                    {% if user_types.isButtonPusher %}
-                                        <li>{{ macros.status('Admin', 'warning') }}</li>
-                                    {% endif %}
-                                    {% if user_types.isSuper %}
-                                        <li>{{ macros.status('Super', 'error') }}</li>
-                                    {% endif %}
-
-                                    {% if is_admin and user.isActive %}
-                                        <li><a href="{{ uriFor('admin.permissions.add', {user: user.id }) }}">{{ macros.icon('add') }} Permission</a></li>
-                                    {% endif %}
-                                </ul>
-                            {% elseif is_admin and user.isActive %}
-                                <a href="{{ uriFor('admin.permissions.add', {user: user.id }) }}">{{ macros.icon('add') }} Permission</a>
+                {% for user in users %}
+                    <tr>
+                        <td>
+                            <a href="{{ uriFor('user', {'user': user.id}) }}">{{ user|shortGUID }}</a>
+                            {% if user.isDisabled %}
+                                {{ macros.status('Disabled', 'error') }}
                             {% endif %}
                         </td>
-                    {% endif %}
+                        <td>
+                            {% if is_serious_business_mode %}
+                                {{ user.name }}
+                            {% else %}
+                                {{ random(['Dave', 'Frank']) }}
+                            {% endif %}
+                        </td>
+                        <td>{{ user.username }}</td>
 
-                </tr>
-            {% endfor %}
+                        <td>{{ user.email }}</td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
 
     {% else %}
         <p>There are no users.</p>
     {% endif %}
-{% endmacro %}
+{% endblock %}

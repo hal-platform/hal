@@ -7,13 +7,13 @@
 
 namespace Hal\UI\Controllers\API\Build;
 
+use Hal\Core\Entity\Build;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Service\EventLogService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Build;
 use QL\Panthor\ControllerInterface;
 
 class EventsController implements ControllerInterface

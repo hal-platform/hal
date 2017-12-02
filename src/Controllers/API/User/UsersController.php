@@ -8,14 +8,14 @@
 namespace Hal\UI\Controllers\API\User;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\Core\Entity\User;
+use Hal\Core\Repository\UserRepository;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\PaginationTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\User;
-use QL\Hal\Core\Repository\UserRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 
@@ -68,7 +68,7 @@ class UsersController implements ControllerInterface
             return $this->withProblem($this->problem, $response, 404, self::ERR_PAGE);
         }
 
-        $pagination = $this->userRepo->getPaginatedUsers(self::MAX_PER_PAGE, ($page - 1));
+        $pagination = $this->userRepo->getPagedResults(self::MAX_PER_PAGE, ($page - 1));
         $total = count($pagination);
 
         $users = [];

@@ -2,6 +2,7 @@ import SearchBuild from './app/build/search';
 import EventLogLoader from './app/event-log';
 
 import DynamicTargetsForm from './app/form/dynamic-targets';
+import DynamicCredentialsForm from './app/form/dynamic-credentials';
 import SelectAllCheckboxes from './app/form/select-all-checkbox';
 import ManageAppPermissions from './app/form/manage-application-permissions';
 
@@ -19,6 +20,11 @@ module.exports = {
     // forms
     "target.add": function() {
         DynamicTargetsForm();
+    },
+
+    // forms
+    "credential.add": function() {
+        DynamicCredentialsForm();
     },
 
     // jobs - start
@@ -44,7 +50,7 @@ module.exports = {
         EventLogLoader();
 
         var pushUpdater = require('./app/status/update-pushes');
-        pushUpdater.mode = 'push';
+        pushUpdater.mode = 'release';
         pushUpdater.init();
     },
 

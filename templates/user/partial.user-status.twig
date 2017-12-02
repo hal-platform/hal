@@ -1,110 +1,88 @@
-{% import "macros.twig" as macros %}
+{% import 'macros.twig' as macros %}
 
-{# user #}
-{% set leadApplications = leadApplications|default([]) %}
-{% set nonProdApplications = nonProdApplications|default([]) %}
-{% set prodApplications = prodApplications|default([]) %}
-
-{% set isAdmin = isAdmin|default(false) %}
-{% set isSuper = isSuper|default(false) %}
-{% set showHalStatus = showHalStatus|default(false) %}
+{#
+    - user: User
+    - authorizations: UserAuthorizations
+    - permissions: array[type] = UserPermission[]
+#}
 
 <div class="details-box">
     <ul class="list--bare">
-        {% if showHalStatus %}
-            <li class="mvs">
-                <span>Hal</span>
-                <p class="mvn">
-                    {% if user.isActive %}
-                        {{ macros.status('Active', 'success', 'tick') }}
-                    {% else %}
-                        {{ macros.status('Disabled', 'error', 'nope') }}
-                    {% endif %}
-                </p>
-            </li>
-        {% endif %}
-
-        <li class="mvs">
-            <span>User Types</span>
-            <ul class="inline-list--space">
-                {% if userPerm.isLead or userPerm.isButtonPusher or userPerm.isSuper %}
-                    {% if userPerm.isLead %}
-                        <li>{{ macros.status('Owner', 'notice') }}</li>
-                    {% endif %}
-                    {% if userPerm.isButtonPusher %}
-                        <li>{{ macros.status('Admin', 'warning') }}</li>
-                    {% endif %}
-                    {% if userPerm.isSuper %}
-                        <li>{{ macros.status('Super', 'error') }}</li>
-                    {% endif %}
-                {% else %}
-                    <li>Standard</li>
-                {% endif %}
-            </ul>
+        <li>
+            <h6>Status</h6>
+            {% if user.isDisabled %}
+                {{ macros.status('Disabled', 'error', 'nope') }}
+            {% else %}
+                {{ macros.status('Active', 'success', 'tick') }}
+            {% endif %}
         </li>
 
-        {% if leadApplications %}
-            <li class="mvs">
-                <span>Application Owner</span>
-                <ul class="inline-list--comma">
-                    {% for application in leadApplications %}
-                        <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
-                    {% endfor %}
-                </ul>
-            </li>
-        {% endif %}
+        <li>
+            <h6>Authorization Tiers</h6>
 
-        {% if nonProdApplications %}
-            <li class="mvs">
-                <span>Non-production Permissions</span>
-                <ul class="inline-list--comma">
-                    {% for application in nonProdApplications %}
-                        <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
-                    {% endfor %}
-                </ul>
-            </li>
-        {% endif %}
+            {% set tiers = authorizations.getTiers %}
 
-        {% if prodApplications %}
-            <li class="mvs">
-                <span>Production Permissions</span>
-                <ul class="inline-list--comma">
-                    {% for application in prodApplications %}
-                        <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
-                    {% endfor %}
-                </ul>
-            </li>
-        {% endif %}
-    </ul>
-
-    {% if isAdmin %}
-        <ul class="mtm">
-            <li><a class="btn btn--action" href="{{ uriFor('admin.permissions.add', {'user': user.id}) }}">Add Permissions</a></li>
-            <li>
-                <form method="post" action="{{ uriFor('admin.permissions.refresh', {'user': user.id}) }}">
-                    <input class="btn btn--action" type="submit" value="Refresh User Cache">
-                </form>
-            </li>
-
-            {% if isSuper or not userPerm.isSuper %}
-                <li>
-                    {% if user.isActive %}
-                        <form method="post" action="{{ uriFor('user.toggle', {'user': user.id}) }}">
-                            <input class="btn btn--destructive" type="submit" value="Disable User">
-                            <input name="disable_user" type="hidden" value="1">
-                        </form>
-                    {% else %}
-                        <form method="post" action="{{ uriFor('user.toggle', {'user': user.id}) }}">
-                            <input class="btn btn--destructive" type="submit" value="Enable User">
-                            <input name="enable_user" type="hidden" value="1">
-                        </form>
+            {% if tiers %}
+                <ul class="list--bullet">
+                    {% if authorizations.isMember %}
+                        <li>{{ macros.status('Member', 'info') }}</li>
                     {% endif %}
-                </li>
+                    {% if authorizations.isOwner %}
+                        <li>{{ macros.status('Owner', 'notice') }}</li>
+                    {% endif %}
+                    {% if authorizations.isAdmin %}
+                        <li>{{ macros.status('Admin', 'warning') }}</li>
+                    {% endif %}
+                    {% if authorizations.isSuper %}
+                        <li>{{ macros.status('Super', 'error') }}</li>
+                    {% endif %}
+                </ul>
+            {% else %}
+                None
             {% endif %}
+        </li>
 
-            <li><a class="btn" href="{{ uriFor('admin.permissions') }}">User Permissions</a></li>
-            <li><a class="btn" href="{{ uriFor('admin.permissions.deployment') }}">Deployment Permissions</a></li>
-        </ul>
-    {% endif %}
+        <li>
+            <h6>Member</h6>
+            {% if permissions.isMember %}
+                <ul class="list--bullet">
+                    {% for permission in permissions.member %}
+                        <li>
+                            {% if permission.application %}
+                                <a href="{{ uriFor('application', {'application': permission.application.id}) }}">{{ permission.application.name }}</a>
+                            {% elseif permission.organization %}
+                                <a href="{{ uriFor('organization', {'organization': permission.organization.id}) }}">{{ permission.organization.name }}</a>
+                            {% else %}
+                                Unknown
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                None
+            {% endif %}
+        </li>
+
+        <li>
+            <h6>Owner</h6>
+            {% if permissions.isOwner %}
+                <ul class="list--bullet">
+                    {% for permission in permissions.owner %}
+                        <li>
+                            {% if permission.application %}
+                                <a href="{{ uriFor('application', {'application': permission.application.id}) }}">{{ permission.application.name }}</a>
+                            {% elseif permission.organization %}
+                                <a href="{{ uriFor('organization', {'organization': permission.organization.id}) }}">{{ permission.organization.name }}</a>
+                            {% else %}
+                                Unknown
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                None
+            {% endif %}
+        </li>
+    </ul>
 
 </div>

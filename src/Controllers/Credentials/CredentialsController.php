@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityRepository;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Credential;
+use Hal\Core\Entity\Credential;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -48,7 +48,7 @@ class CredentialsController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $credentials = $this->credentialsRepo->findBy([], ['name' => 'ASC']);
+        $credentials = $this->credentialsRepo->findBy([], ['isInternal' => 'ASC', 'name' => 'ASC']);
 
         return $this->withTemplate($request, $response, $this->template, [
             'credentials' => $credentials

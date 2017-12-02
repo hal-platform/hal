@@ -14,12 +14,12 @@ use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Flash;
 use Hal\UI\Service\StickyEnvironmentService;
 use Hal\UI\Validator\BuildValidator;
-use Hal\UI\Validator\PushValidator;
+use Hal\UI\Validator\ReleaseValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\User;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Build;
+use Hal\Core\Entity\User;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
 
@@ -45,7 +45,7 @@ class BuildMiddleware implements MiddlewareInterface
     private $validator;
 
     /**
-     * @var PushValidator
+     * @var ReleaseValidator
      */
     private $pushValidator;
 
@@ -62,14 +62,14 @@ class BuildMiddleware implements MiddlewareInterface
     /**
      * @param EntityManagerInterface $em
      * @param BuildValidator $validator
-     * @param PushValidator $pushValidator
+     * @param ReleaseValidator $pushValidator
      * @param StickyEnvironmentService $stickyService
      * @param URI $uri
      */
     public function __construct(
         EntityManagerInterface $em,
         BuildValidator $validator,
-        PushValidator $pushValidator,
+        ReleaseValidator $pushValidator,
         StickyEnvironmentService $stickyService,
         URI $uri
     ) {

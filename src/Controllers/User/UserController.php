@@ -7,11 +7,13 @@
 
 namespace Hal\UI\Controllers\User;
 
+use Hal\Core\Entity\User;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Service\PermissionService;
+use Hal\UI\Security\AuthorizationHydrator;
+use Hal\UI\Security\AuthorizationService;
+use Hal\UI\Security\UserAuthorizations;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\User;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -25,18 +27,28 @@ class UserController implements ControllerInterface
     private $template;
 
     /**
-     * @var PermissionService
+     * @var AuthorizationService
      */
-    private $permissions;
+    private $authorizationService;
+
+    /**
+     * @var AuthorizationHydrator
+     */
+    private $authorizationHydrator;
 
     /**
      * @param TemplateInterface $template
-     * @param PermissionService $permissions
+     * @param AuthorizationService $authorizationService
+     * @param AuthorizationHydrator $authorizationHydrator
      */
-    public function __construct(TemplateInterface $template, PermissionService $permissions)
-    {
+    public function __construct(
+        TemplateInterface $template,
+        AuthorizationService $authorizationService,
+        AuthorizationHydrator $authorizationHydrator
+    ) {
         $this->template = $template;
-        $this->permissions = $permissions;
+        $this->authorizationService = $authorizationService;
+        $this->authorizationHydrator = $authorizationHydrator;
     }
 
     /**
@@ -45,16 +57,15 @@ class UserController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $user = $request->getAttribute(User::class);
-
-        $userPerm = $this->permissions->getUserPermissions($user);
-        $appPerm = $this->permissions->getApplications($userPerm);
+        $authorizations = $this->authorizationService->getUserAuthorizations($user);
+        $permissions = $this->authorizationHydrator->hydrateAuthorizations($user, $authorizations);
 
         return $this->withTemplate($request, $response, $this->template, [
             'user' => $user,
-            'user_permission' => $userPerm,
-            'lead_applications' => $appPerm['lead'],
-            'prod_applications' => $appPerm['prod'],
-            'non_prod_applications' => $appPerm['non_prod']
+            'user_authorizations' => $authorizations,
+            'user_permissions' => $permissions,
+
+            'tokens' => $user->tokens()->toArray()
         ]);
     }
 }

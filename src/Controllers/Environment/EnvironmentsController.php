@@ -9,10 +9,10 @@ namespace Hal\UI\Controllers\Environment;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Environment;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Environment;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 

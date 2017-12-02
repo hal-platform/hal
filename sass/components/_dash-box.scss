@@ -1,0 +1,75 @@
+
+.details-box {
+    border: 8px solid $light-grey;
+    padding: msem(1);
+    @include trailer(1);
+}
+
+.fav-box-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+.fav-box {
+    box-shadow: 0 0 0 2px $light-grey;
+    font-size: .75em;
+    flex: 0 1 auto;
+    margin: .5em;
+    width: 80%;
+
+    @include breakpoint($bp-small) {
+        width: 18em;
+    }
+
+    h5 {
+        background: $light-grey;
+        padding: .3em;
+
+        font-weight: bold;
+        line-height: 110%;
+        margin: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    p { margin: 0; padding: 0 .3em; }
+}
+
+.details-box .fav-box {
+    @include breakpoint($bp-small) {
+        width: 17em;
+    }
+}
+
+$alt-color: $red;
+$alt-color-2: $hal-cyan;
+$alt-color-3: $hal-blue;
+
+.fav-box-alt {
+    box-shadow: 0 0 0 2px $alt-color;
+    h5 {
+        background: $alt-color;
+        color: $white;
+        a { color: $white; }
+    }
+}
+
+.fav-box-alt-2 {
+    box-shadow: 0 0 0 2px $alt-color-2;
+    h5 {
+        background: $alt-color-2;
+        color: $white;
+        a { color: $white; }
+    }
+}
+
+.fav-box-alt-3 {
+    box-shadow: 0 0 0 2px $alt-color-3;
+    h5 {
+        background: $alt-color-3;
+        color: $white;
+        a { color: $white; }
+    }
+}
