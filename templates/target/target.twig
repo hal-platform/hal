@@ -3,7 +3,7 @@
 
 {% set page_title = 'Target : ' ~ application.name %}
 
-{% set can_edit = current_authorizations.isSuper() or current_authorizations.isAdminOf(application) %}
+{% set can_edit = current_authorizations.isSuper() or current_authorizations.isOwnerOf(application) %}
 
 {% block content %}
     <div class="nav--page">
