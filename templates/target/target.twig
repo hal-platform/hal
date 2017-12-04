@@ -72,10 +72,16 @@
 
     {% elseif target.group.type == 's3' %}
 
+        <h4>S3 Method</h4>
+        <p><code>{{ target.parameter('s3_method') }}</code></p>
+
         <h4>S3 Bucket</h4>
         <p><code>{{ target.parameter('bucket') }}</code></p>
 
-        <h4>S3 File</h4>
+        <h4>S3 Source</h4>
+        <p><code>{{ target.parameter('source') ?: '.' }}</code></p>
+
+        <h4>S3 Destination</h4>
         <p><code>{{ target.parameter('path') }}</code></p>
 
     {% elseif target.group.type == 'cd' %}

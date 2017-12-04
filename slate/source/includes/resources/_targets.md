@@ -39,7 +39,8 @@ cd_name              | Application name                                 | string
 cd_group             | Deployment group                                 | string,null | `testapp-deploy1`
 cd_configuration     | Deployment configuration                         | string,null | `CodeDeployDefault.AllAtOnce`
 s3_bucket            | Bucket name Configuration                        | string,null | `test-bucket`
-s3_file              | File name (may include directories)              | string,null | `testapp/$PUSHID.tar.gz`
+s3_local_path        | File name (may include directories)              | string,null | `testapp/$PUSHID.tar.gz`
+s3_remote_path       | File name (may include directories)              | string,null | `test/path`
 
 
 #### AWS Elastic Beanstalk Configuration
@@ -49,14 +50,17 @@ Attribute            | Description                                      | Type  
 eb_name              | Application name                                 | string,null | `DemoApplication`
 eb_environment       | Environment name                                 | string,null | `e-mvbatnpyzv`
 s3_bucket            | Bucket name Configuration                        | string,null | `test-bucket`
-s3_file              | File name (may include directories)              | string,null | `testapp/$PUSHID.tar.gz`
+s3_local_path        | File name (may include directories)              | string,null | `testapp/$PUSHID.tar.gz`
+s3_remote_path       | File name (may include directories)              | string,null | `test/path`
 
 #### AWS S3 Configuration
 
 Attribute            | Description                                      | Type        | Example
 -------------------- | ------------------------------------------------ | ----------- | -------------
 s3_bucket            | Bucket name Configuration                        | string,null | `test-bucket`
-s3_file              | File name (may include directories)              | string,null | `testapp/$PUSHID.tar.gz`
+s3_method            | S3 deployment method for this target             | string      | `sync`, `artifact`
+s3_local_path        | File name (may include directories)              | string,null | `testapp/$PUSHID.tar.gz`
+s3_remote_path       | File name (may include directories)              | string,null | `test/path`
 
 #### Script Configuration
 
@@ -189,8 +193,10 @@ Content-Type: application/hal+json
         "cd_configuration": null,
         "eb_name": null,
         "eb_environment": null,
+        "s3_method": "sync",
         "s3_bucket": "bucket-name",
-        "s3_file": "testapp-24/$PUSHID.tar.gz"
+        "s3_local_path": "testapp-24/$PUSHID.tar.gz",
+        "s3_remote_path": "test/path"
     },
     "pretty_name": "S3 (us-east-1)",
     "detail": "S3: bucket-name/testapp-24/$PUSHID.tar.gz"

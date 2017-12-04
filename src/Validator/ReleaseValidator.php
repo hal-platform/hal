@@ -181,6 +181,7 @@ class ReleaseValidator
             return null;
         }
 
+
         // Make sure requested deploys are verified against ones from DB
         $targetIDs = array_fill_keys($targets, true);
 

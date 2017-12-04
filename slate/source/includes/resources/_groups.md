@@ -100,7 +100,7 @@ Parameter   | Description
 ----------- | -----------
 page        | **Optional** - Page number to retrieve
 
-## Get Server
+## Get Group
 
 ```http
 GET /api/groups/4 HTTP/1.1

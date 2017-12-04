@@ -60,7 +60,6 @@ class TargetNormalizer implements ResourceNormalizerInterface
             'name' => $target->name(),
             'url' => $target->url(),
             'parameters' => $this->fillParameters($target),
-
             'pretty_name' => $target->format(false),
             'detail' => sprintf('%s: %s', $target->group()->format(), $target->formatParameters()),
         ];
@@ -95,16 +94,17 @@ class TargetNormalizer implements ResourceNormalizerInterface
         switch ($type) {
             case GroupEnum::TYPE_S3:
                 return [
+                    's3_method' => $target->parameter(Target::PARAM_S3_METHOD),
                     's3_bucket' => $target->parameter(Target::PARAM_BUCKET),
-                    's3_file' => $target->parameter(Target::PARAM_PATH),
-                    'source' => $target->parameter(Target::PARAM_SOURCE),
+                    's3_local_path' => $target->parameter(Target::PARAM_LOCAL_PATH),
+                    's3_remote_path' => $target->parameter(Target::PARAM_REMOTE_PATH),
                 ];
 
             case GroupEnum::TYPE_EB:
                 return [
                     's3_bucket' => $target->parameter(Target::PARAM_BUCKET),
-                    's3_file' => $target->parameter(Target::PARAM_PATH),
-                    'source' => $target->parameter(Target::PARAM_SOURCE),
+                    's3_local_path' => $target->parameter(Target::PARAM_LOCAL_PATH),
+                    's3_remote_path' => $target->parameter(Target::PARAM_REMOTE_PATH),
                     'eb_name' => $target->parameter(Target::PARAM_APP),
                     'eb_environment' => $target->parameter(Target::PARAM_ENV),
                 ];
@@ -112,15 +112,15 @@ class TargetNormalizer implements ResourceNormalizerInterface
             case GroupEnum::TYPE_CD:
                 return [
                     's3_bucket' => $target->parameter(Target::PARAM_BUCKET),
-                    's3_file' => $target->parameter(Target::PARAM_PATH),
-                    'source' => $target->parameter(Target::PARAM_SOURCE),
+                    's3_local_path' => $target->parameter(Target::PARAM_LOCAL_PATH),
+                    's3_remote_path' => $target->parameter(Target::PARAM_REMOTE_PATH),
                     'cd_name' => $target->parameter(Target::PARAM_APP),
                     'cd_group' => $target->parameter(Target::PARAM_GROUP),
                     'cd_configuration' => $target->parameter(Target::PARAM_CONFIG),
                 ];
 
             case GroupEnum::TYPE_RSYNC:
-                return ['path' => $target->parameter(Target::PARAM_PATH)];
+                return ['path' => $target->parameter(Target::PARAM_REMOTE_PATH)];
 
             case GroupEnum::TYPE_SCRIPT:
                 return ['script_context' => $target->parameter(TARGET::PARAM_CONTEXT)];

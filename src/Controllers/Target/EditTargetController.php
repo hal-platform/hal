@@ -57,6 +57,7 @@ class EditTargetController implements ControllerInterface
 
             'application' => $application,
             'target' => $target,
+            's3_methods' => Target::S3_METHODS,
             'credentials' => $this->credentialRepo->findBy([], ['name' => 'ASC'])
         ]);
     }
@@ -81,8 +82,10 @@ class EditTargetController implements ControllerInterface
                 'eb_name' => $request->getParsedBody()['eb_name'] ?? '',
                 'eb_environment' => $request->getParsedBody()['eb_environment'] ?? '',
 
+                's3_method' => $request->getParsedBody()['s3_method'] ?? '',
                 's3_bucket' => $request->getParsedBody()['s3_bucket'] ?? '',
-                's3_file' => $request->getParsedBody()['s3_file'] ?? '',
+                's3_remote_path' => $request->getParsedBody()['s3_remote_path'] ?? '',
+                's3_local_path' => $request->getParsedBody()['s3_local_path'] ?? '',
 
                 'script_context' => $request->getParsedBody()['script_context'] ?? '',
 
@@ -92,7 +95,7 @@ class EditTargetController implements ControllerInterface
         } else {
             $form = [
                 'name' => $target->name(),
-                'path' => $target->parameter(Target::PARAM_PATH),
+                'path' => $target->parameter(Target::PARAM_REMOTE_PATH),
 
                 'cd_name' => $target->parameter(Target::PARAM_APP),
                 'cd_group' => $target->parameter(Target::PARAM_GROUP),
@@ -101,8 +104,10 @@ class EditTargetController implements ControllerInterface
                 'eb_name' => $target->parameter(Target::PARAM_APP),
                 'eb_environment' => $target->parameter(Target::PARAM_ENV),
 
+                's3_method' => $target->parameter(Target::PARAM_S3_METHOD),
                 's3_bucket' => $target->parameter(Target::PARAM_BUCKET),
-                's3_file' => $target->parameter(Target::PARAM_SOURCE),
+                's3_remote_path' => $target->parameter(Target::PARAM_REMOTE_PATH),
+                's3_local_path' => $target->parameter(Target::PARAM_LOCAL_PATH),
 
                 'script_context' => $target->parameter(Target::PARAM_CONTEXT),
 

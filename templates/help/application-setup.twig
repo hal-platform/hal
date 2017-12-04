@@ -316,10 +316,33 @@
         <li>
             <strong>Have Platform Engineering create an S3 bucket.</strong>
             <p>
-                Your file(s) will be uploaded to the bucket with the filename of your choice. Based on the S3 filename you configure in
-                hal you will either upload your entire application or upload specific a file or directory.
+                Your file(s) will be uploaded to the bucket with the filename of your choice. Based on the S3 deployment method and filename
+                you configure in hal you will either upload your entire application or upload a specific file or directory.
             </p>
         </li>
+        <li>
+            <strong>How will your application be hosted?</strong>
+            <p>
+                When setting the S3 deployment method, you can choose between artifact or sync deployment types. An artifact deployment
+                will either deploy a single file or compress a directory, while the sync deployment methods sync an S3 bucket (or a directory
+                on an S3 bucket) with a local directory.
+            </p>
+        </li>
+        <li>
+            <strong>Choose files to upload</strong>
+            <p>
+                This should be the path to the directory or file that is pushed to S3.
+                <br>Example: <code>dist</code>
+            </p>
+        </li>
+        <li>
+            <strong>Where on those servers will your application be hosted?</strong>
+            <p>
+                This should be the path to the directory that code is pushed to. For artifact deployments, provide a filename.
+                <br>Example: <code>test/path</code>
+            </p>
+        </li>
+        <!--
         <li>
             <strong>Choose files to upload</strong>
             <p>
@@ -329,7 +352,6 @@
                 If neither is given files will be <b>tar/gzipped</b> by default. No compression is given when uploading a single file.
             </p>
 
-            {{ block('s3_file_name_example') }}
             <h5>Examples of changing deployment behavior based on "S3 File"</h5>
             <ul class="list--bullet">
                 <li>
@@ -353,6 +375,7 @@
                 </li>
             </ul>
         </li>
+        -->
         <li>
             <b>Create AWS access token with correct permissions.</b>
             <p class="mvn">This can be shared between multiple applications, but the token must have the following permissions:</p>
@@ -435,21 +458,5 @@ build:
 deploy:
     - 'run-script.sh ${HAL_CONTEXT}'
 </pre>
-{% endblock %}
-
-{% block s3_file_name_example %}
-    {% spaceless %}
-        <pre>
-Application Directory
-|_ bin
-|___ script1.sh
-|___ script2.sh
-|_ lib
-|___ source1.code
-|___ source2.code
-|_ assets
-|___ image1.jpg
-</pre>
-    {% endspaceless %}
 {% endblock %}
 
