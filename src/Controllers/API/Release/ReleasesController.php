@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Release;
 use Hal\Core\Repository\ReleaseRepository;
+use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\Normalizer\ReleaseNormalizer;
 use Hal\UI\API\ResponseFormatter;
@@ -82,6 +83,7 @@ class ReleasesController implements ControllerInterface
         }
 
         $links = $this->buildPaginationLinks('api.releases.history', $page, $total, self::MAX_PER_PAGE, ['application' => $application->id()]);
+        $links['application'] = new Hyperlink(['api.application', ['application' => $application->id()]]);
 
         $data = [
             'count' => count($releases),

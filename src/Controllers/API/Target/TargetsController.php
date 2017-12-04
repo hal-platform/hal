@@ -9,6 +9,7 @@ namespace Hal\UI\Controllers\API\Target;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
@@ -70,7 +71,13 @@ class TargetsController implements ControllerInterface
             'count' => count($targets)
         ];
 
-        $resource = new HypermediaResource($data, [], [
+        $links = [
+            'application' => new Hyperlink([
+                'api.application', ['application' => $application->id()]
+            ])
+        ];
+
+        $resource = new HypermediaResource($data, $links, [
             'targets' => $targets
         ]);
 

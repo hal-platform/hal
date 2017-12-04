@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Build;
+use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
@@ -80,6 +81,7 @@ class BuildsController implements ControllerInterface
         }
 
         $links = $this->buildPaginationLinks('api.builds.history', $page, $total, self::MAX_PER_PAGE, ['application' => $application->id()]);
+        $links['application'] = new Hyperlink(['api.application', ['application' => $application->id()]]);
 
         $data = [
             'count' => count($builds),
