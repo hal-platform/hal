@@ -91,7 +91,7 @@ class ReleaseNormalizer implements ResourceNormalizerInterface
             ];
 
             $links += [
-                'environment' => $this->environmentNormalizer($release->target()->group()->environment())
+                'environment' => $this->environmentNormalizer->link($release->target()->group()->environment())
             ];
         }
 

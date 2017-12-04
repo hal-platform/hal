@@ -88,6 +88,17 @@ class DeployController implements ControllerInterface
 
         $targets = $request->getParsedBody()['targets'] ?? [];
 
+        if (!$targets) {
+            $problem = new HTTPProblem(400, self::ERR_CHECK_FORM, []);
+            $errors = [
+                'target' => [
+                    'No target provided'
+                ]
+            ];
+
+            return $this->renderProblem($response, $this->problemRenderer, $problem, ['errors' => $errors]);
+        }
+
         $environment = $this->getReleaseEnvironment($targets);
         $releases = $this->releaseValidator->isValid($build->application(), $user, $environment, $build, $targets);
 
@@ -124,8 +135,12 @@ class DeployController implements ControllerInterface
      *
      * @return Environment|null
      */
-    private function getPushEnvironment(array $targets)
+    private function getReleaseEnvironment(array $targets)
     {
+        if (!$targets) {
+            return null;
+        }
+
         $target = array_shift($targets);
 
         if (!$target = $this->targetRepository->find($target)) {

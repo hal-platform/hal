@@ -60,7 +60,7 @@ class AddTokenController implements ControllerInterface
     {
         $user = $request->getAttribute(User::class);
 
-        $name = $request->getParsedBody()['label'] ?? '';
+        $name = $request->getParsedBody()['name'] ?? '';
 
         if (!$name) {
             $this->withFlash($request, Flash::ERROR, self::ERR_NAME_REQUIRED);

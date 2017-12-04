@@ -11,7 +11,7 @@ services:
             - '@problem.renderer'
 
     deploy.api:
-        class: 'Hal\UI\Controllers\API\Push\DeployController'
+        class: 'Hal\UI\Controllers\API\Release\DeployController'
         arguments:
             - '@doctrine.em'
             - '@release.start.validator'
