@@ -111,7 +111,9 @@ class StartBuildController implements ControllerInterface
         $children = null;
         if ($targets && is_array($targets)) {
             if (!$build->environment()) {
-                throw new HTTPProblem(400, self::ERR_GLOBAL_DEPLOY);
+                $problem = new HTTPProblem(400, self::ERR_GLOBAL_DEPLOY);
+
+                return $this->renderProblem($response, $this->problemRenderer, $problem);
             }
             $children = $this->pushValidator->isProcessValid($application, $user, $build->environment(), $build, $targets);
             if (!$children) {

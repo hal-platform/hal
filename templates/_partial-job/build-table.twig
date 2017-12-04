@@ -18,7 +18,7 @@
     {% for build in builds %}
         <tr>
             <td>{{ macros.job_status_prefix(build, true) }}</td>
-            <td>{{ build.environment ? build.environment.name : 'global' }}</td>
+            <td>{{ build.environment ? build.environment.name : 'Any' }}</td>
             <td>
                 {% set isCurrent = githubCommitIsCurrent(build.application.github.owner, build.application.github.repository, build.reference, build.commit) %}
                 {{ git_macros.gitref(build, false, isCurrent, true) }}

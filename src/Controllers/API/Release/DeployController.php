@@ -124,7 +124,7 @@ class DeployController implements ControllerInterface
      *
      * @return Environment|null
      */
-    private function getPushEnvironment(aray $targets)
+    private function getPushEnvironment(array $targets)
     {
         $target = array_shift($targets);
 

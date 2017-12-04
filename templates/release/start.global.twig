@@ -23,12 +23,12 @@
         <dl class="split mbn">
             <dt class="split__title">Application</dt>
             <dd>
-                <a href="{{ uriFor('application', {application: build.application.id}) }}">{{ build.application.name }}</a>
+                <a href="{{ uriFor('application', {'application': build.application.id}) }}">{{ build.application.name }}</a>
             </dd>
 
             <dt class="split__title">Build Id</dt>
             <dd>
-                <a href="{{ uriFor('build', {build: build.id}) }}">{{ build.id|formatBuildId }}</a>
+                <a href="{{ uriFor('build', {'build': build.id}) }}">{{ build.id|formatBuildId }}</a>
             </dd>
 
         </dl>
@@ -61,7 +61,7 @@
     <ul class="radio-grid radio-grid--tri">
         {% for environment in environments %}
             <li>
-                <a class="radio-grid--fake" href="{{ uriFor('release.start', {build: build.id}, {environment: environment.id}) }}">
+                <a class="radio-grid--fake" href="{{ uriFor('release.start', {'build': build.id}, {'environment': environment.id}) }}">
                     {% if environment.isProduction %}
                         {{ macros.icon('key') }}
                     {% endif %}

@@ -58,7 +58,7 @@ class StartReleaseGlobalController implements ControllerInterface
         callable $notFound
     ) {
         $this->template = $template;
-        $this->environmentRepository = $em->getRepository(Environment::CLASS);
+        $this->environmentRepository = $em->getRepository(Environment::class);
 
         $this->notFound = $notFound;
         $this->uri = $uri;
@@ -71,7 +71,7 @@ class StartReleaseGlobalController implements ControllerInterface
     {
         $build = $request->getAttribute(Build::class);
 
-        if (!$build || $build->status() != 'success') {
+        if (!$build || !$build->isSuccess()) {
             return ($this->notFound)($request, $response);
         }
 
@@ -95,11 +95,6 @@ class StartReleaseGlobalController implements ControllerInterface
     private function getBuildableEnvironments(Application $application)
     {
         $environments = $this->environmentRepository->getBuildableEnvironmentsByApplication($application);
-
-        // if empty, throw them a bone with "test"
-        if (!$environments) {
-            $environments = $this->environmentRepository->findBy(['name' => 'test']);
-        }
 
         return $environments;
     }

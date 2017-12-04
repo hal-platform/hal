@@ -144,11 +144,8 @@ class BuildValidator
             ->withCommit($commit)
 
             ->withUser($user)
-            ->withApplication($application);
-
-        if ($env) {
-            $build = $build->withEnvironment($env);
-        }
+            ->withApplication($application)
+            ->withEnvironment($env);
 
         return $build;
     }
