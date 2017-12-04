@@ -142,7 +142,7 @@ class DeployMiddleware implements MiddlewareInterface
      * This will grab the environment from the build if it exists, or use the environment repository to search for
      * an environment using the provided request argument.
      *
-     * @param Build                  $build
+     * @param Build $build
      * @param ServerRequestInterface $request
      *
      * @return Environment|null

@@ -14,7 +14,7 @@ interface SessionInterface extends JsonSerializable
     /**
      * Stores a given value in the session.
      *
-     * @param string                      $key
+     * @param string $key
      * @param int|bool|string|float|array $value
      *
      * @return void
