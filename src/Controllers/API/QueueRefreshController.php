@@ -49,7 +49,7 @@ class QueueRefreshController implements ControllerInterface
      * @var EntityRepository
      */
     private $buildRepo;
-    private $pushRepo;
+    private $releaseRepository;
 
     /**
      * @var ProblemRendererInterface
@@ -75,7 +75,7 @@ class QueueRefreshController implements ControllerInterface
         $this->pushNormalizer = $pushNormalizer;
 
         $this->buildRepo = $em->getRepository(Build::class);
-        $this->pushRepo = $em->getRepository(Release::class);
+        $this->releaseRepository = $em->getRepository(Release::class);
 
         $this->problemRenderer = $problemRenderer;
     }
@@ -130,8 +130,8 @@ class QueueRefreshController implements ControllerInterface
         if ($type === 'build') {
             $prefix = 'b';
 
-        } elseif ($type === 'push') {
-            $prefix = 'p';
+        } elseif ($type === 'release') {
+            $prefix = 'r';
 
         } else {
             // Return empty list if no valid type provided
@@ -172,7 +172,7 @@ class QueueRefreshController implements ControllerInterface
      */
     private function retrieveJobs($identifiers)
     {
-        $builds = $pushes = [];
+        $builds = $releases = [];
 
         if ($buildIds = $this->filterIdentifiers($identifiers, 'build')) {
             $buildCriteria = (new Criteria)
@@ -181,13 +181,13 @@ class QueueRefreshController implements ControllerInterface
             $builds = $builds->toArray();
         }
 
-        if ($pushIds = $this->filterIdentifiers($identifiers, 'push')) {
-            $pushCriteria = (new Criteria)
-                ->where(Criteria::expr()->in('id', $pushIds));
-            $pushes = $this->pushRepo->matching($pushCriteria);
-            $pushes = $pushes->toArray();
+        if ($releaseIds = $this->filterIdentifiers($identifiers, 'release')) {
+            $releaseCriteria = (new Criteria)
+                ->where(Criteria::expr()->in('id', $releaseIds));
+            $releases = $this->releaseRepository->matching($releaseCriteria);
+            $releases = $releases->toArray();
         }
 
-        return array_merge($builds, $pushes);
+        return array_merge($builds, $releases);
     }
 }
