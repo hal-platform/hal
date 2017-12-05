@@ -31,6 +31,7 @@ class StartBuildController implements ControllerInterface
 
     private const ERR_CHECK_FORM = 'Cannot start build due to form submission failure. Please check errors.';
     private const ERR_INVALID_DEPLOY = 'Cannot create child processes for selected targets.';
+    private const ERR_GLOBAL_DEPLOY = 'Cannot autodeploy global build.';
 
     /**
      * @var EntityManagerInterface
@@ -109,6 +110,11 @@ class StartBuildController implements ControllerInterface
 
         $children = null;
         if ($targets && is_array($targets)) {
+            if (!$build->environment()) {
+                $problem = new HTTPProblem(400, self::ERR_GLOBAL_DEPLOY);
+
+                return $this->renderProblem($response, $this->problemRenderer, $problem);
+            }
             $children = $this->pushValidator->isProcessValid($application, $user, $build->environment(), $build, $targets);
             if (!$children) {
                 $problem = new HTTPProblem(400, self::ERR_INVALID_DEPLOY, ['errors' => $this->pushValidator->errors()]);

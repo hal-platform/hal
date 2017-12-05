@@ -7,10 +7,8 @@
 
 {% block content %}
 
-    {% set group = target.format %}
-
     <div class="nav--page">
-        <h1>Release History - <b>{{ application.name }}</b> to <b>{{ server }}</b></h1>
+        <h1>Release History - <b>{{ application.name }}</b> to <b>{{ target.format(true) }}</b></h1>
 
         <p class="nav--page__back">
             <a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Back to Application Dashboard</a>
@@ -25,16 +23,16 @@
                 <a href="{{ uriFor('environment', {'environment': target.group.environment.id}) }}">{{ target.group.environment.name }}</a>
             </li>
 
-            <li>Server</li>
+            <li>Target</li>
             <li>
-                <a href="{{ uriFor('server', {'server': target.group.id}) }}">{{ group }}</a>
+                <a href="{{ uriFor('target', {'application': target.application.id, 'target': target.id}) }}">{{ target.format(true) }}</a>
             </li>
 
             <li>
                 Parameters
             </li>
             <li>
-                {{ target.formatParameters }}
+                {{ target.formatParameters() }}
             </li>
 
             {% if target.url %}

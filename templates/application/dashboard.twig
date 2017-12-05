@@ -17,23 +17,20 @@
 
         {{ block('env_picker') }}
 
+        <h2>Environment Status - <b>{{ selected_environment.name }}</b></h2>
         {{ block('deployment_cards') }}
 
-        <h2>Recent Builds - <b>{{ selected_environment.name }}</b></h2>
-        {% set isPushable = deployment_statuses|length > 0 %}
-        {% include '_partial-job/build-table.twig' with {'builds': builds, 'isPushable': isPushable, 'current_authorizations': current_authorizations } %}
-
-        {{ block('page_buttons') }}
     {% else %}
-        <h2>Server Status</h2>
-        <p>This application has no deployment targets configured and cannot be released.</p>
-
-        <h2>Recent Builds</h2>
-        {% include '_partial-job/build-table.twig' with {'builds': builds, 'isPushable': isPushable, 'current_authorizations': current_authorizations } %}
-
-        {{ block('page_buttons') }}
+        <h2>Environment Status</h2>
+        <p>This application has no deployment targets configured and cannot be deployed.</p>
 
     {% endif %}
+
+    <h2>Recent Builds</h2>
+    {% set is_pushable = deployment_statuses|length > 0 and current_authorizations.canDeploy(application, selected_environment) %}
+    {% include '_partial-job/build-table.twig' with {'builds': builds, 'is_pushable': is_pushable, 'current_authorizations': current_authorizations } %}
+
+    {{ block('page_buttons') }}
 
 {% endblock %}
 
@@ -56,10 +53,6 @@
 {% endblock %}
 
 {% block deployment_cards %}
-
-    <h2>
-        Server Status - <b>{{ selected_environment.name }}</b>
-    </h2>
 
     {% if deployment_statuses %}
 

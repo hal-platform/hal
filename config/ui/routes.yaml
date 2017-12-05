@@ -391,7 +391,7 @@ parameters:
         release.start:
             method: ['GET', 'POST']
             route: '/builds/{build:%r.build%}/release'
-            stack: ['middleware.signed_in', 'middleware.require_entity', 'release.start.middleware', 'release.start.page']
+            stack: ['middleware.signed_in', 'middleware.require_entity', 'deploy.select_environment.middleware', 'deploy.middleware', 'release.start.page']
 
         ################################################################################################################
         # ADMIN ROUTES

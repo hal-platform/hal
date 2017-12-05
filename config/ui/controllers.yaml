@@ -577,13 +577,24 @@ services:
     release.start.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['release/start.twig']]]
-    release.start.middleware:
+
+    deploy.middleware:
         class: 'Hal\UI\Controllers\Release\DeployMiddleware'
         arguments:
             - '@doctrine.em'
             - '@release.start.validator'
             - '@sticky.environment'
             - '@uri'
+    deploy.select_environment.middleware:
+        class: 'Hal\UI\Controllers\Release\SelectEnvironmentMiddleware'
+        arguments:
+            - '@deploy.select_environment.twig'
+            - '@doctrine.em'
+            - '@uri'
+            - '@notFoundHandler'
+    deploy.select_environment.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['release/select_deploy_environment.twig']]]
 
     release.rollback.page:
         class: 'Hal\UI\Controllers\Release\RollbackController'

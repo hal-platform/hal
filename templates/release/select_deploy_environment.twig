@@ -1,0 +1,73 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+{% import 'macros.git.twig' as git_macros %}
+
+{% set js_components = ["push.start"] %}
+
+{% set page_title = "Select Deployment Environment : " ~ build.id %}
+
+{% block content %}
+    <div class="nav--page">
+        <h1>Select Environment - <strong>{{ build.application.name }}</strong></h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': build.application.id}) }}">Back to Application Dashboard</a>
+        </p>
+    </div>
+
+    {{ block('meta_details') }}
+{% endblock %}
+
+{% block meta_details %}
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Application</dt>
+            <dd>
+                <a href="{{ uriFor('application', {'application': build.application.id}) }}">{{ build.application.name }}</a>
+            </dd>
+
+            <dt class="split__title">Build Id</dt>
+            <dd>
+                <a href="{{ uriFor('build', {'build': build.id}) }}">{{ build.id|formatBuildId }}</a>
+            </dd>
+
+        </dl>
+    </div>
+
+    <h2>Git Reference</h2>
+
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Reference</dt>
+            <dd>
+                {% set isCurrent = githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, build.branch, build.commit) %}
+                {{ git_macros.gitref(build, false, isCurrent) }}
+            </dd>
+
+            <dt class="split__title">Commit</dt>
+            <dd>{{ git_macros.gitcommit(build) }}</dd>
+        </dl>
+    </div>
+
+    <h2 class="leader mbn">Select An Environment</h2>
+    <p class="trailer"><span>This is a global build. You must select an environment to deploy it.</span></p>
+
+    {{ block('env_picker') }}
+{% endblock %}
+
+{% block env_picker %}
+    {% set env_count = environments|length %}
+    {# Only allow environment switching if has multiple env #}
+    <ul class="list--bullet">
+        {% for environment in environments %}
+            <li>
+                <a class="btn" href="{{ uriFor('release.start', {'build': build.id}, {'environment': environment.id}) }}">
+                    {% if environment.isProduction %}
+                        {{ macros.icon('key') }}
+                    {% endif %}
+                    {{ environment.name }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

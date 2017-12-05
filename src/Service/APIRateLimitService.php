@@ -7,7 +7,7 @@
 
 namespace Hal\UI\Service;
 
-use QL\Hal\Core\Entity\User;
+use Hal\Core\Entity\User;
 use Predis\Client as Predis;
 
 /**
@@ -104,7 +104,7 @@ class APIRateLimitService
      */
     private function cacheKey($user, $routeName)
     {
-        $username = $user ? $user->handle() : 'anonymous';
+        $username = $user ? $user->username() : 'anonymous';
 
         return sprintf(self::RATE_LIMIT_KEY, $username, $routeName);
     }

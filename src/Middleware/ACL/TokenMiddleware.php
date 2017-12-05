@@ -29,9 +29,9 @@ class TokenMiddleware implements MiddlewareInterface
     use APITrait;
 
     const HEADER_NAME = 'Authorization';
-    const REGEX_BEARER_AUTH = '#^(?:bearer|oauth|token) ([0-9a-zA-Z]{40,40})$#i';
+    const REGEX_BEARER_AUTH = '#^(?:bearer|oauth|token) ([0-9a-zA-Z]{32,32})$#i';
 
-    private const ERR_AUTH_HEADER_INVALID = 'Authorization access token is missing is invalid';
+    private const ERR_AUTH_HEADER_INVALID = 'Authorization access token is missing or invalid';
     private const ERR_INVALID_TOKEN = 'Access token is invalid';
     private const ERR_DISABLED = 'User account "%s" is disabled.';
 
@@ -58,7 +58,7 @@ class TokenMiddleware implements MiddlewareInterface
         EntityManagerInterface $em,
         ProblemRendererInterface $renderer
     ) {
-        $this->tokenRepo = $em->getRepository(Token::class);
+        $this->tokenRepo = $em->getRepository(UserToken::class);
         $this->renderer = $renderer;
     }
 
@@ -75,12 +75,12 @@ class TokenMiddleware implements MiddlewareInterface
             return $this->withProblem($this->renderer, $response, 403, self::ERR_INVALID_TOKEN);
         }
 
-        if (!$user->isActive()) {
-            return $this->withProblem($this->renderer, $response, 403, sprintf(self::ERR_DISABLED, $user->handle()));
+        if ($user->isDisabled()) {
+            return $this->withProblem($this->renderer, $response, 403, sprintf(self::ERR_DISABLED, $user->username()));
         }
 
         if ($this->factory) {
-            $this->factory->setDefaultProperty(MessageInterface::USER_NAME, sprintf('Token: %s', $user->handle()));
+            $this->factory->setDefaultProperty(MessageInterface::USER_NAME, sprintf('Token: %s', $user->username()));
         }
 
         // Add user to the server attrs for controllers/middleware

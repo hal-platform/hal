@@ -53,9 +53,9 @@
                     <input
                         type="checkbox"
                         class="js-toggle-box"
-                        name="deployments[]"
+                        name="targets[]"
                         id="sel-{{ target.id }}"
-                        value="{{ taret.id }}"{{ isSelected ? ' checked' : '' }}>
+                        value="{{ target.id }}"{{ isSelected ? ' checked' : '' }}>
                     <b class="checkbox-check--tick"></b>{{ releaseNow ? 'Release Now' : 'Release When Ready' }}
                 </label>
             {% else %}

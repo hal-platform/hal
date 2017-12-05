@@ -33,7 +33,9 @@ services:
 
     api_normalizer.build:
         class: 'Hal\UI\API\Normalizer\BuildNormalizer'
-        arguments: ['@github.url_builder']
+        arguments:
+            - '@github.url_builder'
+            - '@api_normalizer.environment'
 
     api_normalizer.target:
         class: 'Hal\UI\API\Normalizer\TargetNormalizer'
@@ -50,6 +52,7 @@ services:
 
     api_normalizer.release:
         class: 'Hal\UI\API\Normalizer\ReleaseNormalizer'
+        arguments: ['@api_normalizer.environment']
 
     api_normalizer.application:
         class: 'Hal\UI\API\Normalizer\ApplicationNormalizer'

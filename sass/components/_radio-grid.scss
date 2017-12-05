@@ -43,6 +43,20 @@
     }
 }
 
+.radio-grid--checked {
+    input[type="radio"] + label:before {
+        content: "\2610";
+        font-weight: bold;
+        font-size: 1.25em;
+    }
+
+    input[type="radio"]:checked + label:before {
+        content: "\2611";
+        font-weight: bold;
+        font-size: 1.25em;
+    }
+}
+
 .radio-grid {
     display: flex;
     flex-wrap: wrap;

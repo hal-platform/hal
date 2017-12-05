@@ -26,6 +26,13 @@ module.exports = {
             }
         }
 
+        var environmentName = 'Any';
+        if (build._links.hasOwnProperty('environment')) {
+            if (build._links.environment !== null) {
+                environmentName = build._links.environment.title;
+            }
+        }
+
         var humanReference = this.determineGitref(reference);
         var context = {
             buildId: buildId,
@@ -35,7 +42,7 @@ module.exports = {
             buildStatusStyle: this.determineStatusStyle(build.status),
             buildStatus: build.status,
 
-            environmentName: build._links.environment.title,
+            environmentName: environmentName,
             reference: humanReference,
             referenceType: this.determineGitrefType(humanReference),
             referenceUrl: build._links.github_commit_page.href,
@@ -56,6 +63,13 @@ module.exports = {
         if (release._links.hasOwnProperty('user')) {
             if (release._links.user !== null) {
                 initiator = release._links.user.title;
+            }
+        }
+
+        var environmentName = 'Unknown';
+        if (release._embedded.hasOwnProperty('environment')) {
+            if (release._embedded.environment !== null) {
+                environmentName = release._embedded.environment.name;
             }
         }
 
@@ -84,7 +98,7 @@ module.exports = {
             pushStatusStyle: this.determineStatusStyle(release.status),
             pushStatus: release.status,
 
-            environmentName: release._embedded.build._links.environment.title,
+            environmentName: environmentName,
             serverName: servername_or_whatever,
 
             appName: release._embedded.application.name,

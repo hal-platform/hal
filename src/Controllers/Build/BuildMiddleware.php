@@ -96,6 +96,10 @@ class BuildMiddleware implements MiddlewareInterface
         $ref = $request->getParsedBody()['reference'] ?? '';
         $search = $request->getParsedBody()['search'] ?? '';
 
+        if ($env === '!any') {
+            $env = null;
+        }
+
         $build = $this->validator->isValid($application, $user, $env, $ref, $search);
 
         // if validator didn't create a build, add errors and pass through to controller
@@ -106,20 +110,22 @@ class BuildMiddleware implements MiddlewareInterface
             );
         }
 
-        $deployments = $request->getParsedBody()['deployments'] ?? [];
-        $children = $this->maybeMakeChildren($build, $user, $deployments);
-        if ($deployments && !$children) {
-            // child push validation failed, bomb out.
-            return $next(
-                $this->withContext($request, ['errors' => $this->pushValidator->errors()]),
-                $response
-            );
-        }
+        if ($build->environment()) {
+            $deployments = $request->getParsedBody()['deployments'] ?? [];
+            $children = $this->maybeMakeChildren($build, $user, $deployments);
+            if ($deployments && !$children) {
+                // child push validation failed, bomb out.
+                return $next(
+                    $this->withContext($request, ['errors' => $this->pushValidator->errors()]),
+                    $response
+                );
+            }
 
-        // persist to database
-        if ($children) {
-            foreach ($children as $process) {
-                $this->em->persist($process);
+            // persist to database
+            if ($children) {
+                foreach ($children as $process) {
+                    $this->em->persist($process);
+                }
             }
         }
 
@@ -127,7 +133,9 @@ class BuildMiddleware implements MiddlewareInterface
         $this->em->flush();
 
         // override sticky environment
-        $response = $this->stickyService->save($request, $response, $application->id(), $env);
+        if ($env) {
+            $response = $this->stickyService->save($request, $response, $application->id(), $env);
+        }
 
         // flash and redirect
         $this

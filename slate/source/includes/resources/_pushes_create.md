@@ -1,7 +1,7 @@
 ## Deploy Release
 
 ```http
-GET /api/builds/b2.64U218P/deploy HTTP/1.1
+POST /api/builds/b2.64U218P/deploy HTTP/1.1
 Accept: application/json
 Host: hal.computer
 Content-Type: application/json

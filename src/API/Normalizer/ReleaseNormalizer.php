@@ -15,6 +15,19 @@ use Hal\UI\API\ResourceNormalizerInterface;
 class ReleaseNormalizer implements ResourceNormalizerInterface
 {
     /**
+     * @var EnvironmentNormalizer
+     */
+    private $environmentNormalizer;
+
+    /**
+     * @param EnvironmentNormalizer $environmentNormalizer
+     */
+    public function __construct(EnvironmentNormalizer $environmentNormalizer)
+    {
+        $this->environmentNormalizer = $environmentNormalizer;
+    }
+
+    /**
      * @param Release|null $input
      *
      * @return mixed
@@ -71,6 +84,16 @@ class ReleaseNormalizer implements ResourceNormalizerInterface
                 'text/html'
             )
         ];
+
+        if ($release->target()) {
+            $embed += [
+                'environment' => $release->target()->group()->environment()
+            ];
+
+            $links += [
+                'environment' => $this->environmentNormalizer->link($release->target()->group()->environment())
+            ];
+        }
 
         $resource = new HypermediaResource($data, $links, [
             'user' => $release->user(),

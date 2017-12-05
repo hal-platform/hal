@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Build;
 use Hal\Core\Entity\Release;
 use Hal\Core\Entity\Target;
-use Hal\Core\Repository\ReleaseRepository;
+use Hal\Core\Entity\Environment;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
@@ -39,13 +39,7 @@ class StartReleaseController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $buildRepository;
     private $targetRepository;
-
-    /**
-     * @var ReleaseRepository
-     */
-    private $releaseRepository;
 
     /**
      * @var URI
@@ -63,11 +57,7 @@ class StartReleaseController implements ControllerInterface
         URI $uri
     ) {
         $this->template = $template;
-
-        $this->buildRepository = $em->getRepository(Build::class);
-        $this->releaseRepository = $em->getRepository(Release::class);
         $this->targetRepository = $em->getRepository(Target::class);
-
         $this->uri = $uri;
     }
 
@@ -77,8 +67,9 @@ class StartReleaseController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $build = $request->getAttribute(Build::class);
+        $environment = $this->getDeploymentEnvironment( $request);
 
-        if (!$build->isSuccess()) {
+        if (!$build->isSuccess() || !$environment) {
             $this
                 ->getFlash($request)
                 ->withMessage(Flash::ERROR, self::ERR_NOT_BUILDABLE);
@@ -86,18 +77,33 @@ class StartReleaseController implements ControllerInterface
             return $this->withRedirectRoute($response, $this->uri, 'build', ['build' => $build->id()]);
         }
 
-        $targets = $this->targetRepository->getByApplicationAndEnvironment($build->application(), $build->environment());
         $statuses = [];
-        foreach ($targets as $target) {
-            $release = $this->releaseRepository->getByTarget($target, 1)->getIterator()->current();
 
-            $statuses[] = ['target' => $target, 'release' => $release];
+        $targets = $this->targetRepository->getByApplicationAndEnvironment($build->application(), $environment);
+        foreach ($targets as $target) {
+            $statuses[] = [
+                'target' => $target,
+                'release' => $target->release()
+            ];
         }
 
         return $this->withTemplate($request, $response, $this->template, [
             'build' => $build,
+            'environment' => $environment,
             'selected' => $request->getQueryParams()['target'] ?? '',
             'statuses' => $statuses
         ]);
+    }
+
+    /**
+     * The selected environment should have been populated by the previous middleware.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return Environment
+     */
+    private function getDeploymentEnvironment(ServerRequestInterface $request)
+    {
+        return $request->getAttribute(SelectEnvironmentMiddleware::SELECTED_ENVIRONMENT_ATTRIBUTE);
     }
 }

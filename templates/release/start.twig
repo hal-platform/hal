@@ -29,7 +29,7 @@
         {{ form_macros.formErrors(errors) }}
 
         {% set pushables = 0 %}
-        {% set canUserPush = current_authorizations(build.application, build.environment) %}
+        {% set canUserPush = current_authorizations.canDeploy(build.application, environment) %}
 
         {% for status in statuses %}
             {% set inProgress = status.latest.status in ['pending', 'running', 'deploying'] %}
@@ -62,7 +62,11 @@
             </li>
 
             <li>Environment</li>
-            <li>{{ build.environment.name }}</li>
+            {% if build.environment %}
+                <li>{{ environment.name }}</li>
+            {% else %}
+                <li>{{ environment.name }} <small>(<a href="{{ uriFor('release.start', {build: build.id}) }}">Change environment</a>)</small></li>
+            {% endif %}
         </ul>
     </div>
 

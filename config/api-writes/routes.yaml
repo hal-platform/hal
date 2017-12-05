@@ -8,7 +8,7 @@ parameters:
             routes:
                 api.build.start:
                     method: 'POST'
-                    route: '/applications/{application:%r.digit%}/build'
+                    route: '/applications/{application:%r.guid%}/build'
                     stack: ['middleware.api_writes_require_entity', 'build.start.api']
                 api.deploy:
                     method: 'POST'
