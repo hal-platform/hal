@@ -19,7 +19,7 @@ services:
             - ['addNormalizer', ['Hal\Core\Entity\Build', '@api_normalizer.build']]
             - ['addNormalizer', ['Hal\Core\Entity\Target', '@api_normalizer.target']]
             - ['addNormalizer', ['Hal\Core\Entity\Environment', '@api_normalizer.environment']]
-            - ['addNormalizer', ['Hal\Core\Entity\EventLog', '@api_normalizer.event']]
+            - ['addNormalizer', ['Hal\Core\Entity\JobEvent', '@api_normalizer.event']]
             - ['addNormalizer', ['Hal\Core\Entity\Organization', '@api_normalizer.organization']]
             - ['addNormalizer', ['Hal\Core\Entity\Release', '@api_normalizer.release']]
             - ['addNormalizer', ['Hal\Core\Entity\Group', '@api_normalizer.group']]
