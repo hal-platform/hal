@@ -85,16 +85,9 @@ class DeployMiddleware implements MiddlewareInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         $build = $request->getAttribute(Build::class);
+        $environment = $this->getDeploymentEnvironment($request);
 
-        if (!$environment = $this->getPushEnvironment($build, $request)) {
-            return $this->withRedirectRoute($response, $this->uri, 'release.start.global', ['build' => $build->id()]);
-        }
-
-        if (!$request->isPost()) {
-            return $next($request, $response);
-        }
-
-        if (!$build->isSuccess()) {
+        if ($request->getMethod() !== 'POST' || !$build->isSuccess() || !$environment) {
             return $next($request, $response);
         }
 
@@ -137,34 +130,14 @@ class DeployMiddleware implements MiddlewareInterface
     }
 
     /**
-     * This will try several methods to grab the push environment.
+     * The selected environment should have been populated by the previous middleware.
      *
-     * This will grab the environment from the build if it exists, or use the environment repository to search for
-     * an environment using the provided request argument.
-     *
-     * @param Build $build
      * @param ServerRequestInterface $request
      *
-     * @return Environment|null
+     * @return Environment
      */
-    private function getPushEnvironment(Build $build, ServerRequestInterface $request)
+    private function getDeploymentEnvironment(ServerRequestInterface $request)
     {
-        if ($build->environment()) {
-            return $build->environment();
-        }
-
-        $params = $request->getQueryParams();
-
-        $targetID = isset($params['target']) ? $params['target'] : null;
-        if ($targetID && $target = $this->targetRepository->find($targetID)) {
-            return $target->group()->environment();
-        }
-
-        $environmentID = isset($params['environment']) ? $params['environment'] : null;
-        if ($environmentID && $environment = $this->environmentRepository->find($environmentID)) {
-            return $environment;
-        }
-
-        return null;
+        return $request->getAttribute(SelectEnvironmentMiddleware::SELECTED_ENVIRONMENT_ATTRIBUTE);
     }
 }

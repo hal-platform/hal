@@ -58,10 +58,10 @@
 {% block env_picker %}
     {% set env_count = environments|length %}
     {# Only allow environment switching if has multiple env #}
-    <ul class="radio-grid radio-grid--tri">
+    <ul class="list--bullet">
         {% for environment in environments %}
             <li>
-                <a class="radio-grid--fake" href="{{ uriFor('release.start', {'build': build.id}, {'environment': environment.id}) }}">
+                <a class="btn" href="{{ uriFor('release.start', {'build': build.id}, {'environment': environment.id}) }}">
                     {% if environment.isProduction %}
                         {{ macros.icon('key') }}
                     {% endif %}

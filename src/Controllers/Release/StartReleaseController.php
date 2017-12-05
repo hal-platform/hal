@@ -39,10 +39,7 @@ class StartReleaseController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $buildRepository;
     private $targetRepository;
-    private $releaseRepository;
-    private $environmentRepository;
 
     /**
      * @var URI
@@ -60,12 +57,7 @@ class StartReleaseController implements ControllerInterface
         URI $uri
     ) {
         $this->template = $template;
-
-        $this->buildRepository = $em->getRepository(Build::class);
-        $this->releaseRepository = $em->getRepository(Release::class);
         $this->targetRepository = $em->getRepository(Target::class);
-        $this->environmentRepository = $em->getRepository(Environment::class);
-
         $this->uri = $uri;
     }
 
@@ -75,17 +67,7 @@ class StartReleaseController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $build = $request->getAttribute(Build::class);
-
-        $params = $request->getQueryParams();
-        $environment = null;
-        if ($build->environment()) {
-            $environment = $build->environment();
-        } elseif (isset($params['target'])) {
-            $target = $this->targetRepository->find($params['target']);
-            $environment = $target->group()->environment();
-        } elseif (isset($params['environment'])) {
-            $environment = $this->environmentRepository->find($params['environment']);
-        }
+        $environment = $this->getDeploymentEnvironment( $request);
 
         if (!$build->isSuccess() || !$environment) {
             $this
@@ -95,12 +77,14 @@ class StartReleaseController implements ControllerInterface
             return $this->withRedirectRoute($response, $this->uri, 'build', ['build' => $build->id()]);
         }
 
-        $targets = $this->targetRepository->getByApplicationAndEnvironment($build->application(), $environment);
         $statuses = [];
-        foreach ($targets as $target) {
-            $release = $this->releaseRepository->getByTarget($target, 1)->getIterator()->current();
 
-            $statuses[] = ['target' => $target, 'release' => $release];
+        $targets = $this->targetRepository->getByApplicationAndEnvironment($build->application(), $environment);
+        foreach ($targets as $target) {
+            $statuses[] = [
+                'target' => $target,
+                'release' => $target->release()
+            ];
         }
 
         return $this->withTemplate($request, $response, $this->template, [
@@ -109,5 +93,17 @@ class StartReleaseController implements ControllerInterface
             'selected' => $request->getQueryParams()['target'] ?? '',
             'statuses' => $statuses
         ]);
+    }
+
+    /**
+     * The selected environment should have been populated by the previous middleware.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return Environment
+     */
+    private function getDeploymentEnvironment(ServerRequestInterface $request)
+    {
+        return $request->getAttribute(SelectEnvironmentMiddleware::SELECTED_ENVIRONMENT_ATTRIBUTE);
     }
 }
