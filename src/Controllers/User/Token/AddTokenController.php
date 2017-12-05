@@ -46,11 +46,10 @@ class AddTokenController implements ControllerInterface
      * @param URI $uri
      * @param callable $random
      */
-    public function __construct(EntityManagerInterface $em, URI $uri, callable $random)
+    public function __construct(EntityManagerInterface $em, URI $uri)
     {
         $this->em = $em;
         $this->uri = $uri;
-        $this->random = $random;
     }
 
     /**
@@ -82,7 +81,7 @@ class AddTokenController implements ControllerInterface
     private function generateToken(User $user, $name): UserToken
     {
         // @todo encrypt
-        $secret = call_user_func($this->random);
+        $secret = bin2hex(random_bytes(20));
 
         $token = (new UserToken)
             ->withName($name)

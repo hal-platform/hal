@@ -7,6 +7,7 @@
 
 namespace Hal\UI\Middleware;
 
+use Hal\Core\Entity\User;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Service\APIRateLimitService;
@@ -52,7 +53,7 @@ class APIRateLimitingMiddleware implements MiddlewareInterface
         $routeName = $this->getRouteName($request);
 
         if ($this->rateLimiter->isLimited($user, $routeName)) {
-            $msg = sprintf(self::ERR_RATE_LIMIT, $user->handle());
+            $msg = sprintf(self::ERR_RATE_LIMIT, $user->username());
             return $this->withProblem($this->problemRenderer, $response, 429, $msg);
         }
 
@@ -70,7 +71,7 @@ class APIRateLimitingMiddleware implements MiddlewareInterface
      *
      * @return void
      */
-    private function bump(ResponseInterface $response, $user, $routeName)
+    private function bump(ResponseInterface $response, ?User $user, $routeName)
     {
         // Round status code to hundreds.
         $status = (int) floor($response->getStatusCode() / 100) * 100;
