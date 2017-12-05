@@ -6,7 +6,7 @@ namespace Hal\Bin;
 use Hal\UI\Application\DoctrineProxyGenerator;
 
 $root = realpath(__DIR__ . '/../');
-putenv("HAL_ROOT=${root}");
+putenv("PANTHOR_APPROOT=${root}");
 
 if (!$container = @include "${root}/config/bootstrap.php") {
     echo "An error occured while attempting to generate doctrine proxies.\n";

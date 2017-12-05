@@ -9,6 +9,7 @@
     <h1>Dashboard</h1>
     <h2><span class="js-slow-typed" data-text="Hello, Dave.^1000 You're looking well today.">Hello</span></h2>
 
+    {# @todo session is not available in context - find another way to get this #}
     {% if session.get('is-first-login') or not favorites %}
        {{ block('intro') }}
     {% endif %}

@@ -7,7 +7,7 @@
 
 namespace Hal\Bootstrap;
 
-use Hal\UI\VendorAdapters\DI;
+use QL\Panthor\Bootstrap\DI;
 use Hal\UI\CachedContainer;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

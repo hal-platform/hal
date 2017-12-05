@@ -47,8 +47,10 @@ services:
         class: 'Hal\UI\Middleware\LoggerGlobalMiddleware'
         arguments: ['@mcp.logger.factory']
     slim.global_middleware.session:
-        class: 'Hal\UI\Middleware\SessionGlobalMiddleware'
-        arguments: ['@cookie.handler', '%session.lifetime%']
+        class: 'QL\Panthor\Middleware\SessionMiddleware'
+        arguments:
+            - '@cookie.handler'
+            - lifetime: '%session.lifetime%'
     slim.global_middleware.user_session:
         class: 'Hal\UI\Middleware\UserSessionGlobalMiddleware'
         arguments:
