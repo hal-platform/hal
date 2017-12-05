@@ -7,6 +7,8 @@
 
 namespace Hal\UI\API\Normalizer;
 
+use Hal\Core\Entity\Group;
+use Hal\Core\Type\GroupEnum;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResourceNormalizerInterface;
@@ -57,22 +59,7 @@ class TargetNormalizer implements ResourceNormalizerInterface
             'id' => $target->id(),
             'name' => $target->name(),
             'url' => $target->url(),
-
-            'configuration' => [
-                'path' => $target->parameter(Target::PARAM_PATH),
-
-                'cd_name' => $target->parameter(Target::PARAM_APP),
-                'cd_group' => $target->parameter(Target::PARAM_GROUP),
-                'cd_configuration' => $target->parameter(Target::PARAM_CONFIG),
-
-                'eb_name' => $target->parameter(Target::PARAM_APP),
-                'eb_environment' => $target->parameter(Target::PARAM_ENV),
-
-                's3_bucket' => $target->parameter(Target::PARAM_BUCKET),
-                's3_file' => $target->parameter(Target::PARAM_PATH),
-
-                'script_context' => $target->parameter(Target::PARAM_CONTEXT)
-            ],
+            'parameters' => $this->fillParameters($target),
 
             'pretty_name' => $target->format(false),
             'detail' => sprintf('%s: %s', $target->group()->format(), $target->formatParameters()),
@@ -81,7 +68,7 @@ class TargetNormalizer implements ResourceNormalizerInterface
         $links = [
             'self' => $this->link($target),
 
-            'pushes' => new Hyperlink(['api.target.history', ['target' => $target->id()]]),
+            'releases' => new Hyperlink(['api.target.history', ['target' => $target->id()]]),
             'current_release' => new Hyperlink(['api.target.current_release', ['target' => $target->id()]])
         ];
 
@@ -93,5 +80,53 @@ class TargetNormalizer implements ResourceNormalizerInterface
         $resource->withEmbedded($embed);
 
         return $resource;
+    }
+
+    private function fillParameters(Target $target)
+    {
+        $group = $target->group();
+
+        if (!$group instanceof Group) {
+            return [];
+        }
+
+        $type = $group->type();
+
+        switch ($type) {
+            case GroupEnum::TYPE_S3:
+                return [
+                    's3_bucket' => $target->parameter(Target::PARAM_BUCKET),
+                    's3_file' => $target->parameter(Target::PARAM_PATH),
+                    'source' => $target->parameter(Target::PARAM_SOURCE),
+                ];
+
+            case GroupEnum::TYPE_EB:
+                return [
+                    's3_bucket' => $target->parameter(Target::PARAM_BUCKET),
+                    's3_file' => $target->parameter(Target::PARAM_PATH),
+                    'source' => $target->parameter(Target::PARAM_SOURCE),
+                    'eb_name' => $target->parameter(Target::PARAM_APP),
+                    'eb_environment' => $target->parameter(Target::PARAM_ENV),
+                ];
+
+            case GroupEnum::TYPE_CD:
+                return [
+                    's3_bucket' => $target->parameter(Target::PARAM_BUCKET),
+                    's3_file' => $target->parameter(Target::PARAM_PATH),
+                    'source' => $target->parameter(Target::PARAM_SOURCE),
+                    'cd_name' => $target->parameter(Target::PARAM_APP),
+                    'cd_group' => $target->parameter(Target::PARAM_GROUP),
+                    'cd_configuration' => $target->parameter(Target::PARAM_CONFIG),
+                ];
+
+            case GroupEnum::TYPE_RSYNC:
+                return ['path' => $target->parameter(Target::PARAM_PATH)];
+
+            case GroupEnum::TYPE_SCRIPT:
+                return ['script_context' => $target->parameter(TARGET::PARAM_CONTEXT)];
+
+            default:
+                return [];
+        }
     }
 }
