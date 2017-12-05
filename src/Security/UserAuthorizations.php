@@ -142,8 +142,12 @@ class UserAuthorizations implements JsonSerializable
      *
      * @return bool
      */
-    public function canBuild(Application $application): bool
+    public function canBuild($application): bool
     {
+        if (!$application instanceof Application) {
+            return false;
+        }
+
         $organization = $application->organization();
 
         if ($this->isMemberOf($application) || $this->isOwnerOf($application)) {
@@ -170,8 +174,16 @@ class UserAuthorizations implements JsonSerializable
      *
      * @return bool
      */
-    public function canDeploy(Application $application, Environment $environment): bool
+    public function canDeploy($application, $environment): bool
     {
+        if (!$application instanceof Application) {
+            return false;
+        }
+
+        if (!$environment instanceof Environment) {
+            return false;
+        }
+
         if ($this->canBuild($application) && !$environment->isProduction()) {
             return true;
         }

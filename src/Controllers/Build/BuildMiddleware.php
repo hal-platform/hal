@@ -96,7 +96,7 @@ class BuildMiddleware implements MiddlewareInterface
         $ref = $request->getParsedBody()['reference'] ?? '';
         $search = $request->getParsedBody()['search'] ?? '';
 
-        if ($env === 'global') {
+        if ($env === '!any') {
             $env = null;
         }
 

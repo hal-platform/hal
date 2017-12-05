@@ -26,7 +26,7 @@ module.exports = {
             }
         }
 
-        var environmentName = 'global';
+        var environmentName = 'Any';
         if (build._links.hasOwnProperty('environment')) {
             if (build._links.environment !== null) {
                 environmentName = build._links.environment.title;

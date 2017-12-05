@@ -32,6 +32,7 @@ class DeployController implements ControllerInterface
     use SessionTrait;
 
     private const ERR_CHECK_FORM = 'Cannot deploy release due to form submission failure. Please check errors.';
+    private const ERR_INVALID_DEPLOY = 'Cannot start deployment to the provided targets.';
 
     /**
      * @var EntityManagerInterface
@@ -89,14 +90,8 @@ class DeployController implements ControllerInterface
         $targets = $request->getParsedBody()['targets'] ?? [];
 
         if (!$targets) {
-            $problem = new HTTPProblem(400, self::ERR_CHECK_FORM, []);
-            $errors = [
-                'target' => [
-                    'No target provided'
-                ]
-            ];
-
-            return $this->renderProblem($response, $this->problemRenderer, $problem, ['errors' => $errors]);
+            $problem = new HTTPProblem(400, self::ERR_CHECK_FORM, ['errors' => [self::ERR_INVALID_DEPLOY]]);
+            return $this->renderProblem($response, $this->problemRenderer, $problem);
         }
 
         $environment = $this->getReleaseEnvironment($targets);
@@ -104,7 +99,6 @@ class DeployController implements ControllerInterface
 
         if (!$releases) {
             $problem = new HTTPProblem(400, self::ERR_CHECK_FORM, ['errors' => $this->releaseValidator->errors()]);
-
             return $this->renderProblem($response, $this->problemRenderer, $problem);
         }
 

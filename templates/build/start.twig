@@ -18,7 +18,6 @@
         </p>
     </div>
 
-
     {{ form_macros.formErrors(errors) }}
 
     <form method="post" name="start-build">
@@ -26,22 +25,23 @@
         {% block select_environment %}
             <h2 class="leader">Select Environment</h2>
             <p class="trailer">
-                Select <b>Global</b> to create a build that can be deployed to any environment.
+                Select <b>Any</b> to create a build that can be deployed to any environment.
             </p>
 
             <ul class="radio-grid radio-grid--tri">
+                {% set isSelected = form.environment == '!any' or environments|length == 0 %}
+                <li>
+                    <input class="js-environment-selector" id="env-any" type="radio" name="environment" value="!any"{{ isSelected ? ' checked' : '' }}>
+                    <label for="env-any">None (deploy to any environment)</label>
+                </li>
+
                 {% for env in environments %}
-                    {% set isSelected = form.environment == env.id or environments|length == 1 %}
+                    {% set isSelected = form.environment == env.id %}
                     <li>
                         <input class="js-environment-selector" id="env-{{ env.id }}" type="radio" name="environment" value="{{ env.id }}"{{ isSelected ? 'checked' : '' }}>
                         <label for="env-{{ env.id }}">{{ env.name }}</label>
                     </li>
                 {% endfor %}
-                {% set isSelected = form.environment == 'global' %}
-                <li>
-                    <input class="js-environment-selector" id="env-global" type="radio" name="environment" value="global"{{ isSelected ? ' checked' : '' }}>
-                    <label for="env-global">Global (deploy to any environment)</label>
-                </li>
             </ul>
         {% endblock %}
 
@@ -87,9 +87,7 @@
                 {{ macros.alert('warning', alert_message, alert_details) }}
             </div>
 
-            {% if environments %}
-                <div class="leader"><input class="btn btn--action" type="submit" value="Start Build" name="submit"></div>
-            {% endif %}
+            <div class="leader"><input class="btn btn--action" type="submit" value="Start Build" name="submit"></div>
 
             {{ block('build_tabs') }}
 
@@ -102,9 +100,7 @@
 
             </div>
 
-            {% if environments %}
-                <input class="btn btn--action" type="submit" value="Start Build" name="submit">
-            {% endif %}
+            <input class="btn btn--action" type="submit" value="Start Build" name="submit">
         {% endblock %}
 
         {{ block('start_deploy') }}

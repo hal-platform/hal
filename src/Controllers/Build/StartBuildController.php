@@ -105,7 +105,7 @@ class StartBuildController implements ControllerInterface
             'open' => $openPR,
             'closed' => $closedPR,
 
-            'environments' => $this->getBuildableEnvironments($application),
+            'environments' => $this->environmentRepository->getBuildableEnvironmentsByApplication($application),
         ] + $targets);
     }
 
@@ -118,9 +118,8 @@ class StartBuildController implements ControllerInterface
     private function getFormData(ServerRequestInterface $request, Application $application)
     {
         // Automatically select an environment from sticky pref if this is fresh form
-        if ($environment = $request->getAttribute(Environment::class)) {
-            $env = $environment->id();
-        } else {
+        $env = $request->getParsedBody()['search'] ?? null;
+        if ($env === null) {
             $env = $this->stickyService->get($request, $application);
         }
 
@@ -130,23 +129,6 @@ class StartBuildController implements ControllerInterface
             'reference' => $request->getParsedBody()['reference'] ?? '',
             'gitref' => $request->getParsedBody()['gitref'] ?? ''
         ];
-    }
-
-    /**
-     * @param Application $application
-     *
-     * @return Environment[]
-     */
-    private function getBuildableEnvironments(Application $application)
-    {
-        $envs = $this->environmentRepository->getBuildableEnvironmentsByApplication($application);
-
-        // if empty, throw them a bone with "test"
-        if (!$envs) {
-            $envs = $this->environmentRepository->findBy(['name' => 'test']);
-        }
-
-        return $envs;
     }
 
     /**
@@ -263,7 +245,7 @@ class StartBuildController implements ControllerInterface
         $environment = '';
         if ($env instanceof Environment) {
             $environment = $env;
-        } elseif ($env === 'global') {
+        } elseif ($env === '!any') {
             $environment = null;
         } elseif ($env) {
             $environment = $this->environmentRepository->find($env);

@@ -111,10 +111,9 @@
                 {% if can_edit and permissions %}
                     <a href="{{ uriFor('application_permission.remove', {'application': application.id}) }}">Manage or revoke permissions</a>
                 {% else %}
-                    <button class="btn--disabled">Manage or revoke permissions</button>
+                    <button class="btn btn--disabled">Manage or revoke permissions</button>
                 {% endif %}
             </li>
-
         </ul>
 
     </div>

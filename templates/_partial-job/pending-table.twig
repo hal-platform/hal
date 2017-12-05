@@ -20,7 +20,7 @@
                         <td>{{ macros.job_status_prefix(job) }}</td>
                         <td><a href="{{ uriFor('application.dashboard', {'application': job.application.id}) }}">{{ job.application.name }}</a></td>
 
-                        <td>{{ job.environment ? job.environment.name : 'global' }}
+                        <td>{{ job.environment ? job.environment.name : 'Any' }}
 
                         <td>{{ git_macros.gitref(job, true) }}</td>
                         <td class="table-priority-55">{{ job.user ? job.user.username : 'Unknown' }}</td>
@@ -34,7 +34,7 @@
                         {% if job.deployment %}
                             <td>{{ job.target.group.environment.name }} → {{ job.target.formatPretty(true) }}</td>
                         {% else %}
-                            <td>{{ job.build.environment ? job.build.environment.name : 'global' }} → Unknown</td>
+                            <td>{{ job.build.environment ? job.build.environment.name : 'Any' }} → Unknown</td>
                         {% endif %}
 
                         <td>Build <a href="{{ uriFor('build', {'build': job.build.id}) }}">{{ job.build.id|formatBuildId }}</a></td>
