@@ -49,32 +49,37 @@
                                 <td>
                                     {% if target.group.type == 'eb' %}
 
-                                        Application: <code>{{ target.parameter(constant('PARAM_APP', target)) }}</code>
-                                        <br>Environment: <code>{{ target.parameter(constant('PARAM_ENV', target)) }}</code>
+                                        Application: <code>{{ target.parameter('application') }}</code>
+                                        <br>
+                                        Environment: <code>{{ target.parameter('environment') }}</code>
 
                                     {% elseif target.group.type == 'cd' %}
 
-                                        Application: <code>{{ target.parameter(constant('PARAM_APP', target)) }}</code>
-                                        <br>Group: <code>{{ target.parameter(constant('PARAM_GROUP', target)) }}</code>
-                                        <br>Config: <code>{{ target.parameter(constant('PARAM_CONFIG', target)) }}</code>
+                                        Application: <code>{{ target.parameter('application') }}</code>
+                                        <br>
+                                        Group: <code>{{ target.parameter('group') }}</code>
+                                        <br>
+                                        Config: <code>{{ target.parameter('configuration') }}</code>
 
                                     {% elseif target.group.type == 's3' %}
 
-                                        Bucket: <code>{{ target.parameter(constant('PARAM_BUCKET', target)) }}</code>
-                                        <br>File: <code>{{ target.parameter(constant('PARAM_SOURCE', target)) }}</code>
+                                        Bucket: <code>{{ target.parameter('bucket') }}</code>
+                                        <br>
+                                        File: <code>{{ target.parameter('path') }}</code>
 
                                     {% elseif target.group.type == 'script' %}
 
-                                        Context: <code>{{ target.parameter(constant('PARAM_CONTEXT', target)) ?: 'N/A' }}</code>
+                                        Context: <code>{{ target.parameter('context') ?: 'N/A' }}</code>
 
                                     {% elseif target.group.type == 'rsync' %}
 
-                                        Path: <code>{{ target.parameter(constant('PARAM_PATH', target)) }}</code>
+                                        Path: <code>{{ target.parameter('path') }}</code>
 
                                     {% else %}
-                                        <code>{{ target.format(false) }}</code>
-                                    {% endif %}
 
+                                        <code>{{ target.format(false) }}</code>
+
+                                    {% endif %}
                                 </td>
                                 <td>
                                     {% if target.url %}
