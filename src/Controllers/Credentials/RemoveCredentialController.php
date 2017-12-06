@@ -62,7 +62,7 @@ class RemoveCredentialController implements ControllerInterface
         $credential = $request->getAttribute(Credential::class);
         $authorizations = $this->getAuthorizations($request);
 
-        if ($credential->isInternal() && (!$authorizations->isAdmin() && !$authorizations->isSuper())) {
+        if ($credential->isInternal() && !$authorizations->isSuper()) {
             $message = sprintf('Cannot remove internal credential "%s". Contact the administrator.', $credential->name());
             $this->withFlash($request, Flash::ERROR, $message);
 
