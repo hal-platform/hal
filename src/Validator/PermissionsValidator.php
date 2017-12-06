@@ -133,6 +133,7 @@ class PermissionsValidator
         if ($this->hasErrors()) return null;
 
         $permissions = (new UserPermission)
+            ->withType($type)
             ->withUser($selectedUser)
             ->withApplication($application)
             ->withOrganization($organization);
