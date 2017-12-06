@@ -17,7 +17,7 @@ parameters:
     ############################################################################
     # general
     ############################################################################
-    root: '%env(HAL_ROOT)%'
+    root: '%env(PANTHOR_APPROOT)%'
     base_url: '%env(HAL_BASEURL)%'
     administrator_email: '%env(HAL_ADMIN_EMAIL)%'
 
@@ -50,6 +50,8 @@ parameters:
         - 'slim.global_middleware.user_session'
         - 'slim.global_middleware.srs_business'
         - 'slim.global_middleware.global_banner'
+
+    error_handling.html_template: 'error.twig'
 
     ############################################################################
     # logging

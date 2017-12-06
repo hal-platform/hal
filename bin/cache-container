@@ -3,11 +3,11 @@
 
 namespace Hal\Bin;
 
-use Hal\UI\VendorAdapters\DI;
+use QL\Panthor\Bootstrap\DI;
 use Hal\UI\CachedContainer;
 
 $root = realpath(__DIR__ . '/../');
-putenv("HAL_ROOT=${root}");
+putenv("PANTHOR_APPROOT=${root}");
 
 $file = "${root}/src/CachedContainer.php";
 $class = CachedContainer::class;

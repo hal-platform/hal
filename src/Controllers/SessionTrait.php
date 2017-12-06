@@ -9,12 +9,12 @@ namespace Hal\UI\Controllers;
 
 use Hal\Core\Entity\User;
 use Hal\UI\Flash;
-use Hal\UI\SessionInterface;
 use Hal\UI\Middleware\FlashGlobalMiddleware;
-use Hal\UI\Middleware\SessionGlobalMiddleware;
 use Hal\UI\Middleware\UserSessionGlobalMiddleware;
 use Hal\UI\Security\UserAuthorizations;
 use Psr\Http\Message\ServerRequestInterface;
+use QL\Panthor\Middleware\SessionMiddleware;
+use QL\Panthor\Session\SessionInterface;
 
 trait SessionTrait
 {
@@ -25,7 +25,7 @@ trait SessionTrait
      */
     private function getSession(ServerRequestInterface $request): SessionInterface
     {
-        return $request->getAttribute(SessionGlobalMiddleware::SESSION_ATTRIBUTE);
+        return $request->getAttribute(SessionMiddleware::DEFAULT_REQUEST_ATTRIBUTE);
     }
 
     /**

@@ -38,7 +38,7 @@
                     {% elseif group.type() == 's3' %}
 
                         <th>Bucket</th>
-                        <th>File</th>
+                        <th>Path</th>
 
                     {% elseif group.type() == 'cd' %}
 
@@ -67,25 +67,25 @@
 
                     {% if group.type == 'eb' %}
 
-                        <td><code>{{ target.parameter(constant('PARAM_APP', target)) }}</code></td>
-                        <td><code>{{ target.parameter(constant('PARAM_ENV', target)) }}</code></td>
+                        <td><code>{{ target.parameter('application') }}</code></td>
+                        <td><code>{{ target.parameter('environment') }}</code></td>
 
                     {% elseif group.type == 's3' %}
 
-                        <td><code>{{ target.parameter(constant('PARAM_BUCKET', target)) }}</code></td>
-                        <td><code>{{ target.parameter(constant('PARAM_SOURCE', target)) ?: '$APPID/$PUSHID.zip' }}</code></td>
+                        <td><code>{{ target.parameter('bucket', target) }}</code></td>
+                        <td><code>{{ target.parameter('path') ?: '$APPID/$PUSHID.zip' }}</code></td>
 
                     {% elseif group.type == 'cd' %}
 
-                        <td><code>{{ target.parameter(constant('PARAM_APP', target)) }}</code></td>
-                        <td><code>{{ target.parameter(constant('PARAM_GROUP', target)) }}</code></td>
-                        <td><code>{{ target.parameter(constant('PARAM_CONFIG', target)) }}</code></td>
+                        <td><code>{{ target.parameter('application') }}</code></td>
+                        <td><code>{{ target.parameter('group') }}</code></td>
+                        <td><code>{{ target.parameter('configuration') }}</code></td>
 
                     {% elseif group.type == 'script' %}
-                        <td><code>{{ target.parameter(constant('PARAM_CONTEXT', target)) ?: 'None'  }}</code></td>
+                        <td><code>{{ target.parameter('context') ?: 'None'  }}</code></td>
 
                     {% else %}
-                        <td><code>{{ target.parameter(constant('PARAM_PATH', target))  }}</code></td>
+                        <td><code>{{ target.parameter('path')  }}</code></td>
                     {% endif %}
 
                     <td>

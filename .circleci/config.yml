@@ -64,7 +64,7 @@ jobs:
 
             - run:
                 name: 'Run static analysis'
-                command: 'vendor/bin/phpcs -n --colors --standard=PSR2 src || true'
+                command: 'vendor/bin/phpcs -n --colors || true'
 
     build_frontend:
         <<: *defaults

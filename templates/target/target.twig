@@ -54,51 +54,51 @@
     {% if target.group.type == 'rsync' %}
 
         <h4>File path</h4>
-        <p><code>{{ target.parameter(constant('PARAM_PATH', target)) }}</code></p>
+        <p><code>{{ target.parameter('path') }}</code></p>
 
     {% elseif target.group.type == 'eb' %}
 
         <h4>Elastic Beanstalk Application Name</h4>
-        <p><code>{{ target.parameter(constant('PARAM_APP', target)) }}</code></p>
+        <p><code>{{ target.parameter('application') }}</code></p>
 
         <h4>Elastic Beanstalk Environment</h4>
-        <p><code>{{ target.parameter(constant('PARAM_ENV', target)) }}</code></p>
+        <p><code>{{ target.parameter('environment') }}</code></p>
 
         <h4>S3 Bucket</h4>
-        <p><code>{{ target.parameter(constant('PARAM_BUCKET', target)) }}</code></p>
+        <p><code>{{ target.parameter('bucket') }}</code></p>
 
         <h4>S3 File</h4>
-        <p><code>{{ target.parameter(constant('PARAM_SOURCE', target)) ?: '$APPID/$PUSHID.zip' }}</code></p>
+        <p><code>{{ target.parameter('path') ?: '$APPID/$PUSHID.zip' }}</code></p>
 
     {% elseif target.group.type == 's3' %}
 
         <h4>S3 Bucket</h4>
-        <p><code>{{ target.parameter(constant('PARAM_BUCKET', target)) }}</code></p>
+        <p><code>{{ target.parameter('bucket') }}</code></p>
 
         <h4>S3 File</h4>
-        <p><code>{{ target.parameter(constant('PARAM_SOURCE', target)) }}</code></p>
+        <p><code>{{ target.parameter('path') }}</code></p>
 
     {% elseif target.group.type == 'cd' %}
 
         <h4>CodeDeploy Application Name</h4>
-        <p><code>{{ target.parameter(constant('PARAM_APP', target)) }}</code></p>
+        <p><code>{{ target.parameter('application') }}</code></p>
 
         <h4>CodeDeploy Deployment Group</h4>
-        <p><code>{{ target.parameter(constant('PARAM_GROUP', target)) }}</code></p>
+        <p><code>{{ target.parameter('group') }}</code></p>
 
         <h4>CodeDeploy Configuration</h4>
-        <p><code>{{ target.parameter(constant('PARAM_CONFIG', target)) }}</code></p>
+        <p><code>{{ target.parameter('configuration') }}</code></p>
 
         <h4>S3 Bucket</h4>
-        <p><code>{{ target.parameter(constant('PARAM_BUCKET', target)) }}</code></p>
+        <p><code>{{ target.parameter('bucket') }}</code></p>
 
         <h4>S3 File</h4>
-        <p><code>{{ target.parameter(constant('PARAM_SOURCE', target)) ?: '$APPID/$PUSHID.zip' }}</code></p>
+        <p><code>{{ target.parameter('path') ?: '$APPID/$PUSHID.zip' }}</code></p>
 
     {% endif %}
 
     <h4>Script Context</h4>
-    <p><code>{{ target.parameter(constant('PARAM_CONTEXT', target)) ?: 'None' }}</code></p>
+    <p><code>{{ target.parameter('context') ?: 'None' }}</code></p>
 
     <h4>URL</h4>
     <p>

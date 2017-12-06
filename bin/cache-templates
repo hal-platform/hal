@@ -6,7 +6,7 @@ namespace Hal\Bin;
 use Symfony\Component\Finder\Finder;
 
 $root = realpath(__DIR__ . '/../');
-putenv("HAL_ROOT=${root}");
+putenv("PANTHOR_APPROOT=${root}");
 
 if (!$container = @include "${root}/config/bootstrap.php") {
     echo "An error occured while attempting to cache twig templates.\n";
@@ -25,7 +25,7 @@ $twigCacheDir = $container->getParameter('twig.cache.dir');
 $files = (new Finder)
     ->files()
     ->name('*.twig')
-    ->in("${root}/${twigDir}");
+    ->in("${twigDir}");
 
 echo <<<OUTPUT
 Compiling twig templates
@@ -41,8 +41,8 @@ if (!$files) {
 }
 
 // Always create twig cache if not found
-if (!file_exists("${root}/${twigCacheDir}")) {
-    mkdir("${root}/${twigCacheDir}");
+if (!file_exists("${twigCacheDir}")) {
+    mkdir("${twigCacheDir}");
 }
 
 echo "Templates:\n";

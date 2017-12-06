@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "acc0753b982cf9de7760572dff4e5c61",
+    "content-hash": "b6259bb98be326084b4d30518151870d",
     "packages": [
         {
             "name": "acclimate/container",
@@ -1071,12 +1071,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/hal-platform/hal-core.git",
-                "reference": "5542a56d7415e56b6bd6823a58856855799cb70f"
+                "reference": "0a79e0579cb5f532b223d9ad75821fa50fccf202"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hal-platform/hal-core/zipball/5542a56d7415e56b6bd6823a58856855799cb70f",
-                "reference": "5542a56d7415e56b6bd6823a58856855799cb70f",
+                "url": "https://api.github.com/repos/hal-platform/hal-core/zipball/0a79e0579cb5f532b223d9ad75821fa50fccf202",
+                "reference": "0a79e0579cb5f532b223d9ad75821fa50fccf202",
                 "shasum": ""
             },
             "require": {
@@ -1097,9 +1097,9 @@
                 "phpunit/phpunit": "~6.2",
                 "robmorgan/phinx": "~0.8",
                 "squizlabs/php_codesniffer": "~3.0",
-                "symfony/config": "~3.3",
-                "symfony/dependency-injection": "~3.3",
-                "symfony/yaml": "~3.3"
+                "symfony/config": "~3.3.0",
+                "symfony/dependency-injection": "~3.3.0",
+                "symfony/yaml": "~3.3.0"
             },
             "bin": [
                 "bin/hal-build-id",
@@ -1122,7 +1122,7 @@
                 }
             ],
             "description": "Core domain entities and shared resources for Hal UI and Agent.",
-            "time": "2017-10-31T14:20:03+00:00"
+            "time": "2017-12-06 19:59:21"
         },
         {
             "name": "knplabs/github-api",
@@ -2385,16 +2385,16 @@
         },
         {
             "name": "ql/mcp-panthor",
-            "version": "3.1.0",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/quickenloans-mcp/mcp-panthor.git",
-                "reference": "876425c644f806b553b8339980d65af6f4e33155"
+                "reference": "f1351351552bb1cc557cf6a9b9d62fe2beb7fc73"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/quickenloans-mcp/mcp-panthor/zipball/876425c644f806b553b8339980d65af6f4e33155",
-                "reference": "876425c644f806b553b8339980d65af6f4e33155",
+                "url": "https://api.github.com/repos/quickenloans-mcp/mcp-panthor/zipball/f1351351552bb1cc557cf6a9b9d62fe2beb7fc73",
+                "reference": "f1351351552bb1cc557cf6a9b9d62fe2beb7fc73",
                 "shasum": ""
             },
             "require": {
@@ -2405,19 +2405,21 @@
                 "psr/log": "*",
                 "ql/mcp-common": "~1.0",
                 "slim/slim": "~3.4",
-                "symfony/config": "~3.0",
-                "symfony/dependency-injection": "~3.0",
-                "symfony/yaml": "~3.0"
+                "symfony/config": "~3.0 || ~4.0",
+                "symfony/dependency-injection": "~3.0 || ~4.0",
+                "symfony/yaml": "~3.0 || ~4.0"
             },
             "require-dev": {
+                "codacy/coverage": "~1.4",
                 "ext-libsodium": "~1.0",
                 "mockery/mockery": "~0.9",
                 "paragonie/random_compat": "~1.1",
                 "phpunit/phpunit": "~5.6",
-                "twig/twig": "*"
+                "symfony/proxy-manager-bridge": "~3.3 || ~4.0",
+                "twig/twig": "~1.27"
             },
             "suggest": {
-                "ext-libsodium": "~1.0 PECL Libsodium recommended for secure cookie encryption."
+                "ext-libsodium": "~1.0 || ~2.0 PECL Libsodium recommended for secure cookie encryption."
             },
             "type": "library",
             "autoload": {
@@ -2441,7 +2443,7 @@
                 "microframework",
                 "quickenloans"
             ],
-            "time": "2017-02-20T16:30:27+00:00"
+            "time": "2017-12-06T20:02:36+00:00"
         },
         {
             "name": "slim/slim",
