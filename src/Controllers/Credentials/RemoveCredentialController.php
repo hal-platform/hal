@@ -58,7 +58,6 @@ class RemoveCredentialController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        /** @var Credential $credential */
         $credential = $request->getAttribute(Credential::class);
         $authorizations = $this->getAuthorizations($request);
 
@@ -78,10 +77,6 @@ class RemoveCredentialController implements ControllerInterface
 
         $this->em->remove($credential);
         $this->em->flush();
-
-        // target caches must be manually flushed here, since they would contain a link to a removed entity
-        $cache = $this->em->getCache();
-        $cache->evictEntityRegion(Target::class);
 
         $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $credential->name()));
         return $this->withRedirectRoute($response, $this->uri, 'credentials');
