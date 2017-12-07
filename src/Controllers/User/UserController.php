@@ -8,6 +8,7 @@
 namespace Hal\UI\Controllers\User;
 
 use Hal\Core\Entity\User;
+use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Security\AuthorizationHydrator;
 use Hal\UI\Security\AuthorizationService;
@@ -19,6 +20,7 @@ use QL\Panthor\TemplateInterface;
 
 class UserController implements ControllerInterface
 {
+    use SessionTrait;
     use TemplatedControllerTrait;
 
     /**
@@ -57,6 +59,7 @@ class UserController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $user = $request->getAttribute(User::class);
+        $loggedInUserAuth = $this->getAuthorizations($request);
         $authorizations = $this->authorizationService->getUserAuthorizations($user);
         $permissions = $this->authorizationHydrator->hydrateAuthorizations($user, $authorizations);
 
@@ -64,8 +67,28 @@ class UserController implements ControllerInterface
             'user' => $user,
             'user_authorizations' => $authorizations,
             'user_permissions' => $permissions,
+            'can_disable' => $this->canDisableUser($authorizations, $loggedInUserAuth),
 
             'tokens' => $user->tokens()->toArray()
         ]);
+    }
+
+    /**
+     * @param UserAuthorizations $selectedUser
+     * @param UserAuthorizations $currentUser
+     *
+     * @return bool
+     */
+    private function canDisableUser(UserAuthorizations $selectedUser, UserAuthorizations $currentUser)
+    {
+        if ($currentUser->isSuper()) {
+            return true;
+        }
+
+        if ($currentUser->isAdmin() && !$selectedUser->isSuper()) {
+            return true;
+        }
+
+        return false;
     }
 }
