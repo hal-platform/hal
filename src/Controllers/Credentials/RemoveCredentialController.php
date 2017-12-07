@@ -71,11 +71,9 @@ class RemoveCredentialController implements ControllerInterface
 
         $targets = $this->targetRepository->findBy(['credential' => $credential]);
 
-        if (count($targets) > 0) {
-            $message = sprintf('Cannot remove credential "%s". It is being used by applications.', $credential->name());
-            $this->withFlash($request, Flash::ERROR, $message);
-
-            return $this->withRedirectRoute($response, $this->uri, 'credential', ['credential' => $credential->id()]);
+        foreach ($targets as $target) {
+            $target->withCredential(null);
+            $this->em->persist($target);
         }
 
         $this->em->remove($credential);
