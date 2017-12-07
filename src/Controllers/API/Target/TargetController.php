@@ -46,7 +46,7 @@ class TargetController implements ControllerInterface
     {
         $target = $request->getAttribute(Target::class);
 
-        $resource = $this->normalizer->resource($target, ['server']);
+        $resource = $this->normalizer->resource($target, ['group']);
         $body = $this->formatter->buildHypermediaResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $body);

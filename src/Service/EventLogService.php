@@ -72,7 +72,7 @@ class EventLogService
 
         // if finished, get logs from db
         if (in_array($job->status(), ['success', 'failure', 'removed'], true)) {
-            return $this->eventlogsRepository->findBy(['parent' => $job->id()]);
+            return $this->eventlogsRepository->findBy(['parent' => $job->id()], ['order' => 'ASC']);
         }
 
         return $this->getFromRedis($job);

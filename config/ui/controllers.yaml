@@ -170,7 +170,6 @@ services:
         arguments:
             - '@doctrine.em'
             - '@uri'
-            - '@doctrine.random'
 
     user.token.remove.handler:
         class: 'Hal\UI\Controllers\User\Token\RemoveTokenController'

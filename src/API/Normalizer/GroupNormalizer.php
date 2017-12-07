@@ -60,7 +60,7 @@ class GroupNormalizer implements ResourceNormalizerInterface
 
         return new Hyperlink(
             ['api.group', ['group' => $group->id()]],
-            $group->format()
+            $group->format(false)
         );
     }
 
