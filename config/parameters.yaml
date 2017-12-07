@@ -132,6 +132,6 @@ parameters:
     ############################################################################
     # encryption
     ############################################################################
-    encrypter.secret.path: '%root%/config/hal.encrypter.secret'
+    encrypter.secret.path: '%env(HAL_CRYPTO_SECRETPATH)%'
     encrypter.publickey: '%env(HAL_CRYPTO_PUBLICKEY)%'
     encrypter.encryptedkey: '%env(HAL_CRYPTO_PRIVATEKEY)%'

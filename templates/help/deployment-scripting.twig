@@ -14,32 +14,67 @@
     </div>
 
     <ul class="list--bullet">
-        <li><a href="#shell-commands">Commands</a></li>
+        <li><a href="#stages">Build and Release Stages</a></li>
         <li><a href="#configuration-file">.hal9000.yml configuration file</a></li>
-        <li><a href="#build-environment">Build scripting environment</a></li>
-        <li><a href="#deploy-environment">Deployment scripting environment</a></li>
-        <li><a href="#docker">Docker</a></li>
-        <li><a href="#package-managers">Package Managers</a></li>
-        <li><a href="#encrypted-configuration">Encrypted Properties</a></li>
+        <li>
+            <h5>Scripting Environments</h5>
+            <ul class="list--bullet">
+                <li><a href="#build-environment">Build Environment</a></li>
+                <li><a href="#deploy-environment">Deployment Environment</a></li>
+            </ul>
+        </li>
+        <li>
+            <h5>Features</h5>
+            <ul class="list--bullet">
+                <li><a href="#docker">Docker</a></li>
+                <li><a href="#env-configuration">Environment Variables and Configuration</a></li>
+                <li><a href="#encrypted-configuration">Encrypted Properties</a></li>
+                <li><a href="#before-after-deploy">Running commands before or after a deployment</a></li>
+            </ul>
+        </li>
     </ul>
 
-    <h2 id="shell-commands">Commands</h2>
-    <p>An application can specify a command to run in each of these separate steps in the deployment process:</p>
+    <h2 id="stages">Build and Release Stages</h2>
+    <p>An application can specify a command to run in each of these separate stages in the deployment process:</p>
     <ul class="list--bullet">
-        <li><b>Build</b> (Runs on build server)</li>
-        <li><b>Pre-deploy Build Transform</b> (Runs on build server)</li>
-        <li><b>Pre-deploy</b> (Runs on deployment target server)</li>
-        <li><b>Deploy</b> (Runs on build server)</li>
-        <li><b>Post-deploy</b> (Runs on deployment target server)</li>
+        <li>
+            <h6>Build Stage</h6>
+            <ol class="list--numbered">
+                <li>Build</li>
+            </ol>
+        </li>
+        <li>
+            <h6>Release Stage</h6>
+            <ol class="list--numbered">
+                <li>Build Transform</li>
+                <li>Before Deploy</li>
+                <li>Pre-push (<code>rsync</code> only. Runs on target server)</li>
+                <li>Deploy</li>
+                <li>Post-push (<code>rsync</code> only. Runs on target server)</li>
+                <li>After Deploy</li>
+            </ol>
+        </li>
     </ul>
+
+    <p>
+        <b>After Deploy</b> step runs even if the deployment fails. This allows you to run different commands
+        depending on if a deployment passed or failed.
+    </p>
+
+    <p>
+        You can only define the <b>Deploy</b> step if <b>script-based deployments</b> are used. If using a built-in deployment type such as <b>rsync</b>
+        or <b>elastic beanstalk</b>, Hal will take care of the deployment step for you.
+    </p>
 
     <p>
         These commands must be executable in a standard <b>shell environment</b>.
         It is common for applications to create a special bin within the project folder, but any command will do.
     </p>
+
     <p>
-        Commands designed to run on the target server (pre-deploy or post-deploy) are used for rsync-based deployments only.
-        <b>Deploy</b> commands are run for script-based deployments only.
+        <b>RSync deployments</b> have two additional steps: <code>pre-push</code> and <code>post-push</code>.
+        These steps run before and after the deployment <b>on the target server</b> which enables stopping or starting servers
+        before before and after a deployment.
     </p>
 
     Examples:
@@ -54,11 +89,13 @@
 
     <p>
         All commands are executed from the directory of the application.
+        All command are exectued from isolated docker containers on build servers.
+        Hal will consider any command with a non-zero exit code a failure.
     </p>
+
+    <h5 class="mbn"><b>A note on post-deploy command failures</b></h5>
     <p>
-       Build command are executed from isolated docker containers on build servers.
-       Push commands are executed on the server the application code is being pushed to.
-       Hal will consider any command with a non-zero exit code as a failure.
+        The <b>After Deploy</b> step will <b>always</b> run, even if the deployment is a failure.
     </p>
 
     {{ macros.alert('warning', 'The exit code of the command <b>MUST</b> be 0.') }}
@@ -74,7 +111,7 @@
     <h4>Here is an example with default values:</h4>
     {{ block('configuration_file') }}
 
-    <h2 id="build-environment">Build Scripting Environment</h2>
+    <h2 id="build-environment">Build Environment</h2>
     <p>During the build process, The following environment variables are available to application build scripts:</p>
     {{ block('build_vars') }}
 
@@ -90,20 +127,25 @@
     <p>Upon deployment a yaml file in the following format will be written to the application directory:</p>
     {{ block('push_file') }}
 
-    <h5 class="mbn"><b>A note on post-deploy command failures</b></h5>
-    <p>
-        Post-deploy commands run <b>after</b> the application code is synced to the target server. For this
-        reason, returning an error state will not stop the deployment process. If an error occurs, you will need to start
-        a new deployment and overwrite the failed one.
-    </p>
-
     <h2 id="docker">Docker</h2>
     {{ block('docker_info') }}
 
-    <h2 id="package-managers">Package Managers - Recommended installation commands</h2>
-    {{ block('pm_commands') }}
+    <h2 id="env-configuration">Environment Variables and Configuration</h2>
+    <p>
+        Configuration values can be passed to your app and scripts in two ways:
+        <ul class="list--bullet">
+            <li>hal configuration file (non-secrets)</li>
+            <li><a href="#encrypted-configuration">encrypted configuration</a> (secrets and sensitive values)</li>
+        </ul>
+    </p>
+    <p>
+        Both methods allow you to specify <b>global configuration</b> shared by all environments and <b>environment-specific</b> values
+        only defined in specific environments.
+    </p>
+    <p>See the following <code>.hal9000.yml</code> example file for how environment variables are used are used.</p>
+    {{ block('env_configuration_file') }}
 
-    <h2 id="encrypted-configuration">Encrypted Properties</h2>
+    <h2 id="encrypted-configuration">Encrypted Configuration</h2>
 
     <p>
         From the frontend Hal interface, administrators and project leads can add encrypted properties. Encrypted Properties
@@ -122,6 +164,15 @@
         <br><br>
         Hal will automatically fail builds when decryption fails, but this does not protect against required configuration being deleted from the encrypted property store.
     </p>
+
+    <h2 id="before-after-deploy">Running commands before or after a deployment</h2>
+    <p>
+        It is possible to run commands in a docker build environment before or after a deployment. This allows you to
+        run specific commands such as notifications only in the event that a deployment succeeeds (or fails).
+    </p>
+    <p>Check out the following example hal configuration file:</p>
+    {{ block('after_deploy_file') }}
+
 
 {% endblock %}
 
@@ -285,20 +336,33 @@ date: ''       # ISO 8601 date
 {% endblock %}
 
 {% block configuration_file %}
-    <pre>
+<pre>
 # filename: APPLICATION_ROOT/.hal9000.yml
+# Build container.
+system: docker:base_centos7
 
-system: docker:legacy        # Build container.
-dist: .                      # Relative file path to use for build archive.
-exclude:                     # List of directories or files to exclude while pushing to server
-    - config/database.ini
-    - data/
+# Relative file path to use for build artifact after build stage.
+dist: '.'
 
-build: []                    # Shell commands to run during build process, on build server
-build_transform: []          # Shell commands to run before deployment process, on build server
-deploy: []                   # Shell commands to run during the deployment process.
-pre_push: []                 # Shell commands to run before deployment process, on target server
-post_push: []                # Shell commands to run after deployment process, on target server
+# Shell commands to run during build stage
+build: []
+
+# Shell commands to run during deployment stage
+build_transform: []
+before_deploy: []
+deploy: []
+after_deploy: []
+
+# List of directories or files to exclude while pushing to server (rsync-only)
+exclude:
+    - 'config/database.ini'
+    - 'data/'
+
+# Shell commands to run before deployment process, on target server (rsync-only)
+pre_push: []
+
+# Shell commands to run after deployment process, on target server (rsync-only)
+post_push: []
 </pre>
 {% endblock %}
 
@@ -340,32 +404,33 @@ post_push: []                # Shell commands to run after deployment process, o
     </p>
 {% endblock %}
 
-{% block pm_commands %}
-    <table class="table--spacing-medium">
-        <thead>
-            <tr>
-                <td>Manager</td>
-                <td>Command</td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Composer</td>
-                <td><code>composer install --no-dev --prefer-dist --ansi --no-interaction --optimize-autoloader</code></td>
-            </tr>
-            <tr>
-                <td>NPM</td>
-                <td><code>npm install --production</code></td>
-            </tr>
-            <tr>
-                <td>Bundler</td>
-                <td>
-                    <code>
-                        gem install bundler<br>
-                        bundle install --frozen
-                    </code>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+{% block env_configuration_file %}
+<pre>
+# filename: APPLICATION_ROOT/.hal9000.yml
+
+env:
+    global:
+        DERP_HERP: 'TESTING'
+    staging:
+        APP_BASE_URL: 'https://apptest.example.com'
+        DEBUG_MODE_ON: true
+    prod:
+        APP_BASE_URL: 'https://app.example.com'
+        DEBUG_MODE_ON: false
+
+build:
+    - './compile-app.sh $APP_BASE_URL'
+    - './other-command'
+
+deploy:
+    - './deploy-release.sh'
+</pre>
+{% endblock %}
+
+{% block after_deploy_file %}
+<pre>
+after_deploy:
+    - 'if [ "$HAL_DEPLOY_STATUS" == "SUCCESS" ] ; then ./notify.sh ; fi'
+    - 'if [ "$HAL_DEPLOY_STATUS" == "FAILURE" ] ; then echo "UH OH" ; fi'
+</pre>
 {% endblock %}

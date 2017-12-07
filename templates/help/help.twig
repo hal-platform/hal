@@ -47,6 +47,7 @@
 
     <h2 id="help-setup">Application Setup</h2>
     {{ block('setup_questions') }}
+    {{ block('feature_questions') }}
 
     <h2 id="help-misc">Other</h2>
     {{ block('other_questions') }}
@@ -211,4 +212,49 @@
         Details about the latest release are always available at <a href="{{ uriFor('latest.release') }}">/latest-release</a>.
     </p>
     {% include 'help/partial.release-history.twig' %}
+{% endblock %}
+
+{% block feature_questions %}
+    <h3 id="stages-support">{{ macros.status_icon('Does Hal support stages? What is the deployment workflow?') }}</h3>
+    <p>Hal supports the following stages during your build and release workflow:</p>
+    <ul class="list--bullet">
+        <li>
+            <h6>Build Stage</h6>
+            <ol class="list--numbered">
+                <li>Build</li>
+            </ol>
+        </li>
+        <li>
+            <h6>Push Stage</h6>
+            <ol class="list--numbered">
+                <li>Build Transform</li>
+                <li>Before Deploy</li>
+                <li>Deploy</li>
+                <li>After Deploy</li>
+            </ol>
+        </li>
+    </ul>
+
+    <p>
+        You can provide any script to run during these steps.
+    </p>
+    <p>
+        <b>After Deploy</b> step runs even if the deployment fails. This allows you to run different commands
+        depending on if a deployment passed or failed.
+    </p>
+
+    <p>
+        You can only define the <b>Deploy</b> step if <b>script-based deployments</b> are used. If using a built-in deployment type such as <b>rsync</b>
+        or <b>elastic beanstalk</b>, Hal will take care of the deployment step for you.
+    </p>
+
+    <p>
+        <b>RSync deployments</b> have two additional steps: <code>pre-push</code> and <code>post-push</code>.
+        These steps run before and after the deployment <b>on the target server</b> which enables stopping or starting servers
+        before before and after a deployment.
+    </p>
+
+    <p>
+        Please see <a href="{{ uriFor('help.scripting') }}">deployment scripting guide</a> for full details.
+    </p>
 {% endblock %}

@@ -17,7 +17,7 @@
         Deployment targets define what groups your application can be deployed to and where on a server the code will be uploaded.
     </p>
 
-    {% set canEdit = current_authorizations.isSuper() or current_authorizations.isAdminOf(application) %}
+    {% set canEdit = current_authorizations.isSuper() or current_authorizations.isOwnerOf(application) %}
 
     {% if targets_by_env %}
 

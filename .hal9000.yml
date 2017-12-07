@@ -8,4 +8,4 @@ build:
 
 exclude:
     - 'config/kraken.encrypter.secret'
-    - 'config/hal.encrypter.secret'
+    - 'config/dev.encrypter.secret'

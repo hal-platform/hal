@@ -94,8 +94,7 @@ class AddTargetController implements ControllerInterface
                 return $this->withRedirectRoute($response, $this->uri, 'targets', ['application' => $application->id()]);
             }
 
-            // @todo fix when updated to hal-core
-            // $credentials = $this->credentialRepo->findBy([], ['name' => 'ASC']);
+            $credentials = $this->credentialRepo->findBy([], ['name' => 'ASC']);
         }
 
         $form = $this->getFormData($request);
