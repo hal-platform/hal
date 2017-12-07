@@ -119,7 +119,7 @@
         </table>
     {% endif %}
 
-    {#{% if canUserBuild(current_user, build.application) %}#}
+    {% if current_authorizations.canBuild(build.application) %}
         {% set pushableMessage = 'The build was successful, go ahead and release it!' %}
         {% set unpushableMessage = 'The build cannot be released.' %}
 
@@ -135,7 +135,7 @@
             <h3>{{ unpushableMessage }}</h3>
             <p><span class="btn btn--disabled">Release Build</span></p>
         {% endif %}
-    {#{% endif %}#}
+    {% endif %}
 
     <h2 class="leader">Build Events</h2>
     {% include 'build/partial.event-table.twig' with {logs: logs, canLoad: build.isFinished } only %}

@@ -123,10 +123,10 @@ class BuildNormalizer implements ResourceNormalizerInterface
             )
         ];
 
-        if ($build->status() === 'Success') {
+        if ($build->status() === 'success') {
             $pages += [
-                'start_push_page' => new Hyperlink(
-                    ['push.start', ['build' => $build->id()]],
+                'start_release_page' => new Hyperlink(
+                    ['release.start', ['build' => $build->id()]],
                     '',
                     'text/html'
                 )

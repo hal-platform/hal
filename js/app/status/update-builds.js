@@ -74,7 +74,7 @@ module.exports = {
         // - status
         // - start
         // - end
-        // - ? _links.start_push_page.href
+        // - ? _links.start_release_page.href
         $.getJSON(endpoint, function(data) {
             var currentStatus = data.status;
             $elem.data('status', currentStatus); // protip: dom is not updated
@@ -215,16 +215,16 @@ module.exports = {
         }, _this.interval * 1000);
     },
     updateBuild: function(data, $elem) {
-        var $container = $elem.closest('dl');
+        var $container = $elem.closest('ul');
         var $hdr;
 
         $elem.text($elem.data('status'));
 
         if (data.status == 'success') {
             // Add push link if present
-            if (data._links.hasOwnProperty('start_push_page')) {
+            if (data._links.hasOwnProperty('start_release_page')) {
                 $('.js-build-push')
-                    .html('<a class="btn btn--action" href="' + data._links.start_push_page.href + '">Release Build</a>');
+                    .html('<a class="btn btn--action" href="' + data._links.start_release_page.href + '">Release Build</a>');
             }
 
             // Replace success messaging
@@ -283,10 +283,10 @@ module.exports = {
 
         if (data.status == 'success') {
             // Add push link if present
-            if (data._links.hasOwnProperty('start_push_page')) {
+            if (data._links.hasOwnProperty('start_release_page')) {
                 $container
                     .children('.js-build-push')
-                    .html('<a class="btn btn--tiny" href="' + data._links.start_push_page.href + '">Release</a>');
+                    .html('<a class="btn btn--tiny" href="' + data._links.start_release_page.href + '">Release</a>');
             }
         }
     },
