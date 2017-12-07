@@ -95,6 +95,8 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
 
         // sign out user if not found, or is disabled
         if (!$user || $user->isDisabled()) {
+            //stops redirect
+            $this->getSession($request)->clear();
             // @todo CHANGE TO POST!!!!
             return $this->withRedirectRoute($response, $this->uri, self::ROUTE_SIGNOUT);
         }
