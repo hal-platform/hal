@@ -81,7 +81,6 @@ class BuildsController implements ControllerInterface
         }
 
         $links = $this->buildPaginationLinks('api.builds.history', $page, $total, self::MAX_PER_PAGE, ['application' => $application->id()]);
-        $links['application'] = new Hyperlink(['api.application', ['application' => $application->id()]]);
 
         $data = [
             'count' => count($builds),

@@ -83,7 +83,6 @@ class ReleasesController implements ControllerInterface
         }
 
         $links = $this->buildPaginationLinks('api.releases.history', $page, $total, self::MAX_PER_PAGE, ['application' => $application->id()]);
-        $links['application'] = new Hyperlink(['api.application', ['application' => $application->id()]]);
 
         $data = [
             'count' => count($releases),
