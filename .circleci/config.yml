@@ -12,12 +12,13 @@ workflows:
   pipeline:
     jobs:
       - fetch_code
+      - verify_is_rebased
 
       - build_backend:
-          requires: [ fetch_code ]
+          requires: [ verify_is_rebased, fetch_code ]
 
       - build_frontend:
-          requires: [ fetch_code ]
+          requires: [ verify_is_rebased, fetch_code ]
 
 jobs:
     fetch_code:
@@ -27,6 +28,53 @@ jobs:
         steps:
             - checkout
             - persist_to_workspace: { root: '.', paths: [ '.' ] }
+
+    verify_is_rebased:
+        <<: *defaults
+        docker: [ { image: 'halplatform/php:latest' } ]
+        steps:
+            - run:
+                name: 'Prepare Enterprise Setup'
+                command: 'curl -sLk https://git/pages/circleci/prepare-environment/prepare.sh | bash -'
+            - run:
+                name: 'Verify pull request is up to date'
+                command: |
+
+                    if [ -z "${CIRCLE_PULL_REQUEST}" ] ; then
+                        echo "Not a pull request. Skipping git history comparison check."
+                        exit 0
+                    fi
+
+                    web_prefix="://git"
+                    api_prefix="://git/api/v3/repos"
+                    api_compare_url="${CIRCLE_COMPARE_URL/${web_prefix}/${api_prefix}}"
+
+                    # install jq
+                    curl -sSL \
+                        -o "/usr/bin/jq" \
+                        "https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64" \
+                        && chmod +x "/usr/bin/jq"
+
+                    # get comparison status from github
+                    curl -sSL \
+                        -o "github_compare.json" \
+                        "${api_compare_url}"
+
+                    comparison_status=$(jq -r ".status" "github_compare.json")
+
+                    echo "Comparison URL: ${api_compare_url}"
+                    echo "Status: ${comparison_status}"
+                    echo "Ahead By: $(jq -r ".ahead_by" "github_compare.json")"
+                    echo "Behind By: $(jq -r ".behind_by" "github_compare.json")"
+                    echo "Total Commits: $(jq -r ".total_commits" "github_compare.json")"
+
+                    if [ "${comparison_status}" != "ahead" ] ; then
+                        echo
+                        echo "Pull request must be rebased. It is behind HEAD."
+                        exit 1
+                    fi
+
+                    echo "Pull request is up to date."
 
     build_backend:
         <<: *defaults
