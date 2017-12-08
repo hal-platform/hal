@@ -1,0 +1,17 @@
+{% extends 'base.twig' %}
+{% import 'macros.pagination.twig' as pagination %}
+{% set js_components = ["job.updater"] %}
+
+{% set page_title = "Release History" %}
+
+{% block content %}
+
+    <div class="nav--page">
+        <h1>Release History</h1>
+    </div>
+
+    {% include '_partial-job/release-table.twig' with {releases: releases} only %}
+
+    {{ pagination.pagination(page, last, 'releases.list') }}
+
+{% endblock %}
