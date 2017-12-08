@@ -1,0 +1,19 @@
+
+{% extends 'base.twig' %}
+{% import 'macros.pagination.twig' as pagination %}
+{% set js_components = ["job.updater"] %}
+
+{% set page_title = "Build History" %}
+
+{% block content %}
+
+    <div class="nav--page">
+        <h1>Build History</h1>
+    </div>
+
+    {% include '_partial-job/build-table.twig' with {builds: builds, is_pushable: false, current_user: current_user} only %}
+
+    {{ pagination.pagination(page, last, 'builds.list') }}
+
+{% endblock %}
+

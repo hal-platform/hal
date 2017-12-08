@@ -546,6 +546,16 @@ services:
             - '@sticky.environment'
             - '@uri'
 
+    builds.list.page:
+        class: 'Hal\UI\Controllers\Build\BuildsListController'
+        arguments:
+            - '@builds.list.twig'
+            - '@doctrine.em'
+            - '@notFoundHandler'
+    builds.list.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['build/builds.list.twig']]]
+
     ####################################################################################################################
     # Release CONTROLLERS
     ####################################################################################################################

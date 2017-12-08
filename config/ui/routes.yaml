@@ -379,6 +379,15 @@ parameters:
             route: '/applications/{application:%r.digit%}/build[/environment/{environment:%r.digit%}]'
             stack: ['middleware.signed_in', 'middleware.require_entity', 'build.start.middleware', 'build.start.page']
 
+        builds.list.page1:
+            method: 'GET'
+            route: '/builds'
+            stack: ['middleware.signed_in', 'builds.list.page']
+        builds.list:
+            method: 'GET'
+            route: '/builds/page/{page:%r.digit%}'
+            stack: ['middleware.signed_in', 'builds.list.page']
+
         ################################################################################################################
         # Release ROUTES
         ################################################################################################################
@@ -511,3 +520,4 @@ parameters:
                     method: ['GET', 'POST']
                     route: '/banner'
                     stack: ['super.banner.page']
+
