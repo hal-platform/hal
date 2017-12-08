@@ -184,10 +184,32 @@
             </li>
 
             <li data-type-specific data-s3 data-eb data-cd>
-                <label for="s3_file">
-                    S3 File
+                <label for="s3_method">
+                    S3 Method
                 </label>
-                <input class="text-input" type="text" name="s3_file" id="s3_file" maxlength="100" value="{{ form.s3_file }}" pattern="^[^\n\t]+">
+                <select class="select-input" name="s3_method" id="s3_method">
+                    {% for method in s3_methods %}
+                        {% set isSelected = (method == form.s3_method) %}
+                        <option value="{{ method }}"{{ isSelected ? ' selected' : '' }}>{{ method }}</option>
+                    {% endfor %}
+                </select>
+            </li>
+
+            <li data-type-specific data-s3 data-eb data-cd>
+                <label for="s3_local_path">
+                    S3 Local Path
+                </label>
+                <input class="text-input" type="text" name="s3_local_path" id="s3_local_path" maxlength="100" value="{{ form.s3_local_path }}" pattern="^[^\n\t]+">
+                <small>
+                    <br>Leave blank to use <code>.</code>.
+                </small>
+            </li>
+
+            <li data-type-specific data-s3 data-eb data-cd>
+                <label for="s3_remote_path">
+                    S3 Remote Path
+                </label>
+                <input class="text-input" type="text" name="s3_remote_path" id="s3_remote_path" maxlength="100" value="{{ form.s3_remote_path }}" pattern="^[^\n\t]+">
                 <small class="additional">
                     Available placeholders:
                     <ul class="inline-list--comma">

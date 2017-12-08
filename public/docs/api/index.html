@@ -1421,10 +1421,16 @@ For AWS-based deployments, <strong>groups</strong> are regions, so targets are t
 <td><code class="prettyprint">test-bucket</code></td>
 </tr>
 <tr>
-<td>s3_file</td>
+<td>s3_local_path</td>
 <td>File name (may include directories)</td>
 <td>string,null</td>
 <td><code class="prettyprint">testapp/$PUSHID.tar.gz</code></td>
+</tr>
+<tr>
+<td>s3_remote_path</td>
+<td>File name (may include directories)</td>
+<td>string,null</td>
+<td><code class="prettyprint">test/path</code></td>
 </tr>
 </tbody></table>
 
@@ -1457,10 +1463,16 @@ For AWS-based deployments, <strong>groups</strong> are regions, so targets are t
 <td><code class="prettyprint">test-bucket</code></td>
 </tr>
 <tr>
-<td>s3_file</td>
+<td>s3_local_path</td>
 <td>File name (may include directories)</td>
 <td>string,null</td>
 <td><code class="prettyprint">testapp/$PUSHID.tar.gz</code></td>
+</tr>
+<tr>
+<td>s3_remote_path</td>
+<td>File name (may include directories)</td>
+<td>string,null</td>
+<td><code class="prettyprint">test/path</code></td>
 </tr>
 </tbody></table>
 
@@ -1481,10 +1493,22 @@ For AWS-based deployments, <strong>groups</strong> are regions, so targets are t
 <td><code class="prettyprint">test-bucket</code></td>
 </tr>
 <tr>
-<td>s3_file</td>
+<td>s3_method</td>
+<td>S3 deployment method for this target</td>
+<td>string</td>
+<td><code class="prettyprint">sync</code>, <code class="prettyprint">artifact</code></td>
+</tr>
+<tr>
+<td>s3_local_path</td>
 <td>File name (may include directories)</td>
 <td>string,null</td>
 <td><code class="prettyprint">testapp/$PUSHID.tar.gz</code></td>
+</tr>
+<tr>
+<td>s3_remote_path</td>
+<td>File name (may include directories)</td>
+<td>string,null</td>
+<td><code class="prettyprint">test/path</code></td>
 </tr>
 </tbody></table>
 
@@ -1606,8 +1630,10 @@ For AWS-based deployments, <strong>groups</strong> are regions, so targets are t
         </span><span class="s2">"cd_configuration"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
         </span><span class="s2">"eb_name"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
         </span><span class="s2">"eb_environment"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"s3_method"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sync"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"s3_bucket"</span><span class="p">:</span><span class="w"> </span><span class="s2">"bucket-name"</span><span class="p">,</span><span class="w">
-        </span><span class="s2">"s3_file"</span><span class="p">:</span><span class="w"> </span><span class="s2">"testapp-24/$PUSHID.tar.gz"</span><span class="w">
+        </span><span class="s2">"s3_local_path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"testapp-24/$PUSHID.tar.gz"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"s3_remote_path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"test/path"</span><span class="w">
     </span><span class="p">},</span><span class="w">
     </span><span class="s2">"pretty_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"S3 (us-east-1)"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"detail"</span><span class="p">:</span><span class="w"> </span><span class="s2">"S3: bucket-name/testapp-24/$PUSHID.tar.gz"</span><span class="w">
@@ -2218,12 +2244,12 @@ as soon as an agent is available.</p>
 </tr>
 </thead><tbody>
 <tr>
-<td>environment</td>
-<td>The ID or name of the environment to build</td>
-</tr>
-<tr>
 <td>reference</td>
 <td>The reference from the VCS repository to the code snapshot to build.</td>
+</tr>
+<tr>
+<td>environment</td>
+<td><strong>Optional</strong> - The ID or name of the environment to build. Exclude this parameter to create a build that can be used in all environments.</td>
 </tr>
 <tr>
 <td>targets</td>
@@ -2565,7 +2591,7 @@ embed events in the request.</p>
 </tbody></table>
 
           <h2 id="deploy-release">Deploy Release</h2>
-<pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/builds/b2.64U218P/deploy</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<pre class="highlight http tab-http"><code><span class="nf">POST</span> <span class="nn">/api/builds/b2.64U218P/deploy</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
 <span class="na">Host</span><span class="p">:</span> <span class="s">hal.computer</span>
 <span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/json</span>

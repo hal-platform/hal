@@ -19,6 +19,7 @@ use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Credential;
 use Hal\Core\Entity\Environment;
 use Hal\Core\Entity\Group;
+use Hal\Core\Entity\Target;
 use Hal\Core\Repository\EnvironmentRepository;
 use Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
@@ -105,6 +106,8 @@ class AddTargetController implements ControllerInterface
             'environments' => $environments,
             'selected_environment' => $selectedEnvironment,
 
+            's3_methods' => Target::S3_METHODS,
+
             'groups' => $groups,
             'credentials' => $credentials,
 
@@ -164,8 +167,10 @@ class AddTargetController implements ControllerInterface
             'eb_name' => $request->getParsedBody()['eb_name'] ?? '',
             'eb_environment' => $request->getParsedBody()['eb_environment'] ?? '',
 
+            's3_method' => $request->getParsedBody()['s3_method'] ?? '',
             's3_bucket' => $request->getParsedBody()['s3_bucket'] ?? '',
-            's3_file' => $request->getParsedBody()['s3_file'] ?? '',
+            's3_remote_path' => $request->getParsedBody()['s3_remote_path'] ?? '',
+            's3_local_path' => $request->getParsedBody()['s3_local_path'] ?? '',
 
             'script_context' => $request->getParsedBody()['script_context'] ?? '',
 

@@ -101,8 +101,10 @@ class EditTargetMiddleware implements MiddlewareInterface
             'eb_name' => $request->getParsedBody()['eb_name'] ?? '',
             'eb_environment' => $request->getParsedBody()['eb_environment'] ?? '',
 
+            's3_method' => $request->getParsedBody()['s3_method'] ?? '',
             's3_bucket' => $request->getParsedBody()['s3_bucket'] ?? '',
-            's3_file' => $request->getParsedBody()['s3_file'] ?? '',
+            's3_local_path' => $request->getParsedBody()['s3_local_path'] ?? '',
+            's3_remote_path' => $request->getParsedBody()['s3_remote_path'] ?? '',
 
             'script_context' => $request->getParsedBody()['script_context'] ?? '',
 

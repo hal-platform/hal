@@ -38,6 +38,7 @@ class TargetValidator
     const ERR_INVALID_URL_SCHEME = 'URL scheme is invalid. Please use http or https.';
     const ERR_INVALID_CREDENTIALS = 'Credential is invalid.';
     const ERR_INVALID_SERVER = 'Group is invalid.';
+    const ERR_INVALID_S3_METHOD = 'S3 Method is invalid.';
 
     // Should we still check these in Hal 3?
     // const ERR_DUPLICATE_RSYNC = 'A target already exists for this group and file path.';
@@ -77,7 +78,8 @@ class TargetValidator
      * @param string $ebEnvironment
      *
      * @param string $s3bucket
-     * @param string $s3file
+     * @param string $s3source
+     * @param string $s3destination
      *
      * @param string $scriptContext
      *
@@ -99,8 +101,10 @@ class TargetValidator
         $ebName,
         $ebEnvironment,
 
+        $s3method,
         $s3bucket,
-        $s3file,
+        $s3source,
+        $s3destination,
 
         $scriptContext,
 
@@ -139,14 +143,14 @@ class TargetValidator
 
         } elseif ($group->type() == GroupEnum::TYPE_CD) {
             $this->validateCD($cdName, $cdGroup, $cdConfiguration);
-            $this->validateS3($s3bucket, $s3file);
+            $this->validateS3($s3method, $s3bucket, $s3source, $s3destination);
 
         } elseif ($group->type() == GroupEnum::TYPE_EB) {
             $this->validateEB($ebName, $ebEnvironment);
-            $this->validateS3($s3bucket, $s3file);
+            $this->validateS3($s3method, $s3bucket, $s3source, $s3destination);
 
         } elseif ($group->type() == GroupEnum::TYPE_S3) {
-            $this->validateS3($s3bucket, $s3file);
+            $this->validateS3($s3method, $s3bucket, $s3source, $s3destination);
         }
 
         // stop validation if errors
@@ -170,15 +174,15 @@ class TargetValidator
         } elseif ($group->type() == GroupEnum::TYPE_CD) {
             $this
                 ->withCD($target, $cdName, $cdGroup, $cdConfiguration)
-                ->withS3($target, $s3bucket, $s3file);
+                ->withS3($target, $s3method, $s3bucket, $s3source, $s3destination);
 
         } elseif ($group->type() == GroupEnum::TYPE_EB) {
             $this
                 ->withEB($target, $ebName, $ebEnvironment)
-                ->withS3($target, $s3bucket, $s3file);
+                ->withS3($target, $s3method, $s3bucket, $s3source, $s3destination);
 
         } elseif ($group->type() == GroupEnum::TYPE_S3) {
-            $this->withS3($target, $s3bucket, $s3file);
+            $this->withS3($target, $s3method, $s3bucket, $s3source, $s3destination);
         }
 
         return $target;
@@ -197,7 +201,8 @@ class TargetValidator
      * @param string $ebEnvironment
      *
      * @param string $s3bucket
-     * @param string $s3file
+     * @param string $s3source
+     * @param string $s3destination
      *
      * @param string $scriptContext
      *
@@ -218,8 +223,10 @@ class TargetValidator
         $ebName,
         $ebEnvironment,
 
+        $s3method,
         $s3bucket,
-        $s3file,
+        $s3source,
+        $s3destination,
 
         $scriptContext,
 
@@ -249,14 +256,14 @@ class TargetValidator
 
         } elseif ($groupType == GroupEnum::TYPE_CD) {
             $this->validateCD($cdName, $cdGroup, $cdConfiguration);
-            $this->validateS3($s3bucket, $s3file);
+            $this->validateS3($s3method, $s3bucket, $s3source, $s3destination);
 
         } elseif ($groupType == GroupEnum::TYPE_EB) {
             $this->validateEB($ebName, $ebEnvironment);
-            $this->validateS3($s3bucket, $s3file);
+            $this->validateS3($s3method, $s3bucket, $s3source, $s3destination);
 
         } elseif ($groupType == GroupEnum::TYPE_S3) {
-            $this->validateS3($s3bucket, $s3file);
+            $this->validateS3($s3method, $s3bucket, $s3source, $s3destination);
         }
 
         // stop validation if errors
@@ -278,15 +285,15 @@ class TargetValidator
         } elseif ($groupType == GroupEnum::TYPE_CD) {
             $this
                 ->withCD($target, $cdName, $cdGroup, $cdConfiguration)
-                ->withS3($target, $s3bucket, $s3file);
+                ->withS3($target, $s3method, $s3bucket, $s3source, $s3destination);
 
         } elseif ($groupType == GroupEnum::TYPE_EB) {
             $this
                 ->withEB($target, $ebName, $ebEnvironment)
-                ->withS3($target, $s3bucket, $s3file);
+                ->withS3($target, $s3method, $s3bucket, $s3source, $s3destination);
 
         } elseif ($groupType == GroupEnum::TYPE_S3) {
-            $this->withS3($target, $s3bucket, $s3file);
+            $this->withS3($target, $s3method, $s3bucket, $s3source, $s3destination);
         }
 
         return $target;
@@ -431,40 +438,59 @@ class TargetValidator
     }
 
     /**
+     * @param string $method
      * @param string $bucket
-     * @param string $file
+     * @param string $source
+     * @param string $destination
      *
      * @return bool
      */
-    private function validateS3($bucket, $file)
+    private function validateS3($method, $bucket, $source, $destination)
     {
+        if (!$this->validateIsRequired($method) || !$this->validateSanityCheck($method)) {
+            $this->addRequiredError('S3 Method', 's3_method');
+            return true;
+        }
+
+        if (!$this->validateIn($method, Target::S3_METHODS)) {
+            $this->addError(self::ERR_INVALID_S3_METHOD, 's3_method');
+        }
+
         if (!$this->validateIsRequired($bucket) || !$this->validateSanityCheck($bucket)) {
-            $this->addRequiredError('S3 Bucket', 'bucket');
+            $this->addRequiredError('S3 Bucket', 's3_bucket');
             return true;
         }
 
         if (!$this->validateCharacterBlacklist($bucket, self::REGEX_CHARACTER_STRICT_WHITESPACE)) {
             $error = sprintf(self::ERR_CHARACTERS_STRICT_WHITESPACE, 'S3 Bucket');
-            $this->addError($error, 'bucket');
+            $this->addError($error, 's3_bucket');
         }
 
         if (!$this->validateLength($bucket, 1, 100)) {
-            $this->addLengthError('S3 Bucket', 1, 100, 'bucket');
+            $this->addLengthError('S3 Bucket', 1, 100, 's3_bucket');
         }
 
-        if (strlen($file) > 0) {
+        if (strlen($source) > 0) {
 
-            if (!$this->validateCharacterBlacklist($file, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
-                $error = sprintf(ERR_CHARACTERS_RELAXED_WHITESPACE, 'S3 File');
-                $this->addError($error, 'file');
+            if (!$this->validateCharacterBlacklist($source, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
+                $error = sprintf(ERR_CHARACTERS_RELAXED_WHITESPACE, 'S3 Source');
+                $this->addError($error, 's3_local_path');
             }
 
-            if (!$this->validateLength($file, 0, 100)) {
-                $this->addLengthError('S3 File', 0, 100, 'file');
+            if (!$this->validateLength($source, 0, 100)) {
+                $this->addLengthError('S3 Source', 0, 100, 's3_local_path');
+            }
+        }
+
+        if (strlen($destination) > 0) {
+
+            if (!$this->validateCharacterBlacklist($destination, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
+                $error = sprintf(ERR_CHARACTERS_RELAXED_WHITESPACE, 'S3 Destination');
+                $this->addError($error, 's3_remote_path');
             }
 
-            if (substr_count($file, ':') > 1) {
-                $this->addError(self::ERR_FILE_CHARACTERS_FILE_DELIMITER, 'file');
+            if (!$this->validateLength($destination, 0, 100)) {
+                $this->addLengthError('S3 Destination', 0, 100, 's3_remote_path');
             }
         }
 
@@ -594,7 +620,7 @@ class TargetValidator
         }
 
         $target
-            ->withParameter(Target::PARAM_PATH, $path);
+            ->withParameter(Target::PARAM_REMOTE_PATH, $path);
 
         return $this;
     }
@@ -602,23 +628,28 @@ class TargetValidator
     /**
      * @param Target $target
      *
+     * @param string $s3method
      * @param string $s3bucket
-     * @param string $s3file
+     * @param string $s3source
+     * @param string $s3destination
      *
      * @return Target
      */
-    private function withS3(Target $target, $s3bucket, $s3file)
+    private function withS3(Target $target, $s3method, $s3bucket, $s3source, $s3destination)
     {
         $type = $target->group()->type();
 
         if (!in_array($type, [GroupEnum::TYPE_S3, GroupEnum::TYPE_CD, GroupEnum::TYPE_EB], true)) {
             $s3bucket = null;
-            $s3file = null;
+            $s3source = null;
+            $s3destination = null;
         }
 
         $target
+            ->withParameter(Target::PARAM_S3_METHOD, $s3method)
             ->withParameter(Target::PARAM_BUCKET, $s3bucket)
-            ->withParameter(Target::PARAM_SOURCE, $s3file);
+            ->withParameter(Target::PARAM_LOCAL_PATH, $s3source)
+            ->withParameter(Target::PARAM_REMOTE_PATH, $s3destination);
 
         return $this;
     }

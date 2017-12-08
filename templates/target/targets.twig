@@ -63,9 +63,10 @@
 
                                     {% elseif target.group.type == 's3' %}
 
-                                        Bucket: <code>{{ target.parameter('bucket') }}</code>
-                                        <br>
-                                        File: <code>{{ target.parameter('path') }}</code>
+                                        Method: <code>{{ target.parameter('s3_method') }}</code>
+                                        <br>Bucket: <code>{{ target.parameter('bucket') }}</code>
+                                        <br>Source: <code>{{ target.parameter('source') }}</code>
+                                        <br>Destination: <code>{{ target.parameter('path') ?: '.' }}</code>
 
                                     {% elseif target.group.type == 'script' %}
 
