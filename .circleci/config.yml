@@ -39,15 +39,16 @@ jobs:
             - run:
                 name: 'Verify pull request is up to date'
                 command: |
-
                     if [ -z "${CIRCLE_PULL_REQUEST}" ] ; then
                         echo "Not a pull request. Skipping git history comparison check."
                         exit 0
                     fi
 
+                    git_repo="hal/hal-3"
                     web_prefix="://git"
                     api_prefix="://git/api/v3/repos"
-                    api_compare_url="${CIRCLE_COMPARE_URL/${web_prefix}/${api_prefix}}"
+                    api_pr_url="${CIRCLE_PULL_REQUEST/${web_prefix}/${api_prefix}}"
+                    api_pr_url="${api_pr_url/pull\//pulls/}"
 
                     # install jq
                     curl -sSL \
@@ -55,7 +56,16 @@ jobs:
                         "https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64" \
                         && chmod +x "/usr/bin/jq"
 
+                    # get pr info from github
+                    curl -sSL \
+                        -o "github_pr.json" \
+                        "${api_pr_url}"
+
+                    base_commit=$(jq -r ".base.sha" "github_pr.json")
+                    head_commit="${CIRCLE_SHA1}"
+
                     # get comparison status from github
+                    api_compare_url="https://git/api/v3/repos/${git_repo}/compare/${base_commit}...${head_commit}"
                     curl -sSL \
                         -o "github_compare.json" \
                         "${api_compare_url}"
@@ -70,7 +80,7 @@ jobs:
 
                     if [ "${comparison_status}" != "ahead" ] ; then
                         echo
-                        echo "Pull request must be rebased. It is behind HEAD."
+                        echo "Pull request must be rebased. It is behind BASE."
                         exit 1
                     fi
 
