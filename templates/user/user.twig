@@ -96,7 +96,7 @@
         </li>
 
         <li>
-            {% if {{ can_disable }} %}
+            {% if can_disable %}
                 <form method="post" action="{{ uriFor('user.toggle', {'user': user.id}) }}">
                     {% if user.isDisabled %}
                         <input type="submit" class="btn" value="Enable User">
