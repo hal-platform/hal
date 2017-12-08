@@ -47,7 +47,7 @@ module.exports = {
             var $item = $(item);
             var status = $item.data('status').trim();
 
-            if (status == 'pending' || status == 'deploying') {
+            if (status == 'pending' || status == 'deploying' || status == 'running') {
                 $item
                     .removeClass(_this.pendingClass)
                     .addClass(_this.thinkingClass);
@@ -65,7 +65,7 @@ module.exports = {
     },
     checkStatus: function($elem) {
         var _this = this;
-        var id = $elem.data('push');
+        var id = $elem.data('release');
         var endpoint = this.generateUrl(id, 'api-update');
         // console.log(endpoint);
 
@@ -80,7 +80,7 @@ module.exports = {
 
             // console.log('Release ' + id + ' status: ' + currentStatus);
 
-            if (currentStatus == 'pending' || currentStatus == 'deploying') {
+            if (currentStatus == 'pending' || currentStatus == 'deploying' || currentStatus == 'running') {
                 // If still pending, fire up a countdown for the next callback in the chain.
                 _this.startUpdateTimer($elem);
 

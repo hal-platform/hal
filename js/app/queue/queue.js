@@ -10,7 +10,7 @@ module.exports = {
     lastRead: null,
 
     queueTarget: '#js-queue tbody',
-    jobTarget: '[data-push], [data-build]',
+    jobTarget: '[data-release], [data-build]',
     $queue: null,
 
     init: function() {
@@ -174,7 +174,7 @@ module.exports = {
 
                     if (type == 'build') {
                         jobUpdater.updateBuildJob(data._embedded.jobs[entry]);
-                    } else if (type == 'push') {
+                    } else if (type == 'release') {
                         jobUpdater.updateReleaseJob(data._embedded.jobs[entry]);
                     }
                 }

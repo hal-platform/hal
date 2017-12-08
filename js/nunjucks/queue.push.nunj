@@ -1,7 +1,7 @@
 <tr id="{{ pushId }}">
     <td>
-        <span class="{{ pushStatusStyle }}" data-push="{{ pushId }}">
-            Push <a href="{{ pushUrl }}">{{ pushIdShort }}</a>
+        <span class="{{ pushStatusStyle }}" data-release="{{ pushId }}">
+            Release <a href="{{ pushUrl }}">{{ pushIdShort }}</a>
         </span>
     </td>
 

@@ -73,9 +73,10 @@ module.exports = {
             }
         }
 
+        //todo clean this up
         // kinda shitty way to determine server type but whatever
-        var deployment = release._embedded.deployment,
-            servername_or_whatever = deployment._links.server.title;
+        var deployment = release._embedded.target,
+            servername_or_whatever = deployment._links.group.title;
         if (servername_or_whatever.length === 0) {
             if (deployment['eb-environment'].length !== null) {
                 servername_or_whatever = 'EB';
@@ -112,10 +113,10 @@ module.exports = {
     },
 
     updateReleaseJob: function(job) {
-        var $elem = $('[data-push="' + job.id + '"]');
+        var $elem = $('[data-release="' + job.id + '"]');
         var currentStatus = job.status;
 
-        if (currentStatus == 'pending' || currentStatus == 'deploying') {
+        if (currentStatus == 'pending' || currentStatus == 'deploying' || currentStatus == 'running') {
             $elem
                 .removeClass(this.pendingClass)
                 .addClass(this.thinkingClass);
@@ -239,7 +240,7 @@ module.exports = {
         return buildId.slice(0, 10);
     },
     formatPushId: function (pushId) {
-        var regex = /^p[a-zA-Z0-9]{1}.[a-zA-Z0-9]{7}$/i,
+        var regex = /^r[a-zA-Z0-9]{1}.[a-zA-Z0-9]{7}$/i,
             match = null;
 
         match = regex.exec(pushId);
