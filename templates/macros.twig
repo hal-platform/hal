@@ -197,7 +197,7 @@ Example:
 
         {% if job.status == 'success' %}
             {{ self_macros.status_icon(build_link, 'success') }}
-        {% elseif job.status in ['error'] %}
+        {% elseif job.status in ['failure'] %}
             {{ self_macros.status_icon(build_link, 'error') }}
         {% elseif job.status in ['removed'] %}
             {{ self_macros.status_icon(build_link, 'info') }}

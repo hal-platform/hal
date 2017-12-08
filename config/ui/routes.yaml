@@ -215,7 +215,7 @@ parameters:
                     stack: ['builds.page']
                 build.history:
                     method: 'GET'
-                    route: '/builds/{page:%r.digit%}'
+                    route: '/builds/page/{page:%r.digit%}'
                     stack: ['builds.page']
 
                 release.history.page1:

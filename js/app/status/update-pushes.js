@@ -11,7 +11,7 @@ module.exports = {
     thinkingClass: 'status-icon--thinking',
     successClass: 'status-icon--success',
     failureClass: 'status-icon--error',
-    pushTarget: '[data-push]',
+    pushTarget: '[data-release]',
 
     logTable: '.js-event-logs',
     logTarget: '[data-log]',
@@ -47,7 +47,7 @@ module.exports = {
             var $item = $(item);
             var status = $item.data('status').trim();
 
-            if (status == 'pending' || status == 'deploying') {
+            if (status == 'pending' || status == 'deploying' || status == 'running') {
                 $item
                     .removeClass(_this.pendingClass)
                     .addClass(_this.thinkingClass);
@@ -65,7 +65,7 @@ module.exports = {
     },
     checkStatus: function($elem) {
         var _this = this;
-        var id = $elem.data('push');
+        var id = $elem.data('release');
         var endpoint = this.generateUrl(id, 'api-update');
         // console.log(endpoint);
 
@@ -80,7 +80,7 @@ module.exports = {
 
             // console.log('Release ' + id + ' status: ' + currentStatus);
 
-            if (currentStatus == 'pending' || currentStatus == 'deploying') {
+            if (currentStatus == 'pending' || currentStatus == 'deploying' || currentStatus == 'running') {
                 // If still pending, fire up a countdown for the next callback in the chain.
                 _this.startUpdateTimer($elem);
 
@@ -217,19 +217,19 @@ module.exports = {
         }, _this.interval * 1000);
     },
     updatePush: function(data, $elem) {
-        var $container = $elem.closest('dl');
+        var $container = $elem.closest('ul');
 
         $elem.text($elem.data('status'));
 
         if (data.start) {
-            var $start = $container.children('.js-push-start');
+            var $start = $container.children('.js-release-start');
             if ($start.length > 0 && $start.children('time').length === 0) {
                 $start.html(this.createTimeElement(data.start));
             }
         }
 
         if (data.end) {
-            var $duration = $container.children('.js-push-duration');
+            var $duration = $container.children('.js-release-duration');
             if ($duration.length > 0 && $duration.children('time').length === 0) {
                 $duration.html(this.createTimeDuration(data.start, data.end));
             }

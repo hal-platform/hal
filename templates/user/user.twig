@@ -3,7 +3,8 @@
 
 {% set page_title = 'User - ' ~ user.name %}
 
-{% set is_admin = current_authorizations.isSuper() %}
+{% set is_admin = current_authorizations.isAdmin %}
+{% set is_super = current_authorizations.isSuper %}
 
 {% block content %}
 
@@ -78,14 +79,14 @@
 {% block user_actions %}
     <ul>
         <li>
-            {% if is_admin %}
+            {% if is_admin or is_super %}
                 <a class="btn btn--action" href="{{ uriFor('admin.permissions.add', {'user': user.id}) }}">Add Permissions</a>
             {% else %}
                 <button class="btn btn--action btn--disabled">Add Permissions</button>
             {% endif %}
         </li>
         <li>
-            {% if is_admin %}
+            {% if is_admin or is_super %}
                 <form method="post" action="{{ uriFor('admin.permissions.refresh', {'user': user.id}) }}">
                     <input class="btn btn--action" type="submit" value="Refresh User Cache">
                 </form>
@@ -95,8 +96,7 @@
         </li>
 
         <li>
-            {% if is_admin and not user_authorizations.isSuper() %}
-
+            {% if can_disable %}
                 <form method="post" action="{{ uriFor('user.toggle', {'user': user.id}) }}">
                     {% if user.isDisabled %}
                         <input type="submit" class="btn" value="Enable User">

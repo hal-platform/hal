@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Release;
 use Hal\Core\Repository\ReleaseRepository;
+use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\Normalizer\ReleaseNormalizer;
 use Hal\UI\API\ResponseFormatter;

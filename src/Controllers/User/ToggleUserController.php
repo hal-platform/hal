@@ -13,7 +13,7 @@ use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Flash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\User;
+use Hal\Core\Entity\User;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
@@ -57,12 +57,12 @@ class ToggleUserController implements ControllerInterface
 
         $msg = null;
         if ($enable) {
-            $user->withIsActive(true);
-            $msg = sprintf(self::MSG_DISABLED, $user->handle());
+            $user->withIsDisabled(false);
+            $msg = sprintf(self::MSG_ENABLED, $user->username());
 
         } elseif ($disable) {
-            $user->withIsActive(false);
-            $msg = sprintf(self::MSG_DISABLED, $user->handle());
+            $user->withIsDisabled(true);
+            $msg = sprintf(self::MSG_DISABLED, $user->username());
         }
 
         $this->em->merge($user);

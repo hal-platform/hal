@@ -91,10 +91,10 @@
             <li>{{ macros.job_status(release, true) }}</li>
 
             <li>Time</li>
-            <li class="js-push-start">{{ release.start|html5date }}</li>
+            <li class="js-release-start">{{ release.start|html5date }}</li>
 
             <li>Duration</li>
-            <li class="js-push-duration">
+            <li class="js-release-duration">
                 {% if release.start and release.end %}
                     {{ html5duration(release.start, release.end) }}
                 {% endif %}
