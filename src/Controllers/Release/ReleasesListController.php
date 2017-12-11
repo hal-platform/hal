@@ -62,7 +62,7 @@ class ReleasesListController implements ControllerInterface
             return ($this->notFound)($request, $response);
         }
 
-        $releases = $this->releaseRepo->findBy([], ['created' => 'DESC'], self::MAX_PER_PAGE, ($page - 1));
+        $releases = $this->releaseRepo->getPagedResults(self::MAX_PER_PAGE, ($page -1));
 
         $total = count($releases);
         $last = ceil($total / self::MAX_PER_PAGE);
