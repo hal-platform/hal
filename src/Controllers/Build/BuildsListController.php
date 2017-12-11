@@ -7,6 +7,7 @@
 
 namespace Hal\UI\Controllers\Build;
 
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Build;
 use Hal\Core\Repository\BuildRepository;
@@ -62,7 +63,7 @@ class BuildsListController implements ControllerInterface
             return ($this->notFound)($request, $response);
         }
 
-        $builds = $this->buildRepo->findBy([], ['created' => 'DESC'], self::MAX_PER_PAGE, ($page - 1));
+        $builds = $this->buildRepo->getPagedResults(self::MAX_PER_PAGE, ($page -1));
 
         $total = count($builds);
         $last = ceil($total / self::MAX_PER_PAGE);
