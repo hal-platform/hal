@@ -162,3 +162,76 @@ jobs      | Space-delimited list of build or push IDs.
 Unlike the **Queue** endpoint, the refresh endpoint only embeds the parent **builds** and **pushes**.
 
 
+## Get all jobs for a specific date
+
+```http
+GET /api/queue/date/2016-01-12 HTTP/1.1
+Accept: application/json
+Host: hal9000
+Authorization: token "HAL_TOKEN"
+```
+
+``` http
+HTTP/1.1 200 OK
+Content-Type: application/hal+json
+```
+
+```php
+<?php
+$client = new Client([
+    'base_uri' => 'https://hal9000',
+    'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
+]);
+
+$response = $client->get('/api/queue/date/2016-01-12');
+```
+
+```shell
+curl "https://hal9000/api/queue/date/2016-01-12"
+```
+
+> ### Response
+
+```json
+{
+    "_links": {
+        "self": "https://localhost.hal/api/queue/date/2016-01-12"
+    },
+    "_embedded": {
+        "jobs": [
+            {
+                "id": "build1"
+                //build
+            },
+            {
+                "id": "push2"
+                //push
+            }
+        ]
+    },
+    "count": 2
+}
+```
+
+Get a list of jobs queued on the specified date. This list can contain both **Builds** and **Pushes**.
+
+### HTTP Request
+
+`GET https://hal9000/api/queue/date/{date}`
+
+### URL Parameters
+
+Parameter | Description
+--------- | -----------
+date      | A valid ISO8601-formatted date such as `2016-01-12`. Jobs created on this date will be listed.
+
+### Embedded Resources
+
+**Builds** and **Pushes** are embedded in the queue. In addition, the following resources are embedded within their parent.
+
+Parent          | Embedded Resource
+--------------- | -----------------
+build           | Application
+push            | Application
+push            | Build
+push            | Deployment

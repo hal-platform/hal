@@ -287,3 +287,93 @@ Parameter | Description
 --------- | -----------
 id        | The unique ID of the build
 embed     | **Optional** - Should the events be embedded in this request?
+
+
+
+## Get Build History
+
+```http
+GET /api/builds HTTP/1.1
+Accept: application/json
+Host: hal9000
+Authorization: token "HAL_TOKEN"
+```
+
+``` http
+HTTP/1.1 200 OK
+Content-Type: application/hal+json
+```
+
+```php
+<?php
+$client = new Client([
+    'base_uri' => 'https://hal9000',
+    'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
+]);
+
+$response = $client->get('/api/builds');
+```
+
+```shell
+curl "https://hal9000/api/builds"
+```
+
+> ### Response
+
+```json
+{
+    "_links": {
+        "next": {
+            "href": "https://hal9000/api/builds/page/2"
+        },
+        "last": {
+            "href": "https://hal9000/api/builds/page/3"
+        },
+        "builds": [
+            {
+                "href": "https://hal9000/api/builds/b2.5KXYaoX",
+                "title": "b2.5KXYaoX"
+            },
+            {
+                "href": "https://hal9000/api/builds/b2.5KXaayW",
+                "title": "b2.5KXaayW"
+            },
+            {
+                "href": "https://hal9000/api/builds/b2.5KXQs4V",
+                "title": "b2.5KXQs4V"
+            },
+            {
+                "href": "https://hal9000/api/builds/b2.5KX7Pxg",
+                "title": "b2.5KX7Pxg"
+            },
+            {
+                "href": "https://hal9000/api/builds/b2.5yUBm4E",
+                "title": "b2.5yUBm4E"
+            }
+            //additional builds pruned for brevity
+        ],
+        "self": "https://hal9000/api/builds"
+    },
+    "count": 25,
+    "total": 70,
+    "page": 1
+}
+```
+
+Get all builds.
+
+Builds are listed in descending order, based on time they were created (page 3 builds are older than page 1).
+
+<aside class="notice">
+    This endpoint is <b>paged</b>. The maximum size of each page is <b>25 builds</b>.
+</aside>
+
+### HTTP Request
+
+`GET https://hal9000/api/builds(/page/{page})`
+
+### URL Parameters
+
+Parameter | Description
+--------- | -----------
+page      | **Optional** - Page number to retrieve

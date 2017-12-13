@@ -2104,6 +2104,89 @@ embed events in the request.</p>
 </tr>
 </tbody></table>
 
+<h2 id="get-build-history">Get Build History</h2>
+<pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/builds</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
+<span class="na">Host</span><span class="p">:</span> <span class="s">hal9000</span>
+<span class="na">Authorization</span><span class="p">:</span> <span class="s">token "HAL_TOKEN"</span>
+</code></pre><pre class="highlight http tab-http"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/hal+json</span>
+</code></pre><pre class="highlight php tab-php"><code><span class="cp">&lt;?php</span>
+<span class="nv">$client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Client</span><span class="p">([</span>
+    <span class="s1">'base_uri'</span> <span class="o">=&gt;</span> <span class="s1">'https://hal9000'</span><span class="p">,</span>
+    <span class="s1">'headers'</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">'token %s'</span><span class="p">,</span> <span class="nb">getenv</span><span class="p">(</span><span class="s1">'HAL_TOKEN'</span><span class="p">))]</span>
+<span class="p">]);</span>
+
+<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$client</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'/api/builds'</span><span class="p">);</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://hal9000/api/builds"</span>
+</code></pre>
+<blockquote>
+<h3 id="response">Response</h3>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"next"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/page/2"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="s2">"last"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/page/3"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="s2">"builds"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/b2.5KXYaoX"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b2.5KXYaoX"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/b2.5KXaayW"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b2.5KXaayW"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/b2.5KXQs4V"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b2.5KXQs4V"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/b2.5KX7Pxg"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b2.5KX7Pxg"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/b2.5yUBm4E"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b2.5yUBm4E"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+            </span><span class="err">//additional</span><span class="w"> </span><span class="err">builds</span><span class="w"> </span><span class="err">pruned</span><span class="w"> </span><span class="err">for</span><span class="w"> </span><span class="err">brevity</span><span class="w">
+        </span><span class="p">],</span><span class="w">
+        </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">25</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"total"</span><span class="p">:</span><span class="w"> </span><span class="mi">70</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"page"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>Get all builds.</p>
+
+<p>Builds are listed in descending order, based on time they were created (page 3 builds are older than page 1).</p>
+
+<aside class="notice">
+    This endpoint is <b>paged</b>. The maximum size of each page is <b>25 builds</b>.
+</aside>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">GET https://hal9000/api/builds(/page/{page})</code></p>
+
+<h3 id="url-parameters">URL Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>page</td>
+<td><strong>Optional</strong> - Page number to retrieve</td>
+</tr>
+</tbody></table>
+
           <h2 id="create-build">Create Build</h2>
 <pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/applications/24/build</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
@@ -2267,9 +2350,9 @@ as soon as an agent is available.</p>
     </ul>
 </aside>
 
-          <h1 id="pushes">Pushes</h1>
+          <h1 id="releases">Releases</h1>
 
-<p>A push is a deployment to a target. Builds are already built per environment, so a push is created by selecting
+<p>A release is a deployment to a target. Builds are already built per environment, so a release is created by selecting
 a build, and a deployment target within that environment.</p>
 
 <h3 id="attributes">Attributes</h3>
@@ -2284,7 +2367,7 @@ a build, and a deployment target within that environment.</p>
 </thead><tbody>
 <tr>
 <td>id</td>
-<td>Unique push ID</td>
+<td>Unique release ID</td>
 <td>string</td>
 <td><code class="prettyprint">p3.abcdef</code></td>
 </tr>
@@ -2292,29 +2375,29 @@ a build, and a deployment target within that environment.</p>
 <td>status</td>
 <td>Current status</td>
 <td>string</td>
-<td><code class="prettyprint">Success</code>, <code class="prettyprint">Waiting</code>, <code class="prettyprint">Pushing</code></td>
+<td><code class="prettyprint">success</code>, <code class="prettyprint">pending</code>, <code class="prettyprint">running</code></td>
 </tr>
 <tr>
 <td>created</td>
-<td>Time push was created in ISO 8601</td>
+<td>Time release was created in ISO 8601</td>
 <td>string</td>
 <td><code class="prettyprint">2016-01-06T20:41:22Z</code></td>
 </tr>
 <tr>
 <td>start</td>
-<td>Time push was started in ISO 8601</td>
+<td>Time release was started in ISO 8601</td>
 <td>string</td>
 <td><code class="prettyprint">2016-01-06T20:42:00Z</code></td>
 </tr>
 <tr>
 <td>end</td>
-<td>Time push was finished in ISO 8601</td>
+<td>Time release was finished in ISO 8601</td>
 <td>string</td>
 <td><code class="prettyprint">2016-01-06T20:45:36Z</code></td>
 </tr>
 <tr>
 <td>user</td>
-<td><strong>Link, Optional</strong> - User that created push</td>
+<td><strong>Link, Optional</strong> - User that created release</td>
 <td>resource</td>
 <td></td>
 </tr>
@@ -2338,20 +2421,20 @@ a build, and a deployment target within that environment.</p>
 </tr>
 <tr>
 <td>events</td>
-<td><strong>Link</strong> - Events for push</td>
+<td><strong>Link</strong> - Events for release</td>
 <td>list</td>
 <td></td>
 </tr>
 <tr>
 <td>page</td>
-<td><strong>Link</strong> - Page in frontend UI for this push</td>
+<td><strong>Link</strong> - Page in frontend UI for this release</td>
 <td></td>
 <td></td>
 </tr>
 </tbody></table>
 
-<h2 id="get-all-pushes">Get All Pushes</h2>
-<pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/applications/24/pushes</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<h2 id="get-all-releases">Get All Releases</h2>
+<pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/applications/24/releases</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
 <span class="na">Host</span><span class="p">:</span> <span class="s">hal.computer</span>
 <span class="na">Authorization</span><span class="p">:</span> <span class="s">token "HAL_TOKEN"</span>
@@ -2361,8 +2444,8 @@ a build, and a deployment target within that environment.</p>
     <span class="s1">'headers'</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">'token %s'</span><span class="p">,</span> <span class="nb">getenv</span><span class="p">(</span><span class="s1">'HAL_TOKEN'</span><span class="p">))]</span>
 <span class="p">]);</span>
 
-<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$client</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'/api/applications/24/pushes'</span><span class="p">);</span>
-</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://hal.computer/api/applications/24/pushes"</span>
+<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$client</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'/api/applications/24/releases'</span><span class="p">);</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://hal.computer/api/applications/24/releases"</span>
 </code></pre>
 <blockquote>
 <h3 id="response">Response</h3>
@@ -2371,31 +2454,31 @@ a build, and a deployment target within that environment.</p>
 <span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/hal+json</span>
 </code></pre><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
     </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"pushes"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"releases"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
             </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/pushes/p2.5ty8Ump"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/releases/p2.5ty8Ump"</span><span class="p">,</span><span class="w">
                 </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5ty8Ump"</span><span class="w">
             </span><span class="p">},</span><span class="w">
             </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/pushes/p2.5tsr91h"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/releases/p2.5tsr91h"</span><span class="p">,</span><span class="w">
                 </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5tsr91h"</span><span class="w">
             </span><span class="p">},</span><span class="w">
             </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/pushes/p2.5tqRjuq"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/releases/p2.5tqRjuq"</span><span class="p">,</span><span class="w">
                 </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5tqRjuq"</span><span class="w">
             </span><span class="p">},</span><span class="w">
             </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/pushes/p2.5tqxUqB"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/releases/p2.5tqxUqB"</span><span class="p">,</span><span class="w">
                 </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5tqxUqB"</span><span class="w">
             </span><span class="p">},</span><span class="w">
             </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/pushes/p2.5tq5nBL"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/releases/p2.5tq5nBL"</span><span class="p">,</span><span class="w">
                 </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5tq5nBL"</span><span class="w">
             </span><span class="p">}</span><span class="w">
-            </span><span class="err">//additional</span><span class="w"> </span><span class="err">pushes</span><span class="w"> </span><span class="err">pruned</span><span class="w"> </span><span class="err">for</span><span class="w"> </span><span class="err">brevity</span><span class="w">
+            </span><span class="err">//additional</span><span class="w"> </span><span class="err">releases</span><span class="w"> </span><span class="err">pruned</span><span class="w"> </span><span class="err">for</span><span class="w"> </span><span class="err">brevity</span><span class="w">
         </span><span class="p">],</span><span class="w">
         </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/applications/2/pushes"</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/applications/2/releases"</span><span class="w">
         </span><span class="p">}</span><span class="w">
     </span><span class="p">},</span><span class="w">
     </span><span class="s2">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">13</span><span class="p">,</span><span class="w">
@@ -2403,17 +2486,17 @@ a build, and a deployment target within that environment.</p>
     </span><span class="s2">"page"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
-<p>Get all pushes for an application.</p>
+<p>Get all releases for an application.</p>
 
-<p>Pushes are listed in descending order, based on time they were created (page 3 pushes are older than page 1).</p>
+<p>Releases are listed in descending order, based on time they were created (page 3 releases are older than page 1).</p>
 
 <aside class="notice">
-    This endpoint is <b>paged</b>. The maximum size of each page is <b>25 pushes</b>.
+    This endpoint is <b>paged</b>. The maximum size of each page is <b>25 releases</b>.
 </aside>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">GET https://hal.computer/api/applications/{id}/pushes(/page/{page})</code></p>
+<p><code class="prettyprint">GET https://hal.computer/api/applications/{id}/releases(/page/{page})</code></p>
 
 <h3 id="url-parameters">URL Parameters</h3>
 
@@ -2433,8 +2516,8 @@ a build, and a deployment target within that environment.</p>
 </tr>
 </tbody></table>
 
-<h2 id="get-push">Get Push</h2>
-<pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/pushes/p2.5tqQFTF</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<h2 id="get-release">Get Release</h2>
+<pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/releases/p2.5tqQFTF</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
 <span class="na">Host</span><span class="p">:</span> <span class="s">hal.computer</span>
 <span class="na">Authorization</span><span class="p">:</span> <span class="s">token "HAL_TOKEN"</span>
@@ -2444,8 +2527,8 @@ a build, and a deployment target within that environment.</p>
     <span class="s1">'headers'</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">'token %s'</span><span class="p">,</span> <span class="nb">getenv</span><span class="p">(</span><span class="s1">'HAL_TOKEN'</span><span class="p">))]</span>
 <span class="p">]);</span>
 
-<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$client</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'/api/pushes/p2.5tqQFTF'</span><span class="p">);</span>
-</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://hal.computer/api/pushes/p2.5tqQFTF"</span>
+<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$client</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'/api/releases/p2.5tqQFTF'</span><span class="p">);</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://hal.computer/api/releases/p2.5tqQFTF"</span>
 </code></pre>
 <blockquote>
 <h3 id="response">Response</h3>
@@ -2455,7 +2538,7 @@ a build, and a deployment target within that environment.</p>
 </code></pre><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
     </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/pushes/p2.5tqQFTF"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/releases/p2.5tqQFTF"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5tqQFTF"</span><span class="w">
         </span><span class="p">},</span><span class="w">
         </span><span class="s2">"user"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
@@ -2475,25 +2558,25 @@ a build, and a deployment target within that environment.</p>
             </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hal Agent"</span><span class="w">
         </span><span class="p">},</span><span class="w">
         </span><span class="s2">"events"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/pushes/p2.5tqQFTF/events"</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/releases/p2.5tqQFTF/events"</span><span class="w">
         </span><span class="p">},</span><span class="w">
         </span><span class="s2">"page"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/pushes/p2.5tqQFTF"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/releases/p2.5tqQFTF"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text/html"</span><span class="w">
         </span><span class="p">}</span><span class="w">
     </span><span class="p">},</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5tqQFTF"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Success"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"success"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"created"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2015-02-16T17:35:03Z"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"start"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2015-02-16T17:35:04Z"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"end"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2015-02-16T17:35:07Z"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
-<p>Get a push.</p>
+<p>Get a release.</p>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">GET https://hal.computer/api/pushes/{id}</code></p>
+<p><code class="prettyprint">GET https://hal.computer/api/releases/{id}</code></p>
 
 <h3 id="url-parameters">URL Parameters</h3>
 
@@ -2505,12 +2588,12 @@ a build, and a deployment target within that environment.</p>
 </thead><tbody>
 <tr>
 <td>id</td>
-<td>The unique ID of the push</td>
+<td>The unique ID of the release</td>
 </tr>
 </tbody></table>
 
-<h2 id="get-events-for-push">Get Events for Push</h2>
-<pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/pushes/p2.5tqQFTF/events</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<h2 id="get-events-for-release">Get Events for Release</h2>
+<pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/releases/p2.5tqQFTF/events</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
 <span class="na">Host</span><span class="p">:</span> <span class="s">hal.computer</span>
 <span class="na">Authorization</span><span class="p">:</span> <span class="s">token "HAL_TOKEN"</span>
@@ -2520,8 +2603,8 @@ a build, and a deployment target within that environment.</p>
     <span class="s1">'headers'</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">'token %s'</span><span class="p">,</span> <span class="nb">getenv</span><span class="p">(</span><span class="s1">'HAL_TOKEN'</span><span class="p">))]</span>
 <span class="p">]);</span>
 
-<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$client</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'/api/pushes/p2.5tqQFTF/events'</span><span class="p">);</span>
-</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://hal.computer/api/pushes/p2.5tqQFTF/events"</span>
+<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$client</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'/api/releases/p2.5tqQFTF/events'</span><span class="p">);</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://hal.computer/api/releases/p2.5tqQFTF/events"</span>
 </code></pre>
 <blockquote>
 <h3 id="response">Response</h3>
@@ -2530,14 +2613,14 @@ a build, and a deployment target within that environment.</p>
 <span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/hal+json</span>
 </code></pre><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
     </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"push"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/pushes/p2.5tqQFTF"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"release"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/releases/p2.5tqQFTF"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5tqQFTF"</span><span class="w">
         </span><span class="p">},</span><span class="w">
         </span><span class="s2">"events"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
             </span><span class="p">{</span><span class="w">
                 </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/job-events/e34a3e76d2a44ff7a3c7"</span><span class="p">,</span><span class="w">
-                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"[1] Resolved push properties"</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"[1] Resolved release properties"</span><span class="w">
             </span><span class="p">},</span><span class="w">
             </span><span class="p">{</span><span class="w">
                 </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/job-events/d3c75e80d95a4d4b8681"</span><span class="p">,</span><span class="w">
@@ -2545,7 +2628,7 @@ a build, and a deployment target within that environment.</p>
             </span><span class="p">},</span><span class="w">
             </span><span class="p">{</span><span class="w">
                 </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/job-events/93ac503d0b334da5a41f"</span><span class="p">,</span><span class="w">
-                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"[3] Prepare push environment"</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"[3] Prepare release environment"</span><span class="w">
             </span><span class="p">},</span><span class="w">
             </span><span class="p">{</span><span class="w">
                 </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/job-events/e87ce283a6514f4a8215"</span><span class="p">,</span><span class="w">
@@ -2553,13 +2636,13 @@ a build, and a deployment target within that environment.</p>
             </span><span class="p">}</span><span class="w">
         </span><span class="p">],</span><span class="w">
         </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/pushes/p2.5tqQFTF/events"</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/releases/p2.5tqQFTF/events"</span><span class="w">
         </span><span class="p">}</span><span class="w">
     </span><span class="p">},</span><span class="w">
     </span><span class="s2">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
-<p>Get Events for a push. By default this returns a list of links to events, however the client can choose to
+<p>Get Events for a release. By default this returns a list of links to events, however the client can choose to
 embed events in the request.</p>
 
 <aside class="notice">
@@ -2570,7 +2653,7 @@ embed events in the request.</p>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">GET https://hal.computer/api/pushes/{id}/events(?embed=events)</code></p>
+<p><code class="prettyprint">GET https://hal.computer/api/releases/{id}/events(?embed=events)</code></p>
 
 <h3 id="url-parameters">URL Parameters</h3>
 
@@ -2587,6 +2670,89 @@ embed events in the request.</p>
 <tr>
 <td>embed</td>
 <td><strong>Optional</strong> - Should the events be embedded in this request?</td>
+</tr>
+</tbody></table>
+
+<h2 id="get-release-history">Get Release History</h2>
+<pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/releases</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
+<span class="na">Host</span><span class="p">:</span> <span class="s">hal9000</span>
+<span class="na">Authorization</span><span class="p">:</span> <span class="s">token "HAL_TOKEN"</span>
+</code></pre><pre class="highlight http tab-http"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/hal+json</span>
+</code></pre><pre class="highlight php tab-php"><code><span class="cp">&lt;?php</span>
+<span class="nv">$client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Client</span><span class="p">([</span>
+    <span class="s1">'base_uri'</span> <span class="o">=&gt;</span> <span class="s1">'https://hal9000'</span><span class="p">,</span>
+    <span class="s1">'headers'</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">'token %s'</span><span class="p">,</span> <span class="nb">getenv</span><span class="p">(</span><span class="s1">'HAL_TOKEN'</span><span class="p">))]</span>
+<span class="p">]);</span>
+
+<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$client</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'/api/releases'</span><span class="p">);</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://hal9000/api/releases"</span>
+</code></pre>
+<blockquote>
+<h3 id="response">Response</h3>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"next"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/page/2"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="s2">"last"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/page/3"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="s2">"releases"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/p2.5ty8Ump"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5ty8Ump"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/p2.5tsr91h"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5tsr91h"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/p2.5tqRjuq"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5tqRjuq"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/p2.5tqxUqB"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5tqxUqB"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/p2.5tq5nBL"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5tq5nBL"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+            </span><span class="err">//additional</span><span class="w"> </span><span class="err">releases</span><span class="w"> </span><span class="err">pruned</span><span class="w"> </span><span class="err">for</span><span class="w"> </span><span class="err">brevity</span><span class="w">
+        </span><span class="p">]</span><span class="w">
+        </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">25</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"total"</span><span class="p">:</span><span class="w"> </span><span class="mi">70</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"page"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>Get all releases.</p>
+
+<p>Releases are listed in descending order, based on time they were created (page 3 releases are older than page 1).</p>
+
+<aside class="notice">
+    This endpoint is <b>paged</b>. The maximum size of each page is <b>25 releases</b>.
+</aside>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">GET https://hal9000/api/releases(/page/{page})</code></p>
+
+<h3 id="url-parameters">URL Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>page</td>
+<td><strong>Optional</strong> - Page number to retrieve</td>
 </tr>
 </tbody></table>
 
@@ -3263,6 +3429,92 @@ build commands, <code class="prettyprint">stdout</code> will be recorded, and al
 <h3 id="embedded-resources">Embedded Resources</h3>
 
 <p>Unlike the <strong>Queue</strong> endpoint, the refresh endpoint only embeds the parent <strong>builds</strong> and <strong>pushes</strong>.</p>
+
+<h2 id="get-all-jobs-for-a-specific-date">Get all jobs for a specific date</h2>
+<pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/queue/date/2016-01-12</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
+<span class="na">Host</span><span class="p">:</span> <span class="s">hal9000</span>
+<span class="na">Authorization</span><span class="p">:</span> <span class="s">token "HAL_TOKEN"</span>
+</code></pre><pre class="highlight http tab-http"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/hal+json</span>
+</code></pre><pre class="highlight php tab-php"><code><span class="cp">&lt;?php</span>
+<span class="nv">$client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Client</span><span class="p">([</span>
+    <span class="s1">'base_uri'</span> <span class="o">=&gt;</span> <span class="s1">'https://hal9000'</span><span class="p">,</span>
+    <span class="s1">'headers'</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">'token %s'</span><span class="p">,</span> <span class="nb">getenv</span><span class="p">(</span><span class="s1">'HAL_TOKEN'</span><span class="p">))]</span>
+<span class="p">]);</span>
+
+<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$client</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'/api/queue/date/2016-01-12'</span><span class="p">);</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://hal9000/api/queue/date/2016-01-12"</span>
+</code></pre>
+<blockquote>
+<h3 id="response">Response</h3>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://localhost.hal/api/queue/date/2016-01-12"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"_embedded"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"jobs"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"build1"</span><span class="w">
+                </span><span class="err">//build</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"push2"</span><span class="w">
+                </span><span class="err">//push</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+        </span><span class="p">]</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>Get a list of jobs queued on the specified date. This list can contain both <strong>Builds</strong> and <strong>Pushes</strong>.</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">GET https://hal9000/api/queue/date/{date}</code></p>
+
+<h3 id="url-parameters">URL Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>date</td>
+<td>A valid ISO8601-formatted date such as <code class="prettyprint">2016-01-12</code>. Jobs created on this date will be listed.</td>
+</tr>
+</tbody></table>
+
+<h3 id="embedded-resources">Embedded Resources</h3>
+
+<p><strong>Builds</strong> and <strong>Pushes</strong> are embedded in the queue. In addition, the following resources are embedded within their parent.</p>
+
+<table><thead>
+<tr>
+<th>Parent</th>
+<th>Embedded Resource</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>build</td>
+<td>Application</td>
+</tr>
+<tr>
+<td>push</td>
+<td>Application</td>
+</tr>
+<tr>
+<td>push</td>
+<td>Build</td>
+</tr>
+<tr>
+<td>push</td>
+<td>Deployment</td>
+</tr>
+</tbody></table>
 
           <h1 id="changelog">Changelog</h1>
 
