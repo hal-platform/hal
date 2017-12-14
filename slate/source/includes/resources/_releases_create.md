@@ -54,7 +54,7 @@ Content-Type: application/hal+json
         {
             "_links": {
                 "self": {
-                    "href": "https://hal.computer/api/pushes/p3.65ghrn4",
+                    "href": "https://hal.computer/api/releases/p3.65ghrn4",
                     "title": "p3.65ghrn4"
                 },
                 "user": {
@@ -74,10 +74,10 @@ Content-Type: application/hal+json
                     "title": "Hal"
                 },
                 "events": {
-                    "href": "https://hal.computer/api/pushes/p3.65ghrn4/events"
+                    "href": "https://hal.computer/api/releases/p3.65ghrn4/events"
                 },
                 "page": {
-                    "href": "https://hal.computer/pushes/p3.65ghrn4",
+                    "href": "https://hal.computer/releases/p3.65ghrn4",
                     "type": "text/html"
                 }
             },
@@ -90,7 +90,7 @@ Content-Type: application/hal+json
         {
             "_links": {
                 "self": {
-                    "href": "https://hal.computer/api/pushes/p3.65gA633",
+                    "href": "https://hal.computer/api/releases/p3.65gA633",
                     "title": "p3.65gA633"
                 },
                 "user": {
@@ -110,10 +110,10 @@ Content-Type: application/hal+json
                     "title": "Hal"
                 },
                 "events": {
-                    "href": "https://hal.computer/api/pushes/p3.65gA633/events"
+                    "href": "https://hal.computer/api/releases/p3.65gA633/events"
                 },
                 "page": {
-                    "href": "https://hal.computer/pushes/p3.65gA633",
+                    "href": "https://hal.computer/releases/p3.65gA633",
                     "type": "text/html"
                 }
             },

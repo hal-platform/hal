@@ -7,17 +7,17 @@ a build, and a deployment target within that environment.
 
 Attribute       | Description                                         | Type     | Example
 --------------- | --------------------------------------------------- | -------- | -------------
-id              | Unique release ID                                      | string   | `p3.abcdef`
+id              | Unique release ID                                   | string   | `p3.abcdef`
 status          | Current status                                      | string   | `success`, `pending`, `running`
-created         | Time release was created in ISO 8601                   | string   | `2016-01-06T20:41:22Z`
-start           | Time release was started in ISO 8601                   | string   | `2016-01-06T20:42:00Z`
-end             | Time release was finished in ISO 8601                  | string   | `2016-01-06T20:45:36Z`
-user            | **Link, Optional** - User that created release         | resource |
+created         | Time release was created in ISO 8601                | string   | `2016-01-06T20:41:22Z`
+start           | Time release was started in ISO 8601                | string   | `2016-01-06T20:42:00Z`
+end             | Time release was finished in ISO 8601               | string   | `2016-01-06T20:45:36Z`
+user            | **Link, Optional** - User that created release      | resource |
 application     | **Link** - Application of build                     | resource |
 target          | **Link** - Target deployed to                       | resource |
 build           | **Link** - Build deployed                           | resource |
-events          | **Link** - Events for release                          | list     |
-page            | **Link** - Page in frontend UI for this release        |          |
+events          | **Link** - Events for release                       | list     |
+page            | **Link** - Page in frontend UI for this release     |          |
 
 ## Get All Releases
 
