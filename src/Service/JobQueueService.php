@@ -91,6 +91,42 @@ class JobQueueService
     }
 
     /**
+     * @return bool
+     */
+    public function isToday($from)
+    {
+        $now = $this->clock->read();
+        $isToday = $now->format('Y-m-d', 'UTC') === $from->format('Y-m-d', 'UTC');
+
+        return $isToday;
+    }
+
+    /**
+     * @param string|null $date
+     *
+     * @return array
+     */
+    public function getTimeRange($date = '', $timezone = 'UTC')
+    {
+        if ($date) {
+            $date = $this->clock->fromString($date, 'Y-m-d');
+        }
+
+        if (!$date) {
+            $date = $this->clock->read();
+        }
+
+        $y = $date->format('Y', $timezone);
+        $m = $date->format('m', $timezone);
+        $d = $date->format('d', $timezone);
+
+        $from = new TimePoint($y, $m, $d, 0, 0, 0, $timezone);
+        $to = new TimePoint($y, $m, $d, 23, 59, 59, $timezone);
+
+        return [$from, $to];
+    }
+
+    /**
      * @param array $statuses
      * @param TimePoint|null $before
      * @param TimePoint|null $after

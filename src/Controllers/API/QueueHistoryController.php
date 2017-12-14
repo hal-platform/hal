@@ -90,10 +90,7 @@ class QueueHistoryController implements ControllerInterface
             ->getAttribute('route')
             ->getArgument('date');
 
-        [$from, $to] = $this->getTimeRange($date);
-
-        $now = $this->clock->read();
-        $isToday = $now->format('Y-m-d', 'UTC') === $from->format('Y-m-d', 'UTC');
+        [$from, $to] = $this->queue->getTimeRange($date, $this->timezone);
 
         $jobs = $this->queue->getHistory($from, $to);
 
@@ -101,14 +98,11 @@ class QueueHistoryController implements ControllerInterface
             return $job->id();
         }, $jobs);
 
-        $links = [];
-        if ($jobs) {
-            $links['refresh'] = new Hyperlink(['api.queue.refresh', ['jobs' => implode('+', $identifiers)]]);
-        }
-
         $data = [
             'count' => count($jobs)
         ];
+
+        $links = [];
 
         $resource = new HypermediaResource($data, $links, [
             'jobs' => $this->formatQueue($jobs)
@@ -138,30 +132,5 @@ class QueueHistoryController implements ControllerInterface
                 return $this->buildNormalizer->resource($item, ['application']);
             }
         }, $queue);
-    }
-
-    /**
-     * @param string|null $date
-     *
-     * @return array
-     */
-    private function getTimeRange($date = '')
-    {
-        if ($date) {
-            $date = $this->clock->fromString($date, 'Y-m-d');
-        }
-
-        if (!$date) {
-            $date = $this->clock->read();
-        }
-
-        $y = $date->format('Y', $this->timezone);
-        $m = $date->format('m', $this->timezone);
-        $d = $date->format('d', $this->timezone);
-
-        $from = new TimePoint($y, $m, $d, 0, 0, 0, $this->timezone);
-        $to = new TimePoint($y, $m, $d, 23, 59, 59, $this->timezone);
-
-        return [$from, $to];
     }
 }
