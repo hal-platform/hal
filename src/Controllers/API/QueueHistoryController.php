@@ -94,10 +94,6 @@ class QueueHistoryController implements ControllerInterface
 
         $jobs = $this->queue->getHistory($from, $to);
 
-        $identifiers = array_map(function($job) {
-            return $job->id();
-        }, $jobs);
-
         $data = [
             'count' => count($jobs)
         ];

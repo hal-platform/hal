@@ -2104,89 +2104,6 @@ embed events in the request.</p>
 </tr>
 </tbody></table>
 
-<h2 id="get-build-history">Get Build History</h2>
-<pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/builds</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
-<span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
-<span class="na">Host</span><span class="p">:</span> <span class="s">hal9000</span>
-<span class="na">Authorization</span><span class="p">:</span> <span class="s">token "HAL_TOKEN"</span>
-</code></pre><pre class="highlight http tab-http"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
-<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/hal+json</span>
-</code></pre><pre class="highlight php tab-php"><code><span class="cp">&lt;?php</span>
-<span class="nv">$client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Client</span><span class="p">([</span>
-    <span class="s1">'base_uri'</span> <span class="o">=&gt;</span> <span class="s1">'https://hal9000'</span><span class="p">,</span>
-    <span class="s1">'headers'</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">'token %s'</span><span class="p">,</span> <span class="nb">getenv</span><span class="p">(</span><span class="s1">'HAL_TOKEN'</span><span class="p">))]</span>
-<span class="p">]);</span>
-
-<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$client</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'/api/builds'</span><span class="p">);</span>
-</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://hal9000/api/builds"</span>
-</code></pre>
-<blockquote>
-<h3 id="response">Response</h3>
-</blockquote>
-<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-    </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"next"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/page/2"</span><span class="w">
-        </span><span class="p">},</span><span class="w">
-        </span><span class="s2">"last"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/page/3"</span><span class="w">
-        </span><span class="p">},</span><span class="w">
-        </span><span class="s2">"builds"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-            </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/b2.5KXYaoX"</span><span class="p">,</span><span class="w">
-                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b2.5KXYaoX"</span><span class="w">
-            </span><span class="p">},</span><span class="w">
-            </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/b2.5KXaayW"</span><span class="p">,</span><span class="w">
-                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b2.5KXaayW"</span><span class="w">
-            </span><span class="p">},</span><span class="w">
-            </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/b2.5KXQs4V"</span><span class="p">,</span><span class="w">
-                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b2.5KXQs4V"</span><span class="w">
-            </span><span class="p">},</span><span class="w">
-            </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/b2.5KX7Pxg"</span><span class="p">,</span><span class="w">
-                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b2.5KX7Pxg"</span><span class="w">
-            </span><span class="p">},</span><span class="w">
-            </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/b2.5yUBm4E"</span><span class="p">,</span><span class="w">
-                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b2.5yUBm4E"</span><span class="w">
-            </span><span class="p">}</span><span class="w">
-            </span><span class="err">//additional</span><span class="w"> </span><span class="err">builds</span><span class="w"> </span><span class="err">pruned</span><span class="w"> </span><span class="err">for</span><span class="w"> </span><span class="err">brevity</span><span class="w">
-        </span><span class="p">],</span><span class="w">
-        </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds"</span><span class="w">
-    </span><span class="p">},</span><span class="w">
-    </span><span class="s2">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">25</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"total"</span><span class="p">:</span><span class="w"> </span><span class="mi">70</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"page"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-<p>Get all builds.</p>
-
-<p>Builds are listed in descending order, based on time they were created (page 3 builds are older than page 1).</p>
-
-<aside class="notice">
-    This endpoint is <b>paged</b>. The maximum size of each page is <b>25 builds</b>.
-</aside>
-
-<h3 id="http-request">HTTP Request</h3>
-
-<p><code class="prettyprint">GET https://hal9000/api/builds(/page/{page})</code></p>
-
-<h3 id="url-parameters">URL Parameters</h3>
-
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>page</td>
-<td><strong>Optional</strong> - Page number to retrieve</td>
-</tr>
-</tbody></table>
-
           <h2 id="create-build">Create Build</h2>
 <pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/applications/24/build</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
@@ -2670,89 +2587,6 @@ embed events in the request.</p>
 <tr>
 <td>embed</td>
 <td><strong>Optional</strong> - Should the events be embedded in this request?</td>
-</tr>
-</tbody></table>
-
-<h2 id="get-release-history">Get Release History</h2>
-<pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/releases</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
-<span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
-<span class="na">Host</span><span class="p">:</span> <span class="s">hal9000</span>
-<span class="na">Authorization</span><span class="p">:</span> <span class="s">token "HAL_TOKEN"</span>
-</code></pre><pre class="highlight http tab-http"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
-<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/hal+json</span>
-</code></pre><pre class="highlight php tab-php"><code><span class="cp">&lt;?php</span>
-<span class="nv">$client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Client</span><span class="p">([</span>
-    <span class="s1">'base_uri'</span> <span class="o">=&gt;</span> <span class="s1">'https://hal9000'</span><span class="p">,</span>
-    <span class="s1">'headers'</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">'token %s'</span><span class="p">,</span> <span class="nb">getenv</span><span class="p">(</span><span class="s1">'HAL_TOKEN'</span><span class="p">))]</span>
-<span class="p">]);</span>
-
-<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$client</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'/api/releases'</span><span class="p">);</span>
-</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://hal9000/api/releases"</span>
-</code></pre>
-<blockquote>
-<h3 id="response">Response</h3>
-</blockquote>
-<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-    </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"next"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/page/2"</span><span class="w">
-        </span><span class="p">},</span><span class="w">
-        </span><span class="s2">"last"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/page/3"</span><span class="w">
-        </span><span class="p">},</span><span class="w">
-        </span><span class="s2">"releases"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-            </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/p2.5ty8Ump"</span><span class="p">,</span><span class="w">
-                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5ty8Ump"</span><span class="w">
-            </span><span class="p">},</span><span class="w">
-            </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/p2.5tsr91h"</span><span class="p">,</span><span class="w">
-                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5tsr91h"</span><span class="w">
-            </span><span class="p">},</span><span class="w">
-            </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/p2.5tqRjuq"</span><span class="p">,</span><span class="w">
-                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5tqRjuq"</span><span class="w">
-            </span><span class="p">},</span><span class="w">
-            </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/p2.5tqxUqB"</span><span class="p">,</span><span class="w">
-                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5tqxUqB"</span><span class="w">
-            </span><span class="p">},</span><span class="w">
-            </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/p2.5tq5nBL"</span><span class="p">,</span><span class="w">
-                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5tq5nBL"</span><span class="w">
-            </span><span class="p">}</span><span class="w">
-            </span><span class="err">//additional</span><span class="w"> </span><span class="err">releases</span><span class="w"> </span><span class="err">pruned</span><span class="w"> </span><span class="err">for</span><span class="w"> </span><span class="err">brevity</span><span class="w">
-        </span><span class="p">]</span><span class="w">
-        </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases"</span><span class="w">
-    </span><span class="p">},</span><span class="w">
-    </span><span class="s2">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">25</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"total"</span><span class="p">:</span><span class="w"> </span><span class="mi">70</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"page"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-<p>Get all releases.</p>
-
-<p>Releases are listed in descending order, based on time they were created (page 3 releases are older than page 1).</p>
-
-<aside class="notice">
-    This endpoint is <b>paged</b>. The maximum size of each page is <b>25 releases</b>.
-</aside>
-
-<h3 id="http-request">HTTP Request</h3>
-
-<p><code class="prettyprint">GET https://hal9000/api/releases(/page/{page})</code></p>
-
-<h3 id="url-parameters">URL Parameters</h3>
-
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>page</td>
-<td><strong>Optional</strong> - Page number to retrieve</td>
 </tr>
 </tbody></table>
 
@@ -3513,6 +3347,172 @@ build commands, <code class="prettyprint">stdout</code> will be recorded, and al
 <tr>
 <td>push</td>
 <td>Deployment</td>
+</tr>
+</tbody></table>
+
+<h2 id="get-build-history-for-all-applications">Get Build History for all applications</h2>
+<pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/builds</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
+<span class="na">Host</span><span class="p">:</span> <span class="s">hal9000</span>
+<span class="na">Authorization</span><span class="p">:</span> <span class="s">token "HAL_TOKEN"</span>
+</code></pre><pre class="highlight http tab-http"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/hal+json</span>
+</code></pre><pre class="highlight php tab-php"><code><span class="cp">&lt;?php</span>
+<span class="nv">$client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Client</span><span class="p">([</span>
+    <span class="s1">'base_uri'</span> <span class="o">=&gt;</span> <span class="s1">'https://hal9000'</span><span class="p">,</span>
+    <span class="s1">'headers'</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">'token %s'</span><span class="p">,</span> <span class="nb">getenv</span><span class="p">(</span><span class="s1">'HAL_TOKEN'</span><span class="p">))]</span>
+<span class="p">]);</span>
+
+<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$client</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'/api/builds'</span><span class="p">);</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://hal9000/api/builds"</span>
+</code></pre>
+<blockquote>
+<h3 id="response">Response</h3>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"next"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/page/2"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="s2">"last"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/page/3"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="s2">"builds"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/b2.5KXYaoX"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b2.5KXYaoX"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/b2.5KXaayW"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b2.5KXaayW"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/b2.5KXQs4V"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b2.5KXQs4V"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/b2.5KX7Pxg"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b2.5KX7Pxg"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/b2.5yUBm4E"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b2.5yUBm4E"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+            </span><span class="err">//additional</span><span class="w"> </span><span class="err">builds</span><span class="w"> </span><span class="err">pruned</span><span class="w"> </span><span class="err">for</span><span class="w"> </span><span class="err">brevity</span><span class="w">
+        </span><span class="p">],</span><span class="w">
+        </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">25</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"total"</span><span class="p">:</span><span class="w"> </span><span class="mi">70</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"page"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>Get all builds.</p>
+
+<p>Builds are listed in descending order, based on time they were created (page 3 builds are older than page 1).</p>
+
+<aside class="notice">
+    This endpoint is <b>paged</b>. The maximum size of each page is <b>25 builds</b>.
+</aside>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">GET https://hal9000/api/builds(/page/{page})</code></p>
+
+<h3 id="url-parameters">URL Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>page</td>
+<td><strong>Optional</strong> - Page number to retrieve</td>
+</tr>
+</tbody></table>
+
+<h2 id="get-release-history-for-all-applications">Get Release History for all applications</h2>
+<pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/releases</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
+<span class="na">Host</span><span class="p">:</span> <span class="s">hal9000</span>
+<span class="na">Authorization</span><span class="p">:</span> <span class="s">token "HAL_TOKEN"</span>
+</code></pre><pre class="highlight http tab-http"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/hal+json</span>
+</code></pre><pre class="highlight php tab-php"><code><span class="cp">&lt;?php</span>
+<span class="nv">$client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Client</span><span class="p">([</span>
+    <span class="s1">'base_uri'</span> <span class="o">=&gt;</span> <span class="s1">'https://hal9000'</span><span class="p">,</span>
+    <span class="s1">'headers'</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">'token %s'</span><span class="p">,</span> <span class="nb">getenv</span><span class="p">(</span><span class="s1">'HAL_TOKEN'</span><span class="p">))]</span>
+<span class="p">]);</span>
+
+<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$client</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'/api/releases'</span><span class="p">);</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://hal9000/api/releases"</span>
+</code></pre>
+<blockquote>
+<h3 id="response">Response</h3>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"next"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/page/2"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="s2">"last"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/page/3"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="s2">"releases"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/p2.5ty8Ump"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5ty8Ump"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/p2.5tsr91h"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5tsr91h"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/p2.5tqRjuq"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5tqRjuq"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/p2.5tqxUqB"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5tqxUqB"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases/p2.5tq5nBL"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p2.5tq5nBL"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+            </span><span class="err">//additional</span><span class="w"> </span><span class="err">releases</span><span class="w"> </span><span class="err">pruned</span><span class="w"> </span><span class="err">for</span><span class="w"> </span><span class="err">brevity</span><span class="w">
+        </span><span class="p">]</span><span class="w">
+        </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/releases"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">25</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"total"</span><span class="p">:</span><span class="w"> </span><span class="mi">70</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"page"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>Get all releases.</p>
+
+<p>Releases are listed in descending order, based on time they were created (page 3 releases are older than page 1).</p>
+
+<aside class="notice">
+    This endpoint is <b>paged</b>. The maximum size of each page is <b>25 releases</b>.
+</aside>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">GET https://hal9000/api/releases(/page/{page})</code></p>
+
+<h3 id="url-parameters">URL Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>page</td>
+<td><strong>Optional</strong> - Page number to retrieve</td>
 </tr>
 </tbody></table>
 

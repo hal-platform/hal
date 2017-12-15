@@ -26,7 +26,7 @@ class ReleasesListController implements ControllerInterface
     use APITrait;
     use PaginationTrait;
 
-    private const MAX_PER_PAGE = 25;
+    private const MAX_PER_PAGE = 50;
 
     private const ERR_PAGE = 'Invalid page specified';
 
