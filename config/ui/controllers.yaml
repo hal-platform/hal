@@ -10,14 +10,14 @@ services:
         arguments: ['@maintenance.twig']
     maintenance.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['maintenance.twig']]]
+        calls: [['setTemplate', ['error.maintenance.twig']]]
 
     denied.page:
         parent: 'static.controller'
         arguments: ['@denied.twig']
     denied.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['denied.twig']]]
+        calls: [['setTemplate', ['error.denied.twig']]]
 
     ############################################################################
 
@@ -88,7 +88,7 @@ services:
         arguments: ['@latest_release.twig']
     latest_release.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['latest-release.twig']]]
+        calls: [['setTemplate', ['latest_release.twig']]]
 
     styleguide.page:
         parent: 'static.controller'
@@ -202,7 +202,7 @@ services:
             - '@uri'
     group.add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['group/group.add.twig']]]
+        calls: [['setTemplate', ['group/add_group.twig']]]
 
     group.edit.page:
         class: 'Hal\UI\Controllers\Group\EditGroupController'
@@ -213,7 +213,7 @@ services:
             - '@uri'
     group.edit.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['group/group.edit.twig']]]
+        calls: [['setTemplate', ['group/edit_group.twig']]]
 
     group.remove.handler:
         class: 'Hal\UI\Controllers\Group\RemoveGroupController'
@@ -273,7 +273,7 @@ services:
         arguments: ['@queue.twig', '@job_queue']
     queue.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['queue.twig']]]
+        calls: [['setTemplate', ['queue/queue.twig']]]
 
     queue.history.page:
         class: 'Hal\UI\Controllers\QueueHistoryController'
@@ -284,7 +284,7 @@ services:
             - '%date.timezone%'
     queue.history.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['queue.history.twig']]]
+        calls: [['setTemplate', ['queue/queue_history.twig']]]
 
     ####################################################################################################################
     # ORGANIZATION CONTROLLERS
@@ -402,7 +402,7 @@ services:
             - '@uri'
     application.permission_add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['application/application.permission.add.twig']]]
+        calls: [['setTemplate', ['application/add_permission.twig']]]
 
     application.permission_remove.page:
         class: 'Hal\UI\Controllers\Application\RemoveApplicationPermissionController'
@@ -413,7 +413,7 @@ services:
             - '@uri'
     application.permission_remove.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['application/application.permission.remove.twig']]]
+        calls: [['setTemplate', ['application/remove_permission.twig']]]
 
     ####################################################################################################################
     # APPLICATION - ENCRYPTED CONFIGURATION CONTROLLERS
@@ -424,7 +424,7 @@ services:
         arguments: ['@encrypted.configuration.twig', '@doctrine.em']
     encrypted.configuration.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['encrypted-configuration/encrypted.configuration.twig']]]
+        calls: [['setTemplate', ['encrypted-configuration/encrypteds.twig']]]
 
     encrypted.page:
         class: 'Hal\UI\Controllers\EncryptedConfiguration\EncryptedController'
@@ -438,7 +438,7 @@ services:
         arguments: ['@encrypted.add.twig', '@doctrine.em']
     encrypted.add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['encrypted-configuration/encrypted.add.twig']]]
+        calls: [['setTemplate', ['encrypted-configuration/add_encrypted.twig']]]
     encrypted.add.middleware:
         class: 'Hal\UI\Controllers\EncryptedConfiguration\AddEncryptedPropertyMiddleware'
         arguments:
@@ -478,7 +478,7 @@ services:
             - '@uri'
     target.add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['target/target.add.twig']]]
+        calls: [['setTemplate', ['target/add_target.twig']]]
     target.add.middleware:
         class: 'Hal\UI\Controllers\Target\AddTargetMiddleware'
         arguments:
@@ -491,7 +491,7 @@ services:
         arguments: ['@target.edit.twig', '@doctrine.em']
     target.edit.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['target/target.edit.twig']]]
+        calls: [['setTemplate', ['target/edit_target.twig']]]
     target.edit.middleware:
         class: 'Hal\UI\Controllers\Target\EditTargetMiddleware'
         arguments:
@@ -536,7 +536,7 @@ services:
             - '@sticky.environment'
     build.start.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['build/start.twig']]]
+        calls: [['setTemplate', ['build/start_build.twig']]]
     build.start.middleware:
         class: 'Hal\UI\Controllers\Build\BuildMiddleware'
         arguments:
@@ -585,7 +585,7 @@ services:
             - '@uri'
     release.start.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['release/start.twig']]]
+        calls: [['setTemplate', ['release/start_release.twig']]]
 
     deploy.middleware:
         class: 'Hal\UI\Controllers\Release\DeployMiddleware'
@@ -613,7 +613,7 @@ services:
             - '@notFoundHandler'
     release.rollback.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['release/rollback.twig']]]
+        calls: [['setTemplate', ['release/rollback_release.twig']]]
 
     releases.list.page:
         class: 'Hal\UI\Controllers\Release\ReleasesListController'
@@ -724,7 +724,7 @@ services:
             - ['setCacheTTL', ['%cache.page.ttl%']]
     admin.permissions.add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['permissions/permission.add.twig']]]
+        calls: [['setTemplate', ['permissions/add_permission.twig']]]
 
     admin.permissions.remove.handler:
         class: 'Hal\UI\Controllers\Permissions\RemovePermissionsController'
@@ -739,7 +739,7 @@ services:
             - '@service.authorization_hydrator'
     admin.permissions.remove.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['permissions/permission.remove.twig']]]
+        calls: [['setTemplate', ['permissions/remove_permission.twig']]]
 
     admin.permissions.refresh.handler:
         class: 'Hal\UI\Controllers\Permissions\RefreshUserPermissionsController'

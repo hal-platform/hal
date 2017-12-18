@@ -14,7 +14,6 @@
         </p>
     </div>
 
-
     {% include 'partial.pending_job_table.twig' with {'pending': pending} only %}
 
     <p><a class="btn" href="{{ uriFor('queue.history.page1') }}">Queue History</a></p>

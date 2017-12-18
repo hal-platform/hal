@@ -9,7 +9,7 @@
 
     <h2>Current Permissions - <b>{{ user.username }}</b></h2>
 
-    {% include 'user/partial.user-status.twig' with {
+    {% include 'partial.user_permissions.twig' with {
         user: user,
         authorizations: userAuthorizations,
         permissions: userPermissions
