@@ -16,14 +16,20 @@
 
     <div class="details-box">
         <ul>
-            <li>Application</li>
-            <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
+            <li>
+                <h6>Application</h6>
+                <a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a>
+            </li>
 
-            <li>Group</li>
-            <li><a href="{{ uriFor('group', {'group': target.group.id}) }}">{{ target.group.format(false) }}</a></li>
+            <li>
+                <h6>Group</h6>
+                <a href="{{ uriFor('group', {'group': target.group.id}) }}">{{ target.group.format(false) }}</a>
+            </li>
 
-            <li>Environment</li>
-            <li>{{ target.group.environment.name }}</li>
+            <li>
+                <h6>Environment</h6>
+                {{ target.group.environment.name }}
+            </li>
         </ul>
     </div>
 

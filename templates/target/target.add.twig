@@ -11,14 +11,14 @@
 
     <div class="details-box">
         <ul>
-            <li>Application</li>
             <li>
+                <h6>Application</h6>
                 <a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a>
             </li>
 
             {% if selected_environment %}
-                <li>Environment</li>
                 <li>
+                    <h6>Environment</h6>
                     {{ selected_environment.name }}
                     <a href="{{ uriFor('target.add', {'application': application.id}) }}">Change environment</a>
                 </li>
@@ -31,7 +31,6 @@
     </p>
 
     {% if selected_environment %}
-
         <div class="form-wrapper js-dynamic-targets">
             {{ form_macros.formErrors(errors) }}
 
@@ -70,9 +69,7 @@
 
         <ul class="form-fields">
             <li>
-                <label for="group">
-                    Group
-                </label>
+                <label for="group">Group</label>
                 <select class="select-input" name="group" id="group" required>
                     <option></option>
                     {% for group in groups %}

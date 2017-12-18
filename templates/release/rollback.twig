@@ -18,26 +18,24 @@
     <h2>Target Details</h2>
     <div class="details-box">
         <ul class="mbn">
-            <li>Environment</li>
             <li>
+                <h6>Environment</h6>
                 <a href="{{ uriFor('environment', {'environment': target.group.environment.id}) }}">{{ target.group.environment.name }}</a>
             </li>
 
-            <li>Target</li>
             <li>
+                <h6>Target</h6>
                 <a href="{{ uriFor('target', {'application': target.application.id, 'target': target.id}) }}">{{ target.format(true) }}</a>
             </li>
 
             <li>
-                Parameters
-            </li>
-            <li>
+                <h6>Parameters</h6>
                 {{ target.formatParameters() }}
             </li>
 
             {% if target.url %}
-                <li>URL</li>
                 <li>
+                    <h6>URL</h6>
                     <a href="{{ target.url }}">{{ target.url }}</a>
                 </li>
             {% endif %}

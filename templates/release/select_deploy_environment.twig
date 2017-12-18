@@ -8,7 +8,7 @@
 
 {% block content %}
     <div class="nav--page">
-        <h1>Select Environment - <strong>{{ build.application.name }}</strong></h1>
+        <h1>Select Environment - <b>{{ build.application.name }}</b></h1>
 
         <p class="nav--page__back">
             <a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': build.application.id}) }}">Back to Application Dashboard</a>
@@ -20,16 +20,16 @@
 
 {% block meta_details %}
     <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Application</dt>
-            <dd>
+        <ul class="mbn">
+            <li>
+                <h6>Application</h6>
                 <a href="{{ uriFor('application', {'application': build.application.id}) }}">{{ build.application.name }}</a>
-            </dd>
+            </li>
 
-            <dt class="split__title">Build Id</dt>
-            <dd>
+            <li>
+                <h6>Build ID</h6>
                 <a href="{{ uriFor('build', {'build': build.id}) }}">{{ build.id|formatBuildId }}</a>
-            </dd>
+            </li>
 
         </dl>
     </div>
@@ -37,15 +37,17 @@
     <h2>Git Reference</h2>
 
     <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Reference</dt>
-            <dd>
+        <ul class="mbn">
+            <li>
+                <h6>Reference</h6>
                 {% set isCurrent = githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, build.branch, build.commit) %}
                 {{ git_macros.gitref(build, false, isCurrent) }}
-            </dd>
+            </li>
 
-            <dt class="split__title">Commit</dt>
-            <dd>{{ git_macros.gitcommit(build) }}</dd>
+            <li>
+                <h6>Commit</h6>
+                {{ git_macros.gitcommit(build) }}
+            </li>
         </dl>
     </div>
 

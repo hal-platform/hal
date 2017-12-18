@@ -19,14 +19,13 @@
 
     <div class="details-box">
         <ul class="mbn">
-            <li>Id</li>
-            <li>{{ release.id }}</li>
-
-            <li>Short Id</li>
-            <li>{{ release.id|formatPushId }}</li>
-
-            <li>Target</li>
             <li>
+                <h6>ID</h6>
+                {{ release.id }}
+            </li>
+
+            <li>
+                <h6>Target</h6>
                 {% if release.target %}
                     <a href="{{ uriFor('group', {'group': release.target.group.id}) }}">{{ release.target.format }}</a>
                 {% else %}
@@ -35,15 +34,13 @@
             </li>
 
             <li>
-                Parameters
-            </li>
-            <li>
+                <h6>Parameters</h6>
                 {{ release.target.formatParameters }}
             </li>
 
             {% if release.target and release.target.url %}
-                <li>URL</li>
                 <li>
+                    <h6>URL</h6>
                     <a href="{{ release.target.url }}">{{ release.target.url }}</a>
                 </li>
             {% endif %}
@@ -54,30 +51,32 @@
 
     <div class="details-box">
         <ul class="mbn">
-            <li>Build Id</li>
             <li>
+                <h6>Build ID</h6>
                 <a href="{{ uriFor('build', {'build': release.build.id}) }}">{{ release.build.id|formatBuildId }}</a>
                 {% if (release.build.status == 'removed') %}
                     (Removed)
                 {% endif %}
             </li>
 
-            <li>Application</li>
             <li>
+                <h6>Application</h6>
                 <a href="{{ uriFor('application', {'application': release.application.id}) }}">{{ release.application.name }}</a>
             </li>
 
-            <li>Environment</li>
-            <li>{{ release.build.environment ? release.build.environment.name : 'Any' }}</li>
-
-            <li>Reference</li>
             <li>
+                <h6>Environment</h6>
+                {{ release.build.environment ? release.build.environment.name : 'Any' }}
+            </li>
+
+            <li>
+                <h6>Reference</h6>
                 {% set isCurrent = githubCommitIsCurrent(release.application.github.owner, release.application.github.repository, release.build.reference, release.build.commit) %}
                 {{ git_macros.gitref(release.build, false, isCurrent) }}
             </li>
 
-            <li>Commit</li>
             <li>
+                <h6>Commit</h6>
                 {{ git_macros.gitcommit(release.build) }}
             </li>
         </ul>

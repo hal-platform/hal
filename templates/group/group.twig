@@ -12,11 +12,15 @@
 
     <div class="details-box">
         <ul class="mbn">
-            <li>Group Type</li>
-            <li>{{ group.format(false) }}</li>
+            <li>
+                <h6>Group Type</h6>
+                {{ group.format(false) }}
+            </li>
 
-            <li>{{ name_label }}</li>
-            <li>{{ group.type == 'script' ? 'N/A' : group.name() }}</li>
+            <li>
+                <h6>{{ name_label }}</h6>
+                {{ group.type == 'script' ? 'N/A' : group.name() }}
+            </li>
         </ul>
     </div>
 

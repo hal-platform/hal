@@ -56,17 +56,18 @@
 {% block meta_details %}
     <div class="details-box">
         <ul class="mbn">
-            <li>Application</li>
             <li>
+                <h6>Application</h6>
                 <a href="{{ uriFor('application', {'application': build.application.id}) }}">{{ build.application.name }}</a>
             </li>
 
-            <li>Environment</li>
-            {% if build.environment %}
-                <li>{{ environment.name }}</li>
-            {% else %}
-                <li>{{ environment.name }} <small>(<a href="{{ uriFor('release.start', {build: build.id}) }}">Change environment</a>)</small></li>
-            {% endif %}
+            <li>
+                <h6>Environment</h6>
+                {{ environment.name }}
+                {% if not build.environment %}
+                    <small>(<a href="{{ uriFor('release.start', {build: build.id}) }}">Change environment</a>)</small>
+                {% endif %}
+            </li>
         </ul>
     </div>
 
@@ -74,13 +75,13 @@
 
     <div class="details-box">
         <ul class="mbn">
-            <li>Build Id</li>
             <li>
+                <h6>Build ID</h6>
                 <a href="{{ uriFor('build', {'build': build.id}) }}">{{ build.id|formatBuildId }}</a>
             </li>
 
-            <li>User</li>
             <li>
+                <h6>User</h6>
                 {% if build.user %}
                     <a href="{{ uriFor('user', {'user': build.user.id}) }}">{{ build.user.name }}</a>
                 {% else %}
@@ -88,8 +89,10 @@
                 {% endif %}
             </li>
 
-            <li>Time</li>
-            <li>{{ build.end|html5date }}</li>
+            <li>
+                <h6>Time</h6>
+                {{ build.end|html5date }}
+            </li>
         </ul>
     </div>
 
@@ -97,14 +100,16 @@
 
     <div class="details-box">
         <ul class="mbn">
-            <li>Reference</li>
             <li>
+                <h6>Reference</h6>
                 {% set isCurrent = githubCommitIsCurrent(build.application.github.owner, build.application.github.repository, build.reference, build.commit) %}
                 {{ git_macros.gitref(build, false, isCurrent) }}
             </li>
 
-            <li>Commit</li>
-            <li>{{ git_macros.gitcommit(build) }}</li>
+            <li>
+                <h6>Commit</h6>
+                {{ git_macros.gitcommit(build) }}
+            </li>
         </ul>
     </div>
 {% endblock %}
@@ -137,4 +142,3 @@
 
     </form>
 {% endblock %}
-
