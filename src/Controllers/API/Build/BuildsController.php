@@ -16,6 +16,7 @@ use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\PaginationTrait;
+use Hal\UI\SharedStaticConfiguration;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -25,8 +26,6 @@ class BuildsController implements ControllerInterface
 {
     use APITrait;
     use PaginationTrait;
-
-    private const MAX_PER_PAGE = 25;
 
     private const ERR_PAGE = 'Invalid page specified';
 
@@ -72,7 +71,7 @@ class BuildsController implements ControllerInterface
             return $this->withProblem($this->problem, $response, 404, self::ERR_PAGE);
         }
 
-        $pagination = $this->buildRepo->getByApplication($application, self::MAX_PER_PAGE, ($page - 1));
+        $pagination = $this->buildRepo->getByApplication($application, SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1));
         $total = count($pagination);
 
         $builds = [];
@@ -80,7 +79,7 @@ class BuildsController implements ControllerInterface
             $builds[] = $build;
         }
 
-        $links = $this->buildPaginationLinks('api.builds.history', $page, $total, self::MAX_PER_PAGE, ['application' => $application->id()]);
+        $links = $this->buildPaginationLinks('api.builds.history', $page, $total, SharedStaticConfiguration::LARGE_PAGE_SIZE, ['application' => $application->id()]);
 
         $data = [
             'count' => count($builds),

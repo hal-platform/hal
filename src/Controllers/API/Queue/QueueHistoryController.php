@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\API;
+namespace Hal\UI\Controllers\API\Queue;
 
 use Hal\UI\API\Normalizer\BuildNormalizer;
 use Hal\UI\API\Normalizer\ReleaseNormalizer;

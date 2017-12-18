@@ -46,7 +46,7 @@
 
         "symfony/config":               "~3.3",
         "symfony/debug":                "~3.3",
-        "symfony/dependency-injection": "~3.3",
+        "symfony/dependency-injection": "~3.3.0",
         "symfony/dotenv":               "~3.3",
         "symfony/finder":               "~3.3",
         "symfony/ldap":                 "~3.3",

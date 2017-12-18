@@ -5,8 +5,9 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers;
+namespace Hal\UI\Controllers\Queue;
 
+use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Service\JobQueueService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

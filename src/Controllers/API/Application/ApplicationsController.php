@@ -14,6 +14,7 @@ use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\PaginationTrait;
+use Hal\UI\SharedStaticConfiguration;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -23,8 +24,6 @@ class ApplicationsController implements ControllerInterface
 {
     use APITrait;
     use PaginationTrait;
-
-    private const MAX_PER_PAGE = 25;
 
     private const ERR_PAGE = 'Invalid page specified';
 
@@ -68,10 +67,10 @@ class ApplicationsController implements ControllerInterface
             return $this->withProblem($this->problem, $response, 404, self::ERR_PAGE);
         }
 
-        // @todo add pagination to apps
-        $pagination = $this->applicationRepo->findAll();
-        // $pagination = $this->applicationRepo->getPaginatedApplications(self::MAX_PER_PAGE, ($page - 1));
+        $applications = $this->applicationRepo->getPagedResults(SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1));
+
         $total = count($pagination);
+        $last = ceil($total / SharedStaticConfiguration::LARGE_PAGE_SIZE);
 
         $applications = [];
         foreach ($pagination as $application) {

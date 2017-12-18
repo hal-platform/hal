@@ -269,14 +269,14 @@ services:
     ####################################################################################################################
 
     queue.page:
-        class: 'Hal\UI\Controllers\QueueController'
+        class: 'Hal\UI\Controllers\Queue\QueueController'
         arguments: ['@queue.twig', '@job_queue']
     queue.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['queue/queue.twig']]]
 
     queue.history.page:
-        class: 'Hal\UI\Controllers\QueueHistoryController'
+        class: 'Hal\UI\Controllers\Queue\QueueHistoryController'
         arguments:
             - '@queue.history.twig'
             - '@job_queue'
@@ -285,6 +285,26 @@ services:
     queue.history.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['queue/queue_history.twig']]]
+
+    builds.history.page:
+        class: 'Hal\UI\Controllers\Queue\BuildsHistoryController'
+        arguments:
+            - '@builds.history.twig'
+            - '@doctrine.em'
+            - '@notFoundHandler'
+    builds.history.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['queue/builds_history.twig']]]
+
+    releases.history.page:
+        class: 'Hal\UI\Controllers\Queue\ReleasesHistoryController'
+        arguments:
+            - '@releases.history.twig'
+            - '@doctrine.em'
+            - '@notFoundHandler'
+    releases.history.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['queue/releases_history.twig']]]
 
     ####################################################################################################################
     # ORGANIZATION CONTROLLERS
@@ -348,7 +368,7 @@ services:
         calls: [['setTemplate', ['application/application.twig']]]
 
     application.dashboard.page:
-        class: 'Hal\UI\Controllers\Application\DashboardController'
+        class: 'Hal\UI\Controllers\Application\ApplicationDashboardController'
         arguments:
             - '@application.dashboard.twig'
             - '@doctrine.em'
@@ -546,16 +566,6 @@ services:
             - '@sticky.environment'
             - '@uri'
 
-    builds.list.page:
-        class: 'Hal\UI\Controllers\Build\BuildsListController'
-        arguments:
-            - '@builds.list.twig'
-            - '@doctrine.em'
-            - '@notFoundHandler'
-    builds.list.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['build/builds.list.twig']]]
-
     ####################################################################################################################
     # Release CONTROLLERS
     ####################################################################################################################
@@ -614,16 +624,6 @@ services:
     release.rollback.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['release/rollback_release.twig']]]
-
-    releases.list.page:
-        class: 'Hal\UI\Controllers\Release\ReleasesListController'
-        arguments:
-            - '@releases.list.twig'
-            - '@doctrine.em'
-            - '@notFoundHandler'
-    releases.list.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['release/releases.list.twig']]]
 
     ####################################################################################################################
     # ADMIN CONTROLLERS

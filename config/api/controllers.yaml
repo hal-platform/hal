@@ -12,7 +12,7 @@ services:
     ####################################################################################################################
 
     queue.api:
-        class: 'Hal\UI\Controllers\API\QueueController'
+        class: 'Hal\UI\Controllers\API\Queue\QueueController'
         arguments:
             - '@api.response_formatter'
             - '@api_normalizer.build'
@@ -22,7 +22,7 @@ services:
             - '@clock'
 
     queue.refresh.api:
-        class: 'Hal\UI\Controllers\API\QueueRefreshController'
+        class: 'Hal\UI\Controllers\API\Queue\QueueRefreshController'
         arguments:
             - '@api.response_formatter'
             - '@api_normalizer.build'
@@ -31,7 +31,7 @@ services:
             - '@problem.renderer'
 
     queue.history.api:
-        class: 'Hal\UI\Controllers\API\QueueHistoryController'
+        class: 'Hal\UI\Controllers\API\Queue\QueueHistoryController'
         arguments:
             - '@api.response_formatter'
             - '@api_normalizer.build'
@@ -130,8 +130,8 @@ services:
             - '@doctrine.em'
             - '@problem.renderer'
 
-    builds.list.api:
-        class: 'Hal\UI\Controllers\API\Build\BuildsListController'
+    builds.history.api:
+        class: 'Hal\UI\Controllers\API\Queue\BuildsHistoryController'
         arguments:
             - '@api.response_formatter'
             - '@doctrine.em'
@@ -156,8 +156,8 @@ services:
             - '@doctrine.em'
             - '@problem.renderer'
 
-    releases.list.api:
-        class: 'Hal\UI\Controllers\API\Release\ReleasesListController'
+    releases.history.api:
+        class: 'Hal\UI\Controllers\API\Queue\ReleasesHistoryController'
         arguments:
             - '@api.response_formatter'
             - '@doctrine.em'

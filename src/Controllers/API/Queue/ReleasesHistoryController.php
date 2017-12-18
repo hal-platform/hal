@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\API\Release;
+namespace Hal\UI\Controllers\API\Queue;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Release;
@@ -16,17 +16,16 @@ use Hal\UI\API\Normalizer\ReleaseNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\PaginationTrait;
+use Hal\UI\SharedStaticConfiguration;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 
-class ReleasesListController implements ControllerInterface
+class ReleasesHistoryController implements ControllerInterface
 {
     use APITrait;
     use PaginationTrait;
-
-    private const MAX_PER_PAGE = 50;
 
     private const ERR_PAGE = 'Invalid page specified';
 
@@ -71,7 +70,7 @@ class ReleasesListController implements ControllerInterface
             return $this->withProblem($this->problem, $response, 404, self::ERR_PAGE);
         }
 
-        $pagination = $this->releaseRepository->getPagedResults(self::MAX_PER_PAGE, ($page - 1));
+        $pagination = $this->releaseRepository->getPagedResults(SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1));
         $total = count($pagination);
 
         $releases = [];
@@ -79,7 +78,7 @@ class ReleasesListController implements ControllerInterface
             $releases[] = $push;
         }
 
-        $links = $this->buildPaginationLinks('api.release.list.paged', $page, $total, self::MAX_PER_PAGE);
+        $links = $this->buildPaginationLinks('api.release.list.paged', $page, $total, SharedStaticConfiguration::LARGE_PAGE_SIZE);
 
         $data = [
             'count' => count($releases),

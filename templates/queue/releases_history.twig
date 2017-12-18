@@ -12,15 +12,15 @@
 
         <p class="nav--page__back">
             <a class="btn btn--small btn--back" href="{{ uriFor('queue.history.page1') }}">Queue History</a>
-            <a class="btn btn--small btn--back" href="{{ uriFor('builds.list.page1') }}">All Builds</a>
+            <a class="btn btn--small btn--back" href="{{ uriFor('builds.history.page1') }}">All Builds</a>
         </p>
     </div>
 
-    {{ pagination.pagination(page, last, 'releases.list') }}
+    {{ pagination.pagination(page, last, 'releases.history') }}
 
     {{ block('releases') }}
 
-    {{ pagination.pagination(page, last, 'releases.list') }}
+    {{ pagination.pagination(page, last, 'releases.history') }}
 {% endblock %}
 
 

@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\API\Build;
+namespace Hal\UI\Controllers\API\Queue;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -15,17 +15,16 @@ use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\PaginationTrait;
+use Hal\UI\SharedStaticConfiguration;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 
-class BuildsListController implements ControllerInterface
+class BuildsHistoryController implements ControllerInterface
 {
     use APITrait;
     use PaginationTrait;
-
-    private const MAX_PER_PAGE = 50;
 
     private const ERR_PAGE = 'Invalid page specified';
 
@@ -69,7 +68,7 @@ class BuildsListController implements ControllerInterface
             return $this->withProblem($this->problem, $response, 404, self::ERR_PAGE);
         }
 
-        $pagination = $this->buildRepo->getPagedResults(self::MAX_PER_PAGE, ($page - 1));
+        $pagination = $this->buildRepo->getPagedResults(SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1));
         $total = count($pagination);
 
         $builds = [];
@@ -77,7 +76,7 @@ class BuildsListController implements ControllerInterface
             $builds[] = $build;
         }
 
-        $links = $this->buildPaginationLinks('api.build.list.paged', $page, $total, self::MAX_PER_PAGE);
+        $links = $this->buildPaginationLinks('api.build.list.paged', $page, $total, SharedStaticConfiguration::LARGE_PAGE_SIZE);
 
         $data = [
             'count' => count($builds),

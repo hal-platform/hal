@@ -14,6 +14,7 @@ use Hal\Core\Entity\Target;
 use Hal\Core\Repository\ReleaseRepository;
 use Hal\UI\Controllers\PaginationTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\SharedStaticConfiguration;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -23,8 +24,6 @@ class RollbackController implements ControllerInterface
 {
     use PaginationTrait;
     use TemplatedControllerTrait;
-
-    private const MAX_PER_PAGE = 25;
 
     /**
      * @var TemplateInterface
@@ -67,10 +66,10 @@ class RollbackController implements ControllerInterface
             return ($this->notFound)($request, $response);
         }
 
-        $releases = $this->releaseRepository->getByTarget($target, self::MAX_PER_PAGE, ($page - 1));
+        $releases = $this->releaseRepository->getByTarget($target, SharedStaticConfiguration::SMALL_PAGE_SIZE, ($page - 1));
 
         $total = count($releases);
-        $last = ceil($total / self::MAX_PER_PAGE);
+        $last = ceil($total / SharedStaticConfiguration::SMALL_PAGE_SIZE);
 
         return $this->withTemplate($request, $response, $this->template, [
             'page' => $page,

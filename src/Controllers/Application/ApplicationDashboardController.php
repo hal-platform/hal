@@ -10,6 +10,7 @@ namespace Hal\UI\Controllers\Application;
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Service\StickyEnvironmentService;
+use Hal\UI\SharedStaticConfiguration;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Hal\Core\Entity\Application;
@@ -25,7 +26,7 @@ use Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
-class DashboardController implements ControllerInterface
+class ApplicationDashboardController implements ControllerInterface
 {
     use SortingTrait;
     use TemplatedControllerTrait;
@@ -102,7 +103,7 @@ class DashboardController implements ControllerInterface
             $builds = $this->buildRepository->findBy(
                 ['application' => $application, 'environment' => [$selectedEnvironment, null]],
                 ['created' => 'DESC'],
-                10
+                SharedStaticConfiguration::SMALL_PAGE_SIZE
             );
         }
 

@@ -14,6 +14,7 @@ use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\PaginationTrait;
+use Hal\UI\SharedStaticConfiguration;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -23,8 +24,6 @@ class UsersController implements ControllerInterface
 {
     use APITrait;
     use PaginationTrait;
-
-    private const MAX_PER_PAGE = 25;
 
     private const ERR_PAGE = 'Invalid page specified';
 
@@ -68,7 +67,7 @@ class UsersController implements ControllerInterface
             return $this->withProblem($this->problem, $response, 404, self::ERR_PAGE);
         }
 
-        $pagination = $this->userRepo->getPagedResults(self::MAX_PER_PAGE, ($page - 1));
+        $pagination = $this->userRepo->getPagedResults(SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1));
         $total = count($pagination);
 
         $users = [];
@@ -76,7 +75,7 @@ class UsersController implements ControllerInterface
             $users[] = $user;
         }
 
-        $links = $this->buildPaginationLinks('api.users.paged', $page, $total, self::MAX_PER_PAGE);
+        $links = $this->buildPaginationLinks('api.users.paged', $page, $total, SharedStaticConfiguration::LARGE_PAGE_SIZE);
 
         $data = [
             'count' => count($users),

@@ -86,21 +86,27 @@
 
     <div class="details-box">
         <ul class="mbn">
-            <li>Status</li>
-            <li>{{ macros.job_status(release, true) }}</li>
-
-            <li>Time</li>
-            <li class="js-release-start">{{ release.start|html5date }}</li>
-
-            <li>Duration</li>
-            <li class="js-release-duration">
-                {% if release.start and release.end %}
-                    {{ html5duration(release.start, release.end) }}
-                {% endif %}
+            <li>
+                <h6>Status</h6>
+                {{ macros.job_status(release, true) }}
             </li>
 
-            <li>User</li>
             <li>
+                <h6>Time</h6>
+                <span class="js-release-start">{{ release.start|html5date }}</span>
+            </li>
+
+            <li>
+                <h6>Duration</h6>
+                <span class="js-release-duration">
+                    {% if release.start and release.end %}
+                        {{ html5duration(release.start, release.end) }}
+                    {% endif %}
+                </span>
+            </li>
+
+            <li>
+                <h6>User</h6>
                 {% if release.user %}
                     <a href="{{ uriFor('user', {'user': release.user.id}) }}">{{ release.user.name }}</a>
                 {% else %}
@@ -111,6 +117,6 @@
     </div>
 
     <h2>Release Events</h2>
-    {% include 'build/partial.event-table.twig' with {logs: logs, canLoad: release.isFinished } only %}
+    {% include 'partial.event_table.twig' with {logs: logs, canLoad: release.isFinished } only %}
 
 {% endblock %}

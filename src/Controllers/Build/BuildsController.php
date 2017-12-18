@@ -15,6 +15,7 @@ use Hal\Core\Repository\BuildRepository;
 use Hal\Core\Repository\EnvironmentRepository;
 use Hal\UI\Controllers\PaginationTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\SharedStaticConfiguration;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -24,8 +25,6 @@ class BuildsController implements ControllerInterface
 {
     use PaginationTrait;
     use TemplatedControllerTrait;
-
-    private const MAX_PER_PAGE = 25;
 
     private const REGEX_ENV = '/(environment|env|e):([a-zA-Z-]+)/';
 
@@ -79,13 +78,13 @@ class BuildsController implements ControllerInterface
         if ($environment = $this->getEnvironmentFromSearchFilter($searchFilter)) {
             $sanitizedSearchFilter = trim(preg_replace(self::REGEX_ENV, '', $searchFilter, 1));
 
-            $builds = $this->buildRepo->getByApplicationForEnvironment($application, $environment, self::MAX_PER_PAGE, ($page - 1), $sanitizedSearchFilter);
+            $builds = $this->buildRepo->getByApplicationForEnvironment($application, $environment, SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1), $sanitizedSearchFilter);
         } else {
-            $builds = $this->buildRepo->getByApplication($application, self::MAX_PER_PAGE, ($page - 1), $searchFilter);
+            $builds = $this->buildRepo->getByApplication($application, SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1), $searchFilter);
         }
 
         $total = count($builds);
-        $last = ceil($total / self::MAX_PER_PAGE);
+        $last = ceil($total / SharedStaticConfiguration::LARGE_PAGE_SIZE);
 
         return $this->withTemplate($request, $response, $this->template, [
             'page' => $page,

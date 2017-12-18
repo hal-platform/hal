@@ -5,25 +5,23 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Build;
+namespace Hal\UI\Controllers\Queue;
 
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\Core\Entity\Build;
-use Hal\Core\Repository\BuildRepository;
+use Hal\Core\Entity\Release;
+use Hal\Core\Repository\ReleaseRepository;
 use Hal\UI\Controllers\PaginationTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\SharedStaticConfiguration;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
-class BuildsListController implements ControllerInterface
+class ReleasesHistoryController implements ControllerInterface
 {
     use PaginationTrait;
     use TemplatedControllerTrait;
-
-    private const MAX_PER_PAGE = 50;
 
     /**
      * @var TemplateInterface
@@ -31,9 +29,9 @@ class BuildsListController implements ControllerInterface
     private $template;
 
     /**
-     * @var BuildRepository
+     * @var ReleaseRepository
      */
-    private $buildRepo;
+    private $releaseRepo;
 
     /**
      * @var callable
@@ -48,7 +46,7 @@ class BuildsListController implements ControllerInterface
     public function __construct(TemplateInterface $template, EntityManagerInterface $em, callable $notFound)
     {
         $this->template = $template;
-        $this->buildRepo = $em->getRepository(Build::class);
+        $this->releaseRepo = $em->getRepository(Release::class);
 
         $this->notFound = $notFound;
     }
@@ -63,16 +61,17 @@ class BuildsListController implements ControllerInterface
             return ($this->notFound)($request, $response);
         }
 
-        $builds = $this->buildRepo->getPagedResults(self::MAX_PER_PAGE, ($page - 1));
+        $releases = $this->releaseRepo->getPagedResults(SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1));
 
-        $total = count($builds);
-        $last = ceil($total / self::MAX_PER_PAGE);
+        $total = count($releases);
+        $last = ceil($total / SharedStaticConfiguration::LARGE_PAGE_SIZE);
 
         return $this->withTemplate($request, $response, $this->template, [
             'page' => $page,
             'last' => $last,
 
-            'builds' => $builds
+            'releases' => $releases
         ]);
     }
 }
+
