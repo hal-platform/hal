@@ -110,19 +110,19 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['help/help.twig']]]
 
-    help.deployment_scripting.page:
+    help.scripting.page:
         parent: 'static.controller'
-        arguments: ['@help.deployment_scripting.twig']
-    help.deployment_scripting.twig:
+        arguments: ['@help.scripting.twig']
+    help.scripting.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['help/deployment-scripting.twig']]]
+        calls: [['setTemplate', ['help/scripting.twig']]]
 
     help.application_setup.page:
         parent: 'static.controller'
         arguments: ['@help.application_setup.twig']
     help.application_setup.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['help/application-setup.twig']]]
+        calls: [['setTemplate', ['help/application_setup.twig']]]
 
     ####################################################################################################################
     # USER CONTROLLERS

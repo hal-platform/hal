@@ -1,0 +1,50 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+
+{% set page_title = 'Help : Application Setup' %}
+
+{% set halContact = '<a href="mailto:' ~ hal_administrators_email ~ '">' ~ hal_administrators_email ~ '</a>' %}
+
+{% block content %}
+
+    <div class="nav--page">
+        <h1>Help - Application Setup Guide</h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('help') }}">Back to Help</a>
+        </p>
+    </div>
+
+    <p>
+        Once a project has been added to Hal, deployment targets must be added and assigned to start deployments.
+        This guide will help you step through all the requirements for setting up an application for deployments through Hal.
+    </p>
+
+    <ul class="list--bare">
+        <li class="trailer">
+            <ul class="list--bullet">
+                <li><a href="#onprem-rsync">On-premise - Rsync</a></li>
+                <li><a href="#aws-elastic-beanstalk">AWS - Elastic Beanstalk</a></li>
+                <li><a href="#aws-codedeploy">AWS - CodeDeploy</a></li>
+                <li><a href="#aws-s3">AWS - S3</a></li>
+                <li><a href="#any-script">Any - Script-based</a></li>
+            </ul>
+        </li>
+    </ul>
+
+    <h3 id="onprem-rsync">{{ macros.status_icon('How do I set up On-premise servers for Hal?') }}</h3>
+    {% include 'help/partial.application_setup.rsync.twig' %}
+
+    <h3 id="any-script">{{ macros.status_icon('How do I configure my application for deploying with a script?') }}</h3>
+    {% include 'help/partial.application_setup.script.twig' %}
+
+    <h3 id="aws-elastic-beanstalk">{{ macros.status_icon('How I configure my application for AWS Elastic Beanstalk?') }}</h3>
+    {% include 'help/partial.application_setup.beanstalk.twig' %}
+
+    <h3 id="aws-codedeploy">{{ macros.status_icon('How I configure my application for AWS CodeDeploy?') }}</h3>
+    {% include 'help/partial.application_setup.codedeploy.twig' %}
+
+    <h3 id="aws-s3">{{ macros.status_icon('How do I configure my application for AWS S3?') }}</h3>
+    {% include 'help/partial.application_setup.s3.twig' %}
+
+{% endblock %}

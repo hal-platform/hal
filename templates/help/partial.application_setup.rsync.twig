@@ -1,0 +1,40 @@
+<ol class="list--bullet">
+    <li>
+        <b>Request servers from your Platform Engineering team.</b>
+    </li>
+    <li>
+        <b>What environments and servers will your application be deployed to?</b>
+        <p>
+            Examples: <code>test1www1</code>, <code>dev1iweb</code>, <code>prod1srvwww1</code>
+        </p>
+    </li>
+    <li>
+        <b>Where on those servers will your application be hosted?</b>
+        <p>
+            This should be the full path to the directory that code is pushed to.
+            <br>Example: <code>/var/www/application</code>
+        </p>
+    </li>
+    <li>
+        <b>Determine the URL for each environment or server.</b>
+        <p>
+            When a server is added for your application to deploy to, you should also add the URL where the service or site is available from.
+            This will helps testers and administrators find your application servers.
+            <br>Examples: <code>http://test.application.com</code>, <code>http://test1w1.application.com</code>
+        </p>
+    </li>
+    <li>
+        <b>Make sure permissions are correct on each server.</b>
+        <p>
+            For Hal to be able to push code to these servers, the user <code>codexfer</code> must have passwordless access to each server.
+            In addition, the directory to be deployed to must be owned by <code>codexfer</code> and typically belong to the <code>apache</code> or <code>nginx</code> groups.
+        </p>
+    </li>
+</ol>
+
+<small>
+    Once this process is finished you should have the following information:
+    <b>Server names</b>,
+    <b>deployment path</b>,
+    and <b>deployment URLs</b>.
+</small>
