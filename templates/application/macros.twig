@@ -1,0 +1,75 @@
+{% macro pushCard(application, target, active) %}
+    {% import 'macros.twig' as macros %}
+    {% import 'macros.git.twig' as git_macros %}
+
+    <article class="card">
+        <header class="card__header">
+            <h4>
+                <a href="{{ uriFor('group', {'group': target.group.id}) }}">{{ target.format }}</a>
+
+                {% if target.url %}
+                    <a class="icon--link" href="{{ target.url }}">
+                        {{ macros.icon('outgoing') }}
+                    </a>
+                {% endif %}
+
+                {% if active %}
+                    <a class="rollback icon--link" href="{{ uriFor('rollback.page1', {'application': application.id, 'target': target.id}) }}" title="View push history or rollback to a successful build">
+                        {{ macros.icon('revert') }}
+                    </a>
+                {% endif %}
+            </h4>
+        </header>
+
+        <section class="card__details">
+            <ul>
+                {# push details #}
+                <li>
+                    <span>Last Release:</span>
+                    {% if active %}
+                        {{ macros.job_status(active, true) }}
+                        (<a href="{{ uriFor('release', {'release': active.id}) }}">{{ active.id|formatPushId }}</a>)
+                    {% else %}
+                        None
+                    {% endif %}
+                </li>
+                <li>
+                    <span>Released on:</span>
+                    {% if active.created %}
+                        {{ active.created|html5date }}
+                    {% else %}
+                        Never
+                    {% endif %}
+                </li>
+
+                {# build details #}
+                <li>
+                    <span>Build:</span>
+                    {% if active %}
+                        <a href="{{ uriFor('build', {'build': active.build.id}) }}">{{ active.build.id|formatBuildId }}</a>
+                    {% else %}
+                        Unknown
+                    {% endif %}
+                </li>
+                <li>
+                    <span>Reference:</span>
+                    {% if active %}
+                        {% set isCurrent = githubCommitIsCurrent(application.github.owner, application.github.repository, active.build.reference, active.build.commit) %}
+                        {{ git_macros.gitref(active.build, true, isCurrent, true) }}
+
+                    {% else %}
+                        Unknown
+                    {% endif %}
+                </li>
+                <li>
+                    <span>Commit:</span>
+                    {% if active %}
+                        {{ git_macros.gitcommit(active.build) }}
+                    {% else %}
+                        Unknown
+                    {% endif %}
+                </li>
+            </ul>
+        </section>
+    </article>
+{% endmacro %}

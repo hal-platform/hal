@@ -1,9 +1,9 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
 {% import 'macros.git.twig' as git_macros %}
-{% set js_components = ["build.info"] %}
+{% set js_components = ['build.info'] %}
 
-{% set page_title = "Build : " ~ build.application.name %}
+{% set page_title = 'Build : ' ~ build.application.name %}
 
 {% block content %}
 
@@ -145,6 +145,6 @@
     {% endif %}
 
     <h2 class="leader">Build Events</h2>
-    {% include 'build/partial.event-table.twig' with {logs: logs, canLoad: build.isFinished } only %}
+    {% include 'partial.event_table.twig' with {logs: logs, canLoad: build.isFinished } only %}
 
 {% endblock %}

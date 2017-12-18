@@ -1,8 +1,7 @@
 {% extends 'base.twig' %}
-{% import _self as page_macros %}
-{% import "macros.twig" as macros %}
+{% import 'macros.twig' as macros %}
 
-{% set page_title = "Manage Permissions" %}
+{% set page_title = 'Manage Permissions' %}
 
 {% set can_remove = current_authorizations.isAdmin or current_authorizations.isSuper %}
 {% if current_authorizations.isAdmin and user_types.admin|length < 2 %}

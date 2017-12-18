@@ -1,5 +1,5 @@
 {% extends 'base.twig' %}
-{% import "macros.form.twig" as form_macros %}
+{% import 'macros.form.twig' as form_macros %}
 
 {% set name = (group.type() == 'script') ? 'Script' : group.name() %}
 {% set page_title = 'Edit Group : ' ~ name %}

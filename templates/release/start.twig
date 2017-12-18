@@ -2,11 +2,11 @@
 {% import 'macros.twig' as macros %}
 {% import 'macros.git.twig' as git_macros %}
 {% import 'macros.form.twig' as form_macros %}
-{% import 'macros.start-deploy.twig' as deploy_macros %}
+{% import 'macros.start_deployment.twig' as deploy_macros %}
 
-{% set js_components = ["push.start"] %}
+{% set js_components = ['push.start'] %}
 
-{% set page_title = "Start Release : " ~ build.id %}
+{% set page_title = 'Start Release : ' ~ build.id %}
 
 {% block content %}
     <div class="nav--page">

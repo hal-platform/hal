@@ -1,13 +1,11 @@
 {% extends 'base.twig' %}
-{% import "macros.twig" as macros %}
+{% import 'macros.twig' as macros %}
 {% import 'macros.pagination.twig' as pagination %}
 
 {% if is_today %}
-    {% set js_components = ["queue"] %}
+    {% set js_components = ['queue'] %}
 {% endif %}
-
-{% set page_title = "Build and Release History" %}
-{% set paginationblock = pagination.time_pagination(selected_date, 'queue.history') %}
+{% set page_title = 'Build and Release History' %}
 
 {% block content %}
     <div class="nav--page">
@@ -20,11 +18,11 @@
         </p>
     </div>
 
-    {{ paginationblock }}
+    {{ pagination.time_pagination(selected_date, 'queue.history') }}
 
-    {% include '_partial-job/pending-table.twig' with {'pending': pending, 'history_view': true} only %}
+    {% include 'partial.pending_job_table.twig' with {'pending': pending, 'history_view': true} only %}
 
-    {{ paginationblock }}
+    {{ pagination.time_pagination(selected_date, 'queue.history') }}
 
 {% endblock %}
 

@@ -1,7 +1,7 @@
 {% extends 'base.twig' %}
-{% set js_components = ["queue"] %}
 
-{% set page_title = "Queue" %}
+{% set js_components = ['queue'] %}
+{% set page_title = 'Queue' %}
 
 {% block content %}
     <div class="nav--page">
@@ -15,7 +15,7 @@
     </div>
 
 
-    {% include '_partial-job/pending-table.twig' with {'pending': pending} only %}
+    {% include 'partial.pending_job_table.twig' with {'pending': pending} only %}
 
     <p><a class="btn" href="{{ uriFor('queue.history.page1') }}">Queue History</a></p>
 
