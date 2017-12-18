@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Super;
+namespace Hal\UI\Controllers\Admin;
 
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
@@ -64,7 +64,7 @@ class GlobalBannerController implements ControllerInterface
     {
         if ($msg = $this->handleForm($request)) {
             $this->withFlash($request, Flash::SUCCESS, $msg);
-            return $this->withRedirectRoute($response, $this->uri, 'super.banner');
+            return $this->withRedirectRoute($response, $this->uri, 'admin.global_banner');
         }
 
         return $this->withTemplate($request, $response, $this->template, [

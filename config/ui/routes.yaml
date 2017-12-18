@@ -434,6 +434,21 @@ parameters:
                     route: '/audit-history/page/{page:%r.digit%}'
                     stack: ['admin.audit_history.page']
 
+                admin.system_dashboard:
+                    method: 'GET'
+                    route: '/system-dashboard'
+                    stack: ['admin.system_dashboard.page']
+
+                admin.cache_management:
+                    method: ['GET', 'POST']
+                    route: '/caches'
+                    stack: ['admin.cache_management.handler', 'admin.cache_management.page']
+
+                admin.global_banner:
+                    method: ['GET', 'POST']
+                    route: '/global-banner'
+                    stack: ['admin.global_banner.page']
+
                 ################################################################################################################
                 # CREDENTIAL ROUTES
                 ################################################################################################################
@@ -492,32 +507,3 @@ parameters:
                             method: ['GET', 'POST']
                             route: '/permission/{user_permission:%r.guid%}/remove'
                             stack: ['admin.permissions.remove.middleware', 'admin.permissions.remove.handler']
-
-        ################################################################################################################
-        # SUPER ROUTES
-        ################################################################################################################
-
-        super.management:
-            route: '/super'
-            stack: ['middleware.is_super']
-            routes:
-
-                super.system:
-                    method: 'GET'
-                    route: '/system'
-                    stack: ['super.system.page']
-                super.system.agent:
-                    method: 'GET'
-                    route: '/system/{agent:%r.alphanum%}'
-                    stack: ['super.system.page']
-
-                super.caches:
-                    method: ['GET', 'POST']
-                    route: '/caches'
-                    stack: ['super.caches.handler', 'super.caches.page']
-
-                super.banner:
-                    method: ['GET', 'POST']
-                    route: '/banner'
-                    stack: ['super.banner.page']
-

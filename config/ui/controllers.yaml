@@ -650,6 +650,43 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/audit_history.twig']]]
 
+    admin.cache_management.page:
+        class: 'Hal\UI\Controllers\Admin\CacheManagementController'
+        arguments:
+            - '@admin.cache_management.twig'
+            - '@redis'
+            - '%root%'
+            - '%cache.delimiter%'
+    admin.cache_management.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/cache_management.twig']]]
+    admin.cache_management.handler:
+        class: 'Hal\UI\Controllers\Admin\CacheManagementHandler'
+        arguments:
+            - '@redis'
+            - '%cache.delimiter%'
+
+    admin.global_banner.page:
+        class: 'Hal\UI\Controllers\Admin\GlobalBannerController'
+        arguments:
+            - '@admin.global_banner.twig'
+            - '@banner'
+            - '@uri'
+    admin.global_banner.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/global_banner.twig']]]
+
+    admin.system_dashboard.page:
+        class: 'Hal\UI\Controllers\Admin\SystemDashboardController'
+        arguments:
+            - '@admin.system_dashboard.twig'
+            - '@doctrine.em'
+            - '@json'
+            - '@clock'
+    admin.system_dashboard.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/system_dashboard.twig']]]
+
     ####################################################################################################################
     # ADMIN - CREDENTIALS CONTROLLERS
     ####################################################################################################################
@@ -744,45 +781,3 @@ services:
     admin.permissions.refresh.handler:
         class: 'Hal\UI\Controllers\Permissions\RefreshUserPermissionsController'
         arguments: ['@service.authorization', '@uri']
-
-    ####################################################################################################################
-    # SUPER CONTROLLERS
-    ####################################################################################################################
-
-    super.caches.page:
-        class: 'Hal\UI\Controllers\Super\CacheManagementController'
-        arguments:
-            - '@super.caches.twig'
-            - '@redis'
-            - '%root%'
-            - '%cache.delimiter%'
-    super.caches.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['admin/super.cache_management.twig']]]
-    super.caches.handler:
-        class: 'Hal\UI\Controllers\Super\CacheManagementHandler'
-        arguments:
-            - '@redis'
-            - '%cache.delimiter%'
-
-    super.banner.page:
-        class: 'Hal\UI\Controllers\Super\GlobalBannerController'
-        arguments:
-            - '@super.banner.twig'
-            - '@banner'
-            - '@uri'
-    super.banner.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['admin/super.global_banner.twig']]]
-
-    super.system.page:
-        class: 'Hal\UI\Controllers\Super\SystemDashboardController'
-        arguments:
-            - '@super.system.twig'
-            - '@doctrine.em'
-            - '@json'
-            - '@clock'
-    super.system.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['admin/super.system_dashboard.twig']]]
-

@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Super;
+namespace Hal\UI\Controllers\Admin;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\UI\Controllers\TemplatedControllerTrait;

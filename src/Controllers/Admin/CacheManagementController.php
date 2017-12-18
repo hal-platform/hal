@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Super;
+namespace Hal\UI\Controllers\Admin;
 
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Predis\Client as Predis;
