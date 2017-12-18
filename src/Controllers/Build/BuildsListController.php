@@ -23,7 +23,7 @@ class BuildsListController implements ControllerInterface
     use PaginationTrait;
     use TemplatedControllerTrait;
 
-    private const MAX_PER_PAGE = 25;
+    private const MAX_PER_PAGE = 50;
 
     /**
      * @var TemplateInterface
@@ -63,7 +63,7 @@ class BuildsListController implements ControllerInterface
             return ($this->notFound)($request, $response);
         }
 
-        $builds = $this->buildRepo->getPagedResults(self::MAX_PER_PAGE, ($page -1));
+        $builds = $this->buildRepo->getPagedResults(self::MAX_PER_PAGE, ($page - 1));
 
         $total = count($builds);
         $last = ceil($total / self::MAX_PER_PAGE);
