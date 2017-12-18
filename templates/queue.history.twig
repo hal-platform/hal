@@ -10,9 +10,15 @@
 {% set paginationblock = pagination.time_pagination(selected_date, 'queue.history') %}
 
 {% block content %}
-    {{ block('jobhistorylinks') }}
+    <div class="nav--page">
+        <h1>Queue History</h1>
 
-    <h1>Build and Release History</h1>
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('queue') }}">Current Job Queue</a>
+            <a class="btn btn--small btn--back" href="{{ uriFor('builds.list.page1') }}">All builds</a>
+            <a class="btn btn--small btn--back" href="{{ uriFor('releases.list.page1') }}">All pushes</a>
+        </p>
+    </div>
 
     {{ paginationblock }}
 
@@ -22,9 +28,3 @@
 
 {% endblock %}
 
-{% block jobhistorylinks %}
-    <p>
-        <a class="btn btn--small" href="{{ uriFor('builds.list.page1') }}">All builds</a>
-        <a class="btn btn--small" href="{{ uriFor('releases.list.page1') }}">All pushes</a>
-    </p>
-{% endblock %}

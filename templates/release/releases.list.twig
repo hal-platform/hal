@@ -1,5 +1,6 @@
 {% extends 'base.twig' %}
 {% import 'macros.pagination.twig' as pagination %}
+{% import 'macros.twig' as macros %}
 {% set js_components = ["job.updater"] %}
 
 {% set page_title = "Release History" %}
@@ -8,10 +9,73 @@
 
     <div class="nav--page">
         <h1>Release History</h1>
-    </div>
 
-    {% include '_partial-job/release-table.twig' with {releases: releases} only %}
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('queue.history.page1') }}">Queue History</a>
+            <a class="btn btn--small btn--back" href="{{ uriFor('builds.list.page1') }}">All Builds</a>
+        </p>
+    </div>
 
     {{ pagination.pagination(page, last, 'releases.list') }}
 
+    {{ block('releases') }}
+
+    {{ pagination.pagination(page, last, 'releases.list') }}
 {% endblock %}
+
+
+{% block releases %}
+    <table class="table--spacing-medium" data-tablesaw-mode="stack">
+        <thead>
+            <tr>
+                <th>Release</th>
+                <th>Application</th>
+                <th>Env → Server</th>
+                <th>Build</th>
+                <th class="table-priority-55">User</th>
+                <th class="table-priority-50">Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for release in releases %}
+                <tr>
+                    <td>{{ macros.job_status_prefix(release) }}</td>
+
+                    <td>
+                        <a href="{{ uriFor('application.dashboard', {application: release.application.id}) }}">{{ release.application.name }}</a>
+                    </td>
+
+                    <td>
+                        {% if release.target %}
+                            {{ release.target.group.environment.name }} → {{ release.target.format(true) }}
+                        {% else %}
+                            {{ release.build.environment ? release.build.environment.name : 'Any' }} → Unknown
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        Build <a href="{{ uriFor('build', {'build': release.build.id}) }}">{{ release.build.id|formatBuildId }}</a>
+                    </td>
+
+                    <td class="table-priority-55">
+                        {% if release.user %}
+                            <a href="{{ uriFor('user', {'user': release.user.id}) }}">{{ release.user.username }}</a>
+                        {% else %}
+                            Unknown
+                        {% endif %}
+                    </td>
+
+                    <td class="table-priority-50">
+                        {{ release.created|html5date }}
+                    </td>
+
+                </tr>
+            {% else %}
+                <tr id="js-emptyQueue">
+                    <td colspan="6">There are no builds to display.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+

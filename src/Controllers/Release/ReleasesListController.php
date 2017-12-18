@@ -22,7 +22,7 @@ class ReleasesListController implements ControllerInterface
     use PaginationTrait;
     use TemplatedControllerTrait;
 
-    private const MAX_PER_PAGE = 25;
+    private const MAX_PER_PAGE = 50;
 
     /**
      * @var TemplateInterface
@@ -62,7 +62,7 @@ class ReleasesListController implements ControllerInterface
             return ($this->notFound)($request, $response);
         }
 
-        $releases = $this->releaseRepo->getPagedResults(self::MAX_PER_PAGE, ($page -1));
+        $releases = $this->releaseRepo->getPagedResults(self::MAX_PER_PAGE, ($page - 1));
 
         $total = count($releases);
         $last = ceil($total / self::MAX_PER_PAGE);
