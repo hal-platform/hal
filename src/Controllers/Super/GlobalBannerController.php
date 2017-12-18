@@ -90,6 +90,8 @@ class GlobalBannerController implements ControllerInterface
 
         $remove = $request->getParsedBody()['remove'] ?? '';
 
+        $this->saveUpdateTick($updateTick);
+
         if ($message) {
             $this->bannerService->saveBanner($message, (int) $ttl);
             return self::MSG_SUCCESS;
@@ -100,13 +102,21 @@ class GlobalBannerController implements ControllerInterface
             return self::MSG_REMOVED;
         }
 
-        if ($updateTick) {
+        return '';
+    }
+
+    /**
+     * @param bool $tickOn
+     *
+     * @return void
+     */
+    private function saveUpdateTick($tickOn)
+    {
+        if ($tickOn) {
             $this->bannerService->enableUpdateNotification();
         } else {
             $this->bannerService->disableUpdateNotification();
         }
-
-        return '';
     }
 }
 

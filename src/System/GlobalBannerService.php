@@ -122,7 +122,7 @@ class GlobalBannerService
      */
     public function saveBanner($message, int $ttl = 0)
     {
-        if (!$setting = $this->settingRepo->findOneBy(['name' => self::NAME_BANNER])) {
+        if ($setting = $this->settingRepo->findOneBy(['name' => self::NAME_BANNER])) {
             $setting = new SystemSetting;
         }
 
@@ -198,9 +198,9 @@ class GlobalBannerService
     private function getBannerIfNotExpired($payload)
     {
         $message = $payload['message'] ?? '';
-        $isExpired = $payload['is_expired'] ?? true;
+        $isExpired = isset($payload['is_expired']) ? $payload['is_expired'] : true;
 
-        return $isExpired ? $message : '';
+        return $isExpired ? '' : $message;
     }
 
     /**

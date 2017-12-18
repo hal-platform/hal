@@ -11,7 +11,6 @@
 
 {# GLOBAL MESSAGE #}
 {% block messages %}
-
     {%- if attribute(_context, 'global.banner') -%}
         {{ attribute(_context, 'global.banner')|raw }}
     {% endif %}
