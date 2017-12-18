@@ -1,28 +1,28 @@
-# Pushes
+# Releases
 
-A push is a deployment to a target. Builds are already built per environment, so a push is created by selecting
+A release is a deployment to a target. Builds are already built per environment, so a release is created by selecting
 a build, and a deployment target within that environment.
 
 ### Attributes
 
 Attribute       | Description                                         | Type     | Example
 --------------- | --------------------------------------------------- | -------- | -------------
-id              | Unique push ID                                      | string   | `p3.abcdef`
-status          | Current status                                      | string   | `Success`, `Waiting`, `Pushing`
-created         | Time push was created in ISO 8601                   | string   | `2016-01-06T20:41:22Z`
-start           | Time push was started in ISO 8601                   | string   | `2016-01-06T20:42:00Z`
-end             | Time push was finished in ISO 8601                  | string   | `2016-01-06T20:45:36Z`
-user            | **Link, Optional** - User that created push         | resource |
+id              | Unique release ID                                   | string   | `p3.abcdef`
+status          | Current status                                      | string   | `success`, `pending`, `running`
+created         | Time release was created in ISO 8601                | string   | `2016-01-06T20:41:22Z`
+start           | Time release was started in ISO 8601                | string   | `2016-01-06T20:42:00Z`
+end             | Time release was finished in ISO 8601               | string   | `2016-01-06T20:45:36Z`
+user            | **Link, Optional** - User that created release      | resource |
 application     | **Link** - Application of build                     | resource |
 target          | **Link** - Target deployed to                       | resource |
 build           | **Link** - Build deployed                           | resource |
-events          | **Link** - Events for push                          | list     |
-page            | **Link** - Page in frontend UI for this push        |          |
+events          | **Link** - Events for release                       | list     |
+page            | **Link** - Page in frontend UI for this release     |          |
 
-## Get All Pushes
+## Get All Releases
 
 ```http
-GET /api/applications/24/pushes HTTP/1.1
+GET /api/applications/24/releases HTTP/1.1
 Accept: application/json
 Host: hal.computer
 Authorization: token "HAL_TOKEN"
@@ -35,11 +35,11 @@ $client = new Client([
     'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
-$response = $client->get('/api/applications/24/pushes');
+$response = $client->get('/api/applications/24/releases');
 ```
 
 ```shell
-curl "https://hal.computer/api/applications/24/pushes"
+curl "https://hal.computer/api/applications/24/releases"
 ```
 
 > ### Response
@@ -52,31 +52,31 @@ Content-Type: application/hal+json
 ```json
 {
     "_links": {
-        "pushes": [
+        "releases": [
             {
-                "href": "https://hal.computer/api/pushes/p2.5ty8Ump",
+                "href": "https://hal.computer/api/releases/p2.5ty8Ump",
                 "title": "p2.5ty8Ump"
             },
             {
-                "href": "https://hal.computer/api/pushes/p2.5tsr91h",
+                "href": "https://hal.computer/api/releases/p2.5tsr91h",
                 "title": "p2.5tsr91h"
             },
             {
-                "href": "https://hal.computer/api/pushes/p2.5tqRjuq",
+                "href": "https://hal.computer/api/releases/p2.5tqRjuq",
                 "title": "p2.5tqRjuq"
             },
             {
-                "href": "https://hal.computer/api/pushes/p2.5tqxUqB",
+                "href": "https://hal.computer/api/releases/p2.5tqxUqB",
                 "title": "p2.5tqxUqB"
             },
             {
-                "href": "https://hal.computer/api/pushes/p2.5tq5nBL",
+                "href": "https://hal.computer/api/releases/p2.5tq5nBL",
                 "title": "p2.5tq5nBL"
             }
-            //additional pushes pruned for brevity
+            //additional releases pruned for brevity
         ],
         "self": {
-            "href": "https://hal.computer/api/applications/2/pushes"
+            "href": "https://hal.computer/api/applications/2/releases"
         }
     },
     "count": 13,
@@ -85,17 +85,17 @@ Content-Type: application/hal+json
 }
 ```
 
-Get all pushes for an application.
+Get all releases for an application.
 
-Pushes are listed in descending order, based on time they were created (page 3 pushes are older than page 1).
+Releases are listed in descending order, based on time they were created (page 3 releases are older than page 1).
 
 <aside class="notice">
-    This endpoint is <b>paged</b>. The maximum size of each page is <b>25 pushes</b>.
+    This endpoint is <b>paged</b>. The maximum size of each page is <b>25 releases</b>.
 </aside>
 
 ### HTTP Request
 
-`GET https://hal.computer/api/applications/{id}/pushes(/page/{page})`
+`GET https://hal.computer/api/applications/{id}/releases(/page/{page})`
 
 ### URL Parameters
 
@@ -104,10 +104,10 @@ Parameter | Description
 id        | The unique ID of the application
 page      | **Optional** - Page number to retrieve
 
-## Get Push
+## Get Release
 
 ```http
-GET /api/pushes/p2.5tqQFTF HTTP/1.1
+GET /api/releases/p2.5tqQFTF HTTP/1.1
 Accept: application/json
 Host: hal.computer
 Authorization: token "HAL_TOKEN"
@@ -120,11 +120,11 @@ $client = new Client([
     'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
-$response = $client->get('/api/pushes/p2.5tqQFTF');
+$response = $client->get('/api/releases/p2.5tqQFTF');
 ```
 
 ```shell
-curl "https://hal.computer/api/pushes/p2.5tqQFTF"
+curl "https://hal.computer/api/releases/p2.5tqQFTF"
 ```
 
 > ### Response
@@ -138,7 +138,7 @@ Content-Type: application/hal+json
 {
     "_links": {
         "self": {
-            "href": "https://hal.computer/api/pushes/p2.5tqQFTF",
+            "href": "https://hal.computer/api/releases/p2.5tqQFTF",
             "title": "p2.5tqQFTF"
         },
         "user": {
@@ -158,37 +158,37 @@ Content-Type: application/hal+json
             "title": "Hal Agent"
         },
         "events": {
-            "href": "https://hal.computer/api/pushes/p2.5tqQFTF/events"
+            "href": "https://hal.computer/api/releases/p2.5tqQFTF/events"
         },
         "page": {
-            "href": "https://hal.computer/pushes/p2.5tqQFTF",
+            "href": "https://hal.computer/releases/p2.5tqQFTF",
             "type": "text/html"
         }
     },
     "id": "p2.5tqQFTF",
-    "status": "Success",
+    "status": "success",
     "created": "2015-02-16T17:35:03Z",
     "start": "2015-02-16T17:35:04Z",
     "end": "2015-02-16T17:35:07Z"
 }
 ```
 
-Get a push.
+Get a release.
 
 ### HTTP Request
 
-`GET https://hal.computer/api/pushes/{id}`
+`GET https://hal.computer/api/releases/{id}`
 
 ### URL Parameters
 
 Parameter | Description
 --------- | -----------
-id        | The unique ID of the push
+id        | The unique ID of the release
 
-## Get Events for Push
+## Get Events for Release
 
 ```http
-GET /api/pushes/p2.5tqQFTF/events HTTP/1.1
+GET /api/releases/p2.5tqQFTF/events HTTP/1.1
 Accept: application/json
 Host: hal.computer
 Authorization: token "HAL_TOKEN"
@@ -201,11 +201,11 @@ $client = new Client([
     'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
-$response = $client->get('/api/pushes/p2.5tqQFTF/events');
+$response = $client->get('/api/releases/p2.5tqQFTF/events');
 ```
 
 ```shell
-curl "https://hal.computer/api/pushes/p2.5tqQFTF/events"
+curl "https://hal.computer/api/releases/p2.5tqQFTF/events"
 ```
 
 > ### Response
@@ -218,14 +218,14 @@ Content-Type: application/hal+json
 ```json
 {
     "_links": {
-        "push": {
-            "href": "https://hal.computer/api/pushes/p2.5tqQFTF",
+        "release": {
+            "href": "https://hal.computer/api/releases/p2.5tqQFTF",
             "title": "p2.5tqQFTF"
         },
         "events": [
             {
                 "href": "https://hal.computer/api/job-events/e34a3e76d2a44ff7a3c7",
-                "title": "[1] Resolved push properties"
+                "title": "[1] Resolved release properties"
             },
             {
                 "href": "https://hal.computer/api/job-events/d3c75e80d95a4d4b8681",
@@ -233,7 +233,7 @@ Content-Type: application/hal+json
             },
             {
                 "href": "https://hal.computer/api/job-events/93ac503d0b334da5a41f",
-                "title": "[3] Prepare push environment"
+                "title": "[3] Prepare release environment"
             },
             {
                 "href": "https://hal.computer/api/job-events/e87ce283a6514f4a8215",
@@ -241,14 +241,14 @@ Content-Type: application/hal+json
             }
         ],
         "self": {
-            "href": "https://hal.computer/api/pushes/p2.5tqQFTF/events"
+            "href": "https://hal.computer/api/releases/p2.5tqQFTF/events"
         }
     },
     "count": 4
 }
 ```
 
-Get Events for a push. By default this returns a list of links to events, however the client can choose to
+Get Events for a release. By default this returns a list of links to events, however the client can choose to
 embed events in the request.
 
 <aside class="notice">
@@ -259,7 +259,7 @@ See [Events](#events) for more information about the **Job Event** resource.
 
 ### HTTP Request
 
-`GET https://hal.computer/api/pushes/{id}/events(?embed=events)`
+`GET https://hal.computer/api/releases/{id}/events(?embed=events)`
 
 ### URL Parameters
 
@@ -267,3 +267,4 @@ Parameter | Description
 --------- | -----------
 id        | The unique ID of the build
 embed     | **Optional** - Should the events be embedded in this request?
+

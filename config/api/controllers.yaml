@@ -30,6 +30,16 @@ services:
             - '@doctrine.em'
             - '@problem.renderer'
 
+    queue.history.api:
+        class: 'Hal\UI\Controllers\API\QueueHistoryController'
+        arguments:
+            - '@api.response_formatter'
+            - '@api_normalizer.build'
+            - '@api_normalizer.release'
+            - '@job_queue'
+            - '@clock'
+            - '%date.timezone%'
+
     ####################################################################################################################
     # ORGANIZATION CONTROLLERS
     ####################################################################################################################
@@ -120,6 +130,13 @@ services:
             - '@doctrine.em'
             - '@problem.renderer'
 
+    builds.list.api:
+        class: 'Hal\UI\Controllers\API\Build\BuildsListController'
+        arguments:
+            - '@api.response_formatter'
+            - '@doctrine.em'
+            - '@problem.renderer'
+
     ####################################################################################################################
     # Release CONTROLLERS
     ####################################################################################################################
@@ -134,6 +151,13 @@ services:
 
     releases.api:
         class: 'Hal\UI\Controllers\API\Release\ReleasesController'
+        arguments:
+            - '@api.response_formatter'
+            - '@doctrine.em'
+            - '@problem.renderer'
+
+    releases.list.api:
+        class: 'Hal\UI\Controllers\API\Release\ReleasesListController'
         arguments:
             - '@api.response_formatter'
             - '@doctrine.em'

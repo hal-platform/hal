@@ -24,8 +24,8 @@ includes:
   - resources/targets
   - resources/builds
   - resources/builds_create
-  - resources/pushes
-  - resources/pushes_create
+  - resources/releases
+  - resources/releases_create
   - resources/events
   - resources/users
   - endpoints/queue

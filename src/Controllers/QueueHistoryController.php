@@ -67,40 +67,14 @@ class QueueHistoryController implements ControllerInterface
             ->getAttribute('route')
             ->getArgument('date');
 
-        [$from, $to] = $this->getTimeRange($date);
+        [$from, $to] = $this->queue->getTimeRange($date, $this->timezone);
 
-        $now = $this->clock->read();
-        $isToday = $now->format('Y-m-d', 'UTC') === $from->format('Y-m-d', 'UTC');
+        $isToday = $this->queue->isToday($from);
 
         return $this->withTemplate($request, $response, $this->template, [
             'is_today' => $isToday,
             'selected_date' => $from,
             'pending' => $this->queue->getHistory($from, $to)
         ]);
-    }
-
-    /**
-     * @param string|null $date
-     *
-     * @return array
-     */
-    private function getTimeRange($date = '')
-    {
-        if ($date) {
-            $date = $this->clock->fromString($date, 'Y-m-d');
-        }
-
-        if (!$date) {
-            $date = $this->clock->read();
-        }
-
-        $y = $date->format('Y', $this->timezone);
-        $m = $date->format('m', $this->timezone);
-        $d = $date->format('d', $this->timezone);
-
-        $from = new TimePoint($y, $m, $d, 0, 0, 0, $this->timezone);
-        $to = new TimePoint($y, $m, $d, 23, 59, 59, $this->timezone);
-
-        return [$from, $to];
     }
 }

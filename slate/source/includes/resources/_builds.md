@@ -287,3 +287,4 @@ Parameter | Description
 --------- | -----------
 id        | The unique ID of the build
 embed     | **Optional** - Should the events be embedded in this request?
+

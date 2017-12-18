@@ -29,6 +29,11 @@ parameters:
                     route: '/queue-refresh/{jobs:%r.api.queue%}'
                     stack: ['queue.refresh.api']
 
+                api.queue.history:
+                    method: 'GET'
+                    route: '/queue/date/{date:%r.date%}'
+                    stack: ['queue.history.api']
+
                 ################################################################################################################
                 # ORGANIZATION ROUTES
                 ################################################################################################################
@@ -152,6 +157,16 @@ parameters:
                     route: '/builds/{build:%r.build%}/events'
                     stack: ['middleware.api_require_entity', 'build.events.api']
 
+                api.build.list:
+                    method: 'GET'
+                    route: '/builds'
+                    stack: ['middleware.api_require_entity', 'builds.list.api']
+
+                api.build.list.paged:
+                    method: 'GET'
+                    route: '/builds/page/{page:%r.digit%}'
+                    stack: ['middleware.api_require_entity', 'builds.list.api']
+
                 ################################################################################################################
                 # RELEASE ROUTES
                 ################################################################################################################
@@ -165,6 +180,16 @@ parameters:
                     method: 'GET'
                     route: '/releases/{release:%r.release%}/events'
                     stack: ['middleware.api_require_entity', 'release.events.api']
+
+                api.release.list:
+                    method: 'GET'
+                    route: '/releases'
+                    stack: ['middleware.api_require_entity', 'releases.list.api']
+
+                api.release.list.paged:
+                    method: 'GET'
+                    route: '/releases/page/{page:%r.digit%}'
+                    stack: ['middleware.api_require_entity', 'releases.list.api']
 
                 ################################################################################################################
                 # EVENT ROUTES

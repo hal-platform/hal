@@ -546,6 +546,16 @@ services:
             - '@sticky.environment'
             - '@uri'
 
+    builds.list.page:
+        class: 'Hal\UI\Controllers\Build\BuildsListController'
+        arguments:
+            - '@builds.list.twig'
+            - '@doctrine.em'
+            - '@notFoundHandler'
+    builds.list.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['build/builds.list.twig']]]
+
     ####################################################################################################################
     # Release CONTROLLERS
     ####################################################################################################################
@@ -604,6 +614,16 @@ services:
     release.rollback.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['release/rollback.twig']]]
+
+    releases.list.page:
+        class: 'Hal\UI\Controllers\Release\ReleasesListController'
+        arguments:
+            - '@releases.list.twig'
+            - '@doctrine.em'
+            - '@notFoundHandler'
+    releases.list.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['release/releases.list.twig']]]
 
     ####################################################################################################################
     # ADMIN CONTROLLERS
