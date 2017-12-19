@@ -48,10 +48,6 @@ let js_config = {
     module: {
         rules: [
             {
-                test: /\.nunj?$/,
-                loader: 'nunjucks-loader'
-            },
-            {
                 test: /\.(js|jsx)?$/,
                 exclude: /(node_modules)/,
                 use: [
@@ -60,7 +56,7 @@ let js_config = {
                         loader: 'eslint-loader',
                         options: {
                             cache: true,
-                            failOnError: isProdBuild //fail on error only if building for prod
+                            failOnError: isProdBuild // fail on error only if building for prod
                         }
                     }
                 ]
