@@ -38,7 +38,7 @@
     {% set env_count = environments|length %}
     {# Only allow environment switching if has multiple env #}
     {% if env_count > 1 %}
-        <div class="trailer">
+        <div>
             <h5>Change environment</h5>
             <ul>
                 {% for environment in environments %}

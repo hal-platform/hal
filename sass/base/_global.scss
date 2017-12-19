@@ -1,6 +1,6 @@
 html {
-    background-color: tint($light-grey, 50%);
-    @include margin-trailer(2);
+    background-color: mix(#ffffff, $light-grey, 50%);
+    margin-bottom: 2em;
 }
 
 main {
@@ -14,7 +14,7 @@ main {
 
     @include breakpoint($bp-small) {
         padding: ms(3);
-        @include border-radius(5px);
+        border-radius: 5px;
 
     }
 
@@ -41,7 +41,7 @@ svg {
 }
 
 p {
-    @include trailer;
+    margin-top: 1em;
 }
 
 a {
@@ -65,8 +65,8 @@ h1 {
     color: $hal-cyan;
     font-weight: bold;
 
-    @include leader(.25);
-    @include trailer(.75);
+    margin-top: .75em;
+    margin-bottom: .5em;
 
     strong, b {
         color: tint($hal-cyan, 50%);
@@ -77,19 +77,19 @@ h1 {
 h2 {
     color: $bright-blue;
 
-    @include leader(.5);
-    @include trailer(.5);
+    margin-top: .5em;
+    margin-bottom: .5em;
 }
 
 // Label header
 h4 {
-    @include leader(.75);
-    @include trailer(0);
+    margin-top: .75em;
+    margin-bottom: 0;
 }
 
 h3, h5, h6 {
-    @include leader(.75);
-    @include trailer(.25);
+    margin-top: .75em;
+    margin-bottom: .25em;
 }
 
 h6 {
@@ -97,7 +97,6 @@ h6 {
 }
 
 pre, code {
-    @include adjust-font-size-to(ms(-1));
     font-family: menlo, monospace, sans-serif;
 
     color: $red;
@@ -130,7 +129,7 @@ time {
 }
 
 ul, ol {
-    @include trailer;
+    margin-top: 1em;
 }
 
 // Remove vertical spacing from nested lists.
@@ -143,7 +142,7 @@ li {
 
 table {
     min-width: 17em;
-    @include trailer;
+    margin-top: 1em;
 }
 
 thead {
@@ -154,7 +153,7 @@ thead {
 }
 
 tbody tr {
-    @include adjust-font-size-to(ms(-1));
+    font-size: .85em;
     border-bottom: 1px dotted $light-grey;
     &:last-child {
         border-bottom: 0;

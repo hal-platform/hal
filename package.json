@@ -43,7 +43,6 @@
         "node-sass": "4.5.3",
         "breakpoint-sass": "~2.6",
         "modularscale-sass": "~2.1",
-        "compass-mixins": "~0.12",
         "scalescss": "2.2.2"
     }
 }

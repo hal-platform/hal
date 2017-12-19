@@ -1,6 +1,6 @@
 .cards, .cards--dual {
-    @include leader();
-    @include trailer();
+    margin-top: 1em;
+    margin-bottom: 1em;
 
     > li:after {
             content: '';
@@ -48,9 +48,6 @@
 
 .card__header {
     > h4 {
-        @include adjust-font-size-to(ms(1));
-        // margin: 0;
-
         // because css is stupid garbage bullshit
         margin: .01em;
         padding: ms(-10);
@@ -81,7 +78,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: ms(3);
-    @include adjust-font-size-to(ms(0));
 }
 
 .card__details--divided > ul > li {

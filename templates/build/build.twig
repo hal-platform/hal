@@ -144,7 +144,7 @@
         {% endif %}
     {% endif %}
 
-    <h2 class="leader">Build Events</h2>
+    <h2>Build Events</h2>
     {% include 'partial.event_table.twig' with {logs: logs, canLoad: build.isFinished } only %}
 
 {% endblock %}

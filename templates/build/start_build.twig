@@ -22,8 +22,8 @@
     <form method="post" name="start-build">
 
         {% block select_environment %}
-            <h2 class="leader">Select Environment</h2>
-            <p class="trailer">
+            <h2>Select Environment</h2>
+            <p>
                 Select <b>Any</b> to create a build that can be deployed to any environment.
             </p>
 
@@ -45,7 +45,7 @@
         {% endblock %}
 
         {% block select_build %}
-            <h2 class="leader">Select Source</h2>
+            <h2>Select Source</h2>
 
             <ul class="form-fields">
                 <li class="mbn js-search-container">
@@ -73,7 +73,7 @@
 
             {# Dynamic warning, for when Hal cannot find a matching radio option #}
             {% set warningLabel = is_serious_business_mode ? 'Start Build?' : 'Start Build. Maybe?' %}
-            <div class="leader js-build-warning" data-label="Start Build" data-label-warning="{{ warningLabel }}">
+            <div class="js-build-warning" data-label="Start Build" data-label-warning="{{ warningLabel }}">
 
                 {% if is_serious_business_mode %}
                     {% set alert_message = 'A git reference cannot be found from your search query. Hal will attempt to resolve this reference on the backend.' %}
@@ -86,7 +86,7 @@
                 {{ macros.alert('warning', alert_message, alert_details) }}
             </div>
 
-            <div class="leader"><input class="btn btn--action" type="submit" value="Start Build" name="submit"></div>
+            <div><input class="btn btn--action" type="submit" value="Start Build" name="submit"></div>
 
             {{ block('build_tabs') }}
 
@@ -111,8 +111,8 @@
 {% block start_deploy %}
 
     {% if environments %}
-        <h2 class="leader mbn">Select Target <small>(optional)</small></h2>
-        <p class="trailer"><span>Targets will only be triggered if the build succeeds. Alternatively, you can manually deploy builds once finished.</span></p>
+        <h2 class="mbn">Select Target <small>(optional)</small></h2>
+        <p><span>Targets will only be triggered if the build succeeds. Alternatively, you can manually deploy builds once finished.</span></p>
 
         <table class="table--spacing-large table--striped">
             <thead>

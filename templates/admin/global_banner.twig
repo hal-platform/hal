@@ -21,14 +21,14 @@
             Note that the message is not wrapped in any html!
             Use the following as a template if you wish to create an alert.
         </p>
-        <pre class="trailer" style="font-size:70%">{{ block('sample_message')|escape }}</pre>
+        <pre style="font-size:70%">{{ block('sample_message')|escape }}</pre>
     </div>
 
 {% endblock %}
 
 {% block meta %}
     <h2>Current Status</h2>
-    <ul class="trailer">
+    <ul>
         <li>
             <h6>Global Banner</h6>
             {% if setting and setting.message %}

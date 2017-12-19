@@ -21,7 +21,7 @@
         </p>
     </div>
 
-    <ul class="trailer">
+    <ul>
         <li>
             <form method="post">
                 <input name="cache_type" type="hidden" value="doctrine">
@@ -45,7 +45,7 @@
     </ul>
 
     <h3>Permissions Cache</h3>
-    <section class="trailer">
+    <section>
 
         <div class="details-box">
             {% if permissions %}
@@ -77,7 +77,7 @@
     </section>
 
     <h3>Doctrine Cache</h3>
-    <section class="trailer">
+    <section>
 
         <div class="details-box">
             {% if doctrine_cached %}
@@ -107,7 +107,7 @@
     </section>
 
     <h3>OP Cache {{ opcache.version }}</h3>
-    <section class="trailer">
+    <section>
         {% if not opcache %}
             <p>Zend OP Cache is not installed.</p>
         {% else %}

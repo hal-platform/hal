@@ -8,7 +8,7 @@
 {% block content %}
     <h1>{{ page_title }}</h1>
 
-    <h2 class="leader">Manage Deployments</h2>
+    <h2>Manage Deployments</h2>
     <ul>
         <li>
             <a href="{{ uriFor('groups') }}" class="btn">
@@ -27,7 +27,7 @@
         </li>
     </ul>
 
-    <h2 class="leader">User Management</h2>
+    <h2>User Management</h2>
     <ul>
         <li>
             <a href="{{ uriFor('users.page1') }}" class="btn btn--primary">
@@ -41,7 +41,7 @@
         </li>
     </ul>
 
-    <h2 class="leader">Security</h2>
+    <h2>Security</h2>
     <ul>
         <li>
             <a href="{{ uriFor('credentials') }}" class="btn btn--primary">
@@ -56,7 +56,7 @@
     </ul>
 
     {% if is_admin %}
-        <h2 class="leader">Manage Hal System</h2>
+        <h2>Manage Hal System</h2>
         <ul>
             <li><a href="{{ uriFor('admin.system_dashboard') }}" class="btn">System Dashboard</a></li>
             <li><a href="{{ uriFor('admin.cache_management') }}" class="btn">Cache Management</a></li>
