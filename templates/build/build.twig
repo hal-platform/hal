@@ -1,7 +1,7 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
 {% import 'macros.git.twig' as git_macros %}
-{% set js_components = ['build.info'] %}
+{% set js_components = ['build_info'] %}
 
 {% set page_title = 'Build : ' ~ build.application.name %}
 
@@ -127,20 +127,20 @@
     {% endif %}
 
     {% if current_authorizations.canBuild(build.application) %}
-        {% set pushableMessage = 'The build was successful, go ahead and release it!' %}
-        {% set unpushableMessage = 'The build cannot be released.' %}
+        {% set pushableMessage = 'The build was successful, go ahead and deploy it!' %}
+        {% set unpushableMessage = 'The build cannot be deployed.' %}
 
         {% if build.status == 'success' %}
             <h3>{{ pushableMessage }}</h3>
-            <p><a class="btn btn--action" href="{{ uriFor('release.start', {'build': build.id}) }}">Release Build</a></p>
+            <p><a class="btn btn--action" href="{{ uriFor('release.start', {'build': build.id}) }}">Deploy Build</a></p>
         {% elseif build.status in ['pending', 'running'] %}
             <h3 data-success="{{ pushableMessage }}" data-failure="{{ unpushableMessage }}">
                 The build is still pending. Please wait...
             </h3>
-            <p class="js-build-push"><span class="btn btn--disabled js-build-push">Release Build</span></p>
+            <p class="js-build-push"><span class="btn btn--disabled js-build-push">Deploy Build</span></p>
         {% else %}
             <h3>{{ unpushableMessage }}</h3>
-            <p><span class="btn btn--disabled">Release Build</span></p>
+            <p><span class="btn btn--disabled">Deploy Build</span></p>
         {% endif %}
     {% endif %}
 

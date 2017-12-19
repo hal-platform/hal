@@ -1,7 +1,8 @@
 import 'jquery';
 import AU from 'ansi_up'
-import generateIcon from './util/icon';
 import xssFilters from 'xss-filters'
+
+import { generateIcon } from '../util/icon';
 
 let target = '[data-log][data-log-loadable=1]',
     loaderAnchor = '.js-event-logs-loader',
@@ -9,13 +10,13 @@ let target = '[data-log][data-log-loadable=1]',
     expandHTML = generateIcon('chevron-down') + ' Expand',
     closeHTML = generateIcon('cross-2') + ' Close';
 
-var init = () => {
+function initEventLogLoader() {
     var loadableLogs = $(target);
 
     if (loadableLogs.length > 0) {
         loadableLogs.each((index, container) => attachLoader(container));
     }
-};
+}
 
 function attachLoader(logTarget) {
     let $log = $(logTarget),
@@ -125,4 +126,4 @@ function renderRow(logID, data) {
     loadingStates[logID] = false;
 }
 
-export default init;
+export { initEventLogLoader };

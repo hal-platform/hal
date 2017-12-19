@@ -1,5 +1,5 @@
 import 'jquery';
-import filterSearch from '../util/filter-search';
+import { initFilterSearch } from '../util/filter-search';
 
 let searchBox = '#js-search-input',
     searchResults = '.js-search-results',
@@ -18,11 +18,11 @@ var $searchBox = null,
     $warning = $('.js-build-warning'),
     $submitButtons = $('form[name="start-build"] input[type="submit"]');
 
-var init = () => {
+var initGitHubSearch = () => {
     $searchBox = $(searchBox);
     $searchResults = $(searchResults);
 
-    filterSearch($searchBox, {
+    initFilterSearch($searchBox, {
         searchItem: '.js-search-item',
         searchQuery: 'span',
 
@@ -197,4 +197,4 @@ function showWarning() {
     $submitButtons.val($warning.data('label-warning'));
 }
 
-export default init;
+export { initGitHubSearch };

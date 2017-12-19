@@ -49,9 +49,4 @@ function formatGitref(gitref) {
     return gitref;
 }
 
-var component = {
-    format: determineGitref,
-    determineType: determineGitrefType
-};
-
-export default component;
+export { determineGitref, determineGitrefType };

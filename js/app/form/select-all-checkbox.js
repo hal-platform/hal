@@ -9,7 +9,7 @@ let target = '.js-toggle-container',
 var $checks = null,
     toggled = false;
 
-var init = function() {
+var initSelectAllCheckboxes = () => {
     var $container = $(target);
     $checks = $(targetCheckboxes);
 
@@ -35,4 +35,4 @@ function attach($container) {
     $container.html($toggler);
 }
 
-export default init;
+export { initSelectAllCheckboxes };

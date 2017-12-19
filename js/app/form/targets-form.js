@@ -4,7 +4,7 @@ let target = '.js-dynamic-targets';
 
 var $container = null;
 
-var init = function() {
+var initTargetForm = () => {
     $container = $(target);
     if ($container.length !== 0) {
         attach();
@@ -13,10 +13,10 @@ var init = function() {
 
 function attach() {
     $container
-        .find('#server')
-        .on('change', function() {
+        .find('#group')
+        .on('change', () => {
 
-            var $selected = $('option:selected', this),
+            let $selected = $('option:selected', this),
                 selectedType = $selected.data('target-type');
 
             toggle(selectedType);
@@ -47,4 +47,4 @@ function toggle(target_type) {
     }
 }
 
-export default init;
+export { initTargetForm };

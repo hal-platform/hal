@@ -4,4 +4,4 @@ function generateIcon(type) {
     </svg>`
 }
 
-export default generateIcon;
+export { generateIcon };

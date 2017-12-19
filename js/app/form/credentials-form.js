@@ -4,7 +4,7 @@ let target = '.js-dynamic-credentials';
 
 var $container = null;
 
-var init = function() {
+var initCredentialForm = () => {
     $container = $(target);
     if ($container.length !== 0) {
         attach();
@@ -14,14 +14,12 @@ var init = function() {
 function attach() {
     $container
         .find('[data-credential-type]')
-        .on('change', function() {
+        .on('change', () => {
 
-            var $selected = $(this).filter(':checked'),
+            let $selected = $(this).filter(':checked'),
                 selectedType = $selected.data('credential-type');
 
-            if (selectedType) {
-                toggle(selectedType);
-            }
+            toggle(selectedType);
 
         })
         .trigger('change');
@@ -41,4 +39,4 @@ function toggle(target_type) {
     }
 }
 
-export default init;
+export { initCredentialForm };

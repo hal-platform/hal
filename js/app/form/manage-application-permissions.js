@@ -2,7 +2,7 @@ import 'jquery';
 
 let target = '.js-app-permissions';
 
-var init = function() {
+var initApplicationPermissions = () => {
     let $container = $(target);
     if ($container.length !== 0) {
         attach($container);
@@ -22,4 +22,4 @@ function attach($container) {
         });
 }
 
-export default init;
+export { initApplicationPermissions };

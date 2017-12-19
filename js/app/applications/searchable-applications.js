@@ -1,5 +1,5 @@
 import 'jquery';
-import filterSearch from '../util/filter-search';
+import { initFilterSearch } from '../util/filter-search';
 
 let searchTable = '.js-search-table',
     searchBox = '#js-search-input',
@@ -27,7 +27,7 @@ var showParent = (item) => {
         .show();
 };
 
-var init = () => {
+var initSearchableApplications = () => {
     $searchBox = $(searchBox);
     $searchItems = $(searchItem);
     $searchGroups = $(searchGroup);
@@ -40,7 +40,7 @@ var init = () => {
         return $(this).find(searchItem).length === 0;
     });
 
-    filterSearch($searchBox, {
+    initFilterSearch($searchBox, {
         searchItem: searchItem,
         searchQuery: 'span',
 
@@ -72,4 +72,4 @@ var init = () => {
 
 };
 
-export default init;
+export { initSearchableApplications };

@@ -4,7 +4,7 @@ let target = '.form--fav';
 
 var $apps = null;
 
-var init = function() {
+var initFavoriteApplications = () => {
     $apps = $(target);
 
     if ($apps.length > 0) {
@@ -61,4 +61,4 @@ function handleSuccess() {
     }
 }
 
-export default init;
+export { initFavoriteApplications };
