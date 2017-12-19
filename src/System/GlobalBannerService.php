@@ -122,7 +122,7 @@ class GlobalBannerService
      */
     public function saveBanner($message, int $ttl = 0)
     {
-        if ($setting = $this->settingRepo->findOneBy(['name' => self::NAME_BANNER])) {
+        if (!$setting = $this->settingRepo->findOneBy(['name' => self::NAME_BANNER])) {
             $setting = new SystemSetting;
         }
 
