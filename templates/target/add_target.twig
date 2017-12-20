@@ -31,7 +31,7 @@
     </p>
 
     {% if selected_environment %}
-        <div class="form-wrapper js-dynamic-targets">
+        <div class="form-wrapper js-targets-form">
             {{ form_macros.formErrors(errors) }}
 
             {{ block('add_form') }}
@@ -70,7 +70,7 @@
         <ul class="form-fields">
             <li>
                 <label for="group">Group</label>
-                <select class="select-input" name="group" id="group" required>
+                <select class="select-input" name="group" id="group" required data-target-select>
                     <option></option>
                     {% for group in groups %}
                         {% set isSelected = (group.id == form.group) %}

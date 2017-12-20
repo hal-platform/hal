@@ -1,49 +1,53 @@
 import 'jquery';
 
-let target = '.js-dynamic-targets';
+const FORM_SELECTOR = '.js-targets-form';
+const SELECTOR = '[data-target-select]';
+const OPTION_DATA_ATTRIBUTE = 'target-type';
+const HIDEABLE_FIELDS = '[data-type-specific]';
 
-var $container = null;
+const VALID_TYPES = ['rsync', 'eb', 'cd', 's3', 'elb', 'script'];
 
-var initTargetForm = () => {
-    $container = $(target);
-    if ($container.length !== 0) {
-        attach();
+function initTargetForm() {
+    let $container = $(FORM_SELECTOR);
+    if ($container.length > 0) {
+        attach($container);
     }
-};
-
-function attach() {
-    $container
-        .find('#group')
-        .on('change', () => {
-
-            let $selected = $('option:selected', this),
-                selectedType = $selected.data('target-type');
-
-            toggle(selectedType);
-        })
-        .trigger('change');
 }
 
-function toggle(target_type) {
-    $container.find('li[data-type-specific]').hide();
+function attach($container) {
+    let $options = $container
+        .find(SELECTOR)
+        .find(`[data-${OPTION_DATA_ATTRIBUTE}]`);
 
-    if (target_type === 'rsync') {
-        $container.find('li[data-rsync]').show();
+    toggle($container, $options);
 
-    } else if (target_type === 'eb') {
-        $container.find('li[data-eb]').show();
+    $container
+        .find(SELECTOR)
+        .on('change', changeHandler($container));
+}
 
-    } else if (target_type === 'cd') {
-        $container.find('li[data-cd]').show();
+function changeHandler($container) {
+    return (e) => {
+        let $options = $(e.target)
+            .find(`[data-${OPTION_DATA_ATTRIBUTE}]`);
 
-    } else if (target_type === 's3') {
-        $container.find('li[data-s3]').show();
+        toggle($container, $options);
+    };
+}
 
-    } else if (target_type === 'elb') {
-        $container.find('li[data-elb]').show();
+function toggle($container, $options) {
+    let selectedType = $options
+        .filter(':selected')
+        .data(OPTION_DATA_ATTRIBUTE);
 
-    } else if (target_type === 'script') {
-        $container.find('li[data-script]').show();
+    $container
+        .find(HIDEABLE_FIELDS)
+        .hide();
+
+    if (VALID_TYPES.includes(selectedType)) {
+        $container
+            .find(`[data-${selectedType}]`)
+            .show();
     }
 }
 
