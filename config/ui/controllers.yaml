@@ -10,14 +10,14 @@ services:
         arguments: ['@maintenance.twig']
     maintenance.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['maintenance.twig']]]
+        calls: [['setTemplate', ['error.maintenance.twig']]]
 
     denied.page:
         parent: 'static.controller'
         arguments: ['@denied.twig']
     denied.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['denied.twig']]]
+        calls: [['setTemplate', ['error.denied.twig']]]
 
     ############################################################################
 
@@ -88,7 +88,7 @@ services:
         arguments: ['@latest_release.twig']
     latest_release.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['latest-release.twig']]]
+        calls: [['setTemplate', ['latest_release.twig']]]
 
     styleguide.page:
         parent: 'static.controller'
@@ -110,19 +110,19 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['help/help.twig']]]
 
-    help.deployment_scripting.page:
+    help.scripting.page:
         parent: 'static.controller'
-        arguments: ['@help.deployment_scripting.twig']
-    help.deployment_scripting.twig:
+        arguments: ['@help.scripting.twig']
+    help.scripting.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['help/deployment-scripting.twig']]]
+        calls: [['setTemplate', ['help/scripting.twig']]]
 
     help.application_setup.page:
         parent: 'static.controller'
         arguments: ['@help.application_setup.twig']
     help.application_setup.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['help/application-setup.twig']]]
+        calls: [['setTemplate', ['help/application_setup.twig']]]
 
     ####################################################################################################################
     # USER CONTROLLERS
@@ -202,7 +202,7 @@ services:
             - '@uri'
     group.add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['group/group.add.twig']]]
+        calls: [['setTemplate', ['group/add_group.twig']]]
 
     group.edit.page:
         class: 'Hal\UI\Controllers\Group\EditGroupController'
@@ -213,7 +213,7 @@ services:
             - '@uri'
     group.edit.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['group/group.edit.twig']]]
+        calls: [['setTemplate', ['group/edit_group.twig']]]
 
     group.remove.handler:
         class: 'Hal\UI\Controllers\Group\RemoveGroupController'
@@ -269,14 +269,14 @@ services:
     ####################################################################################################################
 
     queue.page:
-        class: 'Hal\UI\Controllers\QueueController'
+        class: 'Hal\UI\Controllers\Queue\QueueController'
         arguments: ['@queue.twig', '@job_queue']
     queue.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['queue.twig']]]
+        calls: [['setTemplate', ['queue/queue.twig']]]
 
     queue.history.page:
-        class: 'Hal\UI\Controllers\QueueHistoryController'
+        class: 'Hal\UI\Controllers\Queue\QueueHistoryController'
         arguments:
             - '@queue.history.twig'
             - '@job_queue'
@@ -284,7 +284,27 @@ services:
             - '%date.timezone%'
     queue.history.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['queue.history.twig']]]
+        calls: [['setTemplate', ['queue/queue_history.twig']]]
+
+    builds.history.page:
+        class: 'Hal\UI\Controllers\Queue\BuildsHistoryController'
+        arguments:
+            - '@builds.history.twig'
+            - '@doctrine.em'
+            - '@notFoundHandler'
+    builds.history.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['queue/builds_history.twig']]]
+
+    releases.history.page:
+        class: 'Hal\UI\Controllers\Queue\ReleasesHistoryController'
+        arguments:
+            - '@releases.history.twig'
+            - '@doctrine.em'
+            - '@notFoundHandler'
+    releases.history.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['queue/releases_history.twig']]]
 
     ####################################################################################################################
     # ORGANIZATION CONTROLLERS
@@ -348,7 +368,7 @@ services:
         calls: [['setTemplate', ['application/application.twig']]]
 
     application.dashboard.page:
-        class: 'Hal\UI\Controllers\Application\DashboardController'
+        class: 'Hal\UI\Controllers\Application\ApplicationDashboardController'
         arguments:
             - '@application.dashboard.twig'
             - '@doctrine.em'
@@ -402,7 +422,7 @@ services:
             - '@uri'
     application.permission_add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['application/application.permission.add.twig']]]
+        calls: [['setTemplate', ['application/add_permission.twig']]]
 
     application.permission_remove.page:
         class: 'Hal\UI\Controllers\Application\RemoveApplicationPermissionController'
@@ -413,7 +433,7 @@ services:
             - '@uri'
     application.permission_remove.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['application/application.permission.remove.twig']]]
+        calls: [['setTemplate', ['application/remove_permission.twig']]]
 
     ####################################################################################################################
     # APPLICATION - ENCRYPTED CONFIGURATION CONTROLLERS
@@ -424,7 +444,7 @@ services:
         arguments: ['@encrypted.configuration.twig', '@doctrine.em']
     encrypted.configuration.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['encrypted-configuration/encrypted.configuration.twig']]]
+        calls: [['setTemplate', ['encrypted-configuration/encrypteds.twig']]]
 
     encrypted.page:
         class: 'Hal\UI\Controllers\EncryptedConfiguration\EncryptedController'
@@ -438,7 +458,7 @@ services:
         arguments: ['@encrypted.add.twig', '@doctrine.em']
     encrypted.add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['encrypted-configuration/encrypted.add.twig']]]
+        calls: [['setTemplate', ['encrypted-configuration/add_encrypted.twig']]]
     encrypted.add.middleware:
         class: 'Hal\UI\Controllers\EncryptedConfiguration\AddEncryptedPropertyMiddleware'
         arguments:
@@ -478,7 +498,7 @@ services:
             - '@uri'
     target.add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['target/target.add.twig']]]
+        calls: [['setTemplate', ['target/add_target.twig']]]
     target.add.middleware:
         class: 'Hal\UI\Controllers\Target\AddTargetMiddleware'
         arguments:
@@ -491,7 +511,7 @@ services:
         arguments: ['@target.edit.twig', '@doctrine.em']
     target.edit.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['target/target.edit.twig']]]
+        calls: [['setTemplate', ['target/edit_target.twig']]]
     target.edit.middleware:
         class: 'Hal\UI\Controllers\Target\EditTargetMiddleware'
         arguments:
@@ -536,7 +556,7 @@ services:
             - '@sticky.environment'
     build.start.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['build/start.twig']]]
+        calls: [['setTemplate', ['build/start_build.twig']]]
     build.start.middleware:
         class: 'Hal\UI\Controllers\Build\BuildMiddleware'
         arguments:
@@ -545,16 +565,6 @@ services:
             - '@release.start.validator'
             - '@sticky.environment'
             - '@uri'
-
-    builds.list.page:
-        class: 'Hal\UI\Controllers\Build\BuildsListController'
-        arguments:
-            - '@builds.list.twig'
-            - '@doctrine.em'
-            - '@notFoundHandler'
-    builds.list.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['build/builds.list.twig']]]
 
     ####################################################################################################################
     # Release CONTROLLERS
@@ -585,7 +595,7 @@ services:
             - '@uri'
     release.start.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['release/start.twig']]]
+        calls: [['setTemplate', ['release/start_release.twig']]]
 
     deploy.middleware:
         class: 'Hal\UI\Controllers\Release\DeployMiddleware'
@@ -613,17 +623,7 @@ services:
             - '@notFoundHandler'
     release.rollback.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['release/rollback.twig']]]
-
-    releases.list.page:
-        class: 'Hal\UI\Controllers\Release\ReleasesListController'
-        arguments:
-            - '@releases.list.twig'
-            - '@doctrine.em'
-            - '@notFoundHandler'
-    releases.list.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['release/releases.list.twig']]]
+        calls: [['setTemplate', ['release/rollback_release.twig']]]
 
     ####################################################################################################################
     # ADMIN CONTROLLERS
@@ -649,6 +649,43 @@ services:
     admin.audit_history.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/audit_history.twig']]]
+
+    admin.cache_management.page:
+        class: 'Hal\UI\Controllers\Admin\CacheManagementController'
+        arguments:
+            - '@admin.cache_management.twig'
+            - '@redis'
+            - '%root%'
+            - '%cache.delimiter%'
+    admin.cache_management.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/cache_management.twig']]]
+    admin.cache_management.handler:
+        class: 'Hal\UI\Controllers\Admin\CacheManagementHandler'
+        arguments:
+            - '@redis'
+            - '%cache.delimiter%'
+
+    admin.global_banner.page:
+        class: 'Hal\UI\Controllers\Admin\GlobalBannerController'
+        arguments:
+            - '@admin.global_banner.twig'
+            - '@banner'
+            - '@uri'
+    admin.global_banner.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/global_banner.twig']]]
+
+    admin.system_dashboard.page:
+        class: 'Hal\UI\Controllers\Admin\SystemDashboardController'
+        arguments:
+            - '@admin.system_dashboard.twig'
+            - '@doctrine.em'
+            - '@json'
+            - '@clock'
+    admin.system_dashboard.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/system_dashboard.twig']]]
 
     ####################################################################################################################
     # ADMIN - CREDENTIALS CONTROLLERS
@@ -724,7 +761,7 @@ services:
             - ['setCacheTTL', ['%cache.page.ttl%']]
     admin.permissions.add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['permissions/permission.add.twig']]]
+        calls: [['setTemplate', ['permissions/add_permission.twig']]]
 
     admin.permissions.remove.handler:
         class: 'Hal\UI\Controllers\Permissions\RemovePermissionsController'
@@ -739,50 +776,8 @@ services:
             - '@service.authorization_hydrator'
     admin.permissions.remove.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['permissions/permission.remove.twig']]]
+        calls: [['setTemplate', ['permissions/remove_permission.twig']]]
 
     admin.permissions.refresh.handler:
         class: 'Hal\UI\Controllers\Permissions\RefreshUserPermissionsController'
         arguments: ['@service.authorization', '@uri']
-
-    ####################################################################################################################
-    # SUPER CONTROLLERS
-    ####################################################################################################################
-
-    super.caches.page:
-        class: 'Hal\UI\Controllers\Super\CacheManagementController'
-        arguments:
-            - '@super.caches.twig'
-            - '@redis'
-            - '%root%'
-            - '%cache.delimiter%'
-    super.caches.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['admin/super.cache_management.twig']]]
-    super.caches.handler:
-        class: 'Hal\UI\Controllers\Super\CacheManagementHandler'
-        arguments:
-            - '@redis'
-            - '%cache.delimiter%'
-
-    super.banner.page:
-        class: 'Hal\UI\Controllers\Super\GlobalBannerController'
-        arguments:
-            - '@super.banner.twig'
-            - '@banner'
-            - '@uri'
-    super.banner.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['admin/super.global_banner.twig']]]
-
-    super.system.page:
-        class: 'Hal\UI\Controllers\Super\SystemDashboardController'
-        arguments:
-            - '@super.system.twig'
-            - '@doctrine.em'
-            - '@json'
-            - '@clock'
-    super.system.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['admin/super.system_dashboard.twig']]]
-

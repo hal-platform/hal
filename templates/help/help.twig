@@ -1,260 +1,94 @@
 {% extends 'base.twig' %}
-{% import "macros.twig" as macros %}
+{% import 'macros.twig' as macros %}
 
 {% set page_title = 'Help' %}
+
+{% set s_1 = 'Who should I contact for support or permission changes?' %}
+
+{% set as_1 = 'How do I add my application to Hal?' %}
+{% set as_2 = 'How do I deploy my application with Hal?' %}
+{% set as_3 = 'How do I use a script to build or deploy my application?' %}
+{% set as_4 = 'My application needs a specific library or software installed to build. What do I do?' %}
+{% set as_5 = 'How do I set up continuous integration or deployment?' %}
+
+{% set sf_1 = 'Does Hal support stages? What is the deployment workflow?' %}
+{% set sf_2 = 'Does Hal support Windows and .NET applications?' %}
+{% set sf_3 = 'Does Hal support AWS?' %}
+{% set sf_4 = 'Does Hal support Blue/Green deployments?' %}
+{% set sf_5 = 'Can Hal add extra protection to prevent accidental deployments to production?' %}
+{% set sf_6 = 'Does Hal support Docker?' %}
+{% set sf_7 = 'What type of configuration does Hal support? Can I encrypt it?' %}
+{% set sf_8 = 'Does Hal support static sites?' %}
+{% set sf_9 = 'Can Hal store metadata for builds or deployments?' %}
+
+{% set o_1 = 'Does Hal have an API? Is there any documentation?' %}
+{% set o_2 = 'When is Hal updated? When does maintenance occur?' %}
+{% set o_3 = 'Release Notes' %}
 
 {% block content %}
     <h1>Help &amp; FAQ</h1>
 
     <a class="btn" href="{{ uriFor('help.setup') }}">Application Setup Guide</a>
-    <a class="btn" href="{{ uriFor('help.scripting') }}">Deployment Scripting Guide</a>
+    <a class="btn" href="{{ uriFor('help.scripting') }}">Build and Deployment Scripting Guide</a>
 
-    <ul class="list--bare">
-        <li class="trailer">
-            <a href="#help-support"><h4>Support</h4></a>
-            <ul class="list--bullet">
-                <li><a href="#permission">Who should I contact for support or permission changes?</a></li>
-                <li><a href="#bugs">Who should I contact regarding bugs or feature requests?</a></li>
-            </ul>
-        </li>
-
-        <li class="trailer">
-            <a href="#help-setup"><h4>Application Setup</h4></a>
-            <ul class="list--bullet">
-                <li><a href="#add-application">How do I add my application to Hal?</a></li>
-                <li><a href="#deploy-application">How do I deploy my application with Hal?</a></li>
-                <li><a href="#application-deployment">How do I use a script to build or deploy my application?</a></li>
-                <li><a href="#dotnet-support">Does Hal support .NET applications?</a></li>
-                <li><a href="#aws-support">Does Hal support AWS?</a></li>
-                <li><a href="#docker-support">Does Hal support Docker?</a></li>
-                <li><a href="#encrypted-configuration">Does Hal support encrypted configuration?</a></li>
-                <li><a href="#app-dependencies">My application needs a specific library or software installed to build. What do I do?</a></li>
-            </ul>
-        </li>
-
-        <li>
-            <a href="#help-misc"><h4>Other</h4></a>
-            <ul class="list--bullet">
-                <li><a href="#api">Does Hal have an API? Is there any documentation?</a></li>
-                <li><a href="#maintenance">When is Hal updated? When does maintenance occur?</a></li>
-                <li><a href="#release-notes">Release Notes</a></li>
-            </ul>
-        </li>
-    </ul>
+    {{ block('table_of_contents') }}
 
     <h2 id="help-support">Support</h2>
-    {{ block('support_questions') }}
+    {% include 'help/partial.help.support.twig' %}
 
     <h2 id="help-setup">Application Setup</h2>
-    {{ block('setup_questions') }}
-    {{ block('feature_questions') }}
+    {% include 'help/partial.help.application_setup.twig' %}
 
-    <h2 id="help-misc">Other</h2>
-    {{ block('other_questions') }}
+    <h2 id="help-features">Supported Features</h2>
+    {% include 'help/partial.help.supported_features.twig' %}
+
+    <h2 id="help-other">Other</h2>
+    {% include 'help/partial.help.other.twig' %}
 
 {% endblock %}
 
-{% block support_questions %}
-    <h3 id="permission">{{ macros.status_icon('Who should I contact for support or permission changes?') }}</h3>
-
-    <h6 class="mbn"><b>How are permissions determined?</b></h6>
-    <p>
-        Hal grants non-prod build and push permissions to users that are <b>public</b> members of the GitHub organization that owns the project.
-    </p>
-    <p>
-        For users that do not use GitHub, access can be granted by an Administrator to build or deploy applications.
-    </p>
-
-    <p>
-        <b>Leads</b> of applications have access to a few more options such as Encrypted Properties, Deployment Targets, and more.
-        Contact an administrator if you think you may need this level of access.
-    </p>
-
-
-    <h3 id="bugs">{{ macros.status_icon('Who should I contact regarding bugs or feature requests?') }}</h3>
-    <p>
-        Hal is developed and maintained by the Web Core team. To report bugs or request a new features, please
-        submit an issue in the GitHub repository at <a href="http://git/hal/hal/issues">http://git/hal/hal</a>.
-    </p>
-
-    <p>For general questions or critical errors, you can contact Web Core through the following methods:</p>
-    <ul class="list--bullet">
-        <li><a href="hipchat://www.hipchat.com/room/1036795">[Team] Web Core</a> (Hipchat)</li>
-    </ul>
-{% endblock %}
-
-{% block setup_questions %}
-    <h3 id="add-application">{{ macros.status_icon('How do I add my application to Hal?') }}</h3>
-    <p>
-        Any project can be added to Hal. Doing so will allow you to create builds in the standard Hal environment. However, to deploy to servers please see <a href="#deploy-application">deployment instructions</a>.
-    </p>
-    <ol class="list--bullet">
+{% block table_of_contents %}
+    <ul class="list--bare">
         <li>
-            <b>Projects belong to organizations. Determine what organization your application should be part of, or create a new one.</b>
-            <p>
-                Projects are often organized by team or business area. You can see the ones that already exist by viewing the <a href="{{ uriFor('applications') }}">Applications page</a>.
-            </p>
+            <a href="#help-support"><h4>Support</h4></a>
+            <ul class="list--bullet">
+                <li><a href="#support-permission">{{ s_1 }}</a></li>
+            </ul>
         </li>
+
         <li>
-            <b>Project code must be hosted on GitHub and belong to an organization</b>
-            <p>
-                The project code must be hosted on the internal <a href="http://git">GitHub Enterprise</a> server. Only applications belonging to a GitHub organization may be used.
-            </p>
+            <a href="#help-setup"><h4>Application Setup</h4></a>
+            <ul class="list--bullet">
+                <li><a href="#setup-application">{{ as_1 }}</a></li>
+                <li><a href="#setup-deploy">{{ as_2 }}</a></li>
+                <li><a href="#setup-scripting">{{ as_3 }}</a></li>
+                <li><a href="#setup-dependencies">{{ as_4 }}</a></li>
+                <li><a href="#setup-cicd">{{ as_5 }}</a></li>
+            </ul>
         </li>
+
         <li>
-            <b>Add a <code>.hal9000.yml</code> configuration file to your project.</b>
-            <p>
-                The hal configuration file is used to tell Hal how to build and deploy your application.
-                Please see <a href="{{ uriFor('help.scripting') }}">deployment scripting guide</a> for full details.
-            </p>
+            <a href="#help-features"><h4>Supported Features</h4></a>
+            <ul class="list--bullet">
+                <li><a href="#features-stages">{{ sf_1 }}</a></li>
+                <li><a href="#features-dotnet">{{ sf_2 }}</a></li>
+                <li><a href="#features-aws">{{ sf_3 }}</a></li>
+                <li><a href="#features-bluegreen">{{ sf_4 }}</a></li>
+                <li><a href="#features-production-protection">{{ sf_5 }}</a></li>
+                <li><a href="#features-docker">{{ sf_6 }}</a></li>
+                <li><a href="#features-configuration">{{ sf_7 }}</a></li>
+                <li><a href="#features-static">{{ sf_8 }}</a></li>
+                <li><a href="#features-metadata">{{ sf_9 }}</a></li>
+            </ul>
         </li>
+
         <li>
-            <b>Determine who should be able to build and push your application.</b>
-            <p>
-                By default, Hal will grant build &amp; push permissions for non-production environments to all
-                users who are members of the GitHub organization that owns the project repository.</p>
-            </p>
-            <p>If non-engineers need to be able to build and deploy, you will need to request access from an administrator.</p>
-        </li>
-    </ol>
-
-    <h3 id="deploy-application">{{ macros.status_icon('How do I deploy my application with Hal?') }}</h3>
-    <p>Hal supports the following deployment strategies:</p>
-
-    <ul class="list--bullet">
-        <li><a href="https://aws.amazon.com/elasticbeanstalk/">AWS Elastic Beanstalk</a></li>
-        <li><a href="https://aws.amazon.com/codedeploy/">AWS CodeDeploy</a></li>
-        <li><a href="https://aws.amazon.com/s3/">AWS S3</a> (Static file deployments)</li>
-        <li>Script (Applications define their deployment process in scripts)</li>
-        <li>R Sync (On-premise unix servers)</li>
-    </ul>
-    <p>See the <a href="{{ uriFor('help.setup') }}">application setup guide</a> for how to set up your application for on premise or AWS.</p>
-
-    <h3 id="application-deployment">{{ macros.status_icon('How do I use a script to build or deploy my application?') }}</h3>
-    <p>
-        System commands can be used to customize the build and/or deploy process for an application.
-    </p>
-
-    <p>
-        If you would like complete control over your deployment process (and not just run commands before or after), use <b>script-based</b> deployments.
-        But be careful! This involves writing your own scripts and requires engineering.
-    </p>
-
-    <p>Read more in the <a href="{{ uriFor('help.scripting') }}">deployment scripting guide</a>.</p>
-
-    <h3 id="dotnet-support">{{ macros.status_icon('Does Hal support .NET applications?') }}</h3>
-    <p>Hal can deploy any application to AWS-based deployment targets such as Elastic Beanstalk and CodeDeploy including both linux and windows-based applications.</p>
-    <p>However, it does not have the infrastructure to build and compile windows-based applications nor deploy to on-premise windows instances.</p>
-
-    <h3 id="aws-support">{{ macros.status_icon('Does Hal support AWS?') }}</h3>
-    <p>Hal supports the following deployment strategies:</p>
-    <ul class="list--bullet">
-        <li><a href="https://aws.amazon.com/elasticbeanstalk/">AWS Elastic Beanstalk</a></li>
-        <li><a href="https://aws.amazon.com/codedeploy/">AWS CodeDeploy</a></li>
-        <li><a href="https://aws.amazon.com/s3/">AWS S3</a> (Static file deployments)</li>
-        <li>Script (Applications define their deployment process in scripts)</li>
-        <li>R Sync (On-premise unix servers)</li>
-    </ul>
-    <p>
-        Looking for help setting up these technologies? Check out the <a href="{{ uriFor('help.setup') }}">application setup guide</a>.
-    </p>
-
-    <h3 id="docker-support">{{ macros.status_icon('Does Hal support Docker?') }}</h3>
-    <p>All linux-based applications are built in isolated Docker containers.</p>
-    <p>
-        This ensures reproducible builds by having a fresh container with consistent system configuration for every build.
-        Applications can even use a custom, dedicated container if needed.
-    </p>
-    <p>Read more in the <a href="{{ uriFor('help.scripting') }}">deployment scripting guide</a>.</p>
-
-    <h3 id="encrypted-configuration">{{ macros.status_icon('Does Hal support encrypted configuration?') }}</h3>
-    <p>
-        <b>Yes.</b><br>
-        Hal can store sensitive information such as passwords or API keys. This data is encrypted when it is store in the database, and only decrypted during the build process.
-    </p>
-    <p>
-        Administrators and Project Leads can add encrypted properties from the Application page. Values can be stored for individual environments, or globally so they can be used in every environment.
-    </p>
-    <p>See in the <a href="{{ uriFor('help.scripting') }}">deployment scripting guide for engineers</a> for more details on how to read these values when they are decrypted during the build process.</p>
-
-    <h3 id="app-dependencies">{{ macros.status_icon('My application needs a specific library or software installed to build. What do I do?') }}</h3>
-    <p>
-        Hal builds within docker containers. Docker allows us to have completely isolated, custom build environments for any application that needs it.
-    </p>
-    <p>
-        To enable a library, it must be installed either by your build scripts directly, or be pre-baked in a docker image.
-        Please see <a href="http://git/skluck/docker-images">skluck/docker-images</a>{{ macros.icon('github') }} for currently available containers.
-    </p>
-{% endblock %}
-
-{% block other_questions %}
-    <h3 id="api">{{ macros.status_icon('Does Hal have an API? Is there any documentation?') }}</h3>
-    <p>
-        Hal has a hypermedia REST API here: <a href="{{ uriFor('api.index') }}">/api</a>. Please note that this API is mostly
-        limited to reads at the current time. With the exception of creating builds, actions cannot be performed through the API.
-
-    </p>
-    <p>Documentation is located at <a href="{{ uriFor('api.docs') }}">/docs/api</a>.</p>
-
-    <h3 id="maintenance">{{ macros.status_icon('When is Hal updated? When does maintenance occur?') }}</h3>
-    <p>
-        New releases of Hal are deployed on <b>Fridays</b>. Typically this occurs before 9 AM, and time is blocked off for 1 hour.
-        The site may or may not be sent into maintenance mode, which disables the frontend.
-    </p>
-    <p>Higher risk deployments that contain larger changes or complex database migrations are performed at <b>night after 7 PM</b>.</p>
-    <p>
-        Hotfixes or critical bugfixes <b>may</b> be deployed on other days, however this is very rare.
-        For these fixes we deploy either during lunchtime, or after business (5 PM or later).
-    </p>
-
-    <h3 id="release-notes">{{ macros.status_icon('Release Notes') }}</h3>
-    <p>
-        Details about the latest release are always available at <a href="{{ uriFor('latest.release') }}">/latest-release</a>.
-    </p>
-    {% include 'help/partial.release-history.twig' %}
-{% endblock %}
-
-{% block feature_questions %}
-    <h3 id="stages-support">{{ macros.status_icon('Does Hal support stages? What is the deployment workflow?') }}</h3>
-    <p>Hal supports the following stages during your build and release workflow:</p>
-    <ul class="list--bullet">
-        <li>
-            <h6>Build Stage</h6>
-            <ol class="list--numbered">
-                <li>Build</li>
-            </ol>
-        </li>
-        <li>
-            <h6>Push Stage</h6>
-            <ol class="list--numbered">
-                <li>Build Transform</li>
-                <li>Before Deploy</li>
-                <li>Deploy</li>
-                <li>After Deploy</li>
-            </ol>
+            <a href="#help-other"><h4>Other</h4></a>
+            <ul class="list--bullet">
+                <li><a href="#other-api">{{ o_1 }}</a></li>
+                <li><a href="#other-maintenance">{{ o_2 }}</a></li>
+                <li><a href="#other-release-notes">{{ o_3 }}</a></li>
+            </ul>
         </li>
     </ul>
-
-    <p>
-        You can provide any script to run during these steps.
-    </p>
-    <p>
-        <b>After Deploy</b> step runs even if the deployment fails. This allows you to run different commands
-        depending on if a deployment passed or failed.
-    </p>
-
-    <p>
-        You can only define the <b>Deploy</b> step if <b>script-based deployments</b> are used. If using a built-in deployment type such as <b>rsync</b>
-        or <b>elastic beanstalk</b>, Hal will take care of the deployment step for you.
-    </p>
-
-    <p>
-        <b>RSync deployments</b> have two additional steps: <code>pre-push</code> and <code>post-push</code>.
-        These steps run before and after the deployment <b>on the target server</b> which enables stopping or starting servers
-        before before and after a deployment.
-    </p>
-
-    <p>
-        Please see <a href="{{ uriFor('help.scripting') }}">deployment scripting guide</a> for full details.
-    </p>
 {% endblock %}

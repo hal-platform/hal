@@ -15,6 +15,7 @@ use Hal\Core\Repository\EnvironmentRepository;
 use Hal\Core\Repository\ReleaseRepository;
 use Hal\UI\Controllers\PaginationTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\SharedStaticConfiguration;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -24,8 +25,6 @@ class ReleasesController implements ControllerInterface
 {
     use PaginationTrait;
     use TemplatedControllerTrait;
-
-    private const MAX_PER_PAGE = 25;
 
     private const REGEX_ENV = '/(?:environment|env|e):([a-zA-Z-]+)/';
 
@@ -76,16 +75,10 @@ class ReleasesController implements ControllerInterface
             return ($this->notFound)($request, $response);
         }
 
-        if ($environment = $this->getEnvironmentFromSearchFilter($searchFilter)) {
-            $sanitizedSearchFilter = trim(preg_replace(self::REGEX_ENV, '', $searchFilter, 1));
-
-            $releases = $this->releaseRepo->getByApplicationForEnvironment($application, $environment, self::MAX_PER_PAGE, ($page - 1), $sanitizedSearchFilter);
-        } else {
-            $releases = $this->releaseRepo->getByApplication($application, self::MAX_PER_PAGE, ($page - 1), $searchFilter);
-        }
+        $releases = $this->getReleases($application, ($page - 1), $searchFilter);
 
         $total = count($releases);
-        $last = ceil($total / self::MAX_PER_PAGE);
+        $last = ceil($total / SharedStaticConfiguration::LARGE_PAGE_SIZE);
 
         return $this->withTemplate($request, $response, $this->template, [
             'page' => $page,
@@ -111,5 +104,34 @@ class ReleasesController implements ControllerInterface
         }
 
         return false;
+    }
+
+    /**
+     * @param Application $application
+     * @param int $pageOffset
+     * @param string $searchFilter
+     *
+     * @return array
+     */
+    private function getReleases(Application $application, $pageOffset, $searchFilter)
+    {
+        if (!$environment = $this->getEnvironmentFromSearchFilter($searchFilter)) {
+            return $this->releaseRepo->getByApplication(
+                $application,
+                SharedStaticConfiguration::LARGE_PAGE_SIZE,
+                $pageOffset,
+                $searchFilter
+            );
+        }
+
+        $sanitizedSearchFilter = trim(preg_replace(self::REGEX_ENV, '', $searchFilter, 1));
+
+        return $this->releaseRepo->getByApplicationForEnvironment(
+            $application,
+            $environment,
+            SharedStaticConfiguration::LARGE_PAGE_SIZE,
+            $pageOffset,
+            $sanitizedSearchFilter
+        );
     }
 }

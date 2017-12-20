@@ -63,8 +63,8 @@ parameters:
 
         help.scripting:
             method: 'GET'
-            route: '/help/deployment-scripting'
-            stack: ['help.deployment_scripting.page']
+            route: '/help/scripting'
+            stack: ['help.scripting.page']
 
         help.setup:
             method: 'GET'
@@ -379,14 +379,14 @@ parameters:
             route: '/applications/{application:%r.digit%}/build[/environment/{environment:%r.digit%}]'
             stack: ['middleware.signed_in', 'middleware.require_entity', 'build.start.middleware', 'build.start.page']
 
-        builds.list.page1:
+        builds.history.page1:
             method: 'GET'
             route: '/builds'
-            stack: ['middleware.signed_in', 'builds.list.page']
-        builds.list:
+            stack: ['middleware.signed_in', 'builds.history.page']
+        builds.history:
             method: 'GET'
             route: '/builds/page/{page:%r.digit%}'
-            stack: ['middleware.signed_in', 'builds.list.page']
+            stack: ['middleware.signed_in', 'builds.history.page']
 
         ################################################################################################################
         # Release ROUTES
@@ -402,15 +402,15 @@ parameters:
             route: '/builds/{build:%r.build%}/release'
             stack: ['middleware.signed_in', 'middleware.require_entity', 'deploy.select_environment.middleware', 'deploy.middleware', 'release.start.page']
 
-        releases.list.page1:
+        releases.history.page1:
             method: 'GET'
             route: '/releases'
-            stack: ['middleware.signed_in', 'releases.list.page']
+            stack: ['middleware.signed_in', 'releases.history.page']
 
-        releases.list:
+        releases.history:
             method: 'GET'
             route: '/releases/page/{page:%r.digit%}'
-            stack: ['middleware.signed_in', 'releases.list.page']
+            stack: ['middleware.signed_in', 'releases.history.page']
 
         ################################################################################################################
         # ADMIN ROUTES
@@ -433,6 +433,21 @@ parameters:
                     method: 'GET'
                     route: '/audit-history/page/{page:%r.digit%}'
                     stack: ['admin.audit_history.page']
+
+                admin.system_dashboard:
+                    method: 'GET'
+                    route: '/system-dashboard'
+                    stack: ['admin.system_dashboard.page']
+
+                admin.cache_management:
+                    method: ['GET', 'POST']
+                    route: '/caches'
+                    stack: ['admin.cache_management.handler', 'admin.cache_management.page']
+
+                admin.global_banner:
+                    method: ['GET', 'POST']
+                    route: '/global-banner'
+                    stack: ['admin.global_banner.page']
 
                 ################################################################################################################
                 # CREDENTIAL ROUTES
@@ -492,32 +507,3 @@ parameters:
                             method: ['GET', 'POST']
                             route: '/permission/{user_permission:%r.guid%}/remove'
                             stack: ['admin.permissions.remove.middleware', 'admin.permissions.remove.handler']
-
-        ################################################################################################################
-        # SUPER ROUTES
-        ################################################################################################################
-
-        super.management:
-            route: '/super'
-            stack: ['middleware.is_super']
-            routes:
-
-                super.system:
-                    method: 'GET'
-                    route: '/system'
-                    stack: ['super.system.page']
-                super.system.agent:
-                    method: 'GET'
-                    route: '/system/{agent:%r.alphanum%}'
-                    stack: ['super.system.page']
-
-                super.caches:
-                    method: ['GET', 'POST']
-                    route: '/caches'
-                    stack: ['super.caches.handler', 'super.caches.page']
-
-                super.banner:
-                    method: ['GET', 'POST']
-                    route: '/banner'
-                    stack: ['super.banner.page']
-

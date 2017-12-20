@@ -7,7 +7,7 @@
 }
 
 .form-fields > li {
-    @include trailer;
+    margin-top: 1em;
 }
 
 // Labels
@@ -20,8 +20,6 @@ label, .label {
 .select-input,
 textarea {
     width: 100%;
-    @include adjust-font-size-to(ms(1));
-    padding: rhythm(.5, ms(1));
     background: #fff;
     box-shadow: inset 0 2px 0 $grey, inset 2px 0px 0 $grey, inset -2px 0px 0 $grey, inset 0px -2px 0 $grey;
     &:focus {
@@ -39,15 +37,10 @@ textarea.is-error {
     box-shadow: inset 0 2px 0 $red, inset 2px 0px 0 $red, inset -2px 0px 0 $red, inset 0px -2px 0 $red;
 }
 
-legend {
-    @include adjust-font-size-to(ms(4));
-}
-
 .error-list {
     background: $error-color;
     margin-left: 0;
     padding: 0 msem(4);
-    @include rhythm(0, .5, .5, .5);
     color: $white;
 }
 

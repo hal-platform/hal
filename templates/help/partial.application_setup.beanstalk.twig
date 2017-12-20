@@ -1,0 +1,59 @@
+<p>
+    With Elastic Beanstalk, you can quickly deploy and manage applications in the AWS cloud without worrying about the infrastructure that runs those applications.
+</p>
+<p>
+    AWS Elastic Beanstalk reduces management complexity without restricting choice or control.
+    You simply upload your application, and Elastic Beanstalk automatically handles the details of capacity provisioning, load balancing, scaling, and application health monitoring.
+</p>
+
+<ol class="list--bullet">
+    <li>
+        <b>Have Platform Engineering create an Elastic Beanstalk Application and S3 bucket.</b>
+        <p>
+            Versions of your application are uploaded as a zip file to S3. EB then downloads the versions and deploys them.
+        </p>
+    </li>
+    <li>
+        <b>An environment must be created for each deployment target.</b>
+        <p>
+            While you may have only one target per traditional environment (test, beta, prod). Elastic Beanstalk supports any number of environments.
+            For example, you may use this if you need multiple isolated testing environments in test.
+        </p>
+    </li>
+    <li>
+        <b>Create AWS access token with correct permissions.</b>
+        <p class="mvn">This can be shared between multiple applications, but the token must have the following permissions:</p>
+        <ul class="list--bare">
+            <li><code>s3:GetObject</code></li>
+            <li><code>s3:ListAllMyBuckets</code></li>
+            <li><code>s3:ListBucket</code></li>
+            <li><code>s3:PutObject</code></li>
+            <li><code>elasticbeanstalk:DescribeEnvironments</code></li>
+            <li><code>elasticbeanstalk:UpdateEnvironment</code></li>
+            <li><code>elasticbeanstalk:CreateApplicationVersion</code></li>
+            <li><code>elasticbeanstalk:DescribeApplicationVersions</code></li>
+        </ul>
+        <small>Please note: S3 permissions must be for the bucket resource and contents (<code>bucket</code> and <code>bucket/*</code>)</small>
+    </li>
+    <li>
+        <b>Customize deployments with .ebextensions or env.yaml</b>
+        <p>
+            If you need to run commands on the server when code is deployed, such as set permissions, warm caches or other functionality.
+        </p>
+    </li>
+</ol>
+
+<h6>Other references:</h6>
+<ul class="list--bare">
+    <li class="mvn"><a href="http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/GettingStarted.Walkthrough.html">Elastic Beanstalk Walkthrough</a></li>
+    <li class="mvn"><a href="http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/ebextensions.html">Advanced environment customization (.ebextensions)</a></li>
+    <li class="mvn"><a href="http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environment-cfg-manifest.html">Environment manifest (env.yaml)</a></li>
+</ul>
+
+<small>
+    Once this process is finished you should have the following information:
+    <b>EB Application</b>,
+    <b>S3 bucket</b>,
+    <b>Environment Name or ID</b>,
+    and <b>AWS Access Token</b>.
+</small>

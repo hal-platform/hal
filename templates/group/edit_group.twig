@@ -1,0 +1,88 @@
+{% extends 'base.twig' %}
+{% import 'macros.form.twig' as form_macros %}
+
+{% set name = (group.type() == 'script') ? 'Script' : group.name() %}
+{% set page_title = 'Edit Group : ' ~ name %}
+
+{% block content %}
+    <h1>Edit Group - {{ group.format(false) }} <b>{{ group.environment.name }}</b></h1>
+
+    {{ form_macros.formErrors(errors) }}
+
+    <form method="post">
+        <ul class="form-fields">
+            <li>
+                <label for="grouptype">Type</label>
+                <ul class="radio-grid radio-grid--tri">
+
+                    {% for type in group_types %}
+                        {% set isSelected = form.group_type == type ? ' checked' : '' %}
+                        <li>
+                            <input id="group_type-{{ type }}" type="radio" name="group_type" value="{{ type }}"{{ isSelected }}>
+                            <label for="group_type-{{ type }}">
+                                {%- if type == 'rsync' %}
+                                    On-premise Linux (Rsync)
+                                {%- elseif type == 'eb' -%}
+                                    Elastic Beanstalk
+                                {%- elseif type == 'cd' -%}
+                                    CodeDeploy
+                                {%- elseif type == 's3' -%}
+                                    S3
+                                {%- elseif type == 'script' -%}
+                                    Script
+                                {%- endif -%}
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+            <li>
+                <label>Environment</label>
+                <ul class="radio-grid radio-grid--tri">
+                    {% for environment in environments %}
+                        {% set isSelected = form.environment == environment.id ? ' checked' : '' %}
+
+                        <li>
+                            <input type="radio" name="environment" id="environment-{{ environment.id }}" value="{{ environment.id }}"{{ isSelected }}>
+                            <label for="environment-{{ environment.id }}">{{ environment.name }}</label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
+
+        <div class="form-wrapper">
+            <ul class="form-fields">
+                {% set hostname = form.group_type == 'rsync' ? form.hostname : '' %}
+                <li>
+                    <label for="hostname">Hostname</label>
+                    <input type="text" name="hostname" id="hostname" maxlength="60" value="{{ hostname }}" class="text-input">
+                    <small class="additional">Rsync Groups Only</small>
+                </li>
+            </ul>
+        </div>
+
+        <ul class="form-fields">
+            <label>Region</label>
+            <ul class="radio-grid radio-grid--tri radio-grid--checked">
+                {% for region in aws_regions %}
+                    {% set isSelected = (region == form.region) ? ' checked' : '' %}
+
+                    <li>
+                        <input id="region-{{ region }}" type="radio" name="region" value="{{ region }}"{{ isSelected }}>
+                        <label for="region-{{ region }}">{{ region }}</label>
+                    </li>
+                {% endfor %}
+            </ul>
+            <small class="additional">AWS Servers Only</small>
+        </ul>
+
+            <ul>
+                <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
+                <li><a class="btn" href="{{ uriFor('group', {'group': group.id}) }}">Cancel</a></li>
+            </ul>
+        </div>
+
+    </form>
+
+{% endblock %}

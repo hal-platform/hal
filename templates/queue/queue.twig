@@ -1,0 +1,21 @@
+{% extends 'base.twig' %}
+
+{% set js_components = ['job_queue'] %}
+{% set page_title = 'Queue' %}
+
+{% block content %}
+    <div class="nav--page">
+        <h1>Current Job Queue</h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('queue.history.page1') }}">Queue History</a>
+            <a class="btn btn--small btn--back" href="{{ uriFor('builds.history.page1') }}">All builds</a>
+            <a class="btn btn--small btn--back" href="{{ uriFor('releases.history.page1') }}">All pushes</a>
+        </p>
+    </div>
+
+    {% include 'partial.pending_job_table.twig' with {'pending': pending} only %}
+
+    <p><a class="btn" href="{{ uriFor('queue.history.page1') }}">Queue History</a></p>
+
+{% endblock %}

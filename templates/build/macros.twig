@@ -1,0 +1,53 @@
+{% macro search(type, ref) %}
+    {% import 'macros.twig' as macros %}
+
+    {# This is a search listing generated for the javascript #}
+
+    {% if type == 'pull-request' %}
+        {% set uniqueId = hash('pr' ~ ref.number) %}
+
+        <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--pr-open">
+            {{ macros.icon('pull', 'github__pr--open') }}
+            <span class="js-search-primary">PR #{{ ref.number }} : {{ ref.title }}</span>
+
+            <span class="js-search-query">PR #{{ ref.number }}</span>
+            <span class="js-search-query">PR {{ ref.number }}</span>
+            <span class="js-search-query">pull/{{ ref.number }}</span>
+            <span class="js-search-query">pull request {{ ref.number }}</span>
+            <span class="js-search-query">{{ ref.title }}</span>
+        </li>
+
+    {% elseif type == 'pull-request-closed' %}
+        {% set uniqueId = hash('pr' ~ ref.number) %}
+
+        <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--pr-closed">
+            {{ macros.icon('pull', 'github__pr--closed') }}
+            <span class="js-search-primary">PR #{{ ref.number }} : {{ ref.title }}</span>
+
+            <span class="js-search-query">PR #{{ ref.number }}</span>
+            <span class="js-search-query">PR {{ ref.number }}</span>
+            <span class="js-search-query">pull/{{ ref.number }}</span>
+            <span class="js-search-query">pull request {{ ref.number }}</span>
+            <span class="js-search-query">{{ ref.title }}</span>
+        </li>
+    {% elseif type == 'release' %}
+        {% set uniqueId = hash(ref.object.sha ~ '-' ~ ref.name) %}
+
+        <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--tags">
+            {{ macros.icon('tag') }}
+            <span class="js-search-primary">{{ ref.name }}</span>
+
+            <span class="js-search-query">tag {{ ref.name }}</span>
+            <span class="js-search-query">tag/{{ ref.name }}</span>
+            <span class="js-search-query">release {{ ref.name }}</span>
+        </li>
+    {% elseif type == 'branch' %}
+        {% set uniqueId = hash(ref.object.sha ~ '-' ~ ref.name) %}
+
+        <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--branches">
+            {{ macros.icon('branch') }}
+            <span class="js-search-primary">{{ ref.name }}</span>
+        </li>
+    {% endif %}
+
+{% endmacro %}

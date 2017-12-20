@@ -2,7 +2,7 @@
 .details-box {
     border: 8px solid $light-grey;
     padding: msem(1);
-    @include trailer(1);
+    margin-top: 1em;
 }
 
 .fav-box-wrapper {

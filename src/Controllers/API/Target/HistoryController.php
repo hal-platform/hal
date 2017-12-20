@@ -16,6 +16,7 @@ use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\PaginationTrait;
+use Hal\UI\SharedStaticConfiguration;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -25,8 +26,6 @@ class HistoryController implements ControllerInterface
 {
     use APITrait;
     use PaginationTrait;
-
-    const MAX_PER_PAGE = 25;
 
     private const ERR_PAGE = 'Invalid page specified';
 
@@ -72,7 +71,7 @@ class HistoryController implements ControllerInterface
             return $this->withProblem($this->problem, $response, 404, self::ERR_PAGE);
         }
 
-        $pagination = $this->releaseRepository->getByTarget($target, self::MAX_PER_PAGE, ($page - 1));
+        $pagination = $this->releaseRepository->getByTarget($target, SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1));
         $total = count($pagination);
 
         $releases = [];
@@ -80,8 +79,7 @@ class HistoryController implements ControllerInterface
             $releases[] = $push;
         }
 
-        $links = $this->buildPaginationLinks('api.target.history.paged', $page, $total, self::MAX_PER_PAGE, ['target' => $target->id()]);
-        $links['target'] = new Hyperlink(['api.target', ['target' => $target->id()]]);
+        $links = $this->buildLinks($target, $page, $total);
 
         $data = [
             'count' => count($releases),
@@ -97,5 +95,27 @@ class HistoryController implements ControllerInterface
         $data = $this->formatter->buildHypermediaResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $data, $status);
+    }
+
+    /**
+     * @param Target $target
+     * @param int $page
+     * @param int $total
+     *
+     * @return array
+     */
+    private function buildLinks(Target $target, $page, $total)
+    {
+        $links = $this->buildPaginationLinks(
+            'api.target.history.paged',
+            $page,
+            $total,
+            SharedStaticConfiguration::LARGE_PAGE_SIZE,
+            ['target' => $target->id()]
+        );
+
+        $self = new Hyperlink(['api.target', ['target' => $target->id()]]);
+
+        return $links + ['target' => $self];
     }
 }

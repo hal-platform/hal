@@ -1,8 +1,7 @@
 {% extends 'base.twig' %}
-{% import _self as page_macros %}
-{% import "macros.twig" as macros %}
+{% import 'macros.twig' as macros %}
 
-{% set page_title = "Manage Permissions" %}
+{% set page_title = 'Manage Permissions' %}
 
 {% set can_remove = current_authorizations.isAdmin or current_authorizations.isSuper %}
 {% if current_authorizations.isAdmin and user_types.admin|length < 2 %}
@@ -160,5 +159,24 @@
     {% endif %}
 
     <h2>User Types</h2>
-    {% include 'user/partial.user-types.twig' %}
+
+    <section class="details-box">
+        <ul class="list--bare mbn">
+            <li class="list--legend">
+                <p class="mbn mrs">{{ macros.status('Member', 'info') }}</p>
+                <p class="mbn">Members have access to non-prod build and deployments</p>
+            </li>
+            <li class="list--legend">
+                <p class="mbn mrs">{{ macros.status('Owner', 'notice') }}</p>
+                <p class="mbn">
+                    Owners can manage specific applications, their deployments and encrypted properties. They can deploy to non-prod environments. Users can lead multiple applications.
+                </p>
+            </li>
+            <li class="list--legend">
+                <p class="mbn mrs">{{ macros.status('Admin', 'warning') }}</p>
+                <p class="mbn">Admins can deploy to all environments, manage all applications and permissions.</p>
+            </li>
+        </ul>
+    </section>
+
 {% endblock %}

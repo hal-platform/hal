@@ -1,8 +1,8 @@
 {% extends 'base.twig' %}
 {% import 'macros.pagination.twig' as pagination %}
-{% set js_components = ["job.updater"] %}
+{% set js_components = ['job_table_updater'] %}
 
-{% set page_title = "Build History : " ~ application.name %}
+{% set page_title = 'Build History : ' ~ application.name %}
 
 {% block content %}
 
@@ -16,7 +16,7 @@
 
     {{ block('search') }}
 
-    {% include '_partial-job/build-table.twig' with {builds: builds, is_pushable: true, current_user: current_user} only %}
+    {% include 'partial.build_table.twig' with {builds: builds, is_pushable: true, current_user: current_user} only %}
 
     {{ pagination.pagination(page, last, 'build.history', {application: application.id}, {search: search_filter}) }}
 

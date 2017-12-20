@@ -147,49 +147,57 @@ parameters:
                 # BUILD ROUTES
                 ################################################################################################################
 
-                api.build:
-                    method: 'GET'
+                api.build.management:
                     route: '/builds/{build:%r.build%}'
-                    stack: ['middleware.api_require_entity', 'build.api']
+                    stack: ['middleware.api_require_entity']
+                    routes:
+                        api.build:
+                            method: 'GET'
+                            route: ''
+                            stack: ['build.api']
 
-                api.build.events:
-                    method: 'GET'
-                    route: '/builds/{build:%r.build%}/events'
-                    stack: ['middleware.api_require_entity', 'build.events.api']
+                        api.build.events:
+                            method: 'GET'
+                            route: '/events'
+                            stack: ['build.events.api']
 
-                api.build.list:
+                api.build.history:
                     method: 'GET'
                     route: '/builds'
-                    stack: ['middleware.api_require_entity', 'builds.list.api']
+                    stack: ['builds.history.api']
 
-                api.build.list.paged:
+                api.build.history.paged:
                     method: 'GET'
                     route: '/builds/page/{page:%r.digit%}'
-                    stack: ['middleware.api_require_entity', 'builds.list.api']
+                    stack: ['builds.history.api']
 
                 ################################################################################################################
                 # RELEASE ROUTES
                 ################################################################################################################
 
-                api.release:
-                    method: 'GET'
+                api.releases.management:
                     route: '/releases/{release:%r.release%}'
-                    stack: ['middleware.api_require_entity', 'release.api']
+                    stack: ['middleware.api_require_entity']
+                    routes:
+                        api.release:
+                            method: 'GET'
+                            route: ''
+                            stack: ['release.api']
 
-                api.release.events:
-                    method: 'GET'
-                    route: '/releases/{release:%r.release%}/events'
-                    stack: ['middleware.api_require_entity', 'release.events.api']
+                        api.release.events:
+                            method: 'GET'
+                            route: '/events'
+                            stack: ['release.events.api']
 
-                api.release.list:
+                api.release.history:
                     method: 'GET'
                     route: '/releases'
-                    stack: ['middleware.api_require_entity', 'releases.list.api']
+                    stack: ['middleware.api_require_entity', 'releases.history.api']
 
-                api.release.list.paged:
+                api.release.history.paged:
                     method: 'GET'
                     route: '/releases/page/{page:%r.digit%}'
-                    stack: ['middleware.api_require_entity', 'releases.list.api']
+                    stack: ['middleware.api_require_entity', 'releases.history.api']
 
                 ################################################################################################################
                 # EVENT ROUTES
@@ -218,6 +226,15 @@ parameters:
                 # USER ROUTES
                 ################################################################################################################
 
+                api.user.management:
+                    route: '/users/{user:%r.guid%}'
+                    stack: ['middleware.api_require_entity']
+                    routes:
+                        api.user:
+                            method: 'GET'
+                            route: ''
+                            stack: ['user.api']
+
                 api.users:
                     method: 'GET'
                     route: '/users'
@@ -227,8 +244,4 @@ parameters:
                     route: '/users/page/{page:%r.digit%}'
                     stack: ['users.api']
 
-                api.user:
-                    method: 'GET'
-                    route: '/users/{user:%r.guid%}'
-                    stack: ['middleware.api_require_entity', 'user.api']
 

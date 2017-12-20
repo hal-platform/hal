@@ -10,6 +10,7 @@ namespace Hal\UI\Controllers\Admin;
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\UI\Controllers\PaginationTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\SharedStaticConfiguration;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Hal\Core\Entity\AuditEvent;
@@ -21,8 +22,6 @@ class AuditHistoryController implements ControllerInterface
 {
     use PaginationTrait;
     use TemplatedControllerTrait;
-
-    private const MAX_PER_PAGE = 25;
 
     /**
      * @var TemplateInterface
@@ -62,10 +61,10 @@ class AuditHistoryController implements ControllerInterface
             return ($this->notFound)($request, $response);
         }
 
-        $events = $this->eventRepo->getPagedResults(self::MAX_PER_PAGE, ($page-1));
+        $events = $this->eventRepo->getPagedResults(SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1));
 
         $total = count($events);
-        $last = ceil($total / self::MAX_PER_PAGE);
+        $last = ceil($total / SharedStaticConfiguration::LARGE_PAGE_SIZE);
 
         return $this->withTemplate($request, $response, $this->template, [
             'page' => $page,

@@ -17,6 +17,7 @@ use Hal\UI\API\Normalizer\ReleaseNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\PaginationTrait;
+use Hal\UI\SharedStaticConfiguration;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -26,8 +27,6 @@ class ReleasesController implements ControllerInterface
 {
     use APITrait;
     use PaginationTrait;
-
-    private const MAX_PER_PAGE = 25;
 
     private const ERR_PAGE = 'Invalid page specified';
 
@@ -74,7 +73,7 @@ class ReleasesController implements ControllerInterface
             return $this->withProblem($this->problem, $response, 404, self::ERR_PAGE);
         }
 
-        $pagination = $this->releaseRepository->getByApplication($application, self::MAX_PER_PAGE, ($page - 1));
+        $pagination = $this->releaseRepository->getByApplication($application, SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1));
         $total = count($pagination);
 
         $releases = [];
@@ -82,7 +81,13 @@ class ReleasesController implements ControllerInterface
             $releases[] = $push;
         }
 
-        $links = $this->buildPaginationLinks('api.releases.history', $page, $total, self::MAX_PER_PAGE, ['application' => $application->id()]);
+        $links = $this->buildPaginationLinks(
+            'api.releases.history',
+            $page,
+            $total,
+            SharedStaticConfiguration::LARGE_PAGE_SIZE,
+            ['application' => $application->id()]
+        );
 
         $data = [
             'count' => count($releases),

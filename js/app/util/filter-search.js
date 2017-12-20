@@ -23,7 +23,7 @@ var $search = null,
     fuse  = null,
     settings = {};
 
-var init = function(element, config) {
+var initFilterSearch = (element, config) => {
     settings = $.extend({}, defaults, config);
 
     $search = $(element);
@@ -127,4 +127,4 @@ function getItemContent($elem) {
     return content;
 }
 
-export default init;
+export { initFilterSearch };

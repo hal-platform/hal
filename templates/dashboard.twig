@@ -1,6 +1,6 @@
 {% extends 'base.twig' %}
-{% import "macros.twig" as macros %}
-{% set js_components = ["queue"] %}
+{% import 'macros.twig' as macros %}
+{% set js_components = ['job_queue'] %}
 
 {% set page_title = 'Dashboard' %}
 
@@ -38,7 +38,7 @@
     {# PENDING WORK #}
     {% if pending %}
         <h2>Build and Deployment Queue</h2>
-        {% include '_partial-job/pending-table.twig' with {'pending': pending} only %}
+        {% include 'partial.pending_job_table.twig' with {'pending': pending} only %}
     {% endif %}
 
 {% endblock %}

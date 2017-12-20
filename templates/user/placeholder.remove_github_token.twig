@@ -1,0 +1,22 @@
+{% extends 'base.twig' %}
+
+{% set page_title = 'Remove GitHub Authorization' %}
+
+{% block content %}
+    <h2>{{ page_title }}</h2>
+
+    <div class="details-box">
+        <h1>Are you sure?</h1>
+
+        <p>This will revoke GitHub authorization and disable updates to GitHub when you deploy a build.</p>
+
+        <form class="form-wrapper" method="post">
+            <ul>
+                <li><input class="btn btn--destructive" type="submit" value="Remove"></li>
+                <li><a class="btn" href="javascript:history.go(-1)">Cancel</a></li>
+            </ul>
+        </form>
+    </div>
+
+{% endblock %}
+

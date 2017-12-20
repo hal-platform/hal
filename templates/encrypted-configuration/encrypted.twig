@@ -1,5 +1,5 @@
 {% extends 'base.twig' %}
-{% import "macros.twig" as macros %}
+{% import 'macros.twig' as macros %}
 
 {% set page_title = 'Encrypted Configuration : ' ~ application.name %}
 
@@ -19,11 +19,13 @@
 
     <div class="details-box">
         <ul class="mbn">
-            <li>Application</li>
-            <li>{{ application.name }}</li>
-
-            <li>Environment</li>
             <li>
+                <h6>Application</h6>
+                {{ application.name }}
+            </li>
+
+            <li>
+                <h6>Environment</h6>
                 {% if encrypted.environment %}
                     {{ encrypted.environment.name }}
                 {% else %}

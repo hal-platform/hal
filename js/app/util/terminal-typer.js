@@ -1,7 +1,7 @@
 import 'jquery';
 import Typed from 'typed.js';
 
-var init = (target, textTarget) => {
+function initTerminalTyper(target, textTarget) {
     $(target).each((i, el) => {
         let $text = $(textTarget),
             text = $text.text().trim();
@@ -13,6 +13,6 @@ var init = (target, textTarget) => {
 
         typed.start();
     });
-};
+}
 
-export default init;
+export { initTerminalTyper };

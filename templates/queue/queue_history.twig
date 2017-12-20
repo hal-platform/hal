@@ -1,0 +1,28 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+{% import 'macros.pagination.twig' as pagination %}
+
+{% if is_today %}
+    {% set js_components = ['job_queue'] %}
+{% endif %}
+{% set page_title = 'Build and Release History' %}
+
+{% block content %}
+    <div class="nav--page">
+        <h1>Queue History</h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('queue') }}">Current Job Queue</a>
+            <a class="btn btn--small btn--back" href="{{ uriFor('builds.history.page1') }}">All builds</a>
+            <a class="btn btn--small btn--back" href="{{ uriFor('releases.history.page1') }}">All pushes</a>
+        </p>
+    </div>
+
+    {{ pagination.time_pagination(selected_date, 'queue.history') }}
+
+    {% include 'partial.pending_job_table.twig' with {'pending': pending, 'history_view': true} only %}
+
+    {{ pagination.time_pagination(selected_date, 'queue.history') }}
+
+{% endblock %}
+

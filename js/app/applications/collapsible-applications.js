@@ -7,7 +7,7 @@ let target = '.js-collapsible .js-collapsible-global',
     rowTarget = '.js-collapsible-row',
     sectionTarget = '.js-collapsible tbody';
 
-var init = function() {
+var initApplicationTable = () => {
     var $container = $(target),
         $sections = $(sectionTarget),
         $rows = $(rowTarget);
@@ -82,5 +82,4 @@ function toggle($el) {
     return currentHidden === '1' ? true : false;
 }
 
-export default init;
-
+export { initApplicationTable };

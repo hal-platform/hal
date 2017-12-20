@@ -1,0 +1,72 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+
+{% set page_title = 'Latest Release' %}
+
+{% block content %}
+
+    <h1>{{ page_title }}</h1>
+
+    {{ block('latest_release_29') }}
+
+    <h2>Past Releases</h2>
+    <p>Check the following documentation sites for recent changes to Hal, or view past updates.</p>
+    <ul class="list--bullet">
+        <li><a href="http://git/hal/hal/releases">GitHub release notes</a></li>
+        <li>
+            Hal release notes
+            {% include 'help/partial.release_notes_history.twig' %}
+        </li>
+    </ul>
+
+{% endblock %}
+
+{% block latest_release_29 %}
+    <p>The latest release of Hal is <b>2.9.0</b>. It was deployed on Friday, January 20, 2017.</p>
+
+    <h2>Changelog</h2>
+
+    <h3>New Features</h3>
+    <ul class="list--bullet">
+        <li>
+            Add new deployment type: <code>script</code>.
+            <blockquote>
+                <p>
+                    Script deployments allow applications complete control over their deployment process. It allows applications to define shell scripts to run during their
+                    deployment process intead of having Hal use rsync, codedeploy, or other deployment types.
+                </p>
+
+                <small>
+                    Script deployments are run within docker containers, just like builds. Deployment commands are configured with the new <code>.hal9000.yml</code> property: <code>deploy</code>.
+                </small>
+
+            </blockquote>
+            See the <a href="{{ uriFor('help.setup') }}">Application Setup Help page</a> for more details.
+        </li>
+    </ul>
+
+    <h3>Enhancements</h3>
+    <ul class="list--bullet">
+        <li>More details on deployments are logged for <b>CodeDeploy</b> deployment types.</li>
+        <li>Groups on the app listing can be collapsed.</li>
+        <li>Administrators can now remove other administrators without requiring direct database changes.</li>
+        <li>Administrators and application leads can now edit the github repository user by an application directly within the UI.</li>
+    </ul>
+
+    <h3>Bugs</h3>
+    <ul class="list--bullet">
+        <li>Fix periodic, unavoidable failures when docker starts a container for application builds.</li>
+        <li>Prevent event logs from being duplicated while a build/push is in progress.</li>
+        <li>Fix stale data in cached deployment targets.</li>
+        <li>The api endpoint <code>/api/users</code> has been fixed.</li>
+    </ul>
+
+    <h3>Changes</h3>
+    <ul class="list--bullet">
+        <li>Remove EC2 autoscaling deployment type.</li>
+    </ul>
+{% endblock %}
+
+{% block no_release %}
+    <p>There are no release notes for the latest version.</p>
+{% endblock %}

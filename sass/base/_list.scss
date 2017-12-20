@@ -1,6 +1,6 @@
 .list--bare {
     > li {
-        @include trailer(.5);
+        margin-top: .5em;
     }
 }
 
@@ -9,7 +9,7 @@
     margin-left: 1.5em;
     list-style-type: disc;
     li {
-        @include trailer(.1);
+        margin-top: .1em;
     }
 }
 

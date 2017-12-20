@@ -198,9 +198,9 @@ class GlobalBannerService
     private function getBannerIfNotExpired($payload)
     {
         $message = $payload['message'] ?? '';
-        $isExpired = $payload['is_expired'] ?? true;
+        $isExpired = isset($payload['is_expired']) ? $payload['is_expired'] : true;
 
-        return $isExpired ? $message : '';
+        return $isExpired ? '' : $message;
     }
 
     /**

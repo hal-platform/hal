@@ -1,0 +1,10 @@
+{% import 'macros.twig' as macros %}
+
+<h3 id="other-api">{{ macros.status_icon(o_1) }}</h3>
+<p>tbd</p>
+
+<h3 id="other-maintenance">{{ macros.status_icon(o_2) }}</h3>
+<p>tbd</p>
+
+<h3 id="other-release-notes">{{ macros.status_icon(o_3) }}</h3>
+{% include 'help/partial.release_notes_history.twig' %}

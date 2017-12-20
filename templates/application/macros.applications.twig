@@ -1,0 +1,45 @@
+{% macro app_row(currentUser, application, allow_collapse) %}
+    {% import 'macros.twig' as macros %}
+    {% import 'macros.git.twig' as git_macros %}
+
+    {% if allow_collapse %}
+        <tr class="js-collapsible-row js-search-item">
+    {% else %}
+        <tr>
+    {% endif %}
+        <td>
+            {% if currentUser.settings.isFavoriteApplication(application) %}
+                <form method="post"
+                      action="{{ uriFor('settings.favorite_applications.remove', {'application': application.id}) }}"
+                      data-app-id="{{ application.id }}"
+                      class="form--fav">
+                    <label class="form--fav__label fav-added">
+                        <input type="submit">
+                        {{ macros.icon('star-2', '', 'Remove from favorites') }}
+                    </label>
+                </form>
+            {% else %}
+                <form method="post"
+                      action="{{ uriFor('settings.favorite_applications.add', {'application': application.id}) }}"
+                      data-app-id="{{ application.id }}"
+                      class="form--fav">
+                    <label class="form--fav__label fav-normal">
+                        <input type="submit">
+                        {{ macros.icon('star-2', '', 'Add to favorites') }}
+                    </label>
+                </form>
+            {% endif %}
+
+            {{ application.name }}
+        </td>
+        <td>
+            {{ git_macros.gitsource(application) }}
+            <span class="js-search-query">{{ application.name }}</span>
+            <span class="js-search-query">{{ application.gitHub.owner ~ '/' ~ application.gitHub.repository }}</span>
+        </td>
+        <td>
+            <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Dashboard</a>
+            <a href="{{ uriFor('application', {'application': application.id}) }}">Manage</a>
+        </td>
+    </tr>
+{% endmacro %}

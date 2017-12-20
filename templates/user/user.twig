@@ -1,5 +1,5 @@
 {% extends 'base.twig' %}
-{% import "macros.twig" as macros %}
+{% import 'macros.twig' as macros %}
 
 {% set page_title = 'User - ' ~ user.name %}
 
@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <h2 class="leader">User Info</h2>
+    <h2>User Info</h2>
     <div class="details-box">
         <ul class="list--bare">
             <li>
@@ -45,7 +45,7 @@
         </ul>
     </div>
 
-    <h2 class="leader">Contact</h2>
+    <h2>Contact</h2>
     <div class="details-box">
         <ul class="list--bare">
             <li>
@@ -61,7 +61,7 @@
     </div>
 
     <h2>Authorizations</h2>
-    {% include 'user/partial.user-status.twig' with {
+    {% include 'partial.user_permissions.twig' with {
         user: user,
         authorizations: user_authorizations,
         permissions: user_permissions
@@ -115,7 +115,7 @@
 {% endblock %}
 
 {% block token_table %}
-    <h2 class="leader">Access Tokens</h2>
+    <h2>Access Tokens</h2>
     <small>Personal Access Tokens can be used to access the <a href="{{ uriFor('api.index') }}">Hal API</a>.</small>
 
     {% if tokens %}
