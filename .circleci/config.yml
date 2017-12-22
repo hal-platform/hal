@@ -4,38 +4,66 @@ version: 2
 
 defaults: &defaults
     working_directory: '~/project'
+    docker:
+        - image: 'halplatform/php:latest'
+
+frontend_defaults: &frontend_defaults
+    working_directory: '~/project'
+    docker:
+        - image: 'halplatform/hal-build-environments:node8.6-centos7'
+
+attach_workspace: &attach_workspace
+    attach_workspace:
+        at: '.'
+
+persist_workspace: &persist_workspace
+    persist_to_workspace:
+        root: '.'
+        paths: [ '.' ]
+
+enterprise_setup: &enterprise_setup
+    run:
+        name: 'Prepare Enterprise Setup'
+        command: 'curl -sLk "https://git/pages/circleci/prepare-environment/prepare.sh" | bash -'
 
 workflows:
 
-  version: 2
+    version: 2
 
-  pipeline:
-    jobs:
-      - fetch_code
-      - verify_is_rebased
+    backend_build:
+        jobs:
+            - fetch_code
+            - verify_is_rebased
+            - install_php_dependencies:
+                requires: [ fetch_code ]
 
-      - build_backend:
-          requires: [ verify_is_rebased, fetch_code ]
+            - unit_tests:
+                requires: [ install_php_dependencies ]
+            - linting:
+                requires: [ install_php_dependencies ]
 
-      - build_frontend:
-          requires: [ verify_is_rebased, fetch_code ]
+    frontend_build:
+        jobs:
+            - fetch_code
+            - install_npm_dependencies:
+                requires: [ fetch_code ]
+
+            - frontend_linting:
+                requires: [ install_npm_dependencies ]
+            - frontend_build:
+                requires: [ install_npm_dependencies ]
 
 jobs:
     fetch_code:
         <<: *defaults
-        docker: [ { image: 'halplatform/php:latest' } ]
-
         steps:
             - checkout
-            - persist_to_workspace: { root: '.', paths: [ '.' ] }
+            - *persist_workspace
 
     verify_is_rebased:
         <<: *defaults
-        docker: [ { image: 'halplatform/php:latest' } ]
         steps:
-            - run:
-                name: 'Prepare Enterprise Setup'
-                command: 'curl -sLk https://git/pages/circleci/prepare-environment/prepare.sh | bash -'
+            - *enterprise_setup
             - run:
                 name: 'Verify pull request is up to date'
                 command: |
@@ -86,70 +114,97 @@ jobs:
 
                     echo "Pull request is up to date."
 
-    build_backend:
+    install_php_dependencies:
         <<: *defaults
-        docker: [ { image: 'halplatform/php:latest' } ]
-
         steps:
-            - attach_workspace: { at: '.' }
-
-            - run:
-                name: 'Prepare Enterprise Setup'
-                command: 'curl -sLk https://git/pages/circleci/prepare-environment/prepare.sh | bash -'
+            - *enterprise_setup
+            - *attach_workspace
 
             - restore_cache:
-                keys: [ 'v1-backend-deps-{{ checksum "composer.lock" }}', 'v1-backend-deps-' ]
+                keys: [ 'v1-php-deps-{{ checksum "composer.lock" }}', 'v1-php-deps' ]
 
             - run:
-                name: 'Update Composer'
-                command: 'composer self-update'
-
-            - run:
-                name: 'Install packages'
-                command: 'composer --no-interaction --no-progress install'
-
-            - run:
-                name: 'List installed packages'
-                command: 'composer show'
+                name: 'Install PHP dependencies'
+                command: |
+                    composer --no-interaction --no-progress install
+                    composer show
 
             - save_cache:
-                key: 'v1-backend-deps-{{ checksum "composer.lock" }}'
-                paths: [ './vendor' ]
+                key: 'v1-php-deps-{{ checksum "composer.lock" }}'
+                paths: [ 'vendor' ]
+
+            - *persist_workspace
+
+    install_npm_dependencies:
+        <<: *frontend_defaults
+        steps:
+            - *enterprise_setup
+            - *attach_workspace
+
+            - restore_cache:
+                keys: [ 'v1-npm-deps-{{ checksum "yarn.lock" }}', 'v1-npm-deps-' ]
+
+            - run:
+                name: 'Install node dependencies'
+                command: |
+                    yarn install
+
+            - save_cache:
+                key: 'v1-npm-deps-{{ checksum "yarn.lock" }}'
+                paths: [ './node_modules' ]
+
+            - *persist_workspace
+
+    unit_tests:
+        <<: *defaults
+        steps:
+            - *attach_workspace
+            - run:
+                name: 'Run unit tests'
+                command: |
+                    vendor/bin/phpunit
+            - store_test_results:
+                path: '.phpunit/report'
+
+    static_analysis:
+        <<: *defaults
+        steps:
+            - *attach_workspace
+            - run:
+                name: 'Run static analysis'
+                command: |
+                    vendor/bin/phpstan analyse src
+
+    linting:
+        <<: *defaults
+        steps:
+            - *attach_workspace
 
             - run:
                 name: 'Run syntax check'
                 command: 'vendor/bin/phplint --no-cache --ansi src'
 
             - run:
-                name: 'Run static analysis'
-                command: 'vendor/bin/phpcs -n --colors || true'
+                name: 'Run code formatting check'
+                command: 'vendor/bin/phpcs -n --colors src'
 
-    build_frontend:
-        <<: *defaults
-        docker: [ { image: 'halplatform/hal-build-environments:node8.6-centos7' } ]
-
+    frontend_linting:
+        <<: *frontend_defaults
         steps:
-            - attach_workspace: { at: '.' }
-
+            - *attach_workspace
             - run:
-                name: 'Prepare Enterprise Setup'
-                command: 'curl -sLk https://git/pages/circleci/prepare-environment/prepare.sh | bash -'
+                name: 'Run jslint and sasslint'
+                command: |
+                    yarn run css
 
-            - restore_cache:
-                keys: [ 'v1-frontend-deps-{{ checksum "yarn.lock" }}', 'v1-frontend-deps-' ]
+                    yarn run lint:sass
+                    yarn run lint:js
 
+    frontend_build:
+        <<: *frontend_defaults
+        steps:
+            - *attach_workspace
             - run:
-                name: 'Install node dependencies'
-                command: 'yarn install'
-
-            - run:
-                name: 'Run eslint and sasslint'
-                command: 'yarn run lint:sass && yarn run lint:js'
-
-            - run:
-                name: 'Run frontend build'
-                command: 'yarn build'
-
-            - save_cache:
-                key: 'v1-frontend-deps-{{ checksum "yarn.lock" }}'
-                paths: [ './node_modules' ]
+                name: 'Run javascript and sass compile'
+                command: |
+                    yarn run build
