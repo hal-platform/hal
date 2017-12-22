@@ -42,7 +42,7 @@ class Normalizer implements NormalizerInterface
         }
 
         if (is_array($input)) {
-            return array_map(function($item) {
+            return array_map(function ($item) {
                 return $this->normalize($item);
             }, $input);
         }

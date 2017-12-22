@@ -119,4 +119,3 @@ class GlobalBannerController implements ControllerInterface
         }
     }
 }
-

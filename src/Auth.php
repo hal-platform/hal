@@ -94,7 +94,9 @@ class Auth
         ];
 
         foreach ($user as $val) {
-            if (strlen($val) === 0) return null;
+            if (strlen($val) === 0) {
+                return null;
+            }
         }
 
         return $user;

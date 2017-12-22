@@ -391,7 +391,6 @@ class CredentialValidator
             $this->errors[] = self::ERR_INVALID_NAME;
         }
 
-
         // aws
         if (preg_match('#[\t\n]+#', $key) === 1) {
             $this->errors[] = self::ERR_INVALID_KEY;
@@ -410,13 +409,17 @@ class CredentialValidator
             $this->errors[] = self::ERR_INVALID_SECRET;
         }
 
-        if ($this->errors) return null;
+        if ($this->errors) {
+            return null;
+        }
 
         if ($dupe = $this->credentialRepo->findOneBy(['name' => $name])) {
             $this->errors[] = self::ERR_DUPLICATE_NAME;
         }
 
-        if ($this->errors) return null;
+        if ($this->errors) {
+            return null;
+        }
 
         $id = call_user_func($this->random);
 
@@ -428,5 +431,4 @@ class CredentialValidator
             ->withName($name)
             ->withAWS($aws);
     }
-
 }

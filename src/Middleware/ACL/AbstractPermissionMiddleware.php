@@ -46,7 +46,7 @@ abstract class AbstractPermissionMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $requreAuthorization = function(ServerRequestInterface $request, ResponseInterface $response) use ($next) {
+        $requreAuthorization = function (ServerRequestInterface $request, ResponseInterface $response) use ($next) {
             return $this->deferredMiddleware($request, $response, $next);
         };
 

@@ -98,4 +98,3 @@ class GroupNormalizer implements ResourceNormalizerInterface
         return $resource;
     }
 }
-

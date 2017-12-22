@@ -129,10 +129,22 @@ class UserAuthorizations implements JsonSerializable
     {
         $tiers = [];
 
-        if ($this->isMember()) $tiers[] = UserPermissionEnum::TYPE_MEMBER;
-        if ($this->isOwner()) $tiers[] = UserPermissionEnum::TYPE_OWNER;
-        if ($this->isAdmin()) $tiers[] = UserPermissionEnum::TYPE_ADMIN;
-        if ($this->isSuper()) $tiers[] = UserPermissionEnum::TYPE_SUPER;
+        if ($this->isMember()) {
+            $tiers[] = UserPermissionEnum::TYPE_MEMBER;
+        }
+
+        if ($this->isOwner()) {
+            $tiers[] = UserPermissionEnum::TYPE_OWNER;
+        }
+
+        if ($this->isAdmin()) {
+            $tiers[] = UserPermissionEnum::TYPE_ADMIN;
+        }
+
+        if ($this->isSuper()) {
+            $tiers[] = UserPermissionEnum::TYPE_SUPER;
+        }
+
 
         return $tiers;
     }

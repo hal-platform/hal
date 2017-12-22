@@ -72,7 +72,6 @@ class ReleaseValidator
         }
 
         // Ensure no deployment has an active push (Waiting, Pushing)
-        /** @var Target $target */
         foreach ($targets as $target) {
             $release = $target->release();
             if ($release && $release->inProgress()) {
@@ -86,8 +85,7 @@ class ReleaseValidator
 
         $releases = [];
         foreach ($targets as $target) {
-
-            $release = (new Release())
+            $release = (new Release)
                 ->withUser($user)
                 ->withBuild($build)
                 ->withTarget($target)
@@ -119,8 +117,7 @@ class ReleaseValidator
 
         $processes = [];
         foreach ($targets as $target) {
-
-            $process = (new JobProcess())
+            $process = (new JobProcess)
                 ->withUser($user)
                 ->withParent($build)
                 ->withChildType('Release')

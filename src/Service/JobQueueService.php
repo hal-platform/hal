@@ -174,7 +174,7 @@ class JobQueueService
      */
     private function queueSort()
     {
-        return function($aEntity, $bEntity) {
+        return function ($aEntity, $bEntity) {
             $a = $aEntity->created();
             $b = $bEntity->created();
 

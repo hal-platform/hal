@@ -107,7 +107,6 @@ class CacheManagementHandler implements MiddlewareInterface
 
         $keys = [];
         foreach (new Keyspace($this->predis, $keyPattern) as $key) {
-
             // slice namespace
             $parts = explode($this->keyDelimiter, $key);
             array_shift($parts);

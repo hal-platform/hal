@@ -74,4 +74,3 @@ class ReleasesHistoryController implements ControllerInterface
         ]);
     }
 }
-

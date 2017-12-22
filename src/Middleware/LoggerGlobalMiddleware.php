@@ -74,9 +74,9 @@ class LoggerGlobalMiddleware implements MiddlewareInterface
         }
 
         // request
-        $this->factory->setDefaultProperty(MessageInterface::REQUEST_METHOD,  $request->getMethod());
+        $this->factory->setDefaultProperty(MessageInterface::REQUEST_METHOD, $request->getMethod());
 
-        $this->factory->setDefaultProperty(MessageInterface::REQUEST_URL,  (string) $request->getUri());
+        $this->factory->setDefaultProperty(MessageInterface::REQUEST_URL, (string) $request->getUri());
 
         // client
         if ($referer = $this->getFirstHeader($request, 'referer')) {

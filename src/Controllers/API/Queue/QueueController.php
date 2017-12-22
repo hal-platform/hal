@@ -113,7 +113,7 @@ class QueueController implements ControllerInterface
 
         $jobs = $this->queue->getHistory($createdAfter, null);
 
-        $identifiers = array_map(function($job) {
+        $identifiers = array_map(function ($job) {
             return $job->id();
         }, $jobs);
 

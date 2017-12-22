@@ -104,7 +104,7 @@ class EventLogService
             }
         }
 
-        usort($logs, function($a, $b) {
+        usort($logs, function ($a, $b) {
             return ($a->order() > $b->order()) ? 1 : -1;
         });
 

@@ -66,7 +66,7 @@ class EncryptedConfigurationController implements ControllerInterface
     {
         $order = $this->sortingHelperEnvironmentOrder;
 
-        return function(EncryptedProperty $prop1, EncryptedProperty $prop2) use ($order) {
+        return function (EncryptedProperty $prop1, EncryptedProperty $prop2) use ($order) {
 
             // global to bottom
             if ($prop1->environment() xor $prop2->environment()) {

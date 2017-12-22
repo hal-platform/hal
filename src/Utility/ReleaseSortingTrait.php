@@ -14,7 +14,7 @@ trait ReleaseSortingTrait
      */
     public function releaseSorter()
     {
-        return function($a, $b) {
+        return function ($a, $b) {
             $matchesA = $this->semver($a['name']);
             $matchesB = $this->semver($b['name']);
 

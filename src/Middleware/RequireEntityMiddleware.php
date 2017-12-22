@@ -88,7 +88,6 @@ class RequireEntityMiddleware implements MiddlewareInterface
             ->getArguments();
 
         foreach ($params as $param => $id) {
-
             if (!isset(self::KNOWN_ENTITIES[$param])) {
                 continue;
             }
