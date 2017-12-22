@@ -31,7 +31,7 @@ use QL\Panthor\Session\SessionInterface;
  * NOT CURRENTLY USED
  * NOT CURRENTLY USED
  */
-class GithubOAuthController implements ControllerInterface
+class GitHubOAuthController implements ControllerInterface
 {
     use RedirectableControllerTrait;
     use SessionTrait;
