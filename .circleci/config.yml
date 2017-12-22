@@ -39,6 +39,8 @@ workflows:
 
             - unit_tests:
                 requires: [ install_php_dependencies ]
+            - static_analysis:
+                requires: [ install_php_dependencies ]
             - linting:
                 requires: [ install_php_dependencies ]
 
