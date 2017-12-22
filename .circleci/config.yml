@@ -195,8 +195,6 @@ jobs:
             - run:
                 name: 'Run jslint and sasslint'
                 command: |
-                    yarn run css
-
                     yarn run lint:sass
                     yarn run lint:js
 
