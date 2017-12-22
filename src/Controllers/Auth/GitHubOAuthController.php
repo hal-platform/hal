@@ -8,18 +8,19 @@
 namespace Hal\UI\Controllers\Auth;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\Core\Entity\User;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\Flash;
 use Hal\UI\Github\OAuthHandler;
-use Hal\UI\SessionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\MCP\Common\GUID;
-use QL\Hal\Core\Entity\User;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\URI;
+use QL\Panthor\Session\SessionInterface;
 
 /**
  * NOT CURRENTLY USED
@@ -115,7 +116,7 @@ class GithubOAuthController implements ControllerInterface
                 return $this->handleError($request, $response, 'invalid_state', static::ERR_INVALID_STATE);
             }
 
-            if (!$this->saveOAuthGrant($user, $code)) {
+            if (!$this->saveOAuthGrant($session, $user, $code)) {
                 return $this->handleError($request, $response, 'could_not_retrieve_token');
             }
 
@@ -167,12 +168,13 @@ class GithubOAuthController implements ControllerInterface
     }
 
     /**
+     * @param SessionInterface $session
      * @param User $user
      * @param string $code
      *
      * @return bool
      */
-    private function saveOAuthGrant(User $user, $code): bool
+    private function saveOAuthGrant(SessionInterface $session, User $user, $code): bool
     {
         // clear state
         $session->remove(self::SESSION_STATE_PARAM);

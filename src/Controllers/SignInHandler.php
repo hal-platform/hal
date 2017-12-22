@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\UserSettings;
+use Hal\Core\Repository\UserRepository;
 use Hal\UI\Auth;
 use Hal\UI\Middleware\UserSessionGlobalMiddleware;
 use Hal\UI\Session;

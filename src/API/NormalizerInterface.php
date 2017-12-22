@@ -7,6 +7,8 @@
 
 namespace Hal\UI\API;
 
+use JsonSerializable;
+
 interface NormalizerInterface
 {
     /**

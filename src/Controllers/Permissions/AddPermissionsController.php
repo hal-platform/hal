@@ -114,7 +114,6 @@ class AddPermissionsController implements ControllerInterface
         $this->applicationRepository = $em->getRepository(Application::class);
         $this->organizationRepository = $em->getRepository(Organization::class);
 
-        $this->errors = [];
         $this->authorizationHydrator = $authorizationHydrator;
     }
 
@@ -163,7 +162,6 @@ class AddPermissionsController implements ControllerInterface
             'permissions' => $this->authorizationHydrator->hydrateAuthorizations($selectedUser, $selectedUserAuthorizations)
         ]);
     }
-
 
     /**
      * @param ServerRequestInterface $request

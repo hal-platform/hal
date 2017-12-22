@@ -45,7 +45,7 @@ class GitHubService
     private $gitReferenceApi;
 
     /**
-     * @var CommitRepoApi
+     * @var CommitApi
      */
     private $gitCommitApi;
 

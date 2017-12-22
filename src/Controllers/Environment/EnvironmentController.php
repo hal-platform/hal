@@ -7,7 +7,6 @@
 
 namespace Hal\UI\Controllers\Environment;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Environment;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -26,12 +25,10 @@ class EnvironmentController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param EntityManagerInterface $em
      */
-    public function __construct(TemplateInterface $template, EntityManagerInterface $em)
+    public function __construct(TemplateInterface $template)
     {
         $this->template = $template;
-        // $this->em = $em;
     }
 
     /**

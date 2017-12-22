@@ -8,6 +8,7 @@
 namespace Hal\UI\Controllers\Credentials;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Hal\Core\Crypto\Encryption;
 use Hal\Core\Entity\Credential;
 use Hal\Core\Type\CredentialEnum;
@@ -44,6 +45,11 @@ class EditCredentialController implements ControllerInterface
      * @var CredentialValidator
      */
     private $credentialValidator;
+
+    /**
+     * @var Encryption
+     */
+    private $encryption;
 
     /**
      * @var URI

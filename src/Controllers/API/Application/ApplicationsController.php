@@ -67,7 +67,7 @@ class ApplicationsController implements ControllerInterface
             return $this->withProblem($this->problem, $response, 404, self::ERR_PAGE);
         }
 
-        $applications = $this->applicationRepo->getPagedResults(SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1));
+        $pagination = $this->applicationRepo->getPagedResults(SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1));
 
         $total = count($pagination);
         $last = ceil($total / SharedStaticConfiguration::LARGE_PAGE_SIZE);
@@ -77,7 +77,7 @@ class ApplicationsController implements ControllerInterface
             $applications[] = $application;
         }
 
-        $links = $this->buildPaginationLinks('api.applications.paged', $page, $total, self::MAX_PER_PAGE);
+        $links = $this->buildPaginationLinks('api.applications.paged', $page, $total, SharedStaticConfiguration::LARGE_PAGE_SIZE);
 
         $data = [
             'count' => count($applications),

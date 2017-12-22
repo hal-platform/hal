@@ -7,6 +7,7 @@
 
 namespace Hal\UI\Service;
 
+use Closure;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;

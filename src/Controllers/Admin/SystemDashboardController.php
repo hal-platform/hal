@@ -34,7 +34,7 @@ class SystemDashboardController implements ControllerInterface
     private $em;
 
     /**
-     * @var Json
+     * @var JSON
      */
     private $json;
 
@@ -46,13 +46,13 @@ class SystemDashboardController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param Json $json
+     * @param JSON $json
      * @param Clock $clock
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        Json $json,
+        JSON $json,
         Clock $clock
     ) {
         $this->template = $template;
@@ -77,46 +77,46 @@ class SystemDashboardController implements ControllerInterface
         ]);
     }
 
-    /**
-     * @param string $agent
-     *
-     * @return array|null
-     */
-    private function parseLatestDocker($agent)
-    {
-        if (!$docker = $this->getLatestStatusForAgent(self::DOCKER_REDIS_KEY, $agent)) {
-            return null;
-        }
+    // /**
+    //  * @param string $agent
+    //  *
+    //  * @return array|null
+    //  */
+    // private function parseLatestDocker($agent)
+    // {
+    //     if (!$docker = $this->getLatestStatusForAgent(self::DOCKER_REDIS_KEY, $agent)) {
+    //         return null;
+    //     }
 
-        $time = isset($docker['generated']) ? $this->clock->fromString($docker['generated']) : null;
+    //     $time = isset($docker['generated']) ? $this->clock->fromString($docker['generated']) : null;
 
-        return [
-            'agent' => isset($docker['agent']) ? $docker['agent'] : '',
-            'builder' => isset($docker['builder']) ? $docker['builder'] : '',
-            'docker' => isset($docker['docker']) ? $docker['docker'] : '',
-            'generated' => $time
-        ];
-    }
+    //     return [
+    //         'agent' => isset($docker['agent']) ? $docker['agent'] : '',
+    //         'builder' => isset($docker['builder']) ? $docker['builder'] : '',
+    //         'docker' => isset($docker['docker']) ? $docker['docker'] : '',
+    //         'generated' => $time
+    //     ];
+    // }
 
-    /**
-     * @param string $list
-     * @param string $agent
-     *
-     * @return array|null
-     */
-    private function getLatestStatusForAgent($list, $agent)
-    {
-        for ($i = 0; $i <= 20; $i++) {
-            $data = $this->predis->lindex($list, $i);
+    // /**
+    //  * @param string $list
+    //  * @param string $agent
+    //  *
+    //  * @return array|null
+    //  */
+    // private function getLatestStatusForAgent($list, $agent)
+    // {
+    //     for ($i = 0; $i <= 20; $i++) {
+    //         $data = $this->predis->lindex($list, $i);
 
-            if ($data === null) {
-                return null;
-            }
+    //         if ($data === null) {
+    //             return null;
+    //         }
 
-            $health = $this->json->decode($data);
-            if (isset($health['generated_by']) && stripos($health['generated_by'], $agent) !== false) {
-                return $health;
-            }
-        }
-    }
+    //         $health = $this->json->decode($data);
+    //         if (isset($health['generated_by']) && stripos($health['generated_by'], $agent) !== false) {
+    //             return $health;
+    //         }
+    //     }
+    // }
 }

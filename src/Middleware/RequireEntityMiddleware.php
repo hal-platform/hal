@@ -51,7 +51,6 @@ class RequireEntityMiddleware implements MiddlewareInterface
 
         'group' => Group::class,
         'target' => Target::class,
-        'group' => Group::class,
         'encrypted' => EncryptedProperty::class,
 
         'environment' => Environment::class,

@@ -80,9 +80,6 @@ services:
     twig.extension.github.cache:
         class: 'QL\MCP\Cache\MemoryCache'
 
-    twig.extension.status:
-        class: 'Hal\UI\Twig\StatusExtension'
-
     # Twig Environment
     twig.environment:
         parent: 'panthor.twig.environment'
@@ -90,4 +87,3 @@ services:
             - ['addExtension', ['@twig.extension.hal']]
             - ['addExtension', ['@twig.extension.hal.global' ]]
             - ['addExtension', ['@twig.extension.github']]
-            - ['addExtension', ['@twig.extension.status']]

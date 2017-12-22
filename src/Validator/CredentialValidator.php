@@ -25,9 +25,13 @@ class CredentialValidator
     private const REGEX_CHARACTER_CLASS_PATH = '0-9a-zA-Z_.-\\\/\ \:';
     private const REGEX_CHARACTER_WHITESPACE = '\f\n\r\t\v';
 
+    private const REGEX_CREDENTIAL_NAME = '/^[a-zA-Z0-9:().\-\/\\\ ]{3,100}$/';
+    private const REGEX_ROLE = '/^[a-zA-Z0-9_\+\=,\.@\-\/]{10,100}$/';
+
     private const ERR_NAME_CHARACTERS = 'Name must not contain tabs or newlines';
     private const ERR_INVALID_TYPE = 'Credential Type is required';
 
+    private const ERR_INVALID_NAME = 'Credential name must not contain special characters';
     private const ERR_INVALID_KEY = 'AWS Access Key must not contain special characters';
     private const ERR_INVALID_SECRET = 'AWS Secret Key must not contain special characters';
     private const ERR_INVALID_ACCOUNT = 'AWS Account ID must not contain special characters';
@@ -216,7 +220,11 @@ class CredentialValidator
             return false;
         }
 
-        if (!$this->validateIn($type, CredentialEnum::options())) {
+        if (!$this->validateCharacterWhitelist($name, self::REGEX_CREDENTIAL_NAME)) {
+            $this->addError(self::ERR_INVALID_NAME, 'name');
+        }
+
+        if (!CredentialEnum::isValid($type)) {
             $this->addError(self::ERR_INVALID_TYPE, 'type');
         }
 
@@ -298,8 +306,8 @@ class CredentialValidator
             $this->addLengthError('AWS Account ID', 3, 25, 'aws_account');
         }
 
-        if (!$this->validateLength($roleName, 3, 100000)) {
-            $this->addLengthError('AWS Role', 3, 100000, 'aws_role');
+        if (!$this->validateCharacterWhitelist($roleName, self::REGEX_ROLE)) {
+            $this->addError(self::ERR_INVALID_ROLE, 'aws_role');
         }
 
         if (!$this->validateCharacterBlacklist($accountID, self::REGEX_CHARACTER_WHITESPACE)) {
@@ -367,68 +375,5 @@ class CredentialValidator
         }
 
         return !$this->hasErrors();
-    }
-
-    /**
-     * @param string $type
-     * @param string $name
-     * @param string $key
-     * @param string $secret
-     * @param string $username
-     * @param string $path
-     * @param string $file
-     *
-     * @return Credential|null
-     */
-    private function validateForm($type, $name, $key, $secret, $username, $path, $file)
-    {
-        if (!in_array($type, CredentialEnum::options(), true)) {
-            $this->errors[] = self::ERR_TYPE_REQUIRED;
-        }
-
-        // name
-        if (preg_match(self::VALIDATE_NAME_REGEX, $name) !== 1) {
-            $this->errors[] = self::ERR_INVALID_NAME;
-        }
-
-        // aws
-        if (preg_match('#[\t\n]+#', $key) === 1) {
-            $this->errors[] = self::ERR_INVALID_KEY;
-        }
-
-        if (preg_match('#[\t\n]+#', $secret) === 1) {
-            $this->errors[] = self::ERR_INVALID_SECRET;
-        }
-
-        $keylen = strlen($key);
-        if ($keylen < 1 || $keylen > 100) {
-            $this->errors[] = self::ERR_INVALID_KEY;
-        }
-
-        if (strlen($secret) < 1) {
-            $this->errors[] = self::ERR_INVALID_SECRET;
-        }
-
-        if ($this->errors) {
-            return null;
-        }
-
-        if ($dupe = $this->credentialRepo->findOneBy(['name' => $name])) {
-            $this->errors[] = self::ERR_DUPLICATE_NAME;
-        }
-
-        if ($this->errors) {
-            return null;
-        }
-
-        $id = call_user_func($this->random);
-
-        $encrypted = $this->encrypter->encrypt($secret);
-        $aws = new AWSCredential($key, $encrypted);
-
-        return (new Credential($id))
-            ->withType($type)
-            ->withName($name)
-            ->withAWS($aws);
     }
 }

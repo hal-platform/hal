@@ -5,11 +5,11 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Api\Normalizer;
+namespace Hal\UI\API\Normalizer;
 
-use Hal\UI\Api\Hyperlink;
-use Hal\UI\Api\HypermediaResource;
-use Hal\UI\Api\ResourceNormalizerInterface;
+use Hal\UI\API\Hyperlink;
+use Hal\UI\API\HypermediaResource;
+use Hal\UI\API\ResourceNormalizerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\Utility\URI;
 
@@ -52,7 +52,7 @@ class HyperlinkNormalizer implements ResourceNormalizerInterface
     }
 
     /**
-     * @param Group|null $link
+     * @param Hyperlink|null $link
      *
      * @return Hyperlink|null
      */

@@ -25,7 +25,7 @@ services:
             - ['addNormalizer', ['Hal\Core\Entity\Group', '@api_normalizer.group']]
             - ['addNormalizer', ['Hal\Core\Entity\User', '@api_normalizer.user']]
             - ['addNormalizer', ['QL\MCP\Common\Time\TimePoint', '@api_normalizer.timepoint']]
-            - ['addNormalizer', ['Hal\UI\Api\Hyperlink', '@api_normalizer.hyperlink']]
+            - ['addNormalizer', ['Hal\UI\API\Hyperlink', '@api_normalizer.hyperlink']]
 
     ####################################################################################################################
     # API Entity Normalizers
