@@ -65,7 +65,8 @@
         "phpstan/phpstan":              "~0.9",
         "squizlabs/php_codesniffer":    "~3.0",
 
-        "mockery/mockery":           "~1.0",
-        "phpunit/phpunit":           "~6.2"
+        "codedungeon/phpunit-result-printer": "~0.4",
+        "mockery/mockery":                    "~1.0",
+        "phpunit/phpunit":                    "~6.2"
     }
 }
