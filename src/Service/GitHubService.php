@@ -297,10 +297,10 @@ class GitHubService
     /**
      * Compare two git commits
      *
-     * @param $user
-     * @param $repo
-     * @param $base
-     * @param $head
+     * @param string $user
+     * @param string $repo
+     * @param string $base
+     * @param string $head
      *
      * @return array|string
      */
@@ -352,7 +352,7 @@ class GitHubService
     /**
      * Parse a git reference as a tag, return null on failure.
      *
-     * @param $reference
+     * @param string $reference
      * @return string|null
      */
     public function parseRefAsTag($reference)
@@ -367,7 +367,7 @@ class GitHubService
     /**
      * Parse a git reference as a pull request, return null on failure.
      *
-     * @param $reference
+     * @param string $reference
      * @return string|null
      */
     public function parseRefAsPull($reference)
@@ -382,7 +382,7 @@ class GitHubService
     /**
      * Parse a git reference as a commit, return null on failure.
      *
-     * @param $reference
+     * @param string $reference
      * @return string|null
      */
     public function parseRefAsCommit($reference)

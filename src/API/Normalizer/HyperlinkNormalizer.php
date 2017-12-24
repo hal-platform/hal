@@ -36,7 +36,7 @@ class HyperlinkNormalizer implements ResourceNormalizerInterface
     }
 
     /**
-     * @param Hyperlink $input
+     * @param Hyperlink $link
      *
      * @return array|null
      */

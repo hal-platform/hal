@@ -35,7 +35,7 @@ class SignOutController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $session = $this
+        $this
             ->getSession($request)
             ->clear();
 

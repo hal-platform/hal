@@ -129,8 +129,8 @@ class EventLogService
         ], $data);
 
         $log = (new JobEvent)
-            ->withId($data['id'])
-            ->withstage($data['event'])
+            ->withID($data['id'])
+            ->withStage($data['event'])
             ->withOrder($data['order'])
             ->withMessage($data['message'])
             ->withStatus($data['status']);

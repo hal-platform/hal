@@ -184,7 +184,7 @@ class GitHubOAuthController implements ControllerInterface
         }
 
         // save token to database
-        $user->withGithubToken($token);
+        // $user->withGithubToken($token);
         $this->em->merge($user);
         $this->em->flush();
 

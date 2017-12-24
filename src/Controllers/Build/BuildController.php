@@ -83,7 +83,7 @@ class BuildController implements ControllerInterface
     }
 
     /**
-     * @param JobProcess $child
+     * @param JobProcess $process
      *
      * @return array
      */

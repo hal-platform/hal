@@ -142,7 +142,7 @@ class StartBuildController implements ControllerInterface
     {
         $branches = $this->github->branches(
             $application->gitHub()->owner(),
-            $application->github()->repository()
+            $application->gitHub()->repository()
         );
 
         // sort master to top, alpha otherwise
@@ -171,8 +171,8 @@ class StartBuildController implements ControllerInterface
     private function getTags(Application $application)
     {
         $tags = $this->github->tags(
-            $application->github()->owner(),
-            $application->github()->repository()
+            $application->gitHub()->owner(),
+            $application->gitHub()->repository()
         );
 
         usort($tags, $this->releaseSorter());
@@ -239,7 +239,7 @@ class StartBuildController implements ControllerInterface
 
     /**
      * @param Application $application
-     * @param User $user
+     * @param UserAuthorizations $userAuthorizations
      * @param Environment|string $env
      *
      * @return array

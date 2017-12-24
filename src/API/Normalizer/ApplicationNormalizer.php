@@ -90,7 +90,7 @@ class ApplicationNormalizer implements ResourceNormalizerInterface
                 'text/html'
             ),
             'github_page' => new Hyperlink(
-                $this->urlBuilder->githubRepoURL($application->github()->owner(), $application->github()->repository()),
+                $this->urlBuilder->githubRepoURL($application->gitHub()->owner(), $application->gitHub()->repository()),
                 '',
                 'text/html'
             )

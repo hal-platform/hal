@@ -97,8 +97,8 @@ class BuildNormalizer implements ResourceNormalizerInterface
      */
     private function buildLinks(Build $build)
     {
-        $ghOwner = $build->application()->github()->owner();
-        $ghRepo = $build->application()->github()->repository();
+        $ghOwner = $build->application()->gitHub()->owner();
+        $ghRepo = $build->application()->gitHub()->repository();
 
         $links = [
             'self' => $this->link($build),

@@ -72,7 +72,7 @@ class CacheManagementHandler implements MiddlewareInterface
     }
 
     /**
-     * @param string $type
+     * @param string $cacheType
      *
      * @return string
      */
@@ -97,7 +97,7 @@ class CacheManagementHandler implements MiddlewareInterface
     }
 
     /**
-     * @param aray $parts
+     * @param array $parts
      *
      * @return void
      */

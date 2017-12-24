@@ -13,6 +13,7 @@ use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Build;
 use Hal\Core\Entity\Environment;
 use Hal\Core\Entity\Target;
+use Hal\Core\Repository\EnvironmentRepository;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -31,9 +32,13 @@ class SelectEnvironmentMiddleware implements MiddlewareInterface
     private $template;
 
     /**
-     * @var EntityRepository
+     * @var EnvironmentRepository
      */
     private $environmentRepository;
+
+    /**
+     * @var EntityRepository
+     */
     private $targetRepository;
 
     /**
@@ -109,7 +114,9 @@ class SelectEnvironmentMiddleware implements MiddlewareInterface
         $environmentID = $request->getQueryParams()['environment'] ?? null;
 
         if ($targetID && $target = $this->targetRepository->find($targetID)) {
-            return $target->group()->environment();
+            if ($target instanceof Target) {
+                return $target->group()->environment();
+            }
         }
 
         if ($environmentID && $environment = $this->environmentRepository->find($environmentID)) {

@@ -128,7 +128,8 @@ class TokenMiddleware implements MiddlewareInterface
      */
     private function validateToken($token): ?User
     {
-        if (!$token = $this->tokenRepo->findOneBy(['value' => $token])) {
+        $token = $this->tokenRepo->findOneBy(['value' => $token]);
+        if (!$token instanceof UserToken) {
             return null;
         }
 

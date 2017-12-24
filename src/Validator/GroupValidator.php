@@ -111,6 +111,9 @@ class GroupValidator
             }
 
             $this->dupeCheck($environment, $groupType, $name);
+
+        } else {
+            return null;
         }
 
         if ($this->hasErrors()) {
@@ -190,6 +193,9 @@ class GroupValidator
             }
 
             $this->dupeCheck($environment, $groupType, $name);
+
+        } else {
+            return null;
         }
 
         SKIP_DUPE_CHECK:

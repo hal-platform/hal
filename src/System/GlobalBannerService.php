@@ -92,7 +92,8 @@ class GlobalBannerService
             return false;
         }
 
-        if ($setting = $this->settingRepo->findOneBy(['name' => self::NAME_NOTIFICATION])) {
+        $setting = $this->settingRepo->findOneBy(['name' => self::NAME_NOTIFICATION]);
+        if ($setting instanceof SystemSetting) {
             return ($setting->value() === '1');
         }
 
@@ -104,7 +105,8 @@ class GlobalBannerService
      */
     public function loadBannerDetails()
     {
-        if (!$message = $this->settingRepo->findOneBy(['name' => self::NAME_BANNER])) {
+        $message = $this->settingRepo->findOneBy(['name' => self::NAME_BANNER]);
+        if (!$message instanceof SystemSetting) {
             return $this->messagePayload('', 0);
         }
 
@@ -122,7 +124,9 @@ class GlobalBannerService
      */
     public function saveBanner($message, int $ttl = 0)
     {
-        if (!$setting = $this->settingRepo->findOneBy(['name' => self::NAME_BANNER])) {
+
+        $setting = $this->settingRepo->findOneBy(['name' => self::NAME_BANNER]);
+        if (!$setting instanceof SystemSetting) {
             $setting = new SystemSetting;
         }
 
@@ -146,7 +150,8 @@ class GlobalBannerService
      */
     public function clearBanner()
     {
-        if ($setting = $this->settingRepo->findOneBy(['name' => self::NAME_BANNER])) {
+        $setting = $this->settingRepo->findOneBy(['name' => self::NAME_BANNER]);
+        if ($setting instanceof SystemSetting) {
             $this->em->remove($setting);
             $this->em->flush();
         }
@@ -160,7 +165,8 @@ class GlobalBannerService
      */
     public function enableUpdateNotification()
     {
-        if (!$setting = $this->settingRepo->findOneBy(['name' => self::NAME_NOTIFICATION])) {
+        $setting = $this->settingRepo->findOneBy(['name' => self::NAME_NOTIFICATION]);
+        if (!$setting instanceof SystemSetting) {
             $setting = new SystemSetting;
         }
 

@@ -41,7 +41,7 @@ class AuditHistoryController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param NotFound $notFound
+     * @param callable $notFound
      */
     public function __construct(TemplateInterface $template, EntityManagerInterface $em, callable $notFound)
     {

@@ -60,7 +60,7 @@ trait ReleaseSortingTrait
      * For example, this will catch things like 1.0, 1, 1.0-rc1, 1.0.0.0, and v1.0 despite those values not being
      * compliant with the semver spec.
      *
-     * @param $value
+     * @param string $value
      *
      * @return false|string
      */

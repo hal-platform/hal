@@ -78,8 +78,8 @@ class JobQueueService
     }
 
     /**
-     * @param Timepoint $after
-     * @param Timepoint|null $before
+     * @param TimePoint $after
+     * @param TimePoint|null $before
      *
      * @return array
      */

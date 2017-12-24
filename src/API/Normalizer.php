@@ -113,7 +113,7 @@ class Normalizer implements NormalizerInterface
     }
 
     /**
-     * @param mixed
+     * @param mixed $input
      *
      * @return string
      */

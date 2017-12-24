@@ -8,6 +8,9 @@
 namespace Hal\UI\Controllers\Target;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Repository\EnvironmentRepository;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
@@ -16,8 +19,7 @@ use Hal\UI\Flash;
 use Hal\UI\Validator\TargetValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\Application;
-use Hal\Core\Entity\Environment;
+
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
 
@@ -50,9 +52,13 @@ HTML;
     private $uri;
 
     /**
+     * @var EnvironmentRepository
+     */
+    private $environmentRepository;
+
+    /**
      * @param EntityManagerInterface $em
      * @param TargetValidator $validator
-     * @param JSON $json
      * @param URI $uri
      */
     public function __construct(
@@ -61,6 +67,7 @@ HTML;
         URI $uri
     ) {
         $this->em = $em;
+        $this->environmentRepository = $this->em->getRepository(Environment::class);
 
         $this->validator = $validator;
         $this->uri = $uri;
@@ -93,9 +100,7 @@ HTML;
         $this->em->flush();
 
         // Clear cached query for buildable environments
-        $envRepo = $this->em
-            ->getRepository(Environment::class)
-            ->clearBuildableEnvironmentsByApplication($application);
+        $this->environmentRepository->clearBuildableEnvironmentsByApplication($application);
 
         $formPage = $this->uri->uriFor(
             'target.add',

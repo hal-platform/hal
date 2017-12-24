@@ -21,7 +21,6 @@ use Hal\Core\Entity\Release;
 use Hal\Core\Repository\BuildRepository;
 use Hal\Core\Repository\TargetRepository;
 use Hal\Core\Repository\EnvironmentRepository;
-use Hal\Core\Repository\ReleaseRepository;
 use Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -47,11 +46,6 @@ class ApplicationDashboardController implements ControllerInterface
     private $targetRepository;
 
     /**
-     * @var ReleaseRepository
-     */
-    private $releaseRepository;
-
-    /**
      * @var EnvironmentRepository
      */
     private $environmentRepository;
@@ -75,9 +69,7 @@ class ApplicationDashboardController implements ControllerInterface
 
         $this->targetRepository = $em->getRepository(Target::class);
         $this->environmentRepository = $em->getRepository(Environment::class);
-
         $this->buildRepository = $em->getRepository(Build::class);
-        $this->releaseRepository = $em->getRepository(Release::class);
 
         $this->stickyEnvironmentService = $stickyEnvironmentService;
     }
@@ -185,7 +177,7 @@ class ApplicationDashboardController implements ControllerInterface
         foreach ($targets as &$target) {
             $target = [
                 'target' => $target,
-                'latest' => $this->releaseRepository->getByTarget($target, 1)->getIterator()->current()
+                'latest' => $target->release()
             ];
         }
 

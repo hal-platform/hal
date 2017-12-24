@@ -8,14 +8,15 @@
 namespace Hal\UI\Controllers\Target;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Repository\EnvironmentRepository;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Flash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\Application;
-use Hal\Core\Entity\Target;
-use Hal\Core\Entity\Environment;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
@@ -37,12 +38,19 @@ class RemoveTargetController implements ControllerInterface
     private $uri;
 
     /**
+     * @var EnvironmentRepository
+     */
+    private $environmentRepository;
+
+    /**
      * @param EntityManagerInterface $em
      * @param URI $uri
      */
     public function __construct(EntityManagerInterface $em, URI $uri)
     {
         $this->em = $em;
+        $this->environmentRepository = $this->em->getRepository(Environment::class);
+
         $this->uri = $uri;
     }
 
@@ -58,9 +66,7 @@ class RemoveTargetController implements ControllerInterface
         $this->em->flush();
 
         // Clear cached query for buildable environments
-        $envRepo = $this->em
-            ->getRepository(Environment::class)
-            ->clearBuildableEnvironmentsByApplication($application);
+        $this->environmentRepository->clearBuildableEnvironmentsByApplication($application);
 
         $this->withFlash($request, Flash::SUCCESS, self::MSG_SUCCESS);
         return $this->withRedirectRoute($response, $this->uri, 'targets', ['application' => $application->id()]);

@@ -94,7 +94,7 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
         $user = $this->userRepo->find($userID);
 
         // sign out user if not found, or is disabled
-        if (!$user || $user->isDisabled()) {
+        if (!$user instanceof User || $user->isDisabled()) {
             //stops redirect
             $this->getSession($request)->clear();
             // @todo CHANGE TO POST!!!!

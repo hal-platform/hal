@@ -120,7 +120,7 @@ class Flash
     /**
      * Remove all messages.
      *
-     * @return array
+     * @return void
      */
     public function removeMessages(): void
     {

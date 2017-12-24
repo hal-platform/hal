@@ -100,12 +100,12 @@ class SignInHandler implements MiddlewareInterface
         $user = $this->userRepo->findOneBy(['username' => $account['username']]);
 
         // account disabled manually
-        if ($user && $user->isDisabled()) {
+        if ($user instanceof User && $user->isDisabled()) {
             return $next($this->withError($request, self::ERR_DISABLED), $response);
         }
 
         $isFirstLogin = false;
-        if (!$user) {
+        if (!$user instanceof User) {
             $isFirstLogin = true;
             $user = new User;
         }

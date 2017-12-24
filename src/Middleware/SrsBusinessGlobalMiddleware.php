@@ -31,7 +31,7 @@ class SrsBusinessGlobalMiddleware implements MiddlewareInterface
     private $cookies;
 
     /**
-     * @param CookieHandler $handler
+     * @param CookieHandler $cookies
      */
     public function __construct(CookieHandler $cookies)
     {

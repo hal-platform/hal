@@ -8,8 +8,8 @@
 namespace Hal\UI\Controllers\Environment;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Environment;
+use Hal\Core\Repository\EnvironmentRepository;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,7 +26,7 @@ class EnvironmentsController implements ControllerInterface
     private $template;
 
     /**
-     * @var EntityRepository
+     * @var EnvironmentRepository
      */
     private $envRepo;
 

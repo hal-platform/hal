@@ -125,7 +125,7 @@ class BuildValidator
             return null;
         }
 
-        if (!$ref = $this->github->resolve($application->github()->owner(), $application->github()->repository(), $reference)) {
+        if (!$ref = $this->github->resolve($application->gitHub()->owner(), $application->gitHub()->repository(), $reference)) {
             $this->addError(self::ERR_UNKNOWN_REF, 'reference');
         }
 

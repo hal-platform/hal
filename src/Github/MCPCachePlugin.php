@@ -152,7 +152,8 @@ class MCPCachePlugin implements Plugin
      * Calculate the timestamp when this cache item should be dropped from the cache. The lowest value that can be
      * returned is $maxAge.
      *
-     * @param $request $maxAge
+     * @param int $maxAge
+     * @param RequestInterface $request
      *
      * @return int|null Unix system time passed to cache
      */

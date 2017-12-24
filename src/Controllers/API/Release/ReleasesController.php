@@ -48,7 +48,6 @@ class ReleasesController implements ControllerInterface
     /**
      * @param ResponseFormatter $formatter
      * @param EntityManagerInterface $em
-     * @param ReleaseNormalizer $normalizer
      * @param ProblemRendererInterface $problem
      */
     public function __construct(

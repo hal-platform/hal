@@ -9,16 +9,18 @@ namespace Hal\UI\Controllers\API\Target;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Repository\TargetRepository;
+use Hal\Core\Utility\SortingTrait;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\Application;
-use Hal\Core\Entity\Target;
-use Hal\Core\Entity\Environment;
-use Hal\Core\Utility\SortingTrait;
+
 use QL\Panthor\ControllerInterface;
 
 class TargetsController implements ControllerInterface
@@ -32,9 +34,13 @@ class TargetsController implements ControllerInterface
     private $formatter;
 
     /**
-     * @var EntityRepository
+     * @var TargetRepository
      */
     private $targetRepo;
+
+    /**
+     * @var EntityRepository
+     */
     private $environmentRepo;
 
     /**

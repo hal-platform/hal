@@ -47,7 +47,7 @@ class HistoryController implements ControllerInterface
     /**
      * @param ResponseFormatter $formatter
      * @param EntityManagerInterface $em
-     * @param array $parameters
+     * @param ProblemRendererInterface $problem
      */
     public function __construct(
         ResponseFormatter $formatter,

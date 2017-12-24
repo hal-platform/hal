@@ -134,8 +134,10 @@ class TargetValidator
             $this->addError(self::ERR_INVALID_CREDENTIALS, 'credentials');
         }
 
-        if (!$group = $this->groupRepo->find($groupID)) {
+        $group = $this->groupRepo->find($groupID);
+        if (!$group instanceof Group) {
             $this->addError(self::ERR_INVALID_SERVER, 'server');
+            return null;
         }
 
         if ($group->type() == GroupEnum::TYPE_RSYNC) {
@@ -339,17 +341,17 @@ class TargetValidator
         }
 
         if (!$this->validateCharacterBlacklist($cdApplication, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
-            $error = sprintf(ERR_CHARACTERS_RELAXED_WHITESPACE, 'CD Application');
+            $error = sprintf(self::ERR_CHARACTERS_RELAXED_WHITESPACE, 'CD Application');
             $this->addError($error, 'cd_application');
         }
 
         if (!$this->validateCharacterBlacklist($cdGroup, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
-            $error = sprintf(ERR_CHARACTERS_RELAXED_WHITESPACE, 'CD Group');
+            $error = sprintf(self::ERR_CHARACTERS_RELAXED_WHITESPACE, 'CD Group');
             $this->addError($error, 'cd_group');
         }
 
         if (!$this->validateCharacterBlacklist($cdConfiguration, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
-            $error = sprintf(ERR_CHARACTERS_RELAXED_WHITESPACE, 'CD Configuration');
+            $error = sprintf(self::ERR_CHARACTERS_RELAXED_WHITESPACE, 'CD Configuration');
             $this->addError($error, 'cd_config');
         }
 
@@ -389,12 +391,12 @@ class TargetValidator
         }
 
         if (!$this->validateCharacterBlacklist($ebApplication, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
-            $error = sprintf(ERR_CHARACTERS_RELAXED_WHITESPACE, 'EB Application');
+            $error = sprintf(self::ERR_CHARACTERS_RELAXED_WHITESPACE, 'EB Application');
             $this->addError($error, 'eb_application');
         }
 
         if (!$this->validateCharacterBlacklist($ebEnvironment, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
-            $error = sprintf(ERR_CHARACTERS_RELAXED_WHITESPACE, 'EB Environment');
+            $error = sprintf(self::ERR_CHARACTERS_RELAXED_WHITESPACE, 'EB Environment');
             $this->addError($error, 'eb_environment');
         }
 
@@ -426,7 +428,7 @@ class TargetValidator
         }
 
         if (!$this->validateCharacterBlacklist($path, self::REGEX_CHARACTER_STRICT_WHITESPACE)) {
-            $error = sprintf(ERR_CHARACTERS_STRICT_WHITESPACE, 'Path');
+            $error = sprintf(self::ERR_CHARACTERS_STRICT_WHITESPACE, 'Path');
             $this->addError($error, 'path');
         }
 
@@ -472,7 +474,7 @@ class TargetValidator
 
         if (strlen($source) > 0) {
             if (!$this->validateCharacterBlacklist($source, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
-                $error = sprintf(ERR_CHARACTERS_RELAXED_WHITESPACE, 'S3 Source');
+                $error = sprintf(self::ERR_CHARACTERS_RELAXED_WHITESPACE, 'S3 Source');
                 $this->addError($error, 's3_local_path');
             }
 
@@ -483,7 +485,7 @@ class TargetValidator
 
         if (strlen($destination) > 0) {
             if (!$this->validateCharacterBlacklist($destination, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
-                $error = sprintf(ERR_CHARACTERS_RELAXED_WHITESPACE, 'S3 Destination');
+                $error = sprintf(self::ERR_CHARACTERS_RELAXED_WHITESPACE, 'S3 Destination');
                 $this->addError($error, 's3_remote_path');
             }
 
@@ -504,7 +506,7 @@ class TargetValidator
     {
         if (strlen($name) > 0) {
             if (!$this->validateCharacterBlacklist($name, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
-                $error = sprintf(ERR_CHARACTERS_RELAXED_WHITESPACE, 'Name');
+                $error = sprintf(self::ERR_CHARACTERS_RELAXED_WHITESPACE, 'Name');
                 $this->addError($error, 'name');
             }
 
@@ -558,7 +560,7 @@ class TargetValidator
      * @param string $cdGroup
      * @param string $cdConfiguration
      *
-     * @return Target
+     * @return self
      */
     private function withCD(Target $target, $cdApplication, $cdGroup, $cdConfiguration)
     {
@@ -584,7 +586,7 @@ class TargetValidator
      * @param string $ebApplication
      * @param string $ebEnvironment
      *
-     * @return Target
+     * @return self
      */
     private function withEB(Target $target, $ebApplication, $ebEnvironment)
     {
@@ -607,7 +609,7 @@ class TargetValidator
      *
      * @param string $path
      *
-     * @return Target
+     * @return self
      */
     private function withPath(Target $target, $path)
     {

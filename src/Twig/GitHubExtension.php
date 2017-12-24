@@ -108,7 +108,7 @@ class GitHubExtension extends Twig_Extension
     /**
      * Format a git commit hash for output
      *
-     * @param $reference
+     * @param string $reference
      *
      * @return string
      */
@@ -120,7 +120,7 @@ class GitHubExtension extends Twig_Extension
     /**
      * Format an arbitrary git reference for display
      *
-     * @param $reference
+     * @param string $reference
      *
      * @return array
      */

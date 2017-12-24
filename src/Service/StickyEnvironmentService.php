@@ -34,7 +34,7 @@ class StickyEnvironmentService
 
     /**
      * @param CookieHandler $cookies
-     * @param Json $JSON
+     * @param JSON $json
      * @param string $preferencesExpiry
      */
     public function __construct(CookieHandler $cookies, JSON $json, string $preferencesExpiry)

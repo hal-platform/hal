@@ -137,7 +137,8 @@ class DeployController implements ControllerInterface
 
         $target = array_shift($targets);
 
-        if (!$target = $this->targetRepository->find($target)) {
+        $target = $this->targetRepository->find($target);
+        if (!$target instanceof Target) {
             return null;
         }
 

@@ -44,7 +44,6 @@ class AddTokenController implements ControllerInterface
     /**
      * @param EntityManagerInterface $em
      * @param URI $uri
-     * @param callable $random
      */
     public function __construct(EntityManagerInterface $em, URI $uri)
     {

@@ -175,7 +175,9 @@ jobs:
             - run:
                 name: 'Run static analysis'
                 command: |
-                    vendor/bin/phpstan analyse src
+                    vendor/bin/phpstan analyse \
+                    -c phpstan.neon -l 2 \
+                    src
 
     linting:
         <<: *defaults

@@ -8,9 +8,9 @@
 namespace Hal\UI\Controllers\API\Build;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Build;
+use Hal\Core\Repository\BuildRepository;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
@@ -35,7 +35,7 @@ class BuildsController implements ControllerInterface
     private $formatter;
 
     /**
-     * @var EntityRepository
+     * @var BuildRepository
      */
     private $buildRepo;
 

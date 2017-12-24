@@ -67,7 +67,7 @@ class ResponseFormatter
      * Format API data for rendering.
      *
      * @param ServerRequestInterface $request
-     * @param HypermediaResource $data
+     * @param HypermediaResource $resource
      *
      * @return string
      */

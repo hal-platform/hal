@@ -25,7 +25,7 @@ class DashboardStickyEnvironmentMiddleware implements MiddlewareInterface
     /**
      * @var EntityRepository
      */
-    private $envRepo;
+    private $environmentRepo;
 
     /**
      * @var StickyEnvironmentService
@@ -47,7 +47,7 @@ class DashboardStickyEnvironmentMiddleware implements MiddlewareInterface
         StickyEnvironmentService $service,
         URI $uri
     ) {
-        $this->envRepo = $em->getRepository(Environment::class);
+        $this->environmentRepo = $em->getRepository(Environment::class);
         $this->uri = $uri;
         $this->service = $service;
     }
@@ -66,7 +66,8 @@ class DashboardStickyEnvironmentMiddleware implements MiddlewareInterface
         }
 
         // environment is valid. save to cookie.
-        if ($environment = $this->envRepo->find($environmentID)) {
+        $environment = $this->environmentRepo->find($environmentID);
+        if ($environment instanceof Environment) {
             $response = $this->service->save($request, $response, $application->id(), $environment->id());
         }
 
