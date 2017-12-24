@@ -39,6 +39,11 @@ class EditEnvironmentController implements ControllerInterface
     private $em;
 
     /**
+     * @var EnvironmentValidator
+     */
+    private $envValidator;
+
+    /**
      * @var URI
      */
     private $uri;

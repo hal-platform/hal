@@ -110,5 +110,4 @@ class TargetsController implements ControllerInterface
 
         return null;
     }
-
 }

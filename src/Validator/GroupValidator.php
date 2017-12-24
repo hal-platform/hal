@@ -91,7 +91,6 @@ class GroupValidator
 
         // validate hostname if rsync group
         if ($groupType === GroupEnum::TYPE_RSYNC) {
-
             $name = trim(strtolower($hostname));
             $name = $this->validateHostname($name);
 
@@ -104,7 +103,6 @@ class GroupValidator
         // validate duplicate AWS group for environment
         // Only 1 aws type per region/environment
         } elseif (in_array($groupType, $this->awsTypes)) {
-
             $name = trim(strtolower($region));
             $name = $this->validateRegion($name);
 
@@ -155,12 +153,11 @@ class GroupValidator
         // validate hostname if rsync group
         // RSYNC-hostname (name) pair is unique
         if ($groupType === GroupEnum::TYPE_RSYNC) {
-
             $name = trim(strtolower($hostname));
 
             $hasChanged = $hasChanged || ($name != $group->name());
             if (!$hasChanged) {
-                GOTO SKIP_DUPE_CHECK;
+                goto SKIP_DUPE_CHECK;
             }
 
             $name = $this->validateHostname($name);
@@ -168,11 +165,10 @@ class GroupValidator
         // validate duplicate script group for environment
         // Only 1 script type per environment
         } elseif ($groupType === GroupEnum::TYPE_SCRIPT) {
-
             $name = '';
 
             if (!$hasChanged) {
-                GOTO SKIP_DUPE_CHECK;
+                goto SKIP_DUPE_CHECK;
             }
 
             $this->dupeCheck($environment, $groupType, $name);
@@ -180,12 +176,11 @@ class GroupValidator
         // validate duplicate AWS group for environment
         // Only 1 aws type per region/environment
         } elseif (in_array($groupType, $this->awsTypes)) {
-
             $name = trim(strtolower($region));
 
             $hasChanged = $hasChanged || ($name != $group->name());
             if (!$hasChanged) {
-                GOTO SKIP_DUPE_CHECK;
+                goto SKIP_DUPE_CHECK;
             }
 
             $name = $this->validateRegion($name);
@@ -269,7 +264,9 @@ class GroupValidator
             'name' => $name
         ]);
 
-        if (!$dupe) return;
+        if (!$dupe) {
+            return;
+        }
 
         if ($type == GroupEnum::TYPE_EB) {
             $this->addError(self::ERR_EB_DUPLICATE);

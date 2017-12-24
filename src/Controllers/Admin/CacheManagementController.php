@@ -102,7 +102,6 @@ class CacheManagementController implements ControllerInterface
 
         $doctrine = [];
         foreach (new Keyspace($this->predis, $keyPattern) as $key) {
-
             // slice namespace
             $parts = explode($this->keyDelimiter, $key);
             array_shift($parts);
@@ -161,7 +160,7 @@ class CacheManagementController implements ControllerInterface
      */
     private function formatConfig(array $directives)
     {
-        return array_map(function($v) {
+        return array_map(function ($v) {
             return var_export($v, true);
         }, $directives);
     }
@@ -174,7 +173,7 @@ class CacheManagementController implements ControllerInterface
     private function formatScripts(array $scripts)
     {
         // descending order
-        usort($scripts, function($a, $b) {
+        usort($scripts, function ($a, $b) {
             $a = $a['hits'];
             $b = $b['hits'];
 
@@ -192,7 +191,6 @@ class CacheManagementController implements ControllerInterface
 
         $formatted = [];
         foreach ($scripts as $script) {
-
             $path = $script['full_path'];
             if (stripos($path, $root) !== 0) {
                 continue;

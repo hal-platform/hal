@@ -7,6 +7,7 @@
 
 namespace Hal\UI\Service;
 
+use Closure;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -174,7 +175,7 @@ class JobQueueService
      */
     private function queueSort()
     {
-        return function($aEntity, $bEntity) {
+        return function ($aEntity, $bEntity) {
             $a = $aEntity->created();
             $b = $bEntity->created();
 

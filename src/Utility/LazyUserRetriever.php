@@ -7,8 +7,8 @@
 
 namespace Hal\UI\Utility;
 
+use Hal\Core\Entity\User;
 use Hal\UI\Middleware\UserSessionGlobalMiddleware;
-use QL\Hal\Core\Entity\User;
 use QL\Panthor\Twig\Context;
 
 /**

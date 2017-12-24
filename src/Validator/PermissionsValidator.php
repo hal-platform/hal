@@ -96,7 +96,9 @@ class PermissionsValidator
             $this->errors[] = self::ERR_SCOPE_REQUIRED;
         }
 
-        if ($this->hasErrors()) return null;
+        if ($this->hasErrors()) {
+            return null;
+        }
 
         $organization = $application = null;
 
@@ -112,11 +114,12 @@ class PermissionsValidator
             }
         }
 
-        if ($this->hasErrors()) return null;
+        if ($this->hasErrors()) {
+            return null;
+        }
 
         // User is already a member
-        if (
-            $type === UserPermissionEnum::TYPE_MEMBER &&
+        if ($type === UserPermissionEnum::TYPE_MEMBER &&
             ($selectedAuthorizations->isMemberOf($application) || $selectedAuthorizations->isMemberOf($organization))
         ) {
             $this->addError(self::ERR_DUPLICATE_PERMISSION);
@@ -130,7 +133,9 @@ class PermissionsValidator
             $this->addError(self::ERR_DUPLICATE_PERMISSION);
         }
 
-        if ($this->hasErrors()) return null;
+        if ($this->hasErrors()) {
+            return null;
+        }
 
         $permissions = (new UserPermission)
             ->withType($type)

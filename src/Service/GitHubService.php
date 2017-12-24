@@ -45,7 +45,7 @@ class GitHubService
     private $gitReferenceApi;
 
     /**
-     * @var CommitRepoApi
+     * @var CommitApi
      */
     private $gitCommitApi;
 
@@ -86,15 +86,15 @@ class GitHubService
     public function __construct(
         RepoApi $repoApi,
         RepoCommitApi $repoCommitApi,
-
+        //
         ReferenceApi $gitReferenceApi,
         CommitApi $gitCommitApi,
-
+        //
         PullRequestApi $pullRequestApi,
-
+        //
         UserApi $userApi,
         OrganizationMembersApi $orgMembersApi,
-
+        //
         ResultPager $pager
     ) {
         $this->repoApi = $repoApi;

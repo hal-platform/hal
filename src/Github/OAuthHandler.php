@@ -8,7 +8,7 @@
 namespace Hal\UI\Github;
 
 use GuzzleHttp\Client as Guzzle;
-use QL\Panthor\Utility\Json;
+use QL\Panthor\Utility\JSON;
 
 class OAuthHandler
 {
@@ -28,9 +28,13 @@ class OAuthHandler
     /**
      * @var array
      */
-    private static $requiredScopes = ['repo:status', 'repo_deployment'];
+    private static $requiredScopes = [
+        'repo:status',
+        'repo_deployment'
+    ];
+
     /**
-     * @var Json
+     * @var JSON
      */
     private $json;
 
@@ -40,8 +44,9 @@ class OAuthHandler
      * @param string $ghBaseUrl
      * @param string $ghClientId
      * @param string $ghClientSecret
+     * @param JSON $json
      */
-    public function __construct(Guzzle $guzzle, $ghBaseApiUrl, $ghBaseUrl, $ghClientId, $ghClientSecret, Json $json)
+    public function __construct(Guzzle $guzzle, $ghBaseApiUrl, $ghBaseUrl, $ghClientId, $ghClientSecret, JSON $json)
     {
         $this->guzzle = $guzzle;
 

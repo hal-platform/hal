@@ -222,10 +222,14 @@ class StartBuildController implements ControllerInterface
                 return ($prA > $prB) ? -1 : 1;
 
             } elseif ($loginA === $username || $loginB === $username) {
-
                 // One is owner
-                if ($loginA === $username) return -1;
-                if ($loginB === $username) return 1;
+                if ($loginA === $username) {
+                    return -1;
+                }
+
+                if ($loginB === $username) {
+                    return 1;
+                }
             }
 
             // No one is owner

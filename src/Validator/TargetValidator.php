@@ -93,21 +93,21 @@ class TargetValidator
         $groupID,
         $name,
         $path,
-
+        //
         $cdName,
         $cdGroup,
         $cdConfiguration,
-
+        //
         $ebName,
         $ebEnvironment,
-
+        //
         $s3method,
         $s3bucket,
         $s3source,
         $s3destination,
-
+        //
         $scriptContext,
-
+        //
         $url,
         $credentialID
     ) {
@@ -215,21 +215,21 @@ class TargetValidator
         Target $target,
         $name,
         $path,
-
+        //
         $cdName,
         $cdGroup,
         $cdConfiguration,
-
+        //
         $ebName,
         $ebEnvironment,
-
+        //
         $s3method,
         $s3bucket,
         $s3source,
         $s3destination,
-
+        //
         $scriptContext,
-
+        //
         $url,
         $credentialID
     ) {
@@ -471,7 +471,6 @@ class TargetValidator
         }
 
         if (strlen($source) > 0) {
-
             if (!$this->validateCharacterBlacklist($source, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
                 $error = sprintf(ERR_CHARACTERS_RELAXED_WHITESPACE, 'S3 Source');
                 $this->addError($error, 's3_local_path');
@@ -483,7 +482,6 @@ class TargetValidator
         }
 
         if (strlen($destination) > 0) {
-
             if (!$this->validateCharacterBlacklist($destination, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
                 $error = sprintf(ERR_CHARACTERS_RELAXED_WHITESPACE, 'S3 Destination');
                 $this->addError($error, 's3_remote_path');

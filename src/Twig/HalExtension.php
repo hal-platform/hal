@@ -96,8 +96,12 @@ class HalExtension extends Twig_Extension
     public function getTests()
     {
         return [
-            new Twig_SimpleTest('build', function ($entity) { return $entity instanceof Build; }),
-            new Twig_SimpleTest('release', function ($entity) { return $entity instanceof Release; })
+            new Twig_SimpleTest('build', function ($entity) {
+                return $entity instanceof Build;
+            }),
+            new Twig_SimpleTest('release', function ($entity) {
+                return $entity instanceof Release;
+            })
         ];
     }
 

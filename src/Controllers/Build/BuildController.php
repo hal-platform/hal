@@ -68,7 +68,7 @@ class BuildController implements ControllerInterface
         ]);
 
         // Queries in loops SUUUUUUCK
-        $children = array_map(function($child) {
+        $children = array_map(function ($child) {
             return $this->formatChild($child);
         }, $processes);
 

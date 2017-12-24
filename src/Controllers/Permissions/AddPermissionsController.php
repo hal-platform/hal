@@ -114,7 +114,6 @@ class AddPermissionsController implements ControllerInterface
         $this->applicationRepository = $em->getRepository(Application::class);
         $this->organizationRepository = $em->getRepository(Organization::class);
 
-        $this->errors = [];
         $this->authorizationHydrator = $authorizationHydrator;
     }
 
@@ -131,7 +130,6 @@ class AddPermissionsController implements ControllerInterface
         $form = $this->getFormData($request);
 
         if ($permission = $this->handleForm($form, $request, $selectedUser, $currentUserAuthorizations, $selectedUserAuthorizations)) {
-
             $this->authorizationService->addUserPermissions($permission);
 
             $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $permission->user()->username()));
@@ -164,7 +162,6 @@ class AddPermissionsController implements ControllerInterface
             'permissions' => $this->authorizationHydrator->hydrateAuthorizations($selectedUser, $selectedUserAuthorizations)
         ]);
     }
-
 
     /**
      * @param ServerRequestInterface $request

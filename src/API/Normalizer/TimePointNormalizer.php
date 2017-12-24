@@ -20,7 +20,7 @@ class TimePointNormalizer implements ResourceNormalizerInterface
     /**
      * @var string
      */
-    private $fomat;
+    private $format;
 
     /**
      * @var string
@@ -33,14 +33,9 @@ class TimePointNormalizer implements ResourceNormalizerInterface
      */
     public function __construct($format = '', $timezone = self::DEFAULT_TIMEZONE)
     {
-        if (!$format) {
-            $format = DateTime::ISO8601;
-        }
-
-        $this->format = $format;
+        $this->format = $format ?: DateTime::ISO8601;
         $this->timezone = $timezone;
     }
-
 
     /**
      * @param TimePoint $time

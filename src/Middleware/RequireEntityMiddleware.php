@@ -51,7 +51,6 @@ class RequireEntityMiddleware implements MiddlewareInterface
 
         'group' => Group::class,
         'target' => Target::class,
-        'group' => Group::class,
         'encrypted' => EncryptedProperty::class,
 
         'environment' => Environment::class,
@@ -88,7 +87,6 @@ class RequireEntityMiddleware implements MiddlewareInterface
             ->getArguments();
 
         foreach ($params as $param => $id) {
-
             if (!isset(self::KNOWN_ENTITIES[$param])) {
                 continue;
             }

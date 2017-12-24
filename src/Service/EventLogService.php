@@ -15,7 +15,7 @@ use Hal\Core\Entity\JobEvent;
 use Hal\Core\Entity\Release;
 use QL\MCP\Common\Time\Clock;
 use QL\MCP\Common\Time\TimePoint;
-use QL\Panthor\Utility\Json;
+use QL\Panthor\Utility\JSON;
 
 /**
  * This service will retrieve event logs from redis if they are available.
@@ -32,7 +32,7 @@ class EventLogService
     private $predis;
 
     /**
-     * @var Json
+     * @var JSON
      */
     private $json;
 
@@ -48,10 +48,10 @@ class EventLogService
 
     /**
      * @param Predis $predis
-     * @param Json $json
+     * @param JSON $json
      * @param Clock $clock
      */
-    public function __construct(Predis $predis, Json $json, Clock $clock, EntityManagerInterface $em)
+    public function __construct(Predis $predis, JSON $json, Clock $clock, EntityManagerInterface $em)
     {
         $this->predis = $predis;
         $this->json = $json;
@@ -104,7 +104,7 @@ class EventLogService
             }
         }
 
-        usort($logs, function($a, $b) {
+        usort($logs, function ($a, $b) {
             return ($a->order() > $b->order()) ? 1 : -1;
         });
 

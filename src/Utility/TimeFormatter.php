@@ -81,7 +81,7 @@ class TimeFormatter
 
         $human = sprintf('%d seconds', $interval->format('%s'));
         if ($minutes = $interval->format('%i')) {
-            $human = sprintf('%d minutes, ' , $minutes) . $human;
+            $human = sprintf('%d minutes, ', $minutes) . $human;
         }
 
         if ($interval->format('%h') || $interval->format('%d')) {

@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Api;
+namespace Hal\UI\Controllers\API;
 
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;

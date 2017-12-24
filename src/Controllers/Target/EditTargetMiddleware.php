@@ -39,6 +39,11 @@ class EditTargetMiddleware implements MiddlewareInterface
     private $validator;
 
     /**
+     * @var URI
+     */
+    private $uri;
+
+    /**
      * @param EntityManagerInterface $em
      * @param TargetValidator $validator
      * @param URI $uri

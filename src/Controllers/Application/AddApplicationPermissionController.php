@@ -110,7 +110,6 @@ class AddApplicationPermissionController implements ControllerInterface
         $form = [];
 
         if ($request->getMethod() === 'POST') {
-
             $form = [
                 'users' => $request->getParsedBody()['users'] ?? [],
                 'type' => $request->getParsedBody()['type'] ?? ''
@@ -183,17 +182,23 @@ class AddApplicationPermissionController implements ControllerInterface
             $this->errors[] = self::ERR_INVALID_TYPE;
         }
 
-        if ($this->errors) return null;
+        if ($this->errors) {
+            return null;
+        }
 
         // Verify users /  database lookup
         $verified = $this->validateUsers($users);
 
-        if ($this->errors) return null;
+        if ($this->errors) {
+            return null;
+        }
 
         // verify no dupe permissions
         $this->validateDuplicatePermissions($verified, $application, $type);
 
-        if ($this->errors) return null;
+        if ($this->errors) {
+            return null;
+        }
 
         // save
         $perms = [];
@@ -219,7 +224,7 @@ class AddApplicationPermissionController implements ControllerInterface
             ->matching($criteria)
             ->toArray();
 
-        $verifiedUsernames = array_map(function($u) {
+        $verifiedUsernames = array_map(function ($u) {
             return strtolower($u->username());
         }, $verifiedUsers);
 
@@ -229,13 +234,17 @@ class AddApplicationPermissionController implements ControllerInterface
             }
         }
 
-        if ($this->errors) return null;
+        if ($this->errors) {
+            return null;
+        }
 
         if (!$verifiedUsernames) {
             $this->errors[] = self::ERR_SELECT_A_USER;
         }
 
-        if ($this->errors) return null;
+        if ($this->errors) {
+            return null;
+        }
 
         return $verifiedUsers;
     }

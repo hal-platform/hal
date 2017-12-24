@@ -67,7 +67,7 @@ class StartReleaseController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $build = $request->getAttribute(Build::class);
-        $environment = $this->getDeploymentEnvironment( $request);
+        $environment = $this->getDeploymentEnvironment($request);
 
         if (!$build->isSuccess() || !$environment) {
             $this

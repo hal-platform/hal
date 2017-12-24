@@ -153,7 +153,6 @@ class QueueRefreshController implements ControllerInterface
         $normalizedQueue = [];
 
         foreach ($queue as $job) {
-
             if ($job instanceof Release) {
                 $normalizedQueue[] = $this->pushNormalizer->resource($job);
 

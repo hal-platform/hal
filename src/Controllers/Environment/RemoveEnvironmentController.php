@@ -60,10 +60,10 @@ class RemoveEnvironmentController implements ControllerInterface
     {
         $environment = $request->getAttribute(Environment::class);
 
-         if ($groups = $this->groupRepository->findBy(['environment' => $environment])) {
-             $this->withFlash($request, Flash::ERROR, self::ERR_HAS_GROUPS);
-             return $this->withRedirectRoute($response, $this->uri, 'environment', ['environment' => $environment->id()]);
-         }
+        if ($groups = $this->groupRepository->findBy(['environment' => $environment])) {
+            $this->withFlash($request, Flash::ERROR, self::ERR_HAS_GROUPS);
+            return $this->withRedirectRoute($response, $this->uri, 'environment', ['environment' => $environment->id()]);
+        }
 
         $this->em->remove($environment);
         $this->em->flush();

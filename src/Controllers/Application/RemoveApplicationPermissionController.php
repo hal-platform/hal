@@ -100,7 +100,6 @@ class RemoveApplicationPermissionController implements ControllerInterface
         $form = [];
 
         if ($request->getMethod() === 'POST') {
-
             $p = $request->getParsedBody()['permissions'] ?? [];
             $form = [
                 'permissions' => is_array($p) ? $p : []
@@ -152,7 +151,7 @@ class RemoveApplicationPermissionController implements ControllerInterface
             ->getRepository(UserPermission::class)
             ->findBy(['application' => $application]);
 
-        usort($applicationPermissions, function($a, $b) {
+        usort($applicationPermissions, function ($a, $b) {
             $a = $a->user()->username();
             $b = $b->user()->username();
             return strcasecmp($a, $b);
@@ -171,7 +170,6 @@ class RemoveApplicationPermissionController implements ControllerInterface
     {
         $toRemove = [];
         foreach ($existingPermissions as $perm) {
-
             if (!in_array($perm->id(), $permissions)) {
                 $toRemove[] = $perm;
             }
