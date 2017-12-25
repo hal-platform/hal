@@ -1,0 +1,23 @@
+{% import 'macros.twig' as macros %}
+
+<ul class="meta-box">
+    <li class="list--legend">
+        <p class="mbn mrs mtn">{{ macros.status('Member', 'info') }}</p>
+        <p class="mbn mtn">
+            Members have access to non-prod build and deployments.
+        </p>
+    </li>
+    <li class="list--legend">
+        <p class="mbn mrs">{{ macros.status('Owner', 'notice') }}</p>
+        <p class="mbn">
+            Owners can manage their application, its environments, and encrypted configuration.
+            They can deploy to non-prod environments and grant non-prod access to others.
+        </p>
+    </li>
+    <li class="list--legend">
+        <p class="mbn mrs">{{ macros.status('Admin', 'warning') }}</p>
+        <p class="mbn">
+            Admins can deploy to all environments, manage all applications and permissions.
+        </p>
+    </li>
+</ul>

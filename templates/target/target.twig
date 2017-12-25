@@ -1,37 +1,35 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
 
-{% set page_title = 'Target : ' ~ application.name %}
+{% set page_title = 'Deployment Target' %}
 
 {% set can_edit = current_authorizations.isSuper() or current_authorizations.isOwnerOf(application) %}
 
 {% block content %}
     <div class="nav--page">
-        <h1>Deployment Target - <b>{{ application.name }}</b></h1>
+        <h1>{{ page_title }}</h1>
 
         <p class="nav--page__back">
             <a class="btn btn--small btn--back" href="{{ uriFor('application', {'application': application.id}) }}">Back to Application</a>
         </p>
     </div>
 
-    <div class="details-box">
-        <ul>
-            <li>
-                <h6>Application</h6>
-                <a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a>
-            </li>
+    <ul class="meta-box">
+        <li>
+            <h6>Application</h6>
+            {{ application.name }}
+        </li>
 
-            <li>
-                <h6>Group</h6>
-                <a href="{{ uriFor('group', {'group': target.group.id}) }}">{{ target.group.format(false) }}</a>
-            </li>
+        <li>
+            <h6>Target Template</h6>
+            {{ target.group.format(false) }}
+        </li>
 
-            <li>
-                <h6>Environment</h6>
-                {{ target.group.environment.name }}
-            </li>
-        </ul>
-    </div>
+        <li>
+            <h6>Environment</h6>
+            {{ target.group.environment.name }}
+        </li>
+    </ul>
 
     <h4>Name</h4>
     <p>{{ target.name ?: 'None' }}</p>
@@ -39,23 +37,23 @@
     <h4>Type</h4>
     <p>{{ target.group.format }}</p>
 
-    {% if target.group.isAWS %}
-
-        <h4>Credentials</h4>
-        <p>
-            {% if target.credential %}
-                {{ target.credential.name }}
-                {% if target.credential.type == 'aws' %}
-                    (AWS)
-                {% elseif target.credential.type == 'privatekey' %}
-                    (Private Key)
-                {% endif %}
-
-            {% else %}
-                {{ macros.status('None', 'error', 'spam-2') }}
+    <h4>Credentials</h4>
+    <p>
+        {% if target.credential %}
+            {{ target.credential.name }}
+            {% if target.credential.type == 'aws_static' %}
+                (AWS Static Key)
+            {% elseif target.credential.type == 'aws_role' %}
+                (AWS Role)
+            {% elseif target.credential.type == 'privatekey' %}
+                (Private Key)
             {% endif %}
-        </p>
-    {% endif %}
+        {% elseif target.group.isAWS %}
+            {{ macros.status('None', 'error', 'spam-2') }}
+        {% else %}
+            None
+        {% endif %}
+    </p>
 
     {% if target.group.type == 'rsync' %}
 
@@ -121,12 +119,23 @@
         {% endif %}
     </p>
 
-    <ul>
-        <li><a class="btn" href="{{ uriFor('targets', {'application': application.id}) }}">Deployment Targets</a></li>
-        {% if can_edit %}
-            <li><a class="btn btn--action" href="{{ uriFor('target.edit', {'application': application.id, 'target': target.id}) }}">Edit Target</a></li>
-            <li><a class="btn btn--destructive" href="{{ uriFor('target.remove', {'application': application.id, 'target': target.id}) }}">Remove Target</a></li>
-        {% endif %}
+    <ul class="list--bare">
+        <li>
+            <a class="btn" href="{{ uriFor('targets', {'application': application.id}) }}">Deployment Targets</a>
+        </li>
+        <li>
+            {% if can_edit %}
+                <a class="btn btn--action" href="{{ uriFor('target.edit', {'application': application.id, 'target': target.id}) }}">Edit Target</a></li>
+            {% else %}
+                {{ macros.disabled_button('Edit Target') }}
+            {% endif %}
+        <li>
+            {% if can_edit %}
+                <a class="btn btn--destructive" href="{{ uriFor('target.remove', {'application': application.id, 'target': target.id}) }}">Remove Target</a></li>
+            {% else %}
+                {{ macros.disabled_button('Remove Target') }}
+            {% endif %}
+        </li>
     </ul>
 
 {% endblock %}

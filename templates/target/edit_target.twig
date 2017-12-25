@@ -6,24 +6,22 @@
 {% block content %}
     <h1>Edit Target - <b>{{ application.name }}</b></h1>
 
-    <div class="details-box">
-        <ul>
-            <li>
-                <h6>Application</h6>
-                <a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a>
-            </li>
+    <ul class="meta-box">
+        <li>
+            <h6>Application</h6>
+            <a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a>
+        </li>
 
-            <li>
-                <h6>Group</h6>
-                <a href="{{ uriFor('group', {'group': target.group.id}) }}">{{ target.group.format }}</a>
-            </li>
+        <li>
+            <h6>Group</h6>
+            <a href="{{ uriFor('group', {'group': target.group.id}) }}">{{ target.group.format }}</a>
+        </li>
 
-            <li>
-                <h6>Environment</h6>
-                {{ target.group.environment.name }}
-            </li>
-        </ul>
-    </div>
+        <li>
+            <h6>Environment</h6>
+            {{ target.group.environment.name }}
+        </li>
+    </ul>
 
     <h4>Type</h4>
     <p>{{ target.group.formatHumanType }}</p>
@@ -224,7 +222,7 @@
 
             </ul>
 
-            <ul>
+            <ul class="list--bare">
                 <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
                 <li><a class="btn" href="{{ uriFor('target', {'application': application.id, 'target': target.id}) }}">Cancel</a></li>
             </ul>

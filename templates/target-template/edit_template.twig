@@ -1,0 +1,91 @@
+{% extends 'base.twig' %}
+{% import 'macros.form.twig' as form_macros %}
+
+{% set page_title = 'Edit Template' %}
+
+{% block content %}
+    <div class="nav--page">
+        <h1>{{ page_title }}</h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('groups') }}">Back to Templates</a>
+        </p>
+    </div>
+
+    {{ form_macros.formErrors(errors) }}
+
+    <form method="post" class="form-wrapper">
+        <ul class="form-fields">
+            <li>
+                <label>Environment</label>
+                <ul class="list--bare">
+                    {% for environment in environments %}
+                        {% set is_selected = form.environment == environment.id ? ' checked' : '' %}
+                        <li>
+                            <label for="env-{{ environment.id }}">
+                                <input type="radio" id="env-{{ environment.id }}" name="environment" value="{{ environment.id }}"{{ is_selected }}>
+                                {{ environment.name }}
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+
+            <li>
+                <label>Type</label>
+                <ul class="list--bare">
+                    {% for type in group_types %}
+                        {% set is_selected = form.group_type == type ? ' checked' : '' %}
+
+                        <li>
+                            <label for="type-{{ type }}">
+                                <input type="radio" id="type-{{ type }}" name="group_type" value="{{ type }}"{{ is_selected }}>
+                                {% if type == 'rsync' -%}
+                                    RSync (On-premises Linux)
+                                {%- elseif type == 'eb' -%}
+                                    Elastic Beanstalk (AWS)
+                                {%- elseif type == 'cd' -%}
+                                    CodeDeploy (AWS)
+                                {%- elseif type == 's3' -%}
+                                    S3 (AWS)
+                                {%- elseif type == 'script' -%}
+                                    Script (Any)
+                                {%- endif %}
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+
+            <li>
+                {% set hostname = form.group_type == 'rsync' ? form.hostname : '' %}
+                <label for="hostname">Hostname</label>
+                <input type="text" name="hostname" id="hostname" maxlength="60" value="{{ hostname }}" class="text-input">
+                <small>RSync Only</small>
+            </li>
+
+            <li>
+                <label>Region</label>
+                <ul class="list--bare">
+                    {% for region in aws_regions %}
+                        {% set is_selected = form.region == region ? ' checked' : '' %}
+                        <li>
+                            <label for="region-{{ region }}">
+                                <input type="radio" id="region-{{ region }}" name="region" value="{{ region }}"{{ is_selected }}>
+                                {{ region }}
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <small>AWS Only</small>
+            </li>
+        </ul>
+
+        <ul class="list--bare">
+            <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
+            <li><a class="btn" href="{{ uriFor('group', {'group': group.id}) }}">Cancel</a></li>
+        </ul>
+
+    </form>
+
+{% endblock %}

@@ -31,7 +31,7 @@
 
     <h2 id="app-owners">Owners</h2>
     {% if owners %}
-        <table class="table--spacing-medium table--striped">
+        <table class="table--spacing-medium">
             <thead>
                 <tr>
                     <th class="t20">Username</th>
@@ -74,7 +74,7 @@
 
     <h2 id="app-members">Members</h2>
     {% if members %}
-        <table class="table--spacing-medium table--striped">
+        <table class="table--spacing-medium">
             <thead>
                 <tr>
                     <th class="t20">Username</th>
@@ -117,7 +117,7 @@
 
     <h2 id="super">Hal Administrators</h2>
     {% if admins %}
-        <table class="table--spacing-medium table--striped">
+        <table class="table--spacing-medium">
             <thead>
             <tr>
                 <th class="t20">Username</th>
@@ -158,25 +158,7 @@
         There are no Hal administrators.
     {% endif %}
 
-    <h2>User Types</h2>
-
-    <section class="details-box">
-        <ul class="list--bare mbn">
-            <li class="list--legend">
-                <p class="mbn mrs">{{ macros.status('Member', 'info') }}</p>
-                <p class="mbn">Members have access to non-prod build and deployments</p>
-            </li>
-            <li class="list--legend">
-                <p class="mbn mrs">{{ macros.status('Owner', 'notice') }}</p>
-                <p class="mbn">
-                    Owners can manage specific applications, their deployments and encrypted properties. They can deploy to non-prod environments. Users can lead multiple applications.
-                </p>
-            </li>
-            <li class="list--legend">
-                <p class="mbn mrs">{{ macros.status('Admin', 'warning') }}</p>
-                <p class="mbn">Admins can deploy to all environments, manage all applications and permissions.</p>
-            </li>
-        </ul>
-    </section>
+    <h2>Permission Levels</h2>
+    {% include 'permissions/partial.permission_descriptions.twig' %}
 
 {% endblock %}

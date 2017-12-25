@@ -21,7 +21,7 @@
         </p>
     </div>
 
-    <ul>
+    <ul class="list--bare">
         <li>
             <form method="post">
                 <input name="cache_type" type="hidden" value="doctrine">
@@ -46,10 +46,9 @@
 
     <h3>Permissions Cache</h3>
     <section>
-
-        <div class="details-box">
+        <div class="meta-box">
             {% if permissions %}
-                <table class="table--spacing-small">
+                <table class="table--spacing-medium">
                     <thead>
                         <tr>
                             <th class="t70">Key</th>
@@ -79,9 +78,9 @@
     <h3>Doctrine Cache</h3>
     <section>
 
-        <div class="details-box">
+        <div class="meta-box">
             {% if doctrine_cached %}
-                <table class="table--spacing-small">
+                <table class="table--spacing-medium">
                     <thead>
                         <tr>
                             <th>Key</th>
@@ -111,66 +110,61 @@
         {% if not opcache %}
             <p>Zend OP Cache is not installed.</p>
         {% else %}
+            <ul class="meta-box">
+                <li>
+                    <h6>Status</h6>
+                    {% set opcEnabledStatus = opcache.enabled ? 'success' : 'error' %}
+                    {% set opcEnabledText = opcache.enabled ? 'Enabled' : 'Disabled' %}
+                    {% set opcEnabledIcon = opcache.enabled ? 'tick' : 'cross' %}
 
-            <div class="details-box">
-                <ul>
-                    <li>
-                        <h6>Status</h6>
-                        {% set opcEnabledStatus = opcache.enabled ? 'success' : 'error' %}
-                        {% set opcEnabledText = opcache.enabled ? 'Enabled' : 'Disabled' %}
-                        {% set opcEnabledIcon = opcache.enabled ? 'tick' : 'cross' %}
+                    {% set opcFullStatus = opcache.cache_full ? 'error' : 'success' %}
+                    {% set opcFullText = opcache.cache_full ? 'Cache Full' : 'Cache Not Full' %}
+                    {% set opcFullIcon = opcache.cache_full ? 'cross' : 'tick' %}
 
-                        {% set opcFullStatus = opcache.cache_full ? 'error' : 'success' %}
-                        {% set opcFullText = opcache.cache_full ? 'Cache Full' : 'Cache Not Full' %}
-                        {% set opcFullIcon = opcache.cache_full ? 'cross' : 'tick' %}
+                    {{ macros.status(opcEnabledText, opcEnabledStatus, opcEnabledIcon) }}
+                    {{ macros.status(opcFullText, opcFullStatus, opcFullIcon) }}
 
-                        {{ macros.status(opcEnabledText, opcEnabledStatus, opcEnabledIcon) }}
-                        {{ macros.status(opcFullText, opcFullStatus, opcFullIcon) }}
+                </li>
 
-                    </li>
+                <li>
+                    <h6>Hits</h6>
+                    <b>{{ opcache.hits }}</b> hits, <b>{{ opcache.misses }}</b> misses
+                </li>
 
-                    <li>
-                        <h6>Hits</h6>
-                        <b>{{ opcache.hits }}</b> hits, <b>{{ opcache.misses }}</b> misses
-                    </li>
+                <li>
+                    <h6>Hit Rate</h6>
+                    {{ opcache.opcache_hit_rate }}%
+                </li>
 
-                    <li>
-                        <h6>Hit Rate</h6>
-                        {{ opcache.opcache_hit_rate }}%
-                    </li>
+                <li>
+                    <h6>Memory</h6>
+                    {{ opcache.used_memory }} / {{ opcache.total_memory }}
+                </li>
 
-                    <li>
-                        <h6>Memory</h6>
-                        {{ opcache.used_memory }} / {{ opcache.total_memory }}
-                    </li>
+                <li>
+                    <h6>Buffer</h6>
+                    {{ opcache.used_buffer }} / {{ opcache.total_buffer }}
+                </li>
 
-                    <li>
-                        <h6>Buffer</h6>
-                        {{ opcache.used_buffer }} / {{ opcache.total_buffer }}
-                    </li>
+                <li>
+                    <h6>Cached</h6>
+                    {{ opcache.cached_scripts }} scripts, {{ opcache.cached_keys }} keys
+                </li>
 
-                    <li>
-                        <h6>Cached</h6>
-                        {{ opcache.cached_scripts }} scripts, {{ opcache.cached_keys }} keys
-                    </li>
-
-                </ul>
-            </div>
+            </ul>
 
             <h4>Configuration</h4>
-            <div class="details-box">
-                <ul>
-                    {% for key, data in opcache.configuration %}
-                        <li>
-                            <h6>{{ key }}</h6>
-                            <code>{{ data|e }}</code>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
+            <ul class="meta-box">
+                {% for key, data in opcache.configuration %}
+                    <li>
+                        <h6>{{ key }}</h6>
+                        <code>{{ data|e }}</code>
+                    </li>
+                {% endfor %}
+            </ul>
 
             <h4>Cached Scripts</h4>
-            <div class="details-box">
+            <div class="meta-box">
                 <table>
                     <thead>
                         <tr>

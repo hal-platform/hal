@@ -1,29 +1,29 @@
-.github__pr--closed {
+.github-pr--closed {
     color: #c00000;
 }
 
-.github__pr--open {
+.github-pr--open {
     color: #00c92c;
 }
 
-.github__pr {
+.github-pr {
     font-size: .6em;
 
-    &.github__pr--owner .github__pr--label {
+    &.github-pr--owner .pr-label {
         background-color: rgb(250, 240, 210);
     }
 }
 
 // Stolen directly from GitHub's css.
-.github__pr--source {
-    color: rgb(89, 138, 159);
-}
-
-.github__pr--label {
-    padding: msem(-7);
+.pr-label {
+    padding: .35em;
     background-color: rgb(232, 240, 248);
     color: rgb(51, 100, 121);
 
     border-radius: 3px;
     font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+
+    .pr-source {
+        color: rgb(89, 138, 159);
+    }
 }

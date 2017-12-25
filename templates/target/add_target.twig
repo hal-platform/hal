@@ -4,31 +4,32 @@
 
 {% set js_components = ['add_target_form'] %}
 
-{% set page_title = 'Add Target : ' ~ application.name %}
+{% set page_title = 'Add Deployment Target' %}
 
 {% block content %}
-    <h1>Add Target - <b>{{ application.name }}</b></h1>
+    <div class="nav--page">
+        <h1>{{ page_title }}</h1>
 
-    <div class="details-box">
-        <ul>
-            <li>
-                <h6>Application</h6>
-                <a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a>
-            </li>
-
-            {% if selected_environment %}
-                <li>
-                    <h6>Environment</h6>
-                    {{ selected_environment.name }}
-                    <a href="{{ uriFor('target.add', {'application': application.id}) }}">Change environment</a>
-                </li>
-            {% endif %}
-        </ul>
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('targets', {'application': application.id}) }}">Back to Deployment Targets</a>
+            <a class="btn btn--small btn--back" href="{{ uriFor('application', {'application': application.id}) }}">Manage Application</a>
+        </p>
     </div>
 
-    <p>
-        Target deployment relationships define what servers your application can be deployed to and where on that server the code will be placed.
-    </p>
+    <ul class="meta-box">
+        <li>
+            <h6>Application</h6>
+            {{ application.name }}
+        </li>
+
+        {% if selected_environment %}
+            <li>
+                <h6>Environment</h6>
+                {{ selected_environment.name }}
+                <a href="{{ uriFor('target.add', {'application': application.id}) }}">Change environment</a>
+            </li>
+        {% endif %}
+    </ul>
 
     {% if selected_environment %}
         <div class="form-wrapper js-targets-form">
@@ -48,10 +49,10 @@
         Select a datacenter provider and environment.
     </p>
 
-    <ul class="radio-grid radio-grid--tri">
+    <ul class="list--bare">
         {% for env in environments %}
             <li>
-                <a class="radio-grid--fake-item" href="{{ uriFor('target.add', {'application': application.id}, {'environment': env.id}) }}">
+                <a class="btn" href="{{ uriFor('target.add', {'application': application.id}, {'environment': env.id}) }}">
                     {% if env.isProduction %}
                         {{ macros.icon('key') }}
                     {% endif %}
@@ -69,7 +70,7 @@
 
         <ul class="form-fields">
             <li>
-                <label for="group">Group</label>
+                <label for="group">Template</label>
                 <select class="select-input" name="group" id="group" required data-target-select>
                     <option></option>
                     {% for group in groups %}
@@ -245,7 +246,7 @@
             </li>
         </ul>
 
-        <ul>
+        <ul class="list--bare">
             <li><input class="btn btn--action" type="submit" value="Add Target"></li>
             <li><a class="btn" href="{{ uriFor('targets', {'application': application.id}) }}">Cancel</a></li>
         </ul>

@@ -1,10 +1,10 @@
-{% macro render_deployment_row(target, release, selected, canUserRelease, releaseNow) %}
+{% macro render_deployment_row(target, release, selected, can_user_deploy, can_deploy_now) %}
     {% import 'macros.twig' as macros %}
     {% import 'macros.git.twig' as git_macros %}
 
-    {% set isSelected = (target.id == selected) %}
-    {% set inProgress = target.status in ['pending', 'running', 'deploying'] %}
-    {% set needsCredentials = target.group.isAWS() and not target.credential %}
+    {% set is_selected = (target.id == selected) %}
+    {% set in_progress = target.status in ['pending', 'running', 'deploying'] %}
+    {% set needs_credentials = target.group.isAWS() and not target.credential %}
 
     <tr>
         <td>
@@ -16,47 +16,42 @@
             {% set build = release.build %}
 
             <td>
-                {% set isCurrent = githubCommitIsCurrent(build.application.github.owner, build.application.github.repository, build.reference, build.commit) %}
-                {{ git_macros.gitref(build, true, isCurrent) }} ({{ git_macros.gitcommit(build) }})
+                {% set is_gitref_current = githubCommitIsCurrent(build.application.github.owner, build.application.github.repository, build.reference, build.commit) %}
+                {{ git_macros.gitref(build, true, is_gitref_current) }}
+                ({{ git_macros.gitcommit(build) }})
             </td>
             <td>
-                {% if inProgress %}
+                {% if in_progress %}
                     Now
                 {% else %}
                     {{ release.created|html5date }}
                 {% endif %}
                 ({{ macros.job_status_prefix(release, true, false) }})
-                by
-                {% if release.user %}
-                    <a href="{{ uriFor('user', {'user': release.user.id}) }}">{{ release.user.username }}</a>
-                {% else %}
-                    Unknown
-                {% endif %}
             </td>
         {% else %}
 
-            {# No successful pushes #}
+            {# No successful releases #}
             <td></td>
             <td></td>
 
         {% endif %}
 
-        <td class="tr">
-            {% if inProgress %}
+        <td>
+            {% if in_progress %}
                 {{ macros.status('Please Wait', 'info', 'clock') }}
 
-            {% elseif needsCredentials %}
+            {% elseif needs_credentials %}
                 {{ macros.status('No Credentials', 'error', 'spam-2') }}
 
-            {% elseif canUserRelease %}
+            {% elseif can_user_deploy %}
                 <label class="checkbox-check mrn" for="sel-{{ target.id }}">
                     <input
                         type="checkbox"
                         class="js-toggle-box"
                         name="targets[]"
                         id="sel-{{ target.id }}"
-                        value="{{ target.id }}"{{ isSelected ? ' checked' : '' }}>
-                    <b class="checkbox-check--tick"></b>{{ releaseNow ? 'Release Now' : 'Release When Ready' }}
+                        value="{{ target.id }}"{{ is_selected ? ' checked' : '' }}>
+                    <b class="checkbox-check--tick"></b>{{ can_deploy_now ? 'Deploy Now' : 'Deploy When Ready' }}
                 </label>
             {% else %}
                 No Access

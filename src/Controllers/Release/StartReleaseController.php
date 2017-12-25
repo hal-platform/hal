@@ -89,7 +89,7 @@ class StartReleaseController implements ControllerInterface
 
         return $this->withTemplate($request, $response, $this->template, [
             'build' => $build,
-            'environment' => $environment,
+            'selected_environment' => $environment,
             'selected' => $request->getQueryParams()['target'] ?? '',
             'statuses' => $statuses
         ]);

@@ -16,7 +16,8 @@
 
 // This allows for dynamically overflowed <code>. Must be wrapped in a block-type element
 .code_fixed {
-    overflow: hidden;
+    overflow: scroll;
+    max-width: 50em;
 
     code {
         position: relative;

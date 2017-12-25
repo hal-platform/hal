@@ -81,48 +81,20 @@ class ApplicationDashboardController implements ControllerInterface
     {
         $application = $request->getAttribute(Application::class);
 
-        // environments, selected env
-        $environments = $this->getBuildableEnvironments($application);
-        $selectedEnvironment = $this->findSelectedEnvironment(
-            $environments,
-            $this->stickyEnvironmentService->get($request, $application->id())
-        );
+        $environments = $this->environmentRepository->getBuildableEnvironmentsByApplication($application);
+        $stickyEnv = $this->stickyEnvironmentService->get($request, $application->id());
+        $selectedEnvironment = $this->findSelectedEnvironment($environments, $stickyEnv);
 
-        $deployments = $builds =  [];
-
-        if ($selectedEnvironment) {
-            $deployments = $this->getTargetsForEnvironment($application, $selectedEnvironment);
-            $builds = $this->buildRepository->findBy(
-                ['application' => $application, 'environment' => [$selectedEnvironment, null]],
-                ['created' => 'DESC'],
-                SharedStaticConfiguration::SMALL_PAGE_SIZE
-            );
-        }
+        $targets = $this->getTargetsForEnvironment($application, $selectedEnvironment);
+        $builds = $this->getBuilds($application, $selectedEnvironment);
 
         return $this->withTemplate($request, $response, $this->template, [
             'application' => $application,
             'builds' => $builds,
             'environments' => $environments,
-            'deployment_statuses' => $deployments,
+            'targets' => $targets,
             'selected_environment' => $selectedEnvironment,
         ]);
-    }
-
-    /**
-     * @param Application $application
-     *
-     * @return Environment[]
-     */
-    private function getBuildableEnvironments(Application $application)
-    {
-        $environments = $this->environmentRepository->getBuildableEnvironmentsByApplication($application);
-
-        // if empty, throw them a bone with "test"
-        if (!$environments) {
-            $environments = $this->environmentRepository->findBy(['name' => 'test']);
-        }
-
-        return $environments;
     }
 
     /**
@@ -131,7 +103,7 @@ class ApplicationDashboardController implements ControllerInterface
      *
      * @return Environment|null
      */
-    private function findSelectedEnvironment($environments, $selected)
+    private function findSelectedEnvironment(array $environments, $selected)
     {
         // list empty
         if (!$environments) {
@@ -145,42 +117,50 @@ class ApplicationDashboardController implements ControllerInterface
             }
         }
 
-        // Not in the list? Just get the first
-        return array_shift($environments);
+        return null;
     }
 
     /**
      * @param Application $application
-     * @param Environment $selectedEnvironment
+     * @param Environment|null $selectedEnvironment
      *
      * @return array
-     * [
-     *     [
-     *         'deploy' => Target
-     *         'latest' => Release|null
-     *     ],
-     *     [
-     *         'deploy' => Target
-     *         'latest' => Release|null
-     *     ]
-     * ]
      */
-    private function getTargetsForEnvironment(Application $application, Environment $selectedEnvironment = null)
+    private function getTargetsForEnvironment(Application $application, ?Environment $selectedEnvironment)
     {
         $targets = [];
+
         if ($selectedEnvironment) {
             $targets = $this->targetRepository->getByApplicationAndEnvironment($application, $selectedEnvironment);
         }
 
         usort($targets, $this->targetSorter());
 
-        foreach ($targets as &$target) {
-            $target = [
-                'target' => $target,
-                'latest' => $target->release()
-            ];
-        }
-
         return $targets;
+    }
+
+    /**
+     * @param Application $application
+     * @param Environment|null $selectedEnvironment
+     *
+     * @return array
+     */
+    private function getBuilds(Application $application, ?Environment $selectedEnvironment)
+    {
+        $searchBy = $selectedEnvironment ? [$selectedEnvironment, null] : [null];
+        $sortBy = [
+            'created' => 'DESC'
+        ];
+
+        $builds = $this->buildRepository->findBy(
+            [
+                'application' => $application,
+                'environment' => $searchBy
+            ],
+            $sortBy,
+            SharedStaticConfiguration::SMALL_PAGE_SIZE
+        );
+
+        return $builds;
     }
 }

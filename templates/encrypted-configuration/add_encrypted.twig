@@ -1,10 +1,17 @@
 {% extends 'base.twig' %}
 {% import 'macros.form.twig' as form_macros %}
 
-{% set page_title = 'Add Encrypted Property' %}
+{% set page_title = 'Add Encrypted Configuration' %}
 
 {% block content %}
-    <h1>{{ page_title }} - <b>{{ application.name }}</b></h1>
+    <div class="nav--page">
+        <h1>{{ page_title }}</h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('application', {'application': application.id}) }}">Back to Application</a>
+        </p>
+    </div>
+
 
     <div class="form-wrapper">
         {{ form_macros.formErrors(errors) }}
@@ -14,50 +21,58 @@
                 <li>
                     <label for="name">
                         Property Name
-                        <small class="additional">
-                            This will be uppercased and prefixed with <code>ENCRYPTED_</code> at runtime.
-                        </small>
                     </label>
                     <input name="name" id="name" maxlength="64" required value="{{ form.name }}" class="text-input">
+                    <small>
+                        This will be uppercased and prefixed with <code>ENCRYPTED_</code> at runtime.
+                    </small>
                 </li>
 
                 <li>
                     <label for="decrypted">
                         Value
-                        <small class="additional">This will be encrypted once saved, and only unencrypted during project build.</small>
                     </label>
                     <input name="decrypted" id="decrypted" maxlength="200" required value="{{ form.decrypted }}" class="text-input" autocomplete="off">
+                    <small>
+                        This will be encrypted once saved, and only unencrypted during project build.
+                    </small>
                 </li>
 
                 <li>
                     <label>Environment</label>
-                    <ul class="radio-grid radio-grid--tri">
-                        {% for environment in environments %}
-                            {% set checked = '' %}
-                            {% if form.environment == environment.id %}
-                                {% set checked = ' checked' %}
-                            {% endif %}
 
+                    {% if environments %}
+                        <ul class="list--bare">
+
+                            {% for environment in environments %}
+                                {% set is_selected = form.environment == environment.id ? ' checked' : '' %}
+
+                                <li>
+                                    <label for="env-{{ environment.id }}">
+                                        <input type="radio" id="env-{{ environment.id }}" name="environment" value="{{ environment.id }}"{{ is_selected }}>
+                                        {{ environment.name }}
+                                    </label>
+                                </li>
+                            {% endfor %}
+
+                            {% set is_selected = form.organization == 'all' ? ' checked' : '' %}
                             <li>
-                                <input id="environment-{{ environment.id }}" type="radio" name="environment" value="{{ environment.id }}"{{ checked }}>
-                                <label for="environment-{{ environment.id }}">{{ environment.name }}</label>
+                                <label for="env-noop">
+                                    <input type="radio" id="env-noop" name="environment" value="global"{{ is_selected }}>
+                                    Global (Available in all environments)
+                                </label>
                             </li>
-                        {% endfor %}
 
-                        {% set checked = '' %}
-                        {% if form.environment == 'all' %}
-                            {% set checked = ' checked' %}
-                        {% endif %}
-                        <li>
-                            <input id="environment-global" type="radio" name="environment" value="global"{{ checked }}>
-                            <label for="environment-global">Global (Available in all environments)</label>
-                        </li>
-                    </ul>
+                        </ul>
+                    {% else %}
+                        <p>There are no environments.</p>
+                    {% endif %}
+
                 </li>
             </ul>
 
-            <ul>
-                <li><input class="btn btn--action" type="submit" value="Add Encrypted Property"></li>
+            <ul class="list--bare">
+                <li><input class="btn btn--action" type="submit" value="Add Encrypted Configuration"></li>
                 <li><a class="btn" href="{{ uriFor('encrypted.configuration', {'application': application.id}) }}">Cancel</a></li>
             </ul>
         </form>

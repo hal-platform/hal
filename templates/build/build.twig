@@ -17,71 +17,67 @@
 
     <h2>Build Details</h2>
 
-    <div class="details-box">
-        <ul class="mbn">
-            <li>
-                <h6>ID</h6>
-                {{ build.id }}
-            </li>
+    <ul class="meta-box">
+        <li>
+            <h6>ID</h6>
+            {{ build.id }}
+        </li>
 
-            <li>
-                <h6>Application</h6>
-                <a href="{{ uriFor('application', {'application': build.application.id}) }}">{{ build.application.name }}</a>
-            </li>
+        <li>
+            <h6>Application</h6>
+            <a href="{{ uriFor('application', {'application': build.application.id}) }}">{{ build.application.name }}</a>
+        </li>
 
-            <li>
-                <h6>Environment</h6>
-                {{ build.environment ? build.environment.name : 'Any' }}
-            </li>
+        <li>
+            <h6>Environment</h6>
+            {{ build.environment ? build.environment.name : 'Any' }}
+        </li>
 
-            <li>
-                <h6>Reference</h6>
-                {% set isCurrent = githubCommitIsCurrent(build.application.github.owner, build.application.github.repository, build.reference, build.commit) %}
-                {{ git_macros.gitref(build, false, isCurrent) }}
-            </li>
+        <li>
+            <h6>Reference</h6>
+            {% set isCurrent = githubCommitIsCurrent(build.application.github.owner, build.application.github.repository, build.reference, build.commit) %}
+            {{ git_macros.gitref(build, false, isCurrent) }}
+        </li>
 
-            <li>
-                <h6>Commit</h6>
-                <a href="{{ githubCommitUrl(build.application.github.owner, build.application.github.repository, build.commit) }}">{{ build.commit|commit }}</a>
-                {{ macros.icon('github') }}
-            </li>
+        <li>
+            <h6>Commit</h6>
+            <a href="{{ githubCommitUrl(build.application.github.owner, build.application.github.repository, build.commit) }}">{{ build.commit|commit }}</a>
+            {{ macros.icon('github') }}
+        </li>
 
-            <li>
-                <h6>User</h6>
-                {% if build.user %}
-                    <a href="{{ uriFor('user', {'user': build.user.id}) }}">{{ build.user.name }}</a>
-                {% else %}
-                    Unknown
-                {% endif %}
-            </li>
-        </ul>
-    </div>
+        <li>
+            <h6>User</h6>
+            {% if build.user %}
+                <a href="{{ uriFor('user', {'user': build.user.id}) }}">{{ build.user.name }}</a>
+            {% else %}
+                Unknown
+            {% endif %}
+        </li>
+    </ul>
 
     <h2>Build Status</h2>
 
-    <div class="details-box">
-        <ul class="mbn">
-            <li>
-                <h6>Status</h6>
-                {{ macros.job_status(build, true) }}
-            </li>
+    <ul class="meta-box">
+        <li>
+            <h6>Status</h6>
+            {{ macros.job_status(build, true) }}
+        </li>
 
-            <li>
-                <h6>Time</h6>
-                <span class="js-build-start">{{ build.start|html5date }}</span>
-            </li>
+        <li>
+            <h6>Time</h6>
+            <span class="js-build-start">{{ build.start|html5date }}</span>
+        </li>
 
 
-            <li>
-                <h6>Duration</h6>
-                <span class="js-build-duration">
-                    {% if build.start and build.end %}
-                        {{ html5duration(build.start, build.end) }}
-                    {% endif %}
-                </span>
-            </li>
-        </ul>
-    </div>
+        <li>
+            <h6>Duration</h6>
+            <span class="js-build-duration">
+                {% if build.start and build.end %}
+                    {{ html5duration(build.start, build.end) }}
+                {% endif %}
+            </span>
+        </li>
+    </ul>
 
     {% if children %}
         <h2>Child Processes</h2>

@@ -1,0 +1,75 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+
+{% set page_title = 'Target Templates' %}
+
+{% set is_admin = current_authorizations.isSuper() %}
+
+{% block content %}
+    <h1>{{ page_title }}</h1>
+
+    <table class="table--spacing-medium">
+        <thead>
+            <tr>
+                <th class="t40">Template</th>
+                <th>Type</th>
+                <th class="t15"></th>
+            </tr>
+        </thead>
+
+        {% if templates_by_environment %}
+            {% for environment in environments %}
+                {% set templates = templates_by_environment[environment.id] %}
+                <tbody>
+
+                    <tr>
+                        <th colspan="3" class="table-mid-header" id="env-{{ environment.id }}">
+                            <a href="{{ uriFor('environment', {'environment': environment.id}) }}">{{ environment.name }}</a>
+                        </th>
+                    </tr>
+
+                    {% if templates %}
+                        {% for template in templates %}
+                            <tr>
+                                <td>
+                                    {{ template.name ?: 'N/A' }}
+                                </td>
+                                <td>
+                                    {{ template.format(true) }}
+                                </td>
+                                <td>
+                                    <a href="{{ uriFor('group', {'group': template.id}) }}">Manage</a>
+                                </td>
+                            <tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3">No templates found.</td>
+                        </tr>
+                    {% endif %}
+
+                </tbody>
+            {% endfor %}
+
+        {% else %}
+            <tbody>
+                <tr>
+                    <td colspan="3">There are no target templates.</td>
+                </tr>
+            </tbody>
+        {% endif %}
+    </table>
+
+    {% if is_admin %}
+        <ul class="list--bare">
+            <li>
+                {% if is_admin %}
+                    <a class="btn" href="{{ uriFor('group.add') }}">Add Template</a>
+                {% else %}
+                    {{ macros.disabled_button('Add Template') }}
+                {% endif %}
+            </li>
+        </ul>
+    {% endif %}
+
+{% endblock %}

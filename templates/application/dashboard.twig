@@ -3,31 +3,28 @@
 {% import 'application/macros.twig' as app_macros %}
 {% set js_components = ['application_dashboard'] %}
 
-{% set page_title = 'Status : ' ~ application.name %}
+{% set page_title = 'Application Dashboard' %}
 
-{% set canUserBuild = current_authorizations.canBuild(application) %}
-{% set isBusinessTime = is_serious_business_mode %}
+{% set can_user_build = current_authorizations.canBuild(application) %}
+{% set can_user_deploy = current_authorizations.canDeploy(application, selected_environment) %}
 
 {% block content %}
     <div class="nav--page">
-        <h1>Application Dashboard - <b>{{ application.name }}</b></h1>
+        <h1>{{ page_title }}</h1>
     </div>
 
+    {{ block('env_picker') }}
+
     {% if selected_environment %}
-
-        {{ block('env_picker') }}
-
-        <h2>Environment Status - <b>{{ selected_environment.name }}</b></h2>
-        {{ block('deployment_cards') }}
-
+        <h2>Environment Targets (<b>{{ selected_environment.name }}</b>)</h2>
     {% else %}
-        <h2>Environment Status</h2>
-        <p>This application has no deployment targets configured and cannot be deployed.</p>
-
+        <h2>Targets</h2>
     {% endif %}
 
+    {{ block('target_cards') }}
+
     <h2>Recent Builds</h2>
-    {% set is_pushable = deployment_statuses|length > 0 and current_authorizations.canDeploy(application, selected_environment) %}
+    {% set is_pushable = targets|length > 0 and can_user_deploy %}
     {% include 'partial.build_table.twig' with {'builds': builds, 'is_pushable': is_pushable, 'current_authorizations': current_authorizations } %}
 
     {{ block('page_buttons') }}
@@ -35,48 +32,62 @@
 {% endblock %}
 
 {% block env_picker %}
-    {% set env_count = environments|length %}
-    {# Only allow environment switching if has multiple env #}
-    {% if env_count > 1 %}
+    {% if environments|length > 0 %}
+    <h4>Change environment</h4>
+        <ul class="list--bare tabs">
+            {% for environment in environments %}
+                {% set is_selected = environment.id == selected_environment.id ? 'active' : '' %}
+                <li class="{{ is_selected }}">
+                    <a href="{{ uriFor('application.dashboard', {'application': application.id}, {'environment': environment.id}) }}">
+                        <span class="tab-text">{{ environment.name }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+
+            {% set is_selected = selected_environment == '' ? 'active' : '' %}
+            <li class="{{ is_selected }}">
+                <a href="{{ uriFor('application.dashboard', {'application': application.id}, {'environment': ''}) }}">
+                    <span class="tab-text">None</span>
+                </a>
+            </li>
+        </ul>
+
+    {% endif %}
+{% endblock %}
+
+{% block target_cards %}
+    {% if targets %}
         <div>
-            <h5>Change environment</h5>
-            <ul>
-                {% for environment in environments %}
-                    {% set btnSelected = environment.id == selected_environment.id ? ' btn--selected' : ' btn--not-selected' %}
-                    <li>
-                        <a class="btn{{ btnSelected }}" href="{{ uriFor('application.dashboard', {'application': application.id}, {'environment': environment.id}) }}">{{ environment.name }}</a>
+            <ul class="list--bare cards">
+                {% for target in targets %}
+                    <li data-deploy="{{ target.id }}">
+                        {{ app_macros.pushCard(application, target, target.release) }}
                     </li>
                 {% endfor %}
             </ul>
         </div>
-    {% endif %}
-{% endblock %}
-
-{% block deployment_cards %}
-
-    {% if deployment_statuses %}
-
-        <div>
-            <ul class="list--bare cards">
-                {% for status in deployment_statuses %}
-                    <li data-deploy="{{ status.target.id }}">{{ app_macros.pushCard(application, status.target, status.latest) }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-
     {% else %}
-        <p>This application has no deployment targets for <b>{{ selected_environment.name }}</b> and cannot be released.</p>
+        <p>
+            This application has no deployment targets
+            {% if selected_environment %}
+                for <b>{{ selected_environment.name }}</b>
+            {% endif %}
+            and cannot be deployed.
+        </p>
     {% endif %}
 {% endblock %}
 
 {% block page_buttons %}
-    <ul>
-        {% if canUserBuild %}
-            <li><a class="btn btn--action" href="{{ uriFor('build.start', {'application': application.id}) }}">Start New Build</a></li>
-        {% endif %}
-
-        <li><a class="btn" href="{{ uriFor('build.history.page1', {'application': application.id}) }}">All Builds</a></li>
-        <li><a class="btn" href="{{ uriFor('release.history.page1', {'application': application.id}) }}">All Releases</a></li>
+    <ul class="list--bare">
+        <li>
+            {% if can_user_build %}
+                <a class="btn btn--action" href="{{ uriFor('build.start', {'application': application.id}) }}">Start New Build</a>
+            {% else %}
+                {{ macros.disabled_button('Start New Build') }}
+            {% endif %}
+        </li>
+        <li><a class="btn" href="{{ uriFor('build.history.page1', {'application': application.id}) }}">Build History</a></li>
+        <li><a class="btn" href="{{ uriFor('release.history.page1', {'application': application.id}) }}">Release History</a></li>
         <li><a class="btn" href="{{ uriFor('application', {'application': application.id}) }}">Manage Application</a></li>
     </ul>
 {% endblock %}

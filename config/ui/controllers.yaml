@@ -176,7 +176,7 @@ services:
         arguments: ['@doctrine.em', '@uri']
 
     ####################################################################################################################
-    # SERVER CONTROLLERS
+    # TEMPLATE CONTROLLERS
     ####################################################################################################################
 
     groups.page:
@@ -184,14 +184,14 @@ services:
         arguments: ['@groups.twig', '@doctrine.em']
     groups.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['group/groups.twig']]]
+        calls: [['setTemplate', ['target-template/templates.twig']]]
 
     group.page:
         class: 'Hal\UI\Controllers\Group\GroupController'
         arguments: ['@group.twig', '@doctrine.em']
     group.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['group/group.twig']]]
+        calls: [['setTemplate', ['target-template/template.twig']]]
 
     group.add.page:
         class: 'Hal\UI\Controllers\Group\AddGroupController'
@@ -202,7 +202,7 @@ services:
             - '@uri'
     group.add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['group/add_group.twig']]]
+        calls: [['setTemplate', ['target-template/add_template.twig']]]
 
     group.edit.page:
         class: 'Hal\UI\Controllers\Group\EditGroupController'
@@ -213,7 +213,7 @@ services:
             - '@uri'
     group.edit.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['group/edit_group.twig']]]
+        calls: [['setTemplate', ['target-template/edit_template.twig']]]
 
     group.remove.handler:
         class: 'Hal\UI\Controllers\Group\RemoveGroupController'
@@ -607,13 +607,10 @@ services:
     deploy.select_environment.middleware:
         class: 'Hal\UI\Controllers\Release\SelectEnvironmentMiddleware'
         arguments:
-            - '@deploy.select_environment.twig'
+            - '@release.start.twig'
             - '@doctrine.em'
             - '@uri'
             - '@notFoundHandler'
-    deploy.select_environment.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['release/select_deploy_environment.twig']]]
 
     release.rollback.page:
         class: 'Hal\UI\Controllers\Release\RollbackController'

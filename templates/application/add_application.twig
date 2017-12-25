@@ -4,7 +4,13 @@
 {% set page_title = 'Add Application' %}
 
 {% block content %}
-    <h1>{{ page_title }}</h1>
+    <div class="nav--page">
+        <h1>{{ page_title }}</h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('applications') }}">Back to Applications</a>
+        </p>
+    </div>
 
     {{ form_macros.formErrors(errors) }}
 
@@ -79,7 +85,7 @@
             </ul>
         </div>
 
-        <ul>
+        <ul class="list--bare">
             <li><input type="submit" class="btn btn--action" value="Add Application"></li>
             <li><a class="btn" href="{{ uriFor('applications') }}">Cancel</a></li>
         </ul>

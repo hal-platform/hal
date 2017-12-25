@@ -1,7 +1,7 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
 
-{% set page_title = 'Encrypted Configuration : ' ~ application.name %}
+{% set page_title = 'Encrypted Value' %}
 
 {% block content %}
 
@@ -10,37 +10,35 @@
     {% endif %}
 
     <div class="nav--page">
-        <h1>Encrypted Property - <b>{{ application.name }}</b></h1>
+        <h1>{{ page_title }}</h1>
 
         <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('application', {'application': application.id}) }}">Back to Application</a>
+            <a class="btn btn--small btn--back" href="{{ uriFor('encrypted.configuration', {'application': application.id}) }}">Back to Encrypted Configuration</a>
         </p>
     </div>
 
-    <div class="details-box">
-        <ul class="mbn">
-            <li>
-                <h6>Application</h6>
-                {{ application.name }}
-            </li>
+    <ul class="meta-box">
+        <li>
+            <h6>Application</h6>
+            {{ application.name }}
+        </li>
 
-            <li>
-                <h6>Environment</h6>
-                {% if encrypted.environment %}
-                    {{ encrypted.environment.name }}
-                {% else %}
-                    Global (Available in all environments)
-                {% endif %}
-            </li>
-        </ul>
-    </div>
+        <li>
+            <h6>Environment</h6>
+            {% if encrypted.environment %}
+                {{ encrypted.environment.name }}
+            {% else %}
+                Global (Available in all environments)
+            {% endif %}
+        </li>
+    </ul>
 
     <section>
 
-        <h4>Property Name</h4>
+        <h4>Configuration Name</h4>
         <p><code>{{ encrypted.name }}</code></p>
 
-        <h4>Current value</h4>
+        <h4>Current Value</h4>
         {% if decryption_error %}
             <p>Unable to decrypt value. Encryption may be misconfigured.</p>
 
@@ -53,8 +51,7 @@
 
     </section>
 
-    <ul>
-        <li><a class="btn" href="{{ uriFor('encrypted.configuration', {'application': application.id}) }}">View all encrypted configuration</a></li>
+    <ul class="list--bare">
         <li><a class="btn btn--destructive" href="{{ uriFor('encrypted.remove', {'application': application.id, 'encrypted': encrypted.id}) }}">Remove Property</a></li>
     </ul>
 

@@ -4,7 +4,13 @@
 {% set page_title = 'Add Environment' %}
 
 {% block content %}
-    <h1>{{ page_title }}</h1>
+    <div class="nav--page">
+        <h1>{{ page_title }}</h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('environments') }}">Back to Environments</a>
+        </p>
+    </div>
 
     <div class="form-wrapper">
         {{ form_macros.formErrors(errors) }}
@@ -31,7 +37,7 @@
                 </li>
             </ul>
 
-            <ul>
+            <ul class="list--bare">
                 <li><input type="submit" class="btn btn--action" value="Add Environment"></li>
                 <li><a class="btn" href="{{ uriFor('environments') }}">Cancel</a></li>
             </ul>

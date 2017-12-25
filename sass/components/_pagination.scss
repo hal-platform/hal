@@ -6,7 +6,7 @@
 
     > li {
         display: inline-block;
-        padding: 0 msem(-5);
+        padding: 0 .5em;
         letter-spacing: normal;
         word-spacing: normal;
     }
@@ -24,7 +24,6 @@
     }
 
     .nav-pagination--pages {
-        padding-right: msem(-1);
-        padding-left: msem(-1);
+        @include padding-x(.75em);
     }
 }

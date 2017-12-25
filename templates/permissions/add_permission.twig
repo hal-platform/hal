@@ -24,19 +24,19 @@
             <ul class="form-fields">
                 <li>
                     <label>Permission Type</label>
-                    <ul class="radio-grid radio-grid--two">
+                    <ul class="list--bare">
                         {% for user_type in availableTypes %}
-                            {% set checked = '' %}
-                            {% if form.type == user_type %}
-                                {% set checked = ' checked' %}
-                            {% endif %}
-
+                            {% set is_selected = form.type == user_type ? ' checked' : '' %}
                             <li>
-                                <input id="perm-{{ user_type }}" type="radio" name="type" value="{{ user_type }}"{{ checked }}>
-                                <label for="perm-{{ user_type }}">{{ user_type|capitalize }}</label>
+                                <label for="perm-{{ user_type }}">
+                                    <input type="radio" id="perm-{{ user_type }}" name="type" value="{{ user_type }}"{{ is_selected }}>
+                                    {{ user_type|capitalize }}
+                                </label>
                             </li>
                         {% endfor %}
                     </ul>
+                </li>
+
                 </li>
                 <li>
                     <label for="perm-app">Application</label>
@@ -74,7 +74,7 @@
                 </li>
             </ul>
 
-            <ul>
+            <ul class="list--bare">
                 <li><input class="btn btn--action" type="submit" value="Add Permissions"></li>
                 <li><a class="btn" href="{{ uriFor('users.page1') }}">Cancel</a></li>
             </ul>

@@ -2,10 +2,16 @@
 {% import 'macros.twig' as macros %}
 {% import 'macros.form.twig' as form_macros %}
 
-{% set page_title = 'Edit Application - ' ~ application.name %}
+{% set page_title = 'Edit Application' %}
 
 {% block content %}
-    <h1>Edit Application</h1>
+    <div class="nav--page">
+        <h1>{{ page_title }}</h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('applications') }}">Back to Applications</a>
+        </p>
+    </div>
 
     {{ form_macros.formErrors(errors) }}
 
@@ -80,7 +86,7 @@
             </ul>
         </div>
 
-        <ul>
+        <ul class="list--bare">
             <li><input type="submit" class="btn btn--action" value="Save Changes"></li>
             <li><a class="btn" href="{{ uriFor('application', {'application': application.id}) }}">Cancel</a></li>
         </ul>

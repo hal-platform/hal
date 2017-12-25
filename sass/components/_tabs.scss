@@ -30,10 +30,12 @@
 
         &.active {
             background-color: $blue;
-
-            a {
-                color: $white;
-            }
+            a { color: $white; }
+            &:hover { background-color: $blue; }
+        }
+        &:hover {
+            background-color: $bright-blue;
+            a { color: $white; }
         }
     }
 }
@@ -55,3 +57,52 @@
 .tab {
     display: none;
 }
+
+.tab-grid {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+
+    li
+
+    input[type="radio"] {
+        display: none;
+    }
+
+    label {
+        border: 1px solid $light-grey;
+        transition: background-color 1s ease;
+        padding: .5em;
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    label:hover {
+        background-color: $lightest-grey;
+    }
+
+    input[type="radio"]:checked + label {
+        background-color: $highlight-color;
+    }
+
+    > li {
+        width: 100%;
+        margin-bottom: 1em;
+
+        &.full {
+            width: 100%;
+        }
+
+        @include breakpoint($bp-large) {
+            &:nth-child(3n+2) {
+                @include margin-x(1em);
+            }
+
+            flex: 1 0 30%;
+            max-width: 32%;
+        }
+    }
+}
+

@@ -1,14 +1,14 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
 
-{% set page_title = 'Encrypted Configuration : ' ~ application.name %}
+{% set page_title = 'Encrypted Configuration' %}
 
 {% set isAdmin = current_authorizations.isSuper() %}
 {% set canEdit = isAdmin or current_authorizations.isAdminOf(application) %}
 
 {% block content %}
     <div class="nav--page">
-        <h1>Encrypted Configuration - <b>{{ application.name }}</b></h1>
+        <h1>{{ page_title }}</h1>
 
         <p class="nav--page__back">
             <a class="btn btn--small btn--back" href="{{ uriFor('application', {'application': application.id}) }}">Back to Application</a>
@@ -16,12 +16,20 @@
     </div>
 
     <p>
-        Encrypted configuration is used to inject secrets and sensitive information into your build process.
+        Encrypted Configuration is used to inject secrets and sensitive information into
+        your build and deployment process.
         Hal encrypts secrets at rest. This is secure. Do not store secrets in your version control!
     </p>
 
+    <ul class="meta-box">
+        <li>
+            <h6>Application</h6>
+            {{ application.name }}
+        </li>
+    </ul>
+
     {% if encrypteds %}
-        <table class="table--spacing-medium table--striped">
+        <table class="table--spacing-medium">
             <thead>
                 <tr>
                     <th>Property Name</th>
@@ -74,14 +82,18 @@
             When decrypted and set as environment variables -  properties will be uppercased and prefixed with <code>ENCRYPTED_</code> at runtime.
         </p>
     {% else %}
-        <p>There are no encrypted configuration for this application.</p>
+        <p>There is no encrypted configuration stored for this application.</p>
 
     {% endif %}
 
-    {% if canEdit %}
-        <ul>
-            <li><a class="btn btn--action" href="{{ uriFor('encrypted.add', {'application': application.id}) }}">Add Encrypted Property</a></li>
-        </ul>
-    {% endif %}
+    <ul class="list--bare">
+        <li>
+            {% if canEdit %}
+                <a class="btn btn--action" href="{{ uriFor('encrypted.add', {'application': application.id}) }}">Add Encrypted Configuration</a>
+            {% else %}
+                {{ macros.disabled_button('Add Encrypted Configuration') }}
+            {% endif %}
+        </li>
+    </ul>
 
 {% endblock %}

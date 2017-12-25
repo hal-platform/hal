@@ -8,12 +8,14 @@
 namespace Hal\UI\Controllers\Group;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\Group;
+use Hal\Core\Repository\EnvironmentRepository;
+use Hal\Core\Utility\SortingTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\Group;
-use Hal\Core\Repository\GroupRepository;
-use Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -33,9 +35,14 @@ class GroupsController implements ControllerInterface
     private $em;
 
     /**
-     * @var GroupRepository
+     * @var EnvironmentRepository
      */
-    private $groupRepository;
+    private $environmentRepo;
+
+    /**
+     * @var EntityRepository
+     */
+    private $templateRepo;
 
     /**
      * @param TemplateInterface $template
@@ -45,7 +52,8 @@ class GroupsController implements ControllerInterface
     {
         $this->template = $template;
         $this->em = $em;
-        $this->groupRepository = $em->getRepository(Group::class);
+        $this->environmentRepo = $em->getRepository(Environment::class);
+        $this->templateRepo = $em->getRepository(Group::class);
     }
 
     /**
@@ -53,40 +61,36 @@ class GroupsController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $groups = $this->groupRepository->findAll();
+        $environments = $this->environmentRepo->getAllEnvironmentsSorted();
+        $templates = $this->templateRepo->findAll();
 
         return $this->withTemplate($request, $response, $this->template, [
-            'group_environments' => $this->sort($groups),
-            'group_count' => count($groups)
+            'environments' => $environments,
+            'templates_by_environment' => $this->sort($templates)
         ]);
     }
 
     /**
-     * @param Group[] $groups
+     * @param Group[] $templates
      *
      * @return array
      */
-    private function sort(array $groups)
+    private function sort(array $templates)
     {
-        $environments = [
-            'dev' => [],
-            'test' => [],
-            'beta' => [],
-            'prod' => []
-        ];
+        $environments = [];
 
-        foreach ($groups as $group) {
-            $env = $group->environment()->name();
+        foreach ($templates as $template) {
+            $envID = $template->environment()->id();
 
-            if (!array_key_exists($env, $environments)) {
-                $environments[$env] = [];
+            if (!array_key_exists($envID, $environments)) {
+                $environments[$envID] = [];
             }
 
-            $environments[$env][] = $group;
+            $environments[$envID][] = $template;
         }
 
         $sorter = $this->groupSorter();
-        foreach ($environments as &$env) {
+        foreach ($environments as $env) {
             usort($env, $sorter);
         }
 

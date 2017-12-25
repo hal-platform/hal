@@ -3,10 +3,15 @@
 {% import 'macros.git.twig' as git_macros %}
 {% import 'macros.form.twig' as form_macros %}
 
-{% set page_title = 'Manage Application Permissions : ' ~ application.name %}
+{% set page_title = 'Manage Application Permissions' %}
 
 {% block content %}
-    <h1>Manage Application Permissions - <b>{{ application.name }}</b></h1>
+    <div class="nav--page">
+        <h1>{{ page_title }}</h1>
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('application', {'application': application.id}) }}">Back to Application</a>
+        </p>
+    </div>
 
     {{ block('meta') }}
 
@@ -47,53 +52,33 @@
 
             </ul>
 
-            <ul>
+            <ul class="list--bare">
                 <li><input class="btn btn--destructive" type="submit" value="Revoke Permissions"></li>
                 <li><a class="btn" href="{{ uriFor('application', {'application': application.id}) }}">Cancel</a></li>
             </ul>
         </form>
     </div>
 
-    {{ block('user_legend') }}
+    <h2>Permission Levels</h2>
+    {% include 'permissions/partial.permission_descriptions.twig' %}
 
 {% endblock %}
 
 {% block meta %}
-    <div class="details-box">
-        <ul>
-            <li>Name</li>
-            <li>{{ application.name }}</li>
-
-            <li>Identifier</li>
-            <li>{{ application.identifier }}</li>
-
-            <li>GitHub Source</li>
-            <li>{{ git_macros.gitsource(application) }}</li>
-        </ul>
-    </div>
-{% endblock %}
-
-{% block user_legend %}
-
-    <h4>Permission Types</h4>
-
-    <section class="details-box">
-        <ul class="list--bare mbn">
-            <li class="list--legend">
-                <p class="mbn mrs">{{ macros.status('Member', 'info') }}</p>
-                <p class="mbn">Users granted member permissions can release an application to non-prod</p>
-            </li>
-            <li class="list--legend">
-                <p class="mbn mrs">{{ macros.status('Owner', 'notice') }}</p>
-                <p class="mbn">
-                    Owners can manage their application, its environments, and encrypted configuration. They can release to non-prod environments and grant non-prod access to others.
-                </p>
-            </li>
-            <li class="list--legend">
-                <p class="mbn mrs">{{ macros.status('Prod', 'error') }}</p>
-                <p class="mbn">Users granted prod release permissions can release an application to prod environments.</p>
-            </li>
-        </ul>
-    </section>
-
+    <ul class="meta-box">
+        <li>
+            <h6>Application</h6>
+            {{ application.name }}
+        </li>
+        <li>
+            <h6>Organization</h6>
+            {% if application.organization %}
+                <a href="{{ uriFor('organization', {'organization': application.organization.id}) }}">
+                    {{ application.organization.name }}
+                </a>
+            {% else %}
+                None
+            {% endif %}
+        </li>
+    </ul>
 {% endblock %}

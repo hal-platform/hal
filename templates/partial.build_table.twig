@@ -6,10 +6,8 @@
         <tr>
             <th>Build</th>
             <th>Env</th>
-            <th>Reference</th>
-            <th>Commit</th>
-            <th>User</th>
-            <th>Time</th>
+            <th>Source Code</th>
+            <th>Built On</th>
             <th class="t10"></th>
         </tr>
     </thead>
@@ -19,42 +17,43 @@
             <td>{{ macros.job_status_prefix(build, true) }}</td>
             <td>{{ build.environment ? build.environment.name : 'Any' }}</td>
             <td>
-                {% set isCurrent = githubCommitIsCurrent(build.application.github.owner, build.application.github.repository, build.reference, build.commit) %}
-                {{ git_macros.gitref(build, false, isCurrent, true) }}
-            </td>
-            <td>
+                {% set is_gitref_current = githubCommitIsCurrent(build.application.github.owner, build.application.github.repository, build.reference, build.commit) %}
+                {{ git_macros.gitref(build, false, is_gitref_current, true) }}
                 {{ git_macros.gitcommit(build) }}
             </td>
             <td>
+                {{ build.created|html5date }}
+                by
                 {% if build.user %}
-                    <a href="{{ uriFor('user', {'user': build.user.id}) }}">{{ build.user.username }}</a>
+                    {{ build.user.username }}
                 {% else %}
                     Unknown
                 {% endif %}
             </td>
-            <td>{{ build.created|html5date }}</td>
 
             {# this is a hacky way to let the frontend know if a user can push a build once it is available. #}
-            {% set canPushSoon = false %}
-            {% set canPushNow = false %}
+            {% set can_deploy_soon = false %}
+            {% set can_deploy_now = false %}
 
             {% if is_pushable %}
                 {% if build.status in ['pending', 'running'] %}
-                    {% set canPushSoon = true %}
+                    {% set can_deploy_soon = true %}
                 {% elseif build.status in ['success'] %}
-                    {% set canPushNow = true %}
+                    {% set can_deploy_now = true %}
                 {% endif %}
             {% endif %}
 
-            <td class="tr{{ canPushSoon ? ' js-build-push' : '' }}">
-                {% if canPushNow %}
-                    <a class="btn btn--tiny" href="{{ uriFor('release.start', {'build': build.id}) }}">Release</a>
+            <td class="tr{{ can_deploy_soon ? ' js-build-push' : '' }}">
+                {% if can_deploy_now %}
+                    <a class="btn btn--tiny" href="{{ uriFor('release.start', {'build': build.id}) }}">Deploy</a>
+                {% else %}
+                    {{ macros.disabled_button('Deploy', 'tiny') }}
                 {% endif %}
             </td>
         </tr>
     {% else %}
         <tr>
-            <td colspan="7">No builds found.</td>
+            <td colspan="5">No builds found.</td>
         </tr>
     {% endfor %}
     </tbody>

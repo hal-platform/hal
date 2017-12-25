@@ -1,7 +1,7 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
 
-{% set page_title = 'User - ' ~ user.name %}
+{% set page_title = 'User' %}
 
 {% set is_admin = current_authorizations.isAdmin %}
 {% set is_super = current_authorizations.isSuper %}
@@ -9,7 +9,7 @@
 {% block content %}
 
     <div class="nav--page">
-        <h1>User</h1>
+        <h1>{{ page_title }}</h1>
 
         <p class="nav--page__back">
             <a class="btn btn--small btn--back" href="{{ uriFor('users.page1') }}">Back to Users</a>
@@ -36,29 +36,25 @@
     </div>
 
     <h2>User Info</h2>
-    <div class="details-box">
-        <ul class="list--bare">
-            <li>
-                <h6>User ID</h6>
-                {{ user.id }}
-            </li>
-        </ul>
-    </div>
+    <ul class="meta-box">
+        <li>
+            <h6>User ID</h6>
+            {{ user.id }}
+        </li>
+    </ul>
 
     <h2>Contact</h2>
-    <div class="details-box">
-        <ul class="list--bare">
-            <li>
-                <h6>Email</h6>
-                {{ user.email ? user.email : 'None' }}
-            </li>
+    <ul class="meta-box">
+        <li>
+            <h6>Email</h6>
+            {{ user.email ? user.email : 'None' }}
+        </li>
 
-            <li>
-                <h6>Username</h6>
-                {{ user.username }}
-            </li>
-        </ul>
-    </div>
+        <li>
+            <h6>Username</h6>
+            {{ user.username }}
+        </li>
+    </ul>
 
     <h2>Authorizations</h2>
     {% include 'partial.user_permissions.twig' with {
@@ -77,12 +73,12 @@
 {% endblock %}
 
 {% block user_actions %}
-    <ul>
+    <ul class="list--bare">
         <li>
             {% if is_admin or is_super %}
                 <a class="btn btn--action" href="{{ uriFor('admin.permissions.add', {'user': user.id}) }}">Add Permissions</a>
             {% else %}
-                <button class="btn btn--action btn--disabled">Add Permissions</button>
+                {{ macros.disabled_button('Add Permissions') }}
             {% endif %}
         </li>
         <li>
@@ -91,7 +87,7 @@
                     <input class="btn btn--action" type="submit" value="Refresh User Cache">
                 </form>
             {% else %}
-                <button class="btn btn--action btn--disabled">Add Permissions</button>
+                {{ macros.disabled_button('Add Permissions') }}
             {% endif %}
         </li>
 
@@ -108,7 +104,7 @@
                 </form>
 
             {% else %}
-                <button class="btn btn--action btn--disabled">Disable User</button>
+                {{ macros.disabled_button('Disable User') }}
             {% endif %}
         </li>
     </ul>

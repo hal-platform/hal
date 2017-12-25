@@ -7,37 +7,20 @@
 {% block content %}
 
     <h1>Dashboard</h1>
-    <h2><span class="js-slow-typed" data-text="Hello, Dave.^1000 You're looking well today.">Hello</span></h2>
+    <h3><span class="js-slow-typed" data-text="Hello, Dave.^1000 You're looking well today.">Hello</span></h3>
 
     {# @todo session is not available in context - find another way to get this #}
     {% if session.get('is-first-login') or not favorites %}
        {{ block('intro') }}
     {% endif %}
 
-    {# FAVORITES #}
     {% if favorites %}
-        <section class="mbm">
-            <h2 class="mbs">Favorites</h2>
-
-            <div class="fav-box-wrapper">
-                {% for application in favorites %}
-                    <div class="fav-box">
-                        <h5>{{ application.name }}</h5>
-                        <p>
-                            <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">App Status</a>
-                            {% if current_authorizations.canBuild(application) %}
-                                | <a href="{{ uriFor('build.start', {'application': application.id}) }}">Start Build</a>
-                            {% endif %}
-                        </p>
-                    </div>
-                {% endfor %}
-            </div>
-        </section>
+        <h2>Favorite Applications</h2>
+        {{ block('favorite_apps') }}
     {% endif %}
 
-    {# PENDING WORK #}
     {% if pending %}
-        <h2>Build and Deployment Queue</h2>
+        <h2>Current Job Queue</h2>
         {% include 'partial.pending_job_table.twig' with {'pending': pending} only %}
     {% endif %}
 
@@ -67,7 +50,35 @@
     </section>
 {% endblock %}
 
-{% block stuck_details %}
-    Stuck jobs are builds or pushes that have been running for more than 45 minutes.<br>
-    They require intervention from Hal administrators!
+{% block favorite_apps %}
+
+    <section>
+        <ul class="list--bare cards">
+            <li>
+                {% for application in favorites %}
+                    <article class="card">
+                        <header class="card__header">
+                            <h4>
+                                <a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a>
+                            </h4>
+                        </header>
+
+                        <section class="card__details">
+                            <ul>
+                                <li style="display:inline-block;width:49%;text-align:center;">
+                                    <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Dashboard</a>
+                                </li>
+                                <li style="display:inline-block;width:49%;text-align:center;">
+                                    {% if current_authorizations.canBuild(application) %}
+                                        <a href="{{ uriFor('build.start', {'application': application.id}) }}">Start Build</a>
+                                    {% endif %}
+                                </li>
+                            </ul>
+                        </section>
+                    </article>
+                {% endfor %}
+            </li>
+        </ul>
+    </section>
+
 {% endblock %}

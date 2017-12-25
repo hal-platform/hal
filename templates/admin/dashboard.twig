@@ -1,7 +1,7 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
 
-{% set page_title = "Admin Dashboard" %}
+{% set page_title = 'Admin Dashboard' %}
 
 {% set is_admin = current_authorizations.isSuper() %}
 
@@ -9,26 +9,21 @@
     <h1>{{ page_title }}</h1>
 
     <h2>Manage Deployments</h2>
-    <ul>
-        <li>
-            <a href="{{ uriFor('groups') }}" class="btn">
-                {{ macros.icon('server') }} Groups
-            </a>
-        </li>
+    <ul class="list--bare">
         <li>
             <a href="{{ uriFor('environments') }}" class="btn">
                 {{ macros.icon('leaf') }} Environments
             </a>
         </li>
         <li>
-            <a href="{{ uriFor('queue.history.page1') }}" class="btn">
-                {{ macros.icon('in') }} Queue History
+            <a href="{{ uriFor('groups') }}" class="btn">
+                {{ macros.icon('server') }} Target Templates
             </a>
         </li>
     </ul>
 
     <h2>User Management</h2>
-    <ul>
+    <ul class="list--bare">
         <li>
             <a href="{{ uriFor('users.page1') }}" class="btn btn--primary">
                 {{ macros.icon('users') }} Users
@@ -42,7 +37,7 @@
     </ul>
 
     <h2>Security</h2>
-    <ul>
+    <ul class="list--bare">
         <li>
             <a href="{{ uriFor('credentials') }}" class="btn btn--primary">
                 {{ macros.icon('locked') }} Credentials
@@ -57,48 +52,46 @@
 
     {% if is_admin %}
         <h2>Manage Hal System</h2>
-        <ul>
+        <ul class="list--bare">
             <li><a href="{{ uriFor('admin.system_dashboard') }}" class="btn">System Dashboard</a></li>
             <li><a href="{{ uriFor('admin.cache_management') }}" class="btn">Cache Management</a></li>
             <li><a href="{{ uriFor('admin.global_banner') }}" class="btn">Global Banner</a></li>
         </ul>
 
         <h3>Server Information</h3>
-        <div class="details-box">
-            <ul>
-                <li>
-                    <h6>Hostname</h6>
-                    <div class="pre-wrapper">
-                        <pre>{{ server_name }}</pre>
-                    </div>
-                </li>
+        <ul class="meta-box">
+            <li>
+                <h6>Hostname</h6>
+                <div class="pre-wrapper">
+                    <pre>{{ server_name }}</pre>
+                </div>
+            </li>
 
-                <li>
-                    <h6>Encryption key</h6>
-                    <div class="pre-wrapper">
-                        <pre>{{ encryption_key }}</pre>
-                    </div>
-                </li>
+            <li>
+                <h6>Encryption key</h6>
+                <div class="pre-wrapper">
+                    <pre>{{ encryption_key }}</pre>
+                </div>
+            </li>
 
-                <li>
-                    <h6>Session Encryption key</h6>
-                    <div class="pre-wrapper">
-                        <pre>{{ session_encryption_key }}</pre>
-                    </div>
-                </li>
+            <li>
+                <h6>Session Encryption key</h6>
+                <div class="pre-wrapper">
+                    <pre>{{ session_encryption_key }}</pre>
+                </div>
+            </li>
 
-                <li>
-                    <h6>Hal Release File</h6>
-                    <div class="pre-wrapper">
-                        {% if release_file %}
-                            <pre>{{ release_file }}</pre>
-                        {% else %}
-                            <pre>No release file found. Are you in dev?</pre>
-                        {% endif %}
-                    </div>
-                </li>
-            </ul>
-        </div>
+            <li>
+                <h6>Hal Release File</h6>
+                <div class="pre-wrapper">
+                    {% if release_file %}
+                        <pre>{{ release_file }}</pre>
+                    {% else %}
+                        <pre>No release file found. Are you in dev?</pre>
+                    {% endif %}
+                </div>
+            </li>
+        </ul>
     {% endif %}
 
 {% endblock %}

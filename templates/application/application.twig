@@ -1,7 +1,8 @@
 {% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
 {% import 'macros.git.twig' as git_macros %}
 
-{% set page_title = 'Application - ' ~ application.name %}
+{% set page_title = 'Application' %}
 
 {% set is_admin = current_authorizations.isSuper() or current_authorizations.isAdmin() %}
 {% set can_edit = is_admin or current_authorizations.isOwnerOf(application) %}
@@ -9,7 +10,7 @@
 
 {% block content %}
     <div class="nav--page">
-        <h1>Application</h1>
+        <h1>{{ page_title }}</h1>
 
         <p class="nav--page__back">
             <a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Go to Application Dashboard</a>
@@ -25,24 +26,33 @@
 {% endblock %}
 
 {% block meta %}
-    <div class="details-box">
-        <ul>
-            <li>
-                <h6>Name</h6>
-                {{ application.identifier }}
-            </li>
+    <ul class="meta-box">
+        <li>
+            <h6>Name</h6>
+            {{ application.identifier }}
+        </li>
 
-            <li>
-                <h6>Description</h6>
-                {{ application.name }}
-            </li>
+        <li>
+            <h6>Description</h6>
+            {{ application.name }}
+        </li>
 
-            <li>
-                <h6>GitHub Source</h6>
-                {{ git_macros.gitsource(application) }}
-            </li>
-        </ul>
-    </div>
+        <li>
+            <h6>Source Code</h6>
+            {{ git_macros.gitsource(application) }}
+        </li>
+
+        <li>
+            <h6>Organization</h6>
+            {% if application.organization %}
+                <a href="{{ uriFor('organization', {'organization': application.organization.id}) }}">
+                    {{ application.organization.name }}
+                </a>
+            {% else %}
+                None
+            {% endif %}
+        </li>
+    </ul>
 {% endblock %}
 
 {% block actions %}
@@ -53,21 +63,21 @@
             {% if can_edit %}
                 <a class="btn btn--action" href="{{ uriFor('application.edit', {'application': application.id}) }}">Edit Application</a>
             {% else %}
-                <button class="btn btn--disabled">Edit Applications</button>
+                {{ macros.disabled_button('Edit Application') }}
             {% endif %}
         </li>
         <li>
             {% if can_remove %}
                 <a class="btn btn--destructive" href="{{ uriFor('application.remove', {'application': application.id}) }}">Remove Application</a>
             {% else %}
-                <button class="btn btn--disabled">Remove Applications</button>
+                {{ macros.disabled_button('Remove Application') }}
             {% endif %}
         </li>
     </ul>
 {% endblock %}
 
 {% block authorization_and_permissions %}
-    <div class="details-box">
+    <div class="meta-box">
         <small>
             Owners can
                 manage this application,
@@ -103,7 +113,7 @@
                 {% if can_edit %}
                     <a class="btn" href="{{ uriFor('application_permission.add', {'application': application.id})}}">Grant access to other users</a>
                 {% else %}
-                    <button class="btn btn--disabled">Grant access to other users</button>
+                    {{ macros.disabled_button('Grant access to other users') }}
                 {% endif %}
             </li>
 
@@ -111,7 +121,7 @@
                 {% if can_edit and permissions %}
                     <a href="{{ uriFor('application_permission.remove', {'application': application.id}) }}">Manage or revoke permissions</a>
                 {% else %}
-                    <button class="btn btn--disabled">Manage or revoke permissions</button>
+                    {{ macros.disabled_button('Manage or revoke permissions') }}
                 {% endif %}
             </li>
         </ul>

@@ -6,7 +6,10 @@
 {% set page_title = 'Applications' %}
 
 {% block content %}
-    <h1>{{ page_title }}</h1>
+    <div class="nav--page">
+        <h1>Applications</h1>
+    </div>
+
     {{ block('favs') }}
 
     <h2>Organizations</h2>
@@ -15,7 +18,7 @@
     <h2>Applications</h2>
     {{ block('apps_table') }}
 
-    <ul>
+    <ul class="list--bare">
         <li><a class="btn" href="{{ uriFor('application.add') }}">Add Application</a></li>
         <li><a class="btn" href="{{ uriFor('organization.add') }}">Add Organization</a></li>
     </ul>
@@ -29,8 +32,8 @@
             <thead>
                 <tr>
                     <th>Application</th>
-                    <th class="t50">GitHub Source</th>
-                    <th class="t5"></th>
+                    <th class="t40">Source Code</th>
+                    <th class="t15"></th>
                 </tr>
             </thead>
             <tbody>
@@ -39,7 +42,6 @@
                 {% endfor %}
             </tbody>
         </table>
-
     {% endif %}
 
 {% endblock %}
@@ -47,7 +49,7 @@
 {% block orgs_grid %}
 
     {% if organizations %}
-        <ul>
+        <ul class="list--bullet">
             {% for organization in organizations %}
                 <li><a href="#org-{{ organization.id }}">{{ organization.name }}</a></li>
             {% endfor %}
@@ -79,8 +81,8 @@
             <thead>
                 <tr>
                     <th>Application</th>
-                    <th class="t40">GitHub Source</th>
-                    <th class="t15 js-collapsible-global"></th>
+                    <th class="t40">Source Code</th>
+                    <th class="t15 js-collapsible-global tr"></th>
                 </tr>
             </thead>
 

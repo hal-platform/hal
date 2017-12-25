@@ -58,18 +58,25 @@ class DashboardStickyEnvironmentMiddleware implements MiddlewareInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         $application = $request->getAttribute(Application::class);
-        $environmentID = $request->getQueryParams()['environment'] ?? '';
+
+        $params = $request->getQueryParams();
 
         // Fall through to controller if no environment in query string
-        if (!$environmentID) {
+        if (!isset($params['environment'])) {
             return $next($request, $response);
         }
 
-        // environment is valid. save to cookie.
-        $environment = $this->environmentRepo->find($environmentID);
-        if ($environment instanceof Environment) {
-            $response = $this->service->save($request, $response, $application->id(), $environment->id());
+        $environmentID = $params['environment'] ?? '';
+
+        if ($environmentID) {
+            // validate environment ID if environment is valid.
+            $environment = $this->environmentRepo->find($environmentID);
+            if ($environment instanceof Environment) {
+                $environmentID = $environment->id();
+            }
         }
+
+        $response = $this->service->save($request, $response, $application->id(), $environmentID);
 
         return $this->withRedirectRoute($response, $this->uri, 'application.dashboard', ['application' => $application->id()]);
     }

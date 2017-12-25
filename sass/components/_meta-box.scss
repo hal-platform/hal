@@ -1,0 +1,14 @@
+
+.meta-box {
+    border: .5em solid $light-grey;
+    padding: .75em;
+    margin-top: 1em;
+}
+
+ul.meta-box {
+    list-style-type: disc;
+    > li {
+        margin-top: .1em;
+        margin-left: 1.5em;
+    }
+}

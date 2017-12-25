@@ -2,33 +2,31 @@
 {% import 'macros.twig' as macros %}
 {% import 'macros.git.twig' as git_macros %}
 
-{% set page_title = 'Organization - ' ~ organization.name %}
+{% set page_title = 'Organization' %}
 
 {% set is_admin = current_authorizations.isSuper() %}
 {% set is_removable = is_admin and not applications %}
 
 {% block content %}
     <div class="nav--page">
-        <h1>Organization</h1>
+        <h1>{{ page_title }}</h1>
 
         <p class="nav--page__back">
             <a class="btn btn--small btn--back" href="{{ uriFor('applications') }}">Back to Applications</a>
         </p>
     </div>
 
-    <div class="details-box">
-        <ul>
-            <li>
-                <h6>Name</h6>
-                {{ organization.identifier }}
-            </li>
+    <ul class="meta-box">
+        <li>
+            <h6>Name</h6>
+            {{ organization.identifier }}
+        </li>
 
-            <li>
-                <h6>Description</h6>
-                {{ organization.name }}
-            </li>
-        </ul>
-    </div>
+        <li>
+            <h6>Description</h6>
+            {{ organization.name }}
+        </li>
+    </ul>
 
     <h2>Applications</h2>
     {{ block('app_table') }}
@@ -42,20 +40,20 @@
 {% endblock %}
 
 {% block actions %}
-    <ul>
+    <ul class="list--bare">
         <li><a class="btn" href="{{ uriFor('application.add') }}">Add Application</a></li>
         <li>
             {% if is_admin %}
                 <a class="btn btn--action" href="{{ uriFor('organization.edit', {'organization': organization.id}) }}">Edit Organization</a>
             {% else %}
-                <button class="btn btn--action btn--disabled">Edit Organization</button>
+                {{ macros.disabled_button('Edit Organization') }}
             {% endif %}
         </li>
         <li>
             {% if is_removable %}
                 <a class="btn btn--destructive" href="{{ uriFor('organization.remove', {'organization': organization.id}) }}">Remove Organization</a>
             {% else %}
-                <button class="btn btn--destructive btn--disabled">Remove Organization</button>
+                {{ macros.disabled_button('Remove Organization') }}
             {% endif %}
         </li>
     </ul>
@@ -64,12 +62,12 @@
 {% block app_table %}
 
     {% if applications %}
-        <table class="table--spacing-medium table--striped">
+        <table class="table--spacing-medium">
             <thead>
                 <tr>
                     <th>Application</th>
-                    <th class="t50">GitHub Source</th>
-                    <th class="t5"></th>
+                    <th class="t40">Source Code</th>
+                    <th class="t15"></th>
                 </tr>
             </thead>
             <tbody>

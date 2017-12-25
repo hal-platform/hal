@@ -55,7 +55,7 @@
     <p>You're about to permanently remove this <b>{{ entity_type }}</b>. Do you want to continue?</p>
 
     <form class="form-wrapper" method="post">
-        <ul>
+        <ul class="list--bare">
             <li><input class="btn btn--destructive" type="submit" value="Remove"></li>
             <li>{{ block('cancel_button') }}</li>
         </ul>
@@ -91,159 +91,144 @@
 {% block group_box %}
     {% set name_label =  remove.entity.type == 'rsync' ? 'Hostname' : 'Region' %}
 
-    <div class="details-box">
-        <ul class="mbn">
-            <li>
-                <h6>Group Type</h6>
-                {{ remove.entity.format(true) }}
-            </li>
+    <ul class="meta-box">
+        <li>
+            <h6>Group Type</h6>
+            {{ remove.entity.format(true) }}
+        </li>
 
-            <li>
-                <h6>{{ name_label }}</h6>
-                {{ remove.entity.type == 'script' ? 'N/A' : remove.entity.name }}
-            </li>
+        <li>
+            <h6>{{ name_label }}</h6>
+            {{ remove.entity.type == 'script' ? 'N/A' : remove.entity.name }}
+        </li>
 
-            <li>
-                <h6>Environment</h6>
-                {{ remove.entity.environment.name}}</li>
-        </ul>
-    </div>
+        <li>
+            <h6>Environment</h6>
+            {{ remove.entity.environment.name}}
+        </li>
+    </ul>
 
 {% endblock %}
 
 {% block environment_box %}
-    <div class="details-box">
-        <ul class="mbn">
-            <li>
-                <h6>Name</h6>
-                {{ remove.entity.name }}
-            </li>
+    <ul class="meta-box">
+        <li>
+            <h6>Name</h6>
+            {{ remove.entity.name }}
+        </li>
 
-            <li>
-                <h6>Is Production Environment?</h6>
-                {{ remove.entity.isProduction ? 'Yes' : 'No' }}
-            </li>
-        </ul>
-    </div>
+        <li>
+            <h6>Is Production Environment?</h6>
+            {{ remove.entity.isProduction ? 'Yes' : 'No' }}
+        </li>
+    </ul>
 {% endblock %}
 
 {% block credential_box %}
-    <div class="details-box">
-        <ul class="mbn">
-            <li>
-                <h6>Name</h6>
-                {{ remove.entity.name }}
-            </li>
+    <ul class="meta-box">
+        <li>
+            <h6>Name</h6>
+            {{ remove.entity.name }}
+        </li>
 
-            <li>
-                <h6>Type</h6>
-                {% if remove.entity.type == 'aws_static' %}
-                    AWS Static Token
-                {% elseif remove.entity.type == 'aws_role' %}
-                    AWS STS Role
-                {% elseif remove.entity.type == 'privatekey' %}
-                    Private Key
-                {% endif %}
-            </li>
-        </ul>
-    </div>
+        <li>
+            <h6>Type</h6>
+            {% if remove.entity.type == 'aws_static' %}
+                AWS Static Token
+            {% elseif remove.entity.type == 'aws_role' %}
+                AWS STS Role
+            {% elseif remove.entity.type == 'privatekey' %}
+                Private Key
+            {% endif %}
+        </li>
+    </ul>
 {% endblock %}
 
 {% block organization_box %}
-    <div class="details-box">
-        <ul class="mbn">
-            <li>
-                <h6>Name</h6>
-                {{ remove.entity.identifier }}
-            </li>
+    <ul class="meta-box">
+        <li>
+            <h6>Name</h6>
+            {{ remove.entity.identifier }}
+        </li>
 
-            <li>
-                <h6>Description</h6>
-                {{ remove.entity.name }}
-            </li>
-        </ul>
-    </div>
+        <li>
+            <h6>Description</h6>
+            {{ remove.entity.name }}
+        </li>
+    </ul>
 {% endblock %}
 
 {% block application_box %}
-    <div class="details-box">
-        <ul>
-            <li>
-                <h6>Name</h6>
-                {{ remove.entity.identifier }}
-            </li>
+    <ul class="meta-box">
+        <li>
+            <h6>Name</h6>
+            {{ remove.entity.identifier }}
+        </li>
 
-            <li>
-                <h6>Description</h6>
-                {{ remove.entity.name }}
-            </li>
+        <li>
+            <h6>Description</h6>
+            {{ remove.entity.name }}
+        </li>
 
-            <li>
-                <h6>GitHub Source</h6>
-                {{ git_macros.gitsource(remove.entity) }}
-            </li>
-        </ul>
-    </div>
+        <li>
+            <h6>GitHub Source</h6>
+            {{ git_macros.gitsource(remove.entity) }}
+        </li>
+    </ul>
 {% endblock %}
 
 {% block target_box %}
-    <div class="details-box">
-        <ul>
-            <li>
-                <h6>Application</h6>
-                {{ remove.entity.application.name }}
-            </li>
+    <ul class="meta-box">
+        <li>
+            <h6>Application</h6>
+            {{ remove.entity.application.name }}
+        </li>
 
-            <li>
-                <h6>Environment</h6>
-                {{ remove.entity.group.environment.name }}
-            </li>
+        <li>
+            <h6>Environment</h6>
+            {{ remove.entity.group.environment.name }}
+        </li>
 
-            <li>
-                <h6>Name</h6>
-                {{ remove.entity.name ?: 'None' }}
-            </li>
+        <li>
+            <h6>Name</h6>
+            {{ remove.entity.name ?: 'None' }}
+        </li>
 
-            <li>
-                <h6>Type</h6>
-                {{ remove.entity.group.format(true) }}
-            </li>
-        </ul>
-    </div>
+        <li>
+            <h6>Type</h6>
+            {{ remove.entity.group.format(true) }}
+        </li>
+    </ul>
 {% endblock %}
 
 {% block encrypted_box %}
-    <div class="details-box">
-        <ul class="mbn">
-            <li>
-                <h6>Application</h6>
-                {{ remove.entity.application.name }}
-            </li>
+    <ul class="meta-box">
+        <li>
+            <h6>Application</h6>
+            {{ remove.entity.application.name }}
+        </li>
 
-            <li>
-                <h6>Environment</h6>
-                {% if remove.entity.environment %}
-                    {{ remove.entity.environment.name }}
-                {% else %}
-                    Global (Available in all environments)
-                {% endif %}
-            </li>
+        <li>
+            <h6>Environment</h6>
+            {% if remove.entity.environment %}
+                {{ remove.entity.environment.name }}
+            {% else %}
+                Global (Available in all environments)
+            {% endif %}
+        </li>
 
-            <li>
-                <h6>Property Name</h6>
-                <code>{{ remove.entity.name }}</code>
-            </li>
-        </ul>
-    </div>
+        <li>
+            <h6>Property Name</h6>
+            <code>{{ remove.entity.name }}</code>
+        </li>
+    </ul>
 {% endblock %}
 
 {% block token_box %}
-    <div class="details-box">
-        <ul>
-            <li>
-                <h6>Name</h6>
-                {{ remove.entity.name }}
-            </li>
-        </ul>
-    </div>
+    <ul class="meta-box">
+        <li>
+            <h6>Name</h6>
+            {{ remove.entity.name }}
+        </li>
+    </ul>
 {% endblock %}

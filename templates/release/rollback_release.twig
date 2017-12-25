@@ -16,31 +16,29 @@
     </div>
 
     <h2>Target Details</h2>
-    <div class="details-box">
-        <ul class="mbn">
-            <li>
-                <h6>Environment</h6>
-                <a href="{{ uriFor('environment', {'environment': target.group.environment.id}) }}">{{ target.group.environment.name }}</a>
-            </li>
+    <ul class="meta-box">
+        <li>
+            <h6>Environment</h6>
+            <a href="{{ uriFor('environment', {'environment': target.group.environment.id}) }}">{{ target.group.environment.name }}</a>
+        </li>
 
-            <li>
-                <h6>Target</h6>
-                <a href="{{ uriFor('target', {'application': target.application.id, 'target': target.id}) }}">{{ target.format(true) }}</a>
-            </li>
+        <li>
+            <h6>Target</h6>
+            <a href="{{ uriFor('target', {'application': target.application.id, 'target': target.id}) }}">{{ target.format(true) }}</a>
+        </li>
 
-            <li>
-                <h6>Parameters</h6>
-                {{ target.formatParameters() }}
-            </li>
+        <li>
+            <h6>Parameters</h6>
+            {{ target.formatParameters() }}
+        </li>
 
-            {% if target.url %}
-                <li>
-                    <h6>URL</h6>
-                    <a href="{{ target.url }}">{{ target.url }}</a>
-                </li>
-            {% endif %}
-        </ul>
-    </div>
+        {% if target.url %}
+            <li>
+                <h6>URL</h6>
+                <a href="{{ target.url }}">{{ target.url }}</a>
+            </li>
+        {% endif %}
+    </ul>
 
     <p>
         This table shows the release history for this target.

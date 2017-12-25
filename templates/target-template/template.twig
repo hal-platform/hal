@@ -1,0 +1,84 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+
+{% set page_title = 'Target Template' %}
+
+{% set is_admin = current_authorizations.isSuper() %}
+
+{% block content %}
+    <div class="nav--page">
+        <h1>{{ page_title }}</h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('groups') }}">Back to Templates</a>
+        </p>
+    </div>
+
+    <ul class="meta-box">
+        <li>
+            <h6>Environment</h6>
+            {{ group.environment.name }}
+        </li>
+
+        <li>
+            <h6>Type</h6>
+            {{ group.format(false) }}
+        </li>
+
+        <li>
+            <h6>Template</h6>
+            {{ group.name ?: 'N/A' }}
+        </li>
+    </ul>
+
+    <h3>Application Deployment Targets</h3>
+
+    {% if targets %}
+        <table class="table--spacing-medium">
+            <thead>
+                <tr>
+                    <th class="t50">Application</th>
+                    <th>Parameters</th>
+                    <th class="t10"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for target in targets %}
+                    <tr>
+                        <td>{{ target.application.name }}</td>
+                        <td>{{ target.format(false) }}</td>
+                        <td>
+                            <a href="{{ uriFor('target', {'application': target.application.id, 'target': target.id}) }}">Manage</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>This template is not currently being used by any applications.</p>
+    {% endif %}
+
+    {% if is_admin and targets %}
+        <p>
+            <b>Note:</b> Applications must stop using this template for it to be removed.
+        </p>
+    {% endif %}
+
+    <ul class="list--bare">
+        <li>
+            {% if is_admin %}
+                <a class="btn btn--action" href="{{ uriFor('group.edit', {'group': group.id}) }}">Edit Template</a>
+            {% else %}
+                {{ macros.disabled_button('Edit Template') }}
+            {% endif %}
+        </li>
+
+        <li>
+            {% if is_admin and not targets %}
+                <a class="btn btn--destructive" href="{{ uriFor('group.remove', {'group': group.id}) }}">Remove Template</a>
+            {% else %}
+                {{ macros.disabled_button('Remove Template') }}
+            {% endif %}
+        </li>
+    </ul>
+{% endblock %}

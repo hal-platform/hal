@@ -40,8 +40,11 @@ textarea.is-error {
 .error-list {
     background: $error-color;
     margin-left: 0;
-    padding: 0 msem(4);
+    padding: 0 2em;
     color: $white;
+    li {
+        @include padding-y(.25em);
+    }
 }
 
 select {

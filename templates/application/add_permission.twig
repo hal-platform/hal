@@ -4,10 +4,16 @@
 {% import 'macros.form.twig' as form_macros %}
 {% set js_components = ['application_permissions'] %}
 
-{% set page_title = 'Grant Application Permissions : ' ~ application.name %}
+{% set page_title = 'Grant Application Permissions' %}
 
 {% block content %}
-    <h1>Grant Application Permissions - <b>{{ application.name }}</b></h1>
+    <div class="nav--page">
+        <h1>{{ page_title }}</h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('application', {'application': application.id}) }}">Back to Application</a>
+        </p>
+    </div>
 
     {{ block('meta') }}
 
@@ -18,7 +24,6 @@
 
         <form method="post">
             <ul class="form-fields">
-
                 <li>
                     <label>Users</label>
                     <small class="additional">
@@ -46,76 +51,42 @@
 
                 <li>
                     <label>Permission Type</label>
-                    {% if availableTypes|length > 1 %}
-                        <ul class="radio-grid radio-grid--two">
-                            {% for user_type in availableTypes %}
-
-                                {% set isSelected = form.type == user_type ? true : false %}
-
-                                <li>
-                                    <input id="perm-{{ user_type }}" type="radio" name="type" value="{{ user_type }}"{{ isSelected ? ' checked' : '' }}>
-                                    <label for="perm-{{ user_type }}">{{ user_type|capitalize }}</label>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <ul class="radio-grid radio-grid--two">
-                            {% for user_type in availableTypes %}
-                                <li>
-                                    <input id="perm-{{ user_type }}" type="radio" name="type" value="{{ user_type }}" checked>
-                                    <label for="perm-{{ user_type }}">{{ user_type|capitalize }}</label>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
+                    <ul class="list--bare">
+                        {% for user_type in availableTypes %}
+                            {% set is_selected = form.type == user_type ? ' checked' : '' %}
+                            <li>
+                                <label for="perm-{{ user_type }}">
+                                    <input type="radio" id="perm-{{ user_type }}" name="type" value="{{ user_type }}"{{ is_selected }}>
+                                    {{ user_type|capitalize }}
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </li>
-
             </ul>
 
-            <ul>
+            <ul class="list--bare">
                 <li><input class="btn btn--action" type="submit" value="Add Permissions"></li>
                 <li><a class="btn" href="{{ uriFor('application', {'application': application.id}) }}">Cancel</a></li>
             </ul>
         </form>
     </div>
 
-    {{ block('user_legend') }}
+    <h2>Permission Levels</h2>
+    {% include 'permissions/partial.permission_descriptions.twig' %}
 
 {% endblock %}
 
 {% block meta %}
-    <div class="details-box">
-        <ul>
-            <li>Name</li>
-            <li>{{ application.name }}</li>
+    <ul class="meta-box">
+        <li>
+            <h6>Application</h6>
+            {{ application.name }}
+        </li>
 
-            <li>Identifier</li>
-            <li>{{ application.key }}</li>
-
-            <li>GitHub Source</li>
-            <li>{{ git_macros.gitsource(application) }}</li>
-        </ul>
-    </div>
-{% endblock %}
-
-{% block user_legend %}
-
-    <h4>Permission Types</h4>
-
-    <section class="details-box">
-        <ul class="list--bare mbn">
-            <li class="list--legend">
-                <p class="mbn mrs">{{ macros.status('Member', 'info') }}</p>
-                <p class="mbn">Users granted member access can create builds and push to non-prod environments</p>
-            </li>
-            <li class="list--legend">
-                <p class="mbn mrs">{{ macros.status('Owner', 'notice') }}</p>
-                <p class="mbn">
-                    Leads can manage their application, its environments, and encrypted configuration. They can deploy to non-prod environments and grant non-prod access to others.
-                </p>
-            </li>
-        </ul>
-    </section>
-
-
+        <li>
+            <h6>Source Code</h6>
+            {{ git_macros.gitsource(application) }}
+        </li>
+    </ul>
 {% endblock %}

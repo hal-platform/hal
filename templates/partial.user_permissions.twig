@@ -6,83 +6,80 @@
     - permissions: array[type] = UserPermission[]
 #}
 
-<div class="details-box">
-    <ul class="list--bare">
-        <li>
-            <h6>Status</h6>
-            {% if user.isDisabled %}
-                {{ macros.status('Disabled', 'error', 'nope') }}
-            {% else %}
-                {{ macros.status('Active', 'success', 'tick') }}
-            {% endif %}
-        </li>
+<ul class="meta-box">
+    <li>
+        <h6>Status</h6>
+        {% if user.isDisabled %}
+            {{ macros.status('Disabled', 'error', 'nope') }}
+        {% else %}
+            {{ macros.status('Active', 'success', 'tick') }}
+        {% endif %}
+    </li>
 
-        <li>
-            <h6>Authorization Tiers</h6>
+    <li>
+        <h6>Authorization Tiers</h6>
 
-            {% set tiers = authorizations.getTiers %}
+        {% set tiers = authorizations.getTiers %}
 
-            {% if tiers %}
-                <ul class="list--bullet">
-                    {% if authorizations.isMember %}
-                        <li>{{ macros.status('Member', 'info') }}</li>
-                    {% endif %}
-                    {% if authorizations.isOwner %}
-                        <li>{{ macros.status('Owner', 'notice') }}</li>
-                    {% endif %}
-                    {% if authorizations.isAdmin %}
-                        <li>{{ macros.status('Admin', 'warning') }}</li>
-                    {% endif %}
-                    {% if authorizations.isSuper %}
-                        <li>{{ macros.status('Super', 'error') }}</li>
-                    {% endif %}
-                </ul>
-            {% else %}
-                None
-            {% endif %}
-        </li>
+        {% if tiers %}
+            <ul class="list--bullet">
+                {% if authorizations.isMember %}
+                    <li>{{ macros.status('Member', 'info') }}</li>
+                {% endif %}
+                {% if authorizations.isOwner %}
+                    <li>{{ macros.status('Owner', 'notice') }}</li>
+                {% endif %}
+                {% if authorizations.isAdmin %}
+                    <li>{{ macros.status('Admin', 'warning') }}</li>
+                {% endif %}
+                {% if authorizations.isSuper %}
+                    <li>{{ macros.status('Super', 'error') }}</li>
+                {% endif %}
+            </ul>
+        {% else %}
+            None
+        {% endif %}
+    </li>
 
-        <li>
-            <h6>Member</h6>
-            {% if permissions.isMember %}
-                <ul class="list--bullet">
-                    {% for permission in permissions.member %}
-                        <li>
-                            {% if permission.application %}
-                                <a href="{{ uriFor('application', {'application': permission.application.id}) }}">{{ permission.application.name }}</a>
-                            {% elseif permission.organization %}
-                                <a href="{{ uriFor('organization', {'organization': permission.organization.id}) }}">{{ permission.organization.name }}</a>
-                            {% else %}
-                                Unknown
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                None
-            {% endif %}
-        </li>
+    <li>
+        <h6>Member</h6>
+        {% if permissions.isMember %}
+            <ul class="list--bullet">
+                {% for permission in permissions.member %}
+                    <li>
+                        {% if permission.application %}
+                            <a href="{{ uriFor('application', {'application': permission.application.id}) }}">{{ permission.application.name }}</a>
+                        {% elseif permission.organization %}
+                            <a href="{{ uriFor('organization', {'organization': permission.organization.id}) }}">{{ permission.organization.name }}</a>
+                        {% else %}
+                            Unknown
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            None
+        {% endif %}
+    </li>
 
-        <li>
-            <h6>Owner</h6>
-            {% if permissions.isOwner %}
-                <ul class="list--bullet">
-                    {% for permission in permissions.owner %}
-                        <li>
-                            {% if permission.application %}
-                                <a href="{{ uriFor('application', {'application': permission.application.id}) }}">{{ permission.application.name }}</a>
-                            {% elseif permission.organization %}
-                                <a href="{{ uriFor('organization', {'organization': permission.organization.id}) }}">{{ permission.organization.name }}</a>
-                            {% else %}
-                                Unknown
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                None
-            {% endif %}
-        </li>
-    </ul>
-
-</div>
+    <li>
+        <h6>Owner</h6>
+        {% if permissions.isOwner %}
+            <ul class="list--bullet">
+                {% for permission in permissions.owner %}
+                    <li>
+                        {% if permission.application %}
+                            <a href="{{ uriFor('application', {'application': permission.application.id}) }}">{{ permission.application.name }}</a>
+                        {% elseif permission.organization %}
+                            <a href="{{ uriFor('organization', {'organization': permission.organization.id}) }}">{{ permission.organization.name }}</a>
+                        {% else %}
+                            Unknown
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            None
+        {% endif %}
+    </li>
+</ul>

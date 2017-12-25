@@ -1,119 +1,92 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
 
-{% set page_title = 'Targets : ' ~ application.name %}
+{% set page_title = 'Deployment Targets' %}
+
+{% set can_edit = current_authorizations.isSuper() or current_authorizations.isOwnerOf(application) %}
 
 {% block content %}
     <div class="nav--page">
-        <h1>Deployment Targets - <b>{{ application.name }}</b></h1>
+        <h1>{{ page_title }}</h1>
 
         <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('application', {'application': application.id}) }}">Manage Application</a>
-            <a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Application Dashboard</a>
+            <a class="btn btn--small btn--back" href="{{ uriFor('application', {'application': application.id}) }}">Back to Application</a>
         </p>
     </div>
 
-    <p>
-        Deployment targets define what groups your application can be deployed to and where on a server the code will be uploaded.
-    </p>
+    <ul class="meta-box">
+        <li>
+            <h6>Application</h6>
+            {{ application.name }}
+        </li>
+    </ul>
 
-    {% set canEdit = current_authorizations.isSuper() or current_authorizations.isOwnerOf(application) %}
+    <p>
+        Deployment Targets are used to specify configuration for the enviromments your application needs when
+        it is deployed. For example - with <b>AWS-based</b> deployments this allows you to configure
+        which credentials and region to deploy to.
+
+        <br><br>
+        Multiple targets can be specified for a single environment to support many configurations within
+        a single environment (such as multiple regions, servers, or canary/blue/green environments).
+    </p>
 
     {% if targets_by_env %}
 
-        {% for name, targets in targets_by_env %}
+        <table class="table--spacing-medium">
+            <thead>
+                <tr>
+                    <th class="t40">Name</th>
+                    <th>Parameters</th>
+                    <th class="t10"></th>
+                </tr>
+            </thead>
 
-            {% set environment = environments[name] %}
-            {% if targets %}
-
-                <h2 class="mbn">{{ name }}</h2>
-                <table class="table--spacing-medium table--striped">
-                    <thead>
-                        <tr>
-                            <th class="t15">Name</th>
-                            <th class="t40">Details</th>
-                            <th>URL</th>
-                            <th class="t10"></th>
-                        </tr>
-                    </thead>
+            {% for name, targets in targets_by_env %}
+                {% set environment = environments[name] %}
+                {% if targets %}
                     <tbody>
-                        {% for target in targets %}
+                        <tr>
+                            <th colspan="3" class="table-mid-header" id="env-{{ environment.id }}">
+                                <a href="{{ uriFor('environment', {'environment': environment.id}) }}">{{ environment.name }}</a>
+                            </th>
+                        </tr>
 
+                        {% for target in targets %}
                             <tr>
                                 <td>
-                                    {% if target.group().isAWS() and not target.credential() %}
+                                    {% if target.group.isAWS() and not target.credential -%}
                                         <span class="hint--right" aria-label="No credentials are assigned.">{{ macros.status_icon('', 'error') }}</span>
-                                    {% endif %}
+                                    {%- endif %}
                                     {{ target.format(false) }}
                                 </td>
                                 <td>
-                                    {% if target.group.type == 'eb' %}
-
-                                        Application: <code>{{ target.parameter('application') }}</code>
-                                        <br>
-                                        Environment: <code>{{ target.parameter('environment') }}</code>
-
-                                    {% elseif target.group.type == 'cd' %}
-
-                                        Application: <code>{{ target.parameter('application') }}</code>
-                                        <br>
-                                        Group: <code>{{ target.parameter('group') }}</code>
-                                        <br>
-                                        Config: <code>{{ target.parameter('configuration') }}</code>
-
-                                    {% elseif target.group.type == 's3' %}
-
-                                        Method: <code>{{ target.parameter('s3_method') }}</code>
-                                        <br>Bucket: <code>{{ target.parameter('bucket') }}</code>
-                                        <br>Source: <code>{{ target.parameter('source') }}</code>
-                                        <br>Destination: <code>{{ target.parameter('path') ?: '.' }}</code>
-
-                                    {% elseif target.group.type == 'script' %}
-
-                                        Context: <code>{{ target.parameter('context') ?: 'N/A' }}</code>
-
-                                    {% elseif target.group.type == 'rsync' %}
-
-                                        Path: <code>{{ target.parameter('path') }}</code>
-
-                                    {% else %}
-
-                                        <code>{{ target.format(false) }}</code>
-
-                                    {% endif %}
+                                    {{ target.group.format(true) }}: {{ target.formatParameters() }}
                                 </td>
                                 <td>
-                                    {% if target.url %}
-                                        <a href="{{ target.url }}">{{ target.url }}</a>
-                                    {% endif %}
+                                    <a href="{{ uriFor('target', {'application': target.application.id, 'target': target.id}) }}">Manage</a>
                                 </td>
-                                <td class="tr">
-                                    <a class="btn btn--tiny" href="{{ uriFor('target', {'application': target.application.id, 'target': target.id}) }}">View</a>
-                                </td>
-                            </tr>
-                        {% else %}
                             <tr>
-                                <td colspan="4">No targets found.</td>
-                            </tr>
                         {% endfor %}
                     </tbody>
-                </table>
+                {% endif %}
 
-            {% endif %}
-        {% endfor %}
-
+            {% endfor %}
+        </table>
     {% else %}
 
         <p>There are no deployment targets for this application.</p>
 
     {% endif %}
 
-    {% if canEdit %}
-
-        <div class="mvl">
-            <a class="btn" href="{{ uriFor('target.add', {'application': application.id}) }}">Add Deployment Target</a>
-        </div>
-
-    {% endif %}
+    <ul class="list--bare">
+        <li>
+            {% if can_edit %}
+                <a class="btn" href="{{ uriFor('target.add', {'application': application.id}) }}">Add Deployment Target</a>
+            {% else %}
+                {{ macros.disabled_button('Add Deployment Target') }}
+            {% endif %}
+        </li>
+    </ul>
 
 {% endblock %}
