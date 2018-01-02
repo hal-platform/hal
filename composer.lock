@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "2d34ce431715c9693be7edbb1dc29fd6",
+    "content-hash": "1aa741dc0d8aba306aab999608434e59",
     "packages": [
         {
             "name": "acclimate/container",
@@ -1070,17 +1070,19 @@
         },
         {
             "name": "hal/hal-core",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/hal-platform/hal-core.git",
-                "reference": "fd9b5c7d19ec797837a982e86f5d836b10277617"
-            },
+            "version": "dev-db-refactor",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/hal-platform/hal-core/zipball/fd9b5c7d19ec797837a982e86f5d836b10277617",
-                "reference": "fd9b5c7d19ec797837a982e86f5d836b10277617",
-                "shasum": ""
+                "type": "path",
+                "url": "../hal-core",
+                "reference": "b5163f493cd712963a6beea237250bb883003968",
+                "shasum": null
+            },
+            "archive": {
+                "exclude": [
+                    ".gitignore",
+                    "/phpunit.xml.dist",
+                    "/tests"
+                ]
             },
             "require": {
                 "aws/aws-sdk-php": "^3.21.6",
@@ -1095,17 +1097,19 @@
                 "ql/mcp-common": "~1.1"
             },
             "require-dev": {
-                "mockery/mockery": "~0.9",
-                "overtrue/phplint": "~0.2",
+                "codedungeon/phpunit-result-printer": "~0.4",
+                "mockery/mockery": "~1.0",
+                "overtrue/phplint": "~1.0",
+                "phpstan/phpstan": "~0.9",
                 "phpunit/phpunit": "~6.2",
-                "robmorgan/phinx": "~0.8",
+                "predis/predis": "~1.0",
                 "squizlabs/php_codesniffer": "~3.0",
                 "symfony/config": "~3.3.0",
                 "symfony/dependency-injection": "~3.3.0",
+                "symfony/proxy-manager-bridge": "~3.3.0",
                 "symfony/yaml": "~3.3.0"
             },
             "bin": [
-                "bin/hal-build-id",
                 "bin/hal-random-id"
             ],
             "type": "library",
@@ -1114,7 +1118,11 @@
                     "Hal\\Core\\": "src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Hal\\Core\\Testing\\": "tests/src"
+                }
+            },
             "license": [
                 "MIT"
             ],
@@ -1124,8 +1132,7 @@
                     "email": "steve@kluck.engineering"
                 }
             ],
-            "description": "Core domain entities and shared resources for Hal UI and Agent.",
-            "time": "2017-12-18 19:47:54"
+            "description": "Core domain entities and shared resources for Hal UI and Agent."
         },
         {
             "name": "knplabs/github-api",

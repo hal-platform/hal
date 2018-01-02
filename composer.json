@@ -14,6 +14,9 @@
     "autoload": {
         "psr-4": { "Hal\\UI\\": "src" }
     },
+    "repositories": [
+        { "type": "path", "url": "../hal-core" }
+    ],
 
     "require": {
         "php-64bit": "~7.1",
@@ -36,7 +39,7 @@
         "predis/predis":            "~1.0",
         "psr/log":                  "*",
 
-        "hal/hal-core":             "dev-master",
+        "hal/hal-core":             "dev-db-refactor",
 
         "ql/mcp-cache":             "~3.0.0",
         "ql/mcp-common":            "~1.0",
