@@ -1,40 +1,90 @@
 {% extends 'base.twig' %}
+{% import 'macros.form.twig' as form_macros %}
 
 {% set page_title = 'Sign-In' %}
 
 {% block content %}
 
-    <h1 class="mbn">Hal Deployment System</h1>
+    <h1>Hal Deployment System</h1>
     <p>It deploys code to other, less capable machines.</p>
 
-    {% if errors %}
-        <ul class="error-list">
-            {% for error in errors %}
-                <li>{{ error }}</li>
-            {% endfor %}
-        </ul>
+    {{ form_macros.formErrors(errors) }}
+
+    {% if idp_providers|length == 1 %}
+        {% set selected_auth = idp_providers|first %}
     {% endif %}
 
-    {{ block('signin_form') }}
+    {% if selected_auth.type == 'internal' %}
+
+        <h2>Sign In via <b>Internal Auth</b></h2>
+        {{ block('internal_signin_form') }}
+
+    {% elseif selected_auth.type == 'ldap' %}
+
+        <h2>Sign In via <b>LDAP</b></h2>
+        {{ block('ldap_signin_form') }}
+
+    {% elseif selected_auth.type == 'ghe' %}
+
+        <h2>Sign In via <b>GitHub Enterprise</b></h2>
+        {{ block('github_enterprise_signin_form') }}
+
+    {% elseif selected_auth.type == 'gh' %}
+
+        <h2>Sign In via <b>GitHub.com</b></h2>
+        {{ block('github_signin_form') }}
+
+    {% else %}
+
+        {# todo support multiple IDPs #}
+        <p>No Identity Providers are configured.</p>
+
+    {% endif %}
 
 {% endblock %}
 
-{% block signin_form %}
-    <div class="form-wrapper">
-        <form action="" method="post">
-            <ul class="form-fields">
-                <li>
-                    <label for="username">Username</label>
-                    <input class="text-input" type="text" id="username" name="username" autofocus>
-                </li>
-                <li>
-                    <label for="password">Password</label>
-                    <input class="text-input" type="password" id="password" name="password">
-                </li>
-                <li>
-                    <input class="btn" type="submit" value="Sign In" name="submit">
-                </li>
-            </ul>
-        </form>
-    </div>
+{% block internal_signin_form %}
+    <form action="?idp={{ selected_auth.id }}" method="post">
+        <ul class="form-fields form-wrapper">
+            <li>
+                <label for="username">Username</label>
+                <input class="text-input" type="text" id="username" name="internal_username" autofocus>
+            </li>
+            <li>
+                <label for="password">Password</label>
+                <input class="text-input" type="password" id="password" name="internal_password">
+            </li>
+        </ul>
+
+        <p>
+            <button class="btn" type="submit">Sign In</button>
+        </p>
+    </form>
+{% endblock %}
+
+{% block ldap_signin_form %}
+    <form action="?idp={{ selected_auth.id }}" method="post">
+        <ul class="form-fields form-wrapper">
+            <li>
+                <label for="username">Username</label>
+                <input class="text-input" type="text" id="username" name="ldap_username" autofocus>
+            </li>
+            <li>
+                <label for="password">Password</label>
+                <input class="text-input" type="password" id="password" name="ldap_password">
+            </li>
+        </ul>
+
+        <p>
+            <button class="btn" type="submit">Sign In</button>
+        </p>
+    </form>
+{% endblock %}
+
+{% block github_enterprise_signin_form %}
+    <p>GitHub Enterprise Sign-In coming soon!</p>
+{% endblock %}
+
+{% block github_signin_form %}
+    <p>GitHub.com Sign-In coming soon!</p>
 {% endblock %}

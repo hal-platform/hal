@@ -9,7 +9,7 @@ namespace Hal\UI\System;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\Core\Entity\SystemSetting;
+use Hal\Core\Entity\System\SystemSetting;
 use QL\MCP\Cache\CachingTrait;
 use QL\MCP\Common\Time\Clock;
 use QL\Panthor\Utility\JSON;

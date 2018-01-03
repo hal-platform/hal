@@ -76,33 +76,6 @@ services:
     # DOMAIN-SPECIFIC SERVICES
     ####################################################################################################################
 
-    ldap.auth:
-        class: 'Hal\UI\Auth'
-        arguments:
-            - '@ldap.auth.symfony'
-            - '%ldap.base_dn%'
-            - '%ldap.domain%'
-            - 'person'
-            - 'sAMAccountName'
-
-    ldap.auth.symfony:
-        class: 'Symfony\Component\Ldap\Ldap'
-        factory: ['Symfony\Component\Ldap\Ldap', 'create']
-        arguments:
-            - 'ext_ldap'
-            -
-                host: '%ldap.host%'
-                port: '%ldap.port%'
-
-    permissions:
-        class: 'Hal\UI\Service\PermissionService'
-        arguments:
-            - '@doctrine.em'
-            - '@json'
-        calls:
-            - ['setCache', ['@cache']]
-            - ['setCacheTTL', ['%cache.permissions.ttl%']]
-
     banner:
         class: 'Hal\UI\System\GlobalBannerService'
         arguments:

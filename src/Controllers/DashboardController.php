@@ -11,10 +11,10 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Application;
-use Hal\Core\Entity\UserSettings;
+use Hal\Core\Entity\Job;
 use Hal\Core\Entity\User;
+use Hal\Core\Type\JobStatusEnum;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Service\JobQueueService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -31,29 +31,23 @@ class DashboardController implements ControllerInterface
     private $template;
 
     /**
-     * @var JobQueueService
-     */
-    private $queue;
-
-    /**
      * @var EntityRepository
      */
     private $applicationRepo;
+    private $jobRepo;
 
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param JobQueueService $queue
      */
     public function __construct(
         TemplateInterface $template,
-        EntityManagerInterface $em,
-        JobQueueService $queue
+        EntityManagerInterface $em
     ) {
         $this->template = $template;
-        $this->queue = $queue;
 
         $this->applicationRepo = $em->getRepository(Application::class);
+        $this->jobRepo = $em->getRepository(Job::class);
     }
 
     /**
@@ -65,8 +59,23 @@ class DashboardController implements ControllerInterface
 
         return $this->withTemplate($request, $response, $this->template, [
             'favorites' => $this->findFavorites($user),
-            'pending' => $this->queue->getPendingJobs()
+            'pending' => $this->findPendingJobs()
         ]);
+    }
+
+    /**
+     * @return array
+     */
+    private function findPendingJobs()
+    {
+        return $this->jobRepo->findBy(
+            [
+                'status' => [JobStatusEnum::TYPE_PENDING, JobStatusEnum::TYPE_RUNNING]
+            ],
+            [
+                'created' => 'DESC'
+            ]
+        );
     }
 
     /**
@@ -76,7 +85,7 @@ class DashboardController implements ControllerInterface
      */
     private function findFavorites(User $user): array
     {
-        if (!$favorites = $user->settings()->favoriteApplications()) {
+        if (!$favorites = $user->settings('favorite_applications')) {
             return [];
         }
 

@@ -26,7 +26,6 @@ services:
         arguments:
             - '@dashboard.twig'
             - '@doctrine.em'
-            - '@job_queue'
     dashboard.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['dashboard.twig']]]
@@ -37,20 +36,36 @@ services:
 
     signin.page:
         class: 'Hal\UI\Controllers\SignInController'
-        arguments: ['@signin.twig']
+        arguments:
+            - '@doctrine.em'
+            - '@uri'
+            - '@signin.twig'
     signin.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['signin.twig']]]
     signin.middleware:
         class: 'Hal\UI\Controllers\SignInHandler'
         arguments:
-            - '@ldap.auth'
             - '@doctrine.em'
+            - '@auth'
             - '@uri'
-            - '@doctrine.random'
     signout.page:
         class: 'Hal\UI\Controllers\SignOutController'
         arguments: ['@uri']
+
+    ####################################################################################################################
+    # HAL BOOTSTRAP
+    ####################################################################################################################
+
+    hal_bootstrap.page:
+        class: 'Hal\UI\Controllers\Admin\HalBootstrapController'
+        arguments:
+            - '@doctrine.em'
+            - '@uri'
+            - '@hal_bootstrap.twig'
+    hal_bootstrap.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/hal_bootstrap.twig']]]
 
     ####################################################################################################################
     # GITHUB OAUTH CONTROLLERS

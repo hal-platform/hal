@@ -5,12 +5,12 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Github;
+namespace Hal\UI\Security\UserAuthentication;
 
 use GuzzleHttp\Client as Guzzle;
 use QL\Panthor\Utility\JSON;
 
-class OAuthHandler
+class GitHubOAuthHandler
 {
     /**
      * @var Guzzle

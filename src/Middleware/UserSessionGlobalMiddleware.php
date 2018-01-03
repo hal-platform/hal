@@ -10,7 +10,7 @@ namespace Hal\UI\Middleware;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\User;
-use Hal\Core\Entity\UserPermission;
+use Hal\Core\Entity\User\UserPermission;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
@@ -159,7 +159,7 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
             return;
         }
 
-        $this->factory->setDefaultProperty(MessageInterface::USER_NAME, $user->username());
+        $this->factory->setDefaultProperty(MessageInterface::USER_NAME, $user->name());
     }
 
     /**

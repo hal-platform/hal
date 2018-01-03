@@ -10,11 +10,11 @@ namespace Hal\UI\Controllers;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\User;
-use Hal\Core\Entity\UserSettings;
-use Hal\Core\Repository\UserRepository;
-use Hal\UI\Auth;
+use Hal\Core\Entity\System\UserIdentityProvider;
+use Hal\Core\Type\IdentityProviderEnum;
 use Hal\UI\Middleware\UserSessionGlobalMiddleware;
-use Hal\UI\Session;
+use Hal\UI\Security\Auth;
+use Hal\UI\Validator\ValidatorErrorTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\MiddlewareInterface;
@@ -25,10 +25,13 @@ class SignInHandler implements MiddlewareInterface
     use RedirectableControllerTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
+    use ValidatorErrorTrait;
 
     private const ERR_INVALID = 'A username and password must be entered.';
     private const ERR_AUTH_FAILURE = 'Authentication failed.';
     private const ERR_DISABLED = 'Account disabled.';
+
+    const ERR_AUTH_MISCONFIGURED = 'No valid Identity Provider was found. Hal may be misconfigured.';
 
     /**
      * @var Auth
@@ -36,9 +39,9 @@ class SignInHandler implements MiddlewareInterface
     private $auth;
 
     /**
-     * @var UserRepository
+     * @var EntityRepository
      */
-    private $userRepo;
+    private $idpRepo;
 
     /**
      * @var EntityManagerInterface
@@ -51,27 +54,21 @@ class SignInHandler implements MiddlewareInterface
     private $uri;
 
     /**
-     * @var callable
-     */
-    private $random;
-
-    /**
      * @param Auth $auth
      * @param EntityManagerInterface $em
      * @param URI $uri
      * @param callable $random
      */
     public function __construct(
-        Auth $auth,
         EntityManagerInterface $em,
-        URI $uri,
-        callable $random
+        Auth $auth,
+        URI $uri
     ) {
         $this->auth = $auth;
-        $this->userRepo = $em->getRepository(User::class);
-        $this->em = $em;
         $this->uri = $uri;
-        $this->random = $random;
+
+        $this->idpRepo = $em->getRepository(UserIdentityProvider::class);
+        $this->em = $em;
     }
 
     /**
@@ -83,43 +80,57 @@ class SignInHandler implements MiddlewareInterface
             return $next($request, $response);
         }
 
-        $username = $request->getParsedBody()['username'] ?? null;
-        $password = $request->getParsedBody()['password'] ?? null;
-        $redirect = $request->getQueryParams()['redirect'] ?? null;
+        $providerID = $request->getQueryParams()['idp'] ?? '';
+        $redirectURL = $request->getQueryParams()['redirect'] ?? null;
 
-        // auth empty
-        if (!$username || !$password) {
-            return $next($this->withError($request, self::ERR_INVALID), $response);
+        if (!$providerID) {
+            return $next($request, $response);
         }
 
-        // auth failed
-        if (!$account = $this->auth->authenticate($username, $password)) {
-            return $next($this->withError($request, self::ERR_AUTH_FAILURE), $response);
+        $idp = $this->idpRepo->find($providerID);
+        if (!$idp) {
+            return $next($request, $response);
         }
 
-        $user = $this->userRepo->findOneBy(['username' => $account['username']]);
+        if ($idp->type() === IdentityProviderEnum::TYPE_INTERNAL) {
+            $user = $this->auth->authenticate($idp, [
+                'username' => $request->getParsedBody()['internal_username'] ?? '',
+                'password' => $request->getParsedBody()['internal_password'] ?? '',
+            ]);
 
-        // account disabled manually
-        if ($user instanceof User && $user->isDisabled()) {
+        } elseif ($idp->type() === IdentityProviderEnum::TYPE_LDAP) {
+            $user = $this->auth->authenticate($idp, [
+                'username' => $request->getParsedBody()['ldap_username'] ?? '',
+                'password' => $request->getParsedBody()['ldap_password'] ?? '',
+            ]);
+
+        } else {
+            return $next($this->withError($request, self::ERR_AUTH_MISCONFIGURED), $response);
+        }
+
+        if (!$user instanceof User) {
+            return $next($this->withErrors($request, $this->auth->errors()), $response);
+        }
+
+        if ($user->isDisabled()) {
             return $next($this->withError($request, self::ERR_DISABLED), $response);
         }
 
-        $isFirstLogin = false;
-        if (!$user instanceof User) {
-            $isFirstLogin = true;
-            $user = new User;
-        }
-
-        $this->updateUserDetails($user, $account);
+        // :( dont know this
+        //
+        // $isFirstLogin = false;
+        // if (!$user instanceof User) {
+        //     $isFirstLogin = true;
+        // }
 
         $session = $this->getSession($request);
 
         $session->clear();
         $session->set(UserSessionGlobalMiddleware::SESSION_ATTRIBUTE, $user->id());
-        $session->set('is_first_login', $isFirstLogin);
+        // $session->set('is_first_login', $isFirstLogin);
 
-        if ($redirect && strpos($redirect, '/') === 0) {
-            return $this->withRedirectURL($response, $request->getUri(), $redirect);
+        if ($redirectURL && strpos($redirectURL, '/') === 0) {
+            return $this->withRedirectURL($response, $request->getUri(), $redirectURL);
         } else {
             return $this->withRedirectRoute($response, $this->uri, 'dashboard');
         }
@@ -128,33 +139,37 @@ class SignInHandler implements MiddlewareInterface
     /**
      * @param ServerRequestInterface $request
      * @param string $error
+     * @param string|null $field
      *
      * @return ServerRequestInterface
      */
-    private function withError(ServerRequestInterface $request, string $error)
+    private function withError(ServerRequestInterface $request, string $error, string $field = '')
     {
+        if ($field) {
+            $this->addError($error, $field);
+        } else {
+            $this->addError($error);
+        }
+
         $context = [
-            'errors' => [$error]
+            'errors' => $this->errors()
         ];
 
         return $this->withContext($request, $context);
     }
 
     /**
-     * @param User $user
-     * @param array $account
+     * @param ServerRequestInterface $request
+     * @param array $errors
      *
-     * @return null
+     * @return ServerRequestInterface
      */
-    private function updateUserDetails(User $user, array $account)
+    private function withErrors(ServerRequestInterface $request, $errors)
     {
-        // Always ensure email and name is in sync
-        $user
-            ->withUsername($account['username'])
-            ->withEmail($account['email'])
-            ->withName($account['name']);
+        $context = [
+            'errors' => $errors
+        ];
 
-        $this->em->persist($user);
-        $this->em->flush();
+        return $this->withContext($request, $context);
     }
 }
