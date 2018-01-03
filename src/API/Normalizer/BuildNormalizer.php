@@ -11,21 +11,21 @@ use Hal\Core\Entity\Build;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResourceNormalizerInterface;
-use Hal\UI\Github\GitHubURLBuilder;
+use Hal\UI\VersionControl\VCS;
 
 class BuildNormalizer implements ResourceNormalizerInterface
 {
     /**
-     * @var GitHubURLBuilder
+     * @var VCS
      */
-    private $urlBuilder;
+    private $vcs;
 
     /**
-     * @param GitHubURLBuilder $urlBuilder
+     * @param VCS $vcs
      */
-    public function __construct(GitHubURLBuilder $urlBuilder)
+    public function __construct(VCS $vcs)
     {
-        $this->urlBuilder = $urlBuilder;
+        $this->vcs = $vcs;
     }
 
     /**
@@ -112,12 +112,14 @@ class BuildNormalizer implements ResourceNormalizerInterface
                 'text/html'
             ),
             'github_reference_page' => new Hyperlink(
-                $this->urlBuilder->githubReferenceURL($ghOwner, $ghRepo, $build->reference()),
+                'https://github.example.com',
+                // $this->vcs->authenticate($provider)->url()->githubReferenceURL($ghOwner, $ghRepo, $build->reference()),
                 '',
                 'text/html'
             ),
             'github_commit_page' => new Hyperlink(
-                $this->urlBuilder->githubCommitURL($ghOwner, $ghRepo, $build->commit()),
+                'https://github.example.com',
+                // $this->vcs->authenticate($provider)->url()->githubCommitURL($ghOwner, $ghRepo, $build->commit()),
                 '',
                 'text/html'
             )

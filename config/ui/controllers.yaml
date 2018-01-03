@@ -567,7 +567,7 @@ services:
         arguments:
             - '@build.start.twig'
             - '@doctrine.em'
-            - '@github'
+            - '@vcs'
             - '@sticky.environment'
     build.start.twig:
         parent: 'twig.template'

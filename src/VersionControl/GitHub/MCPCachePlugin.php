@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Github;
+namespace Hal\UI\VersionControl\GitHub;
 
 use Http\Client\Common\Plugin;
 use Http\Message\StreamFactory;

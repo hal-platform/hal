@@ -5,16 +5,14 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Github;
-
-use Hal\UI\Service\GitHubService;
+namespace Hal\UI\VersionControl\GitHub;
 
 class GitHubURLBuilder
 {
     /**
      * @var GitHubService
      */
-    private $github;
+    private $resolver;
 
     /**
      * @var string
@@ -22,12 +20,12 @@ class GitHubURLBuilder
     private $githubBaseURL;
 
     /**
-     * @param GitHubService $github
+     * @param GitHubResolver $resolver
      * @param string $githubBaseURL
      */
-    public function __construct(GitHubService $github, $githubBaseURL)
+    public function __construct(GitHubResolver $resolver, $githubBaseURL)
     {
-        $this->github = $github;
+        $this->resolver = $resolver;
         $this->githubBaseURL = rtrim($githubBaseURL, '/');
     }
 
@@ -118,15 +116,15 @@ class GitHubURLBuilder
      */
     public function githubReferenceURL($user, $repo, $reference)
     {
-        if ($tag = $this->github->parseRefAsTag($reference)) {
+        if ($tag = $this->resolver->parseRefAsTag($reference)) {
             return $this->githubReleaseURL($user, $repo, $tag);
         }
 
-        if ($pull = $this->github->parseRefAsPull($reference)) {
+        if ($pull = $this->resolver->parseRefAsPull($reference)) {
             return $this->githubPullRequestURL($user, $repo, $pull);
         }
 
-        if ($commit = $this->github->parseRefAsCommit($reference)) {
+        if ($commit = $this->resolver->parseRefAsCommit($reference)) {
             return $this->githubCommitURL($user, $repo, $commit);
         }
 

@@ -8,8 +8,7 @@
 namespace Hal\UI\Twig;
 
 use Exception;
-use Hal\UI\Github\GitHubURLBuilder;
-use Hal\UI\Service\GitHubService;
+use Hal\UI\VersionControl\VCS;
 use QL\MCP\Cache\CachingTrait;
 use Twig_Extension;
 use Twig_SimpleFilter;
@@ -19,26 +18,19 @@ class GitHubExtension extends Twig_Extension
 {
     use CachingTrait;
 
-    const NAME = 'github_permissions';
+    const NAME = 'github';
 
     /**
-     * @var GitHubService
+     * @var VCS
      */
-    private $github;
+    private $vcs;
 
     /**
-     * @var GitHubURLBuilder
+     * @param VCS $vcs
      */
-    private $urlBuilder;
-
-    /**
-     * @param GitHubService $github
-     * @param GitHubURLBuilder $urlBuilder
-     */
-    public function __construct(GitHubService $github, GitHubURLBuilder $urlBuilder)
+    public function __construct(VCS $vcs)
     {
-        $this->github = $github;
-        $this->urlBuilder = $urlBuilder;
+        $this->vcs = $vcs;
     }
 
     /**
@@ -55,13 +47,20 @@ class GitHubExtension extends Twig_Extension
     public function getFunctions()
     {
         return [
-            new Twig_SimpleFunction('githubRepoUrl', [$this->urlBuilder, 'githubRepoURL']),
-            new Twig_SimpleFunction('githubCommitUrl', [$this->urlBuilder, 'githubCommitURL']),
-            new Twig_SimpleFunction('githubBranchUrl', [$this->urlBuilder, 'githubBranchURL']),
-            new Twig_SimpleFunction('githubPullRequestUrl', [$this->urlBuilder, 'githubPullRequestURL']),
-            new Twig_SimpleFunction('githubReferenceUrl', [$this->urlBuilder, 'githubReferenceURL']),
-            new Twig_SimpleFunction('githubReleaseUrl', [$this->urlBuilder, 'githubReleaseURL']),
-            new Twig_SimpleFunction('githubUserUrl', [$this->urlBuilder, 'githubUserUrl']),
+            // new Twig_SimpleFunction('githubRepoUrl', [$this->urlBuilder, 'githubRepoURL']),
+            // new Twig_SimpleFunction('githubCommitUrl', [$this->urlBuilder, 'githubCommitURL']),
+            // new Twig_SimpleFunction('githubBranchUrl', [$this->urlBuilder, 'githubBranchURL']),
+            // new Twig_SimpleFunction('githubPullRequestUrl', [$this->urlBuilder, 'githubPullRequestURL']),
+            // new Twig_SimpleFunction('githubReferenceUrl', [$this->urlBuilder, 'githubReferenceURL']),
+            // new Twig_SimpleFunction('githubReleaseUrl', [$this->urlBuilder, 'githubReleaseURL']),
+            // new Twig_SimpleFunction('githubUserUrl', [$this->urlBuilder, 'githubUserUrl']),
+            new Twig_SimpleFunction('githubRepoUrl', [$this, 'getFakeURL']),
+            new Twig_SimpleFunction('githubCommitUrl', [$this, 'getFakeURL']),
+            new Twig_SimpleFunction('githubBranchUrl', [$this, 'getFakeURL']),
+            new Twig_SimpleFunction('githubPullRequestUrl', [$this, 'getFakeURL']),
+            new Twig_SimpleFunction('githubReferenceUrl', [$this, 'getFakeURL']),
+            new Twig_SimpleFunction('githubReleaseUrl', [$this, 'getFakeURL']),
+            new Twig_SimpleFunction('githubUserUrl', [$this, 'getFakeURL']),
 
             new Twig_SimpleFunction('githubCommitIsCurrent', [$this, 'commitIsCurrent'])
         ];
@@ -78,6 +77,11 @@ class GitHubExtension extends Twig_Extension
         ];
     }
 
+    public function getFakeURL()
+    {
+        return 'https://github.example.com';
+    }
+
     /**
      * Check if a commit hash is the most recent for a given Github user, repo, and reference
      *
@@ -90,6 +94,12 @@ class GitHubExtension extends Twig_Extension
      */
     public function commitIsCurrent($user, $repo, $reference, $commit)
     {
+        // debug
+        // debug
+        // debug
+        // debug
+        return false;
+
         // cache ref comparisons in memory
         $key = md5($user . $repo . $reference . $commit);
 
@@ -126,15 +136,21 @@ class GitHubExtension extends Twig_Extension
      */
     public function resolveGitReference($reference)
     {
-        if ($tag = $this->github->parseRefAsTag($reference)) {
+        // debug
+        // debug
+        // debug
+        // debug
+        return ['branch', $reference];
+
+        if ($tag = $this->githubResolver->parseRefAsTag($reference)) {
             return ['tag', $tag];
         }
 
-        if ($pull = $this->github->parseRefAsPull($reference)) {
+        if ($pull = $this->githubResolver->parseRefAsPull($reference)) {
             return ['pull', $pull];
         }
 
-        if ($commit = $this->github->parseRefAsCommit($reference)) {
+        if ($commit = $this->githubResolver->parseRefAsCommit($reference)) {
             return ['commit', $commit];
         }
 
@@ -159,7 +175,7 @@ class GitHubExtension extends Twig_Extension
         }
 
         try {
-            $resolve = $this->github->resolve($user, $repo, $reference);
+            $resolve = $this->githubResolver->resolve($user, $repo, $reference);
             $latest = (is_array($resolve)) ? $resolve[1] : null;
 
         // Fuck off weird errors

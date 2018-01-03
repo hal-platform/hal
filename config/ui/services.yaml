@@ -22,7 +22,7 @@ services:
 
     validator.application:
         class: 'Hal\UI\Validator\ApplicationValidator'
-        arguments: ['@doctrine.em', '@github']
+        arguments: ['@doctrine.em', '@vcs']
 
     validator.credential:
         class: 'Hal\UI\Validator\CredentialValidator'
@@ -41,7 +41,7 @@ services:
         class: 'Hal\UI\Validator\BuildValidator'
         arguments:
             - '@doctrine.em'
-            - '@github'
+            - '@vcs'
             - '@service.authorization'
     release.start.validator:
         class: 'Hal\UI\Validator\ReleaseValidator'
@@ -73,12 +73,12 @@ services:
 
     twig.extension.github:
         class: 'Hal\UI\Twig\GitHubExtension'
-        arguments: ['@github', '@github.url_builder']
+        arguments: ['@vcs']
         calls:
             - ['setCache', ['@twig.extension.github.cache']]
 
     twig.extension.github.cache:
-        class: 'QL\MCP\Cache\MemoryCache'
+        parent: 'cache.memory'
 
     # Twig Environment
     twig.environment:

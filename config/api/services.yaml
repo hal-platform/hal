@@ -34,7 +34,7 @@ services:
     api_normalizer.build:
         class: 'Hal\UI\API\Normalizer\BuildNormalizer'
         arguments:
-            - '@github.url_builder'
+            - '@vcs'
             - '@api_normalizer.environment'
 
     api_normalizer.target:
@@ -56,7 +56,7 @@ services:
 
     api_normalizer.application:
         class: 'Hal\UI\API\Normalizer\ApplicationNormalizer'
-        arguments: ['@github.url_builder']
+        arguments: ['@vcs']
 
     api_normalizer.group:
         class: 'Hal\UI\API\Normalizer\GroupNormalizer'

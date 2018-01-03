@@ -7,15 +7,16 @@
 
 namespace Hal\UI\Service;
 
-use Github\Api\GitData\Commits as CommitApi;
-use Github\Api\GitData\References as ReferenceApi;
-use Github\Api\Organization\Members as OrganizationMembersApi;
-use Github\Api\PullRequest as PullRequestApi;
-use Github\Api\Repo as RepoApi;
-use Github\Api\Repository\Commits as RepoCommitApi;
-use Github\Api\User as UserApi;
+use Github\Api\GitData\References as ReferencesAPI;
+use Github\Api\PullRequest as PullRequestAPI;
+use Github\Api\Repo as RepoAPI;
+use Github\Api\Repository\Commits as RepoCommitsAPI;
+use Github\Api\User as UserAPI;
+use Github\Client;
 use Github\Exception\RuntimeException;
 use Github\ResultPager;
+use Hal\UI\VersionControl\GitHub\GitHubResolver;
+use Hal\UI\VersionControl\GitHub\GitHubURLBuilder;
 
 /**
  * Combine all individual github api services into a giant convenience service.
@@ -23,46 +24,14 @@ use Github\ResultPager;
 class GitHubService
 {
     /**
-     * Git Reference Patterns
+     * @var GitHubResolver
      */
-    const REGEX_TAG = '#^tag/([[:print:]]+)$#';
-    const REGEX_PULL = '#^pull/([\d]+)$#';
-    const REGEX_COMMIT = '#^[0-9a-f]{40}$#';
+    public $resolver;
 
     /**
-     * @var RepoApi
+     * @var GitHubURLBuilder
      */
-    public $repoApi;
-
-    /**
-     * @var RepoCommitApi
-     */
-    private $repoCommitApi;
-
-    /**
-     * @var ReferenceApi
-     */
-    private $gitReferenceApi;
-
-    /**
-     * @var CommitApi
-     */
-    private $gitCommitApi;
-
-    /**
-     * @var PullRequestApi
-     */
-    private $pullRequestApi;
-
-    /**
-     * @var UserApi
-     */
-    private $userApi;
-
-    /**
-     * @var OrganizationMembersApi
-     */
-    private $orgMembersApi;
+    public $urlBuilder;
 
     /**
      * @var ResultPager
@@ -70,45 +39,65 @@ class GitHubService
     private $pager;
 
     /**
-     * @param RepoApi $repoApi
-     * @param RepoCommitApi $repoCommitApi
-     *
-     * @param ReferenceApi $gitReferenceApi
-     * @param CommitApi $gitCommitApi
-     *
-     * @param PullRequestApi $pullRequestApi
-     *
-     * @param UserApi $userApi
-     * @param OrganizationMembersApi $orgMembersApi
-     *
+     * @var RepoAPI
+     */
+    public $repoAPI;
+
+    /**
+     * @var RepoCommitsAPI
+     */
+    private $repoCommitsAPI;
+
+    /**
+     * @var ReferencesAPI
+     */
+    private $gitReferencesAPI;
+
+    /**
+     * @var PullRequestAPI
+     */
+    private $pullRequestAPI;
+
+    /**
+     * @var UserAPI
+     */
+    private $userAPI;
+
+    /**
+     * @param Client $client
+     * @param GitHubResolver $resolver
+     * @param GitHubURLBuilder $builder
      * @param ResultPager $pager
      */
-    public function __construct(
-        RepoApi $repoApi,
-        RepoCommitApi $repoCommitApi,
-        //
-        ReferenceApi $gitReferenceApi,
-        CommitApi $gitCommitApi,
-        //
-        PullRequestApi $pullRequestApi,
-        //
-        UserApi $userApi,
-        OrganizationMembersApi $orgMembersApi,
-        //
-        ResultPager $pager
-    ) {
-        $this->repoApi = $repoApi;
-        $this->repoCommitApi = $repoCommitApi;
-
-        $this->gitReferenceApi = $gitReferenceApi;
-        $this->gitCommitApi = $gitCommitApi;
-
-        $this->pullRequestApi = $pullRequestApi;
-
-        $this->userApi = $userApi;
-        $this->orgMembersApi = $orgMembersApi;
-
+    public function __construct(Client $client, GitHubResolver $resolver, GitHubURLBuilder $builder, ResultPager $pager)
+    {
+        $this->resolver = $resolver;
+        $this->urlBuilder = $builder;
         $this->pager = $pager;
+
+        $this->gitReferencesAPI = $client->api('git_data')->references();
+        $this->pullRequestAPI = $client->api('pull_request');
+
+        $this->repoAPI = $client->api('repo');
+        $this->repoCommitsAPI = $client->api('repo')->commits();
+
+        $this->userAPI = $client->api('user');
+    }
+
+    /**
+     * @return GitHubResolver
+     */
+    public function resolver(): GitHubResolver
+    {
+        return $this->resolver;
+    }
+
+    /**
+     * @return GitHubURLBuilder
+     */
+    public function url(): GitHubURLBuilder
+    {
+        return $this->urlBuilder;
     }
 
     /**
@@ -116,12 +105,13 @@ class GitHubService
      *
      * @param string $user
      * @param string $repo
+     *
      * @return array
      */
-    public function branches($user, $repo)
+    public function branches($user, $repo): array
     {
         try {
-            $refs = $this->pager->fetchAll($this->gitReferenceApi, 'branches', [$user, $repo]);
+            $refs = $this->pager->fetchAll($this->gitReferencesAPI, 'branches', [$user, $repo]);
         } catch (RuntimeException $e) {
             $refs = [];
         }
@@ -143,16 +133,17 @@ class GitHubService
      *
      * @param string $user
      * @param string $repo
-     * @param boolean $getAll
+     * @param bool $getAll
+     *
      * @return array
      */
-    public function closedPullRequests($user, $repo, $getAll = false)
+    public function closedPullRequests($user, $repo, $getAll = false): array
     {
         try {
             if ($getAll) {
-                $pulls = $this->pager->fetchAll($this->pullRequestApi, 'all', [$user, $repo, ['state' => 'closed']]);
+                $pulls = $this->pager->fetchAll($this->pullRequestAPI, 'all', [$user, $repo, ['state' => 'closed']]);
             } else {
-                $pulls = $this->pullRequestApi->all($user, $repo, ['state' => 'closed']);
+                $pulls = $this->pullRequestAPI->all($user, $repo, ['state' => 'closed']);
             }
         } catch (RuntimeException $e) {
             $pulls = [];
@@ -169,12 +160,13 @@ class GitHubService
      *
      * @param string $user
      * @param string $repo
+     *
      * @return array
      */
-    public function openPullRequests($user, $repo)
+    public function openPullRequests($user, $repo): array
     {
         try {
-            $pulls = $this->pager->fetchAll($this->pullRequestApi, 'all', [$user, $repo]);
+            $pulls = $this->pager->fetchAll($this->pullRequestAPI, 'all', [$user, $repo]);
         } catch (RuntimeException $e) {
             $pulls = [];
         }
@@ -188,12 +180,13 @@ class GitHubService
      * @param string $user
      * @param string $repo
      * @param string $number
+     *
      * @return array|null
      */
-    public function pullRequest($user, $repo, $number)
+    public function pullRequest($user, $repo, $number): ?array
     {
         try {
-            $pull = $this->pullRequestApi->show($user, $repo, $number);
+            $pull = $this->pullRequestAPI->show($user, $repo, $number);
         } catch (RuntimeException $e) {
             $pull = null;
         }
@@ -206,13 +199,15 @@ class GitHubService
      *
      * @param string $user
      * @param string $repo
+     *
      * @return array|null
      */
-    public function repository($user, $repo)
+    public function repository($user, $repo): ?array
     {
         try {
-            $repository = $this->repoApi->show($user, $repo);
+            $repository = $this->repoAPI->show($user, $repo);
         } catch (RuntimeException $e) {
+            dump($e);
             $repository = null;
         }
 
@@ -220,33 +215,17 @@ class GitHubService
     }
 
     /**
-     * Get all repositories for a user.
-     *
-     * @param string $user
-     * @return array
-     */
-    public function repositories($user)
-    {
-        try {
-            $repositories = $this->pager->fetchAll($this->userApi, 'repositories', [$user]);
-        } catch (RuntimeException $e) {
-            $repositories = [];
-        }
-
-        return $repositories;
-    }
-
-    /**
      * Get the reference data for tags for a repository.
      *
      * @param string $user
      * @param string $repo
+     *
      * @return array
      */
-    public function tags($user, $repo)
+    public function tags($user, $repo): array
     {
         try {
-            $refs = $this->pager->fetchAll($this->gitReferenceApi, 'tags', [$user, $repo]);
+            $refs = $this->pager->fetchAll($this->gitReferencesAPI, 'tags', [$user, $repo]);
         } catch (RuntimeException $e) {
             $refs = [];
         }
@@ -265,33 +244,15 @@ class GitHubService
      *
      * @return array|null
      */
-    public function user($user)
+    public function user($user): ?array
     {
         try {
-            $user = $this->userApi->show($user);
+            $user = $this->userAPI->show($user);
         } catch (RuntimeException $e) {
             $user = null;
         }
 
         return $user;
-    }
-
-    /**
-     * @param string $organization
-     * @param string $user
-     *
-     * @return boolean
-     */
-    public function isUserOrganizationMember($organization, $user)
-    {
-        try {
-            // A successful response returns 'null'
-            $this->orgMembersApi->check($organization, $user);
-        } catch (RuntimeException $e) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -302,183 +263,14 @@ class GitHubService
      * @param string $base
      * @param string $head
      *
-     * @return array|string
+     * @return array|string|null
      */
     public function diff($user, $repo, $base, $head)
     {
-        return $this->repoCommitApi->compare($user, $repo, $base, $head);
-    }
-
-    /**
-     * Resolve a git reference in the following format.
-     *
-     * Tag: tag/(tag name)
-     * Pull: pull/(pull request number)
-     * Commit: (commit hash){40}
-     * Branch: (branch name)
-     *
-     * Will return an array of [reference, commit] or null on failure
-     *
-     * @param string $user
-     * @param string $repo
-     * @param string $reference
-     * @return null|array
-     */
-    public function resolve($user, $repo, $reference)
-    {
-        if (strlen($reference) === 0) {
-            return null;
-        }
-
-        if ($sha = $this->resolveTag($user, $repo, $reference)) {
-            return [$reference, $sha];
-        }
-
-        if ($sha = $this->resolvePull($user, $repo, $reference)) {
-            return [$reference, $sha];
-        }
-
-        if ($sha = $this->resolveCommit($user, $repo, $reference)) {
-            return ['commit', $sha];
-        }
-
-        if ($sha = $this->resolveBranch($user, $repo, $reference)) {
-            return [$reference, $sha];
-        }
-
-        return null;
-    }
-
-    /**
-     * Parse a git reference as a tag, return null on failure.
-     *
-     * @param string $reference
-     * @return string|null
-     */
-    public function parseRefAsTag($reference)
-    {
-        if (preg_match(self::REGEX_TAG, $reference, $matches) !== 1) {
-            return null;
-        }
-
-        return $matches[1];
-    }
-
-    /**
-     * Parse a git reference as a pull request, return null on failure.
-     *
-     * @param string $reference
-     * @return string|null
-     */
-    public function parseRefAsPull($reference)
-    {
-        if (preg_match(self::REGEX_PULL, $reference, $matches) !== 1) {
-            return null;
-        }
-
-        return $matches[1];
-    }
-
-    /**
-     * Parse a git reference as a commit, return null on failure.
-     *
-     * @param string $reference
-     * @return string|null
-     */
-    public function parseRefAsCommit($reference)
-    {
-        if (preg_match(self::REGEX_COMMIT, $reference, $matches) !== 1) {
-            return null;
-        }
-
-        return $matches[0];
-    }
-
-    /**
-     * Resolve a tag reference. Returns the commit sha or null on failure.
-     *
-     * @param string $user
-     * @param string $repo
-     * @param string $reference
-     * @return null|string
-     */
-    private function resolveTag($user, $repo, $reference)
-    {
-        if (!$tag = $this->parseRefAsTag($reference)) {
-            return null;
-        }
-
         try {
-            $result = $this->gitReferenceApi->show($user, $repo, sprintf('tags/%s', $tag));
+            return $this->repoCommitsAPI->compare($user, $repo, $base, $head);
         } catch (RuntimeException $e) {
             return null;
         }
-
-        return $result['object']['sha'];
-    }
-
-    /**
-     * Resolve a pull request reference. Returns the commit sha or null on failure.
-     *
-     * @param string $user
-     * @param string $repo
-     * @param string $reference
-     * @return null|string
-     */
-    private function resolvePull($user, $repo, $reference)
-    {
-        if (!$pull = $this->parseRefAsPull($reference)) {
-            return null;
-        }
-
-        try {
-            $result = $this->pullRequestApi->show($user, $repo, $pull);
-        } catch (RuntimeException $e) {
-            return null;
-        }
-
-        return $result['head']['sha'];
-    }
-
-    /**
-     * Resolve a commit reference. Returns the commit sha or null on failure.
-     *
-     * @param string $user
-     * @param string $repo
-     * @param string $reference
-     * @return null|string
-     */
-    private function resolveCommit($user, $repo, $reference)
-    {
-        if (!$commit = $this->parseRefAsCommit($reference)) {
-            return null;
-        }
-
-        try {
-            $result = $this->gitCommitApi->show($user, $repo, $commit);
-        } catch (RuntimeException $e) {
-            return null;
-        }
-
-        return $result['sha'];
-    }
-
-    /**
-     * Resolve a branch reference. Returns the head commit sha or null on failure.
-     *
-     * @param string $user
-     * @param string $repo
-     * @param string $branch
-     * @return null|string
-     */
-    private function resolveBranch($user, $repo, $branch)
-    {
-        try {
-            $result = $this->gitReferenceApi->show($user, $repo, sprintf('heads/%s', $branch));
-        } catch (RuntimeException $e) {
-            return null;
-        }
-
-        return $result['object']['sha'];
     }
 }
