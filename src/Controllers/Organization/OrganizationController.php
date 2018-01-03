@@ -49,7 +49,7 @@ class OrganizationController implements ControllerInterface
         $organization = $request->getAttribute(Organization::class);
 
         $applications = $this->applicationRepo
-            ->findBy(['organization' => $organization], ['identifier' => 'ASC']);
+            ->findBy(['organization' => $organization], ['name' => 'ASC']);
 
         return $this->withTemplate($request, $response, $this->template, [
             'organization' => $organization,

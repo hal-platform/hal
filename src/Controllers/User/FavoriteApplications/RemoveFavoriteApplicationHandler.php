@@ -15,6 +15,7 @@ use Hal\UI\Flash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Hal\Core\Entity\Application;
+use Hal\Core\Entity\User;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\JSON;
 use QL\Panthor\Utility\URI;
@@ -67,14 +68,17 @@ class RemoveFavoriteApplicationHandler implements ControllerInterface
         $application = $request->getAttribute(Application::class);
         $user = $this->getUser($request);
 
-        $settings = $user->settings();
+        $favorites = $user->setting('favorite_applications') ?? [];
 
-        if ($settings->isFavoriteApplication($application)) {
-            $settings->withoutFavoriteApplication($application);
+        $this->removeFavorite($user, $application);
+
+        $isFavorite = in_array($application->id(), $favorites, true);
+        if ($isFavorite) {
+            $favorites[] = $application->id();
         }
 
         // persist to database
-        $this->em->persist($settings);
+        $this->em->persist($user);
         $this->em->flush();
 
         $success = sprintf(self::MSG_SUCCESS, $application->name());
@@ -89,5 +93,27 @@ class RemoveFavoriteApplicationHandler implements ControllerInterface
             ->withNewBody($response, $this->json->encode(['message' => $success]))
             ->withHeader('Content-Type', 'application/json')
             ->withStatus(200);
+    }
+
+    /**
+     * @param User $user
+     * @param Application $application
+     *
+     * @return void
+     */
+    private function removeFavorite(User $user, Application $application)
+    {
+        $favorites = $user->setting('favorite_applications') ?? [];
+
+        $isFavorite = in_array($application->id(), $favorites, true);
+        if (!$isFavorite || !$favorites) {
+            return;
+        }
+
+        array_filter($favorites, function($appID) use ($application) {
+            return ($appID === $application->id());
+        });
+
+        $user->setting('favorite_applications', array_values($favorites));
     }
 }

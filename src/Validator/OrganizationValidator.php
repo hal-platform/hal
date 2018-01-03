@@ -16,10 +16,8 @@ class OrganizationValidator
     use ValidatorErrorTrait;
     use NewValidatorTrait;
 
-    private const REGEX_CHARACTER_CLASS_NAME = '0-9a-z_.-';
     private const REGEX_CHARACTER_WHITESPACE = '\f\n\r\t\v';
-    private const ERR_NAME_CHARACTERS = 'Name must contain only alphanumeric characters with periods (.), underscore (_), and dashes (-)';
-    private const ERR_DESCRIPTION_CHARACTERS = 'Description must not contain tabs or newlines';
+    private const ERR_NAME_CHARACTERS = 'Name must not contain tabs or newlines';
     private const ERR_DUPE_NAME = 'An organization with this name already exists';
 
     /**
@@ -37,22 +35,20 @@ class OrganizationValidator
 
     /**
      * @param string $name
-     * @param string $description
      *
      * @return Organization|null
      */
-    public function isValid($name, $description): ?Organization
+    public function isValid($name): ?Organization
     {
         $this->resetErrors();
 
-        $name = $this->sanitizeName($name);
-        $this->validate($name, $description);
+        $this->validate($name);
 
         if ($this->hasErrors()) {
             return null;
         }
 
-        if ($org = $this->organizationRepo->findOneBy(['identifier' => $name])) {
+        if ($org = $this->organizationRepo->findOneBy(['name' => $name])) {
             $this->addError(self::ERR_DUPE_NAME);
         }
 
@@ -61,8 +57,7 @@ class OrganizationValidator
         }
 
         $organization = (new Organization)
-            ->withIdentifier($name)
-            ->withName($description);
+            ->withName($name);
 
         return $organization;
     }
@@ -70,23 +65,21 @@ class OrganizationValidator
     /**
      * @param Organization $organization
      * @param string $name
-     * @param string $description
      *
      * @return Organization|null
      */
-    public function isEditValid(Organization $organization, $name, $description): ?Organization
+    public function isEditValid(Organization $organization, $name): ?Organization
     {
         $this->resetErrors();
 
-        $name = $this->sanitizeName($name);
-        $this->validate($name, $description);
+        $this->validate($name);
 
         if ($this->hasErrors()) {
             return null;
         }
 
-        if ($organization->identifier() !== $name) {
-            if ($org = $this->organizationRepo->findOneBy(['identifier' => $name])) {
+        if ($organization->name() !== $name) {
+            if ($org = $this->organizationRepo->findOneBy(['name' => $name])) {
                 $this->addError(self::ERR_DUPE_NAME);
             }
 
@@ -96,65 +89,36 @@ class OrganizationValidator
         }
 
         $organization = $organization
-            ->withIdentifier($name)
-            ->withName($description);
+            ->withName($name);
 
         return $organization;
     }
 
-
     /**
      * @param string $name
-     *
-     * @return string
-     */
-    private function sanitizeName($name)
-    {
-        $name = strtolower($name);
-        $name = preg_replace('/[^' . self::REGEX_CHARACTER_CLASS_NAME . ']/', '-', $name);
-        $name = trim($name, '_.-');
-
-        return $name;
-    }
-
-    /**
-     * @param string $name
-     * @param string $description
      *
      * @return bool
      */
-    private function validate($name, $description): bool
+    private function validate($name): bool
     {
         if (!$this->validateIsRequired($name) || !$this->validateSanityCheck($name)) {
             $this->addRequiredError('Name', 'name');
         }
 
-        if (!$this->validateIsRequired($description) || !$this->validateSanityCheck($description)) {
-            $this->addRequiredError('Description', 'description');
+        if ($this->hasErrors()) {
+            return false;
+        }
+
+        if (!$this->validateLength($name, 3, 100)) {
+            $this->addLengthError('Name', 3, 100, 'name');
         }
 
         if ($this->hasErrors()) {
             return false;
         }
 
-        if (!$this->validateLength($name, 3, 30)) {
-            $this->addLengthError('Name', 3, 30, 'name');
-        }
-
-        if (!$this->validateLength($description, 3, 100)) {
-            $this->addLengthError('Description', 3, 100, 'description');
-        }
-
-        if ($this->hasErrors()) {
-            return false;
-        }
-
-        if (!$this->validateCharacterWhitelist($name, self::REGEX_CHARACTER_CLASS_NAME)) {
+        if (!$this->validateCharacterBlacklist($name, self::REGEX_CHARACTER_WHITESPACE)) {
             $this->addError(self::ERR_NAME_CHARACTERS, 'name');
-        }
-
-        if (!$this->validateCharacterBlacklist($description, self::REGEX_CHARACTER_WHITESPACE)) {
-            $this->addError(self::ERR_DESCRIPTION_CHARACTERS, 'description');
         }
 
         return !$this->hasErrors();

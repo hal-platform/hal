@@ -220,7 +220,7 @@ class CredentialValidator
             return false;
         }
 
-        if (!$this->validateCharacterWhitelist($name, self::REGEX_CREDENTIAL_NAME)) {
+        if ($this->validateCharacterWhitelist($name, self::REGEX_CREDENTIAL_NAME)) {
             $this->addError(self::ERR_INVALID_NAME, 'name');
         }
 

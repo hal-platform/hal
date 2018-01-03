@@ -19,12 +19,11 @@
     <ul class="meta-box">
         <li>
             <h6>Name</h6>
-            {{ organization.identifier }}
-        </li>
-
-        <li>
-            <h6>Description</h6>
             {{ organization.name }}
+        </li>
+        <li>
+            <h6>Dated Added</h6>
+            {{ organization.created|html5date }}
         </li>
     </ul>
 

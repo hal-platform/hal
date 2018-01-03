@@ -12,7 +12,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Hal\Core\Entity\Organization;
 use Hal\Core\Entity\User;
-use Hal\Core\Entity\UserPermission;
+use Hal\Core\Entity\User\UserPermission;
 use Hal\Core\Type\UserPermissionEnum;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
@@ -114,7 +114,7 @@ class AddOrganizationController implements ControllerInterface
             return null;
         }
 
-        $organization = $this->orgValidator->isValid($data['name'], $data['description']);
+        $organization = $this->orgValidator->isValid($data['name']);
         if ($organization) {
             $this->em->persist($organization);
             $this->em->flush();
@@ -132,7 +132,6 @@ class AddOrganizationController implements ControllerInterface
     {
         $form = [
             'name' => $request->getParsedBody()['name'] ?? '',
-            'description' => $request->getParsedBody()['description'] ?? ''
         ];
 
         return $form;

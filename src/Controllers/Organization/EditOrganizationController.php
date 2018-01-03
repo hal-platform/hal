@@ -104,7 +104,7 @@ class EditOrganizationController implements ControllerInterface
             return null;
         }
 
-        $organization = $this->orgValidator->isEditValid($organization, $data['name'], $data['description']);
+        $organization = $this->orgValidator->isEditValid($organization, $data['name']);
 
         if ($organization) {
             $this->em->persist($organization);
@@ -125,11 +125,9 @@ class EditOrganizationController implements ControllerInterface
         $isPost = ($request->getMethod() === 'POST');
 
         $name = $request->getParsedBody()['name'] ?? '';
-        $description = $request->getParsedBody()['description'] ?? '';
 
         $form = [
-            'name' => $isPost ? $name : $organization->identifier(),
-            'description' => $isPost ? $description : $organization->name(),
+            'name' => $isPost ? $name : $organization->name(),
         ];
 
         return $form;
