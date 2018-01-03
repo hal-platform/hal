@@ -8,6 +8,8 @@
 namespace Hal\UI\Twig;
 
 use Exception;
+use Hal\Core\Entity\Application;
+use Hal\Core\Type\VCSProviderEnum;
 use Hal\UI\VersionControl\VCS;
 use QL\MCP\Cache\CachingTrait;
 use Twig_Extension;
@@ -62,6 +64,9 @@ class GitHubExtension extends Twig_Extension
             new Twig_SimpleFunction('githubReleaseUrl', [$this, 'getFakeURL']),
             new Twig_SimpleFunction('githubUserUrl', [$this, 'getFakeURL']),
 
+            new Twig_SimpleFunction('vcs_url', [$this, 'formatVCSLink']),
+            new Twig_SimpleFunction('vcs_text', [$this, 'formatVCSText']),
+
             new Twig_SimpleFunction('githubCommitIsCurrent', [$this, 'commitIsCurrent'])
         ];
     }
@@ -80,6 +85,60 @@ class GitHubExtension extends Twig_Extension
     public function getFakeURL()
     {
         return 'https://github.example.com';
+    }
+
+    /**
+     * @param Application|null $app
+     *
+     * @return string
+     */
+    public function formatVCSLink($app): string
+    {
+        if (!$app instanceof Application) {
+            return '';
+        }
+
+        $githubs = [VCSProviderEnum::TYPE_GITHUB, VCSProviderEnum::TYPE_GITHUB_ENTERPRISE];
+
+        if ($app->provider() && in_array($app->provider()->type(), $githubs)) {
+            $github = $this->vcs->authenticate($app->provider());
+            return $github->url()->githubRepoURL(
+                $app->parameter('gh.owner'),
+                $app->parameter('gh.repo')
+            );
+
+        } elseif ($app->provider() && $app->provider->type() === VCSProviderEnum::TYPE_GITHUB) {
+            return $app->parameter('git.link');
+        }
+
+        return '';
+    }
+
+    /**
+     * @param Application|null
+     *
+     * @return string
+     */
+    public function formatVCSText($app): string
+    {
+        if (!$app instanceof Application) {
+            return '';
+        }
+
+        $githubs = [VCSProviderEnum::TYPE_GITHUB, VCSProviderEnum::TYPE_GITHUB_ENTERPRISE];
+
+        if ($app->provider() && in_array($app->provider()->type(), $githubs)) {
+            return sprintf(
+                '%s/%s',
+                $app->parameter('gh.owner'),
+                $app->parameter('gh.repo')
+            );
+
+        } elseif ($app->provider() && $app->provider->type() === VCSProviderEnum::TYPE_GITHUB) {
+            return 'clone';
+        }
+
+        return '';
     }
 
     /**

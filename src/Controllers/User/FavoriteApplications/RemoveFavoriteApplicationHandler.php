@@ -114,6 +114,6 @@ class RemoveFavoriteApplicationHandler implements ControllerInterface
             return ($appID === $application->id());
         });
 
-        $user->setting('favorite_applications', array_values($favorites));
+        $user->withSetting('favorite_applications', array_values($favorites));
     }
 }

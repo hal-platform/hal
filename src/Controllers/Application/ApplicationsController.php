@@ -92,13 +92,13 @@ class ApplicationsController implements ControllerInterface
      */
     private function findFavorites(User $user, array $groupApps)
     {
-        if (!$favorites = $user->settings('favorite_applications')) {
+        if (!$favorites = $user->setting('favorite_applications')) {
             return [];
         }
 
         $saved = array_fill_keys($favorites, true);
-        $favorites = [];
 
+        $favorites = [];
         foreach ($groupApps as $applications) {
             foreach ($applications as $application) {
                 if ($saved[$application->id()] ?? false) {

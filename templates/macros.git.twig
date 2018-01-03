@@ -73,9 +73,21 @@ Example:
 <svg class="icon"><use xlink:href="/icons.svg#github"></use></svg>
 ```
 #}
-{% macro gitsource(application) %}
+{% macro vcs(application) %}
     {% import 'macros.twig' as macros %}
-    <a href="{{ githubRepoUrl(application.gitHub.owner, application.gitHub.repository) }}">{{ application.gitHub.owner }}/{{ application.gitHub.repository }}</a> {{ macros.icon('github') }}
+
+    {%- if application.provider.type in ['ghe', 'gh'] -%}
+        {{ macros.icon('github') }}
+        <a href="{{ vcs_url(application) }}">{{ vcs_text(application) }}</a>
+
+    {%- elseif application.provider.type in ['git'] -%}
+        <a href="{{ vcs_url(application) }}">{{ vcs_text(application) }}</a>
+        {{ macros.icon('code') }}
+
+    {%- else %}
+        {{ macros.icon('spam') }} <a href="#">Unknown</a>
+    {%- endif -%}
+
 {% endmacro %}
 
 {#

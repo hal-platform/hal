@@ -8,7 +8,7 @@
         <tr>
     {% endif %}
         <td>
-            {% if currentUser.settings.isFavoriteApplication(application) %}
+            {% if application.id in currentUser.setting('favorite_applications') %}
                 <form method="post"
                       action="{{ uriFor('settings.favorite_applications.remove', {'application': application.id}) }}"
                       data-app-id="{{ application.id }}"
@@ -33,13 +33,17 @@
             {{ application.name }}
         </td>
         <td>
-            {{ git_macros.gitsource(application) }}
+            {% if application.provider %}
+                {{ git_macros.vcs(application) }}
+                <span class="js-search-query">{{ application.parameter('gh.owner') ~ '/' ~ application.parameter('gh.repo') }}</span>
+            {% else %}
+                None
+            {% endif %}
             <span class="js-search-query">{{ application.name }}</span>
-            <span class="js-search-query">{{ application.gitHub.owner ~ '/' ~ application.gitHub.repository }}</span>
         </td>
-        <td>
+        <td class="tr">
             <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Dashboard</a>
-            <a href="{{ uriFor('application', {'application': application.id}) }}">Manage</a>
+            • <a href="{{ uriFor('application', {'application': application.id}) }}">Manage</a>
         </td>
     </tr>
 {% endmacro %}

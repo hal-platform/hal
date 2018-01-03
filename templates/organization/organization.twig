@@ -73,7 +73,7 @@
             {% for application in applications %}
                 <tr>
                     <td>{{ application.name }}</td>
-                    <td>{{ git_macros.gitsource(application) }}</td>
+                    <td>{{ git_macros.vcs(application) }}</td>
                     <td>
                         <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Dashboard</a>
                         <a href="{{ uriFor('application', {'application': application.id}) }}">Manage</a>

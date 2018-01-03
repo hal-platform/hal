@@ -207,7 +207,6 @@ class GitHubService
         try {
             $repository = $this->repoAPI->show($user, $repo);
         } catch (RuntimeException $e) {
-            dump($e);
             $repository = null;
         }
 

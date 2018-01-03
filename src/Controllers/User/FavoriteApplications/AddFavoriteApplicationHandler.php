@@ -105,6 +105,6 @@ class AddFavoriteApplicationHandler implements ControllerInterface
 
         $favorites[] = $application->id();
 
-        $user->setting('favorite_applications', $favorites);
+        $user->withSetting('favorite_applications', $favorites);
     }
 }
