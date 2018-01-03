@@ -8,20 +8,20 @@
 namespace Hal\UI\Controllers\Build;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\UI\Controllers\SessionTrait;
-use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Security\UserAuthorizations;
-use Hal\UI\Service\GitHubService;
-use Hal\UI\Service\StickyEnvironmentService;
-use Hal\UI\Utility\ReleaseSortingTrait;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Target;
 use Hal\Core\Entity\Environment;
 use Hal\Core\Entity\User;
 use Hal\Core\Repository\TargetRepository;
 use Hal\Core\Repository\EnvironmentRepository;
+use Hal\UI\Controllers\SessionTrait;
+use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\Security\UserAuthorizations;
+use Hal\UI\Service\StickyEnvironmentService;
+use Hal\UI\Utility\ReleaseSortingTrait;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Hal\UI\VersionControl\VCS;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -47,9 +47,9 @@ class StartBuildController implements ControllerInterface
     private $targetRepository;
 
     /**
-     * @var GitHubService
+     * @var VCS
      */
-    private $github;
+    private $vcs;
 
     /**
      * @var StickyEnvironmentService
@@ -59,17 +59,17 @@ class StartBuildController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param GitHubService $github
+     * @param VCS $vcs
      * @param StickyEnvironmentService $stickyService
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        GitHubService $github,
+        VCS $vcs,
         StickyEnvironmentService $stickyService
     ) {
         $this->template = $template;
-        $this->github = $github;
+        $this->vcs = $vcs;
         $this->stickyService = $stickyService;
 
         $this->environmentRepository = $em->getRepository(Environment::class);
@@ -140,10 +140,14 @@ class StartBuildController implements ControllerInterface
      */
     private function getBranches(Application $application)
     {
-        $branches = $this->github->branches(
-            $application->gitHub()->owner(),
-            $application->gitHub()->repository()
-        );
+        $service = $this->getVCSClient($application);
+        if (!$service) {
+            return [];
+        }
+
+        ['service' => $github, 'params' => $params] = $service;
+
+        $branches = $github->branches(...$params);
 
         // sort master to top, alpha otherwise
         usort($branches, function ($a, $b) {
@@ -170,10 +174,14 @@ class StartBuildController implements ControllerInterface
      */
     private function getTags(Application $application)
     {
-        $tags = $this->github->tags(
-            $application->gitHub()->owner(),
-            $application->gitHub()->repository()
-        );
+        $service = $this->getVCSClient($application);
+        if (!$service) {
+            return [];
+        }
+
+        ['service' => $github, 'params' => $params] = $service;
+
+        $tags = $github->tags(...$params);
 
         usort($tags, $this->releaseSorter());
 
@@ -190,13 +198,17 @@ class StartBuildController implements ControllerInterface
      */
     private function getPullRequests(Application $application, $open = true)
     {
-        $owner = $application->gitHub()->owner();
-        $repo = $application->gitHub()->repository();
+        $service = $this->getVCSClient($application);
+        if (!$service) {
+            return [];
+        }
+
+        ['service' => $github, 'params' => $params] = $service;
 
         if ($open) {
-            $pr = $this->github->openPullRequests($owner, $repo);
+            $pr = $github->openPullRequests(...$params);
         } else {
-            $pr = $this->github->closedPullRequests($owner, $repo);
+            $pr = $github->closedPullRequests(...$params);
         }
 
         return $pr;
@@ -269,6 +281,34 @@ class StartBuildController implements ControllerInterface
         return [
             'can_deploy' => $canPush,
             'available_targets' => $available
+        ];
+    }
+
+    /**
+     * @param Application $application
+     *
+     * @return array
+     */
+    private function getVCSClient(Application $application)
+    {
+        $provider = $application->provider();
+        if (!$provider) {
+            return [];
+        }
+
+        $github = $this->vcs->authenticate($provider);
+        if (!$github) {
+            return [];
+        }
+
+        $params = [
+            $application->parameter('gh.owner'),
+            $application->parameter('gh.repo')
+        ];
+
+        return [
+            'service' => $github,
+            'params' => $params
         ];
     }
 }

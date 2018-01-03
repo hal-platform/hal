@@ -86,10 +86,10 @@
             </ul>
         </div>
 
-        <ul class="list--bare">
-            <li><input type="submit" class="btn btn--action" value="Save Changes"></li>
-            <li><a class="btn" href="{{ uriFor('application', {'application': application.id}) }}">Cancel</a></li>
-        </ul>
+        <p>
+            <button class="btn btn--action" type="submit">Save Changes</button>
+            <a href="{{ uriFor('application', {'application': application.id}) }}">Cancel</a>
+        </p>
 
     </form>
 {% endblock %}

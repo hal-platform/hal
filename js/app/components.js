@@ -2,6 +2,7 @@ import { initGitHubSearch } from './job/github-search-for-build';
 import { initEventLogLoader } from './job/event-log-loader';
 
 import { initTargetForm } from './form/targets-form';
+import { initApplicationForm } from './form/applications-form';
 import { initCredentialForm } from './form/credentials-form';
 import { initSelectAllCheckboxes } from './form/select-all-checkbox';
 import { initApplicationPermissions } from './form/manage-application-permissions';
@@ -18,6 +19,9 @@ let appComponents = {
     // forms
     add_target_form: () => {
         initTargetForm();
+    },
+    add_application_form: () => {
+        initApplicationForm();
     },
     add_credential_form: () => {
         initCredentialForm();

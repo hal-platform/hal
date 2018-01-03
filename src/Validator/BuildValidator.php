@@ -11,7 +11,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Type\JobStatusEnum;
 use Hal\UI\Security\AuthorizationService;
-use Hal\UI\Service\GitHubService;
+use Hal\UI\VersionControl\GitHub\GitHubResolver;
+use Hal\UI\VersionControl\VCS;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Build;
 use Hal\Core\Entity\Environment;
@@ -45,9 +46,9 @@ class BuildValidator
     private $buildRepo;
 
     /**
-     * @var GitHubService
+     * @var VCS
      */
-    private $github;
+    private $vcs;
 
     /**
      * @var AuthorizationService
@@ -56,18 +57,18 @@ class BuildValidator
 
     /**
      * @param EntityManagerInterface $em
-     * @param GitHubService $github
+     * @param VCS $vcs
      * @param AuthorizationService $authorizationService
      */
     public function __construct(
         EntityManagerInterface $em,
-        GitHubService $github,
+        VCS $vcs,
         AuthorizationService $authorizationService
     ) {
         $this->buildRepo = $em->getRepository(Build::class);
         $this->environmentRepo = $em->getRepository(Environment::class);
 
-        $this->github = $github;
+        $this->vcs = $vcs;
         $this->authorizationService = $authorizationService;
     }
 
@@ -125,7 +126,7 @@ class BuildValidator
             return null;
         }
 
-        if (!$ref = $this->github->resolve($application->gitHub()->owner(), $application->gitHub()->repository(), $reference)) {
+        if ($this->validateVCS($application, $reference)) {
             $this->addError(self::ERR_UNKNOWN_REF, 'reference');
         }
 
@@ -151,6 +152,29 @@ class BuildValidator
     }
 
     /**
+     * @param Application $application
+     * @param string $reference
+     *
+     * @return array|null
+     */
+    private function validateVCS(Application $application, $reference)
+    {
+        $provider = $application->provider();
+        if (!$provider) {
+            return null;
+        }
+
+        $github = $this->vcs->authenticate($provider);
+        if (!$github) {
+            return null;
+        }
+
+        $resolved = $github->resolver()->resolve($owner, $repo, $reference);
+
+        return $resolved;
+    }
+
+    /**
      * @param string $selectedOption
      * @param string $search
      *
@@ -164,7 +188,7 @@ class BuildValidator
         }
 
         // search query is commit sha
-        if (preg_match(GitHubService::REGEX_COMMIT, $search) === 1) {
+        if (preg_match(GitHubResolver::REGEX_COMMIT, $search) === 1) {
             return $search;
         }
 

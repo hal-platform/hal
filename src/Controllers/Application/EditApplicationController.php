@@ -121,10 +121,13 @@ class EditApplicationController implements ControllerInterface
         $application = $this->applicationValidator->isEditValid(
             $application,
             $data['name'],
-            $data['description'],
-            $data['github'],
-            $data['organization']
+            $data['organization'],
+            $data['vcs_provider']
         );
+
+        if ($application->provider()) {
+            $application = $this->applicationValidator->isVCSValid($application, $data);
+        }
 
         if ($application) {
             $this->em->persist($application);
@@ -156,18 +159,27 @@ class EditApplicationController implements ControllerInterface
         $isPost = ($request->getMethod() === 'POST');
 
         $name = $request->getParsedBody()['name'] ?? '';
-        $description = $request->getParsedBody()['description'] ?? '';
         $organization = $request->getParsedBody()['organization'] ?? '';
-        $github = $request->getParsedBody()['github'] ?? '';
+        $vcs = $request->getParsedBody()['vcs_provider'] ?? '';
+
+        $ghOwner = $request->getParsedBody()['gh_owner'] ?? '';
+        $ghRepo = $request->getParsedBody()['gh_repo'] ?? '';
+        $gitLink = $request->getParsedBody()['git_link'] ?? '';
 
         $originalOrganizationID = $application->organization() ? $application->organization()->id() : '';
-        $originalGitHub = sprintf('%s/%s', $application->gitHub()->owner(), $application->gitHub()->repository());
+        $originalVCSID = $application->provider() ? $application->provider()->id() : '';
+        $originalGHOwner = $application->parameter('gh.owner');
+        $originalGHRepo = $application->parameter('gh.repo');
+        $originalGitLink = $application->parameter('git.link');
 
         $form = [
-            'name' => $isPost ? $name : $application->identifier(),
-            'description' => $isPost ? $description : $application->name(),
+            'name' => $isPost ? $name : $application->name(),
             'organization' => $isPost ? $organization : $originalOrganizationID,
-            'github' => $isPost ? $github : $originalGitHub,
+            'vcs_provider' => $isPost ? $vcs : $originalVCSID,
+
+            'gh_owner' => $request->getParsedBody()['gh_owner'] ?? $originalGHOwner,
+            'gh_repo' => $request->getParsedBody()['gh_repo'] ?? $originalGHRepo,
+            'git_link' => $request->getParsedBody()['git_link'] ?? $originalGitLink,
         ];
 
         return $form;

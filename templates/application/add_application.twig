@@ -1,6 +1,7 @@
 {% extends 'base.twig' %}
 {% import 'macros.form.twig' as form_macros %}
 
+{% set js_components = ['add_application_form'] %}
 {% set page_title = 'Add Application' %}
 
 {% block content %}
@@ -14,30 +15,19 @@
 
     {{ form_macros.formErrors(errors) }}
 
-    <form method="post">
+    <form method="post" class="js-applications-form">
 
-        <div class="form-wrapper">
-            <ul class="form-fields">
-                <li>
-                    {% set has_error = form_macros.hasError(errors, 'name') %}
-                    <label for="name">Name</label>
-                    <input type="text" class="text-input t50{{ has_error ? ' is-error' : '' }}" name="name" id="name" maxlength="30" value="{{ form.name }}" required>
-                    <small>
-                        Unique name such as <span>"hal"</span> or <span>"my-project"</span>.
-                        <br>Alphanumeric, hyphen, and period characters only.
-                    </small>
-                </li>
-                <li>
-                    {% set has_error = form_macros.hasError(errors, 'name') %}
-                    <label for="description">Description</label>
-                    <input type="text" class="text-input{{ has_error ? ' is-error' : '' }}" name="description" id="description" maxlength="100" value="{{ form.description }}" required>
-                    <small>
-                        Display description for this organization such as
-                        <span>"Hal"</span> or <span>"My Secret Project"</span>.
-                    </small>
-                </li>
-            </ul>
-        </div>
+        <ul class="form-fields form-wrapper">
+            <li>
+                {% set has_error = form_macros.hasError(errors, 'name') %}
+                <label for="name">Name</label>
+                <input type="text" class="text-input{{ has_error ? ' is-error' : '' }}" name="name" id="name" maxlength="100" value="{{ form.name }}" required>
+                <small>
+                    Display description for this organization such as
+                    <span>"Hal"</span> or <span>"My Secret Project"</span>.
+                </small>
+            </li>
+        </ul>
 
         <ul class="form-fields">
             <li>
@@ -71,24 +61,73 @@
             </li>
         </ul>
 
-        <div class="form-wrapper">
-            <ul class="form-fields">
+
+        <h4>Source Control</h4>
+        {% if vcs|length > 0 %}
+            <ul class="form-fields form-wrapper">
                 <li>
-                    {% set has_error = form_macros.hasError(errors, 'github') %}
-                    <label for="github">GitHub Repository</label>
-                    <input type="text" class="text-input{{ has_error ? ' is-error' : '' }}" name="github" id="github" maxlength="200" value="{{ form.github }}" required>
-                    <small>
-                        Enter the full URL or organization/repository such as
-                        <b>https://github.com/team-a/project-b</b> or <b>team-a/project-b</b>.
-                    </small>
+                    <ul class="list--bare">
+                        {% for provider in vcs %}
+                            {% set is_selected = form.vcs_provider == provider.id ? ' checked' : '' %}
+
+                            <li>
+                                <label for="vcs-{{ provider.id }}">
+                                    <input type="radio" id="vcs-{{ provider.id }}" name="vcs_provider" value="{{ provider.id }}" data-vcs-select data-vcs-type="{{ provider.type }}"{{ is_selected }}>
+                                    {{ provider.name }} ({{ provider.type }})
+                                </label>
+                            </li>
+                        {% endfor %}
+
+                        {% set is_selected = form.vcs_provider == '' ? ' checked' : '' %}
+                        <li>
+                            <label for="vcs-noop">
+                                <input type="radio" id="vcs-noop" name="vcs_provider" value="" data-vcs-select data-vcs-type="noop"{{ is_selected }}>
+                                Do not add source control
+                            </label>
+                        </li>
+                    </ul>
+
+                    {{ block('gh_provider_form') }}
+                    {{ block('git_provider_form') }}
+
                 </li>
             </ul>
-        </div>
+        {% else %}
+            <p>No source control providers are configured. You can add this later.</p>
+        {% endif %}
 
-        <ul class="list--bare">
-            <li><input type="submit" class="btn btn--action" value="Add Application"></li>
-            <li><a class="btn" href="{{ uriFor('applications') }}">Cancel</a></li>
-        </ul>
+        <p>
+            <button class="btn btn--action" type="submit">Add Application</button>
+            <a href="{{ uriFor('applications') }}">Cancel</a>
+        </p>
 
     </form>
+{% endblock %}
+
+{% block gh_provider_form %}
+    <li data-type-specific data-gh data-ghe>
+        <label for="gh-owner">GitHub User or Organization</label>
+        <input type="text" class="text-input" name="gh_owner" id="gh-owner" value="{{ form.gh_owner }}" maxlength="100">
+        <small>
+            <b>Example:</b> https://git.example.com/<b style="color:indianred;">owner</b>/repository.git
+        </small>
+
+    </li>
+    <li data-type-specific data-gh data-ghe>
+        <label for="gh-repo">GitHub Repository</label>
+        <input type="text" class="text-input" name="gh_repo" id="gh-repo" value="{{ form.gh_repo }}" maxlength="100">
+        <small>
+            <b>Example:</b> https://git.example.com/owner/<b style="color:indianred;">repository</b>.git
+        </small>
+    </li>
+{% endblock %}
+
+{% block git_provider_form %}
+    <li data-type-specific data-git>
+        <label for="git-link">Git Clone URL</label>
+        <input type="text" class="text-input" name="git_link" id="git-link" value="{{ form.git_link }}" maxlength="200">
+        <small>
+            <b>Example:</b> https://git.example.com/my-project.git
+        </small>
+    </li>
 {% endblock %}

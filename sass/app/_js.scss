@@ -52,10 +52,10 @@
     margin-bottom: 0;
 }
 
+.js-applications-form [data-type-specific],
 .js-credentials-form [data-type-specific],
 .js-targets-form [data-type-specific] {
     display: none;
-
 }
 
 .js-event-logs {

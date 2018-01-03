@@ -18,10 +18,10 @@
     <h2>Applications</h2>
     {{ block('apps_table') }}
 
-    <ul class="list--bare">
-        <li><a class="btn" href="{{ uriFor('application.add') }}">Add Application</a></li>
-        <li><a class="btn" href="{{ uriFor('organization.add') }}">Add Organization</a></li>
-    </ul>
+    <p>
+        <a class="btn" href="{{ uriFor('application.add') }}">Add Application</a>
+        <a class="btn" href="{{ uriFor('organization.add') }}">Add Organization</a>
+    </p>
 {% endblock %}
 
 {% block favs %}
@@ -32,7 +32,7 @@
             <thead>
                 <tr>
                     <th>Application</th>
-                    <th class="t40">Source Code</th>
+                    <th class="t40">Version Control</th>
                     <th class="t15"></th>
                 </tr>
             </thead>

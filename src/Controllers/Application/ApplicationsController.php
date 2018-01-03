@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Organization;
-use Hal\Core\Entity\UserSettings;
+use Hal\Core\Entity\User;
 use Hal\Core\Repository\ApplicationRepository;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
@@ -62,7 +62,7 @@ class ApplicationsController implements ControllerInterface
         $grouped = $this->applicationRepo->getGroupedApplications();
         $organizations = $this->getOrganizations();
 
-        $favorites = $this->findFavorites($grouped, $user->settings());
+        $favorites = $this->findFavorites($user, $grouped);
 
         return $this->withTemplate($request, $response, $this->template, [
             'favorites' => $favorites,
@@ -85,17 +85,21 @@ class ApplicationsController implements ControllerInterface
     }
 
     /**
+     * @param User $settings
      * @param array $grouped
-     * @param UserSettings $settings
      *
      * @return Application[]
      */
-    private function findFavorites(array $grouped, UserSettings $settings)
+    private function findFavorites(User $user, array $groupApps)
     {
-        $saved = array_fill_keys($settings->favoriteApplications(), true);
+        if (!$favorites = $user->settings('favorite_applications')) {
+            return [];
+        }
+
+        $saved = array_fill_keys($favorites, true);
         $favorites = [];
 
-        foreach ($grouped as $applications) {
+        foreach ($groupApps as $applications) {
             foreach ($applications as $application) {
                 if ($saved[$application->id()] ?? false) {
                     $favorites[] = $application;

@@ -12,7 +12,8 @@ use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Organization;
 use Hal\Core\Entity\User;
-use Hal\Core\Entity\UserPermission;
+use Hal\Core\Entity\System\VersionControlProvider;
+use Hal\Core\Entity\User\UserPermission;
 use Hal\Core\Type\UserPermissionEnum;
 use Hal\Core\Utility\SortingTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
@@ -51,6 +52,7 @@ class AddApplicationController implements ControllerInterface
      */
     private $organizationRepo;
     private $applicationRepo;
+    private $vcsRepo;
 
     /**
      * @var ApplicationValidator
@@ -85,6 +87,7 @@ class AddApplicationController implements ControllerInterface
 
         $this->applicationRepo = $em->getRepository(Application::class);
         $this->organizationRepo = $em->getRepository(Organization::class);
+        $this->vcsRepo = $em->getRepository(VersionControlProvider::class);
         $this->em = $em;
 
         $this->applicationValidator = $applicationValidator;
@@ -112,7 +115,8 @@ class AddApplicationController implements ControllerInterface
         return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
             'errors' => $this->applicationValidator->errors(),
-            'organizations' => $this->getOrganizations()
+            'organizations' => $this->getOrganizations(),
+            'vcs' => $this->vcsRepo->findAll()
         ]);
     }
 
@@ -130,10 +134,13 @@ class AddApplicationController implements ControllerInterface
 
         $application = $this->applicationValidator->isValid(
             $data['name'],
-            $data['description'],
-            $data['github'],
-            $data['organization']
+            $data['organization'],
+            $data['vcs_provider']
         );
+
+        if ($application && $application->provider()) {
+            $application = $this->applicationValidator->isVCSValid($application, $data);
+        }
 
         if ($application) {
             // persist to database
@@ -164,10 +171,13 @@ class AddApplicationController implements ControllerInterface
     {
         $form = [
             'name' => $request->getParsedBody()['name'] ?? '',
-            'description' => $request->getParsedBody()['description'] ?? '',
 
             'organization' => $request->getParsedBody()['organization'] ?? '',
-            'github' => $request->getParsedBody()['github'] ?? ''
+            'vcs_provider' => $request->getParsedBody()['vcs_provider'] ?? '',
+
+            'gh_owner' => $request->getParsedBody()['gh_owner'] ?? '',
+            'gh_repo' => $request->getParsedBody()['gh_repo'] ?? '',
+            'git_link' => $request->getParsedBody()['git_link'] ?? '',
         ];
 
         return $form;
