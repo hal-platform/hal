@@ -12,36 +12,35 @@
         </p>
     </div>
 
-    <div class="form-wrapper">
-        {{ form_macros.formErrors(errors) }}
+    {{ form_macros.formErrors(errors) }}
 
-        <form method="post">
+    <form method="post">
 
-            <ul class="form-fields">
-                <li>
-                    {% set has_error = form_macros.hasError(errors, 'name') %}
-                    <label for="name">Name</label>
-                    <input type="text" class="text-input t50{{ has_error ? ' is-error' : '' }}" name="name" id="name" value="{{ form.name }}" maxlength="30" required>
-                    <small>
-                        Unique name such as <span>"staging"</span> or <span>"prod"</span>.
-                        <br>Alphanumeric, hyphen, and period characters only.
-                    </small>
-                </li>
+        <ul class="form-fields form-wrapper">
+            <li>
+                {% set has_error = form_macros.hasError(errors, 'name') %}
+                <label for="name">Name</label>
+                <input type="text" class="text-input t50{{ has_error ? ' is-error' : '' }}" name="name" id="name" value="{{ form.name }}" maxlength="30" required>
+                <small>
+                    Unique name such as <span>"staging"</span> or <span>"prod"</span>.
+                    <br>Alphanumeric, hyphen, and period characters only.
+                </small>
+            </li>
 
-                <li>
-                    <div class="label">Is this a <b>Production</b> environment?</div>
-                    <label for="is_production" class="checkbox-check">
-                        <input type="checkbox" name="is_production" id="is_production" value="1" {{ form.is_production ? 'checked ' : ''}}>
-                        <b class="checkbox-check--tick"></b>Yes, this is production.
-                    </label>
-                </li>
-            </ul>
+            {% set is_selected = form.is_production ? ' checked' : '' %}
+            <li>
+                <div class="label">Is this a <b>Production</b> environment?</div>
+                <label for="is_production" class="checkbox-check">
+                    <input type="checkbox" name="is_production" id="is_production" value="1" {{ is_selected }}>
+                    <b class="checkbox-check--tick"></b>Yes, this is production.
+                </label>
+            </li>
+        </ul>
 
-            <ul class="list--bare">
-                <li><input type="submit" class="btn btn--action" value="Add Environment"></li>
-                <li><a class="btn" href="{{ uriFor('environments') }}">Cancel</a></li>
-            </ul>
+        <p>
+            <button class="btn btn--action" type="submit">Add Environment</button>
+            <a href="{{ uriFor('environments') }}">Cancel</a>
+        </p>
 
-        </form>
-    </div>
+    </form>
 {% endblock %}

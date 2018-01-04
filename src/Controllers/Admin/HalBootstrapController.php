@@ -9,6 +9,7 @@ namespace Hal\UI\Controllers\Admin;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\Core\Entity\Environment;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\User\UserPermission;
 use Hal\Core\Entity\System\SystemSetting;
@@ -125,6 +126,7 @@ class HalBootstrapController implements ControllerInterface
 
         $this->addIdentityProvider($data['admin_username'], $data['admin_password']);
         $this->addVersionControlProvider($data['ghe_url'], $data['ghe_token']);
+        $this->addEnvironments();
 
         $isConfigured = (new SystemSetting)
             ->withName(self::SETTING_IS_BOOTSTRAPPED)
@@ -225,5 +227,21 @@ class HalBootstrapController implements ControllerInterface
             ->withParameter('ghe.token', $gheToken);
 
         $this->em->persist($vcs);
+    }
+
+    /**
+     * @return void
+     */
+    private function addEnvironments()
+    {
+        $staging = (new Environment)
+            ->withName('staging');
+
+        $prod = (new Environment)
+            ->withName('prod')
+            ->withIsProduction(true);
+
+        $this->em->persist($staging);
+        $this->em->persist($prod);
     }
 }

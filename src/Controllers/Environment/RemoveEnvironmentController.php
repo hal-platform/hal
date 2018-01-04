@@ -10,7 +10,6 @@ namespace Hal\UI\Controllers\Environment;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Environment;
-use Hal\Core\Entity\Group;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Flash;
@@ -25,7 +24,6 @@ class RemoveEnvironmentController implements ControllerInterface
     use SessionTrait;
 
     private const MSG_SUCCESS = '"%s" environment removed.';
-    private const ERR_HAS_GROUPS = 'Cannot remove environment. All associated groups must first be removed.';
 
     /**
      * @var EntityManagerInterface
@@ -38,17 +36,11 @@ class RemoveEnvironmentController implements ControllerInterface
     private $uri;
 
     /**
-     * @var EntityRepository
-     */
-    private $groupRepository;
-
-    /**
      * @param EntityManagerInterface $em
      * @param URI $uri
      */
     public function __construct(EntityManagerInterface $em, URI $uri)
     {
-        $this->groupRepository = $em->getRepository(Group::class);
         $this->em = $em;
         $this->uri = $uri;
     }
@@ -60,10 +52,11 @@ class RemoveEnvironmentController implements ControllerInterface
     {
         $environment = $request->getAttribute(Environment::class);
 
-        if ($groups = $this->groupRepository->findBy(['environment' => $environment])) {
-            $this->withFlash($request, Flash::ERROR, self::ERR_HAS_GROUPS);
-            return $this->withRedirectRoute($response, $this->uri, 'environment', ['environment' => $environment->id()]);
-        }
+        // @todo handle all entities that may depend on env:
+        // - build, release
+        // - target
+        // - encrypted config
+        // - scoped: (template target, credentials, permissions)
 
         $this->em->remove($environment);
         $this->em->flush();

@@ -103,7 +103,7 @@ trait ValidatorErrorTrait
             $msg = sprintf('%s must be %d characters or more', $name, $min);
 
         } else {
-            $msg = sprintf('%s must be contain %d - %d characters', $name, $min, $max);
+            $msg = sprintf('%s must contain %d - %d characters', $name, $min, $max);
         }
 
         $this->addError($msg, $field);

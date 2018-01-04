@@ -10,16 +10,13 @@
 
     {{ block('env_table') }}
 
-    <ul class="list--bare">
-        <li><a class="btn" href="{{ uriFor('applications') }}">Applications</a></li>
-        <li>
-            {% if is_admin %}
-                <a class="btn btn--action" href="{{ uriFor('environment.add') }}">Add Environment</a>
-            {% else %}
-                {{ macros.disabled_button('Add Environment') }}
-            {% endif %}
-        </li>
-    </ul>
+    <p>
+        {% if is_admin %}
+            <a class="btn" href="{{ uriFor('environment.add') }}">Add Environment</a>
+        {% else %}
+            {{ macros.disabled_button('Add Environment') }}
+        {% endif %}
+    </p>
 
 {% endblock %}
 
@@ -45,7 +42,7 @@
                                 {{ environment.name }}
                             {% endif %}
                         </td>
-                        <td>
+                        <td class="tr">
                             <a href="{{ uriFor('environment', {'environment': environment.id}) }}">Manage</a>
                         </td>
                     </tr>

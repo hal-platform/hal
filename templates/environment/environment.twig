@@ -17,6 +17,11 @@
 
     <ul class="meta-box">
         <li>
+            <h6>ID</h6>
+            {{ environment.id|shortGUID }}
+        </li>
+
+        <li>
             <h6>Environment</h6>
             {{ environment.name }}
         </li>
@@ -36,21 +41,17 @@
 {% endblock %}
 
 {% block actions %}
-    <ul class="list--bare">
-        <li><a class="btn" href="{{ uriFor('environments') }}">Environments</a></li>
-        <li>
-            {% if is_admin %}
-                <a class="btn btn--action" href="{{ uriFor('environment.edit', {'environment': environment.id}) }}">Edit Environment</a>
-            {% else %}
-                {{ macros.disabled_button('Edit Environment') }}
-            {% endif %}
-        </li>
-        <li>
-            {% if is_removable %}
-                <a class="btn btn--destructive" href="{{ uriFor('environment.remove', {'environment': environment.id}) }}">Remove Environment</a>
-            {% else %}
-                {{ macros.disabled_button('Remove Environment') }}
-            {% endif %}
-        </li>
-    </ul>
+    <p>
+        {% if is_admin %}
+            <a class="btn btn--action" href="{{ uriFor('environment.edit', {'environment': environment.id}) }}">Edit Environment</a>
+        {% else %}
+            {{ macros.disabled_button('Edit Environment') }}
+        {% endif %}
+
+        {% if is_removable %}
+            <a class="btn btn--destructive" href="{{ uriFor('environment.remove', {'environment': environment.id}) }}">Remove Environment</a>
+        {% else %}
+            {{ macros.disabled_button('Remove Environment') }}
+        {% endif %}
+    </p>
 {% endblock %}
