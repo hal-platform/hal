@@ -44,22 +44,47 @@ class SystemDashboardController implements ControllerInterface
     private $clock;
 
     /**
+     * @var string
+     */
+    private $encryptionKey;
+
+    /**
+     * @var string
+     */
+    private $sessionEncryptionKey;
+
+    /**
+     * @var string
+     */
+    private $halDeploymentFile;
+
+    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param JSON $json
      * @param Clock $clock
+     * @param string $encryptionKey
+     * @param string $sessionEncryptionKey
+     * @param string $halDeploymentFile
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
         JSON $json,
-        Clock $clock
+        Clock $clock,
+        $encryptionKey,
+        $sessionEncryptionKey,
+        $halDeploymentFile
     ) {
         $this->template = $template;
         $this->em = $em;
 
         $this->json = $json;
         $this->clock = $clock;
+
+        $this->encryptionKey = $encryptionKey;
+        $this->sessionEncryptionKey = $sessionEncryptionKey;
+        $this->halDeploymentFile = $halDeploymentFile;
     }
 
     /**
@@ -71,9 +96,16 @@ class SystemDashboardController implements ControllerInterface
         // $system = $this->parseLatestDocker($agent);
         // $connections = $this->parseLatestServerConnections($agent);
 
+        # get hal push file if possible.
+        $deploymentFile = file_exists($this->halDeploymentFile) ? file_get_contents($this->halDeploymentFile) : '';
+
         return $this->withTemplate($request, $response, $this->template, [
             // 'system' => $system,
             // 'connections' => $connections,
+            'server_name' => gethostname(),
+            'encryption_key' => $this->encryptionKey,
+            'session_encryption_key' => $this->sessionEncryptionKey,
+            'release_file' => $deploymentFile
         ]);
     }
 

@@ -1,6 +1,6 @@
 import 'jquery';
 
-let target = '.form--fav';
+let target = '.js-fav';
 
 var $apps = null;
 

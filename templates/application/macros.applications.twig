@@ -12,8 +12,8 @@
                 <form method="post"
                       action="{{ uriFor('settings.favorite_applications.remove', {'application': application.id}) }}"
                       data-app-id="{{ application.id }}"
-                      class="form--fav">
-                    <label class="form--fav__label fav-added">
+                      class="form--inline js-fav">
+                    <label class="fav-added">
                         <input type="submit">
                         {{ macros.icon('star-2', '', 'Remove from favorites') }}
                     </label>
@@ -22,7 +22,7 @@
                 <form method="post"
                       action="{{ uriFor('settings.favorite_applications.add', {'application': application.id}) }}"
                       data-app-id="{{ application.id }}"
-                      class="form--fav">
+                      class="form--inline js-fav">
                     <label class="form--fav__label fav-normal">
                         <input type="submit">
                         {{ macros.icon('star-2', '', 'Add to favorites') }}

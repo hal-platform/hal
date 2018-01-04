@@ -27,12 +27,6 @@ class AddCredentialController implements ControllerInterface
     use SessionTrait;
     use TemplatedControllerTrait;
 
-    public const HUMAN_READABLE_TYPES = [
-        CredentialEnum::TYPE_AWS_STATIC => 'AWS Static Token',
-        CredentialEnum::TYPE_AWS_ROLE => 'AWS STS Role',
-        CredentialEnum::TYPE_PRIVATEKEY => 'Private Key'
-    ];
-
     private const MSG_SUCCESS = 'Credential "%s" added.';
 
     /**
@@ -89,7 +83,7 @@ class AddCredentialController implements ControllerInterface
             'form' => $form,
             'errors' => $this->credentialValidator->errors(),
 
-            'credential_types' => self::HUMAN_READABLE_TYPES
+            'credential_options' => CredentialEnum::options()
         ]);
     }
 

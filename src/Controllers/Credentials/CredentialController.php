@@ -65,15 +65,8 @@ class CredentialController implements ControllerInterface
 
         $targets = $this->targetRepository->findBy(['credential' => $credential]);
 
-        $decrypted = false;
-        if ($credential->type() === CredentialEnum::TYPE_AWS_STATIC) {
-            $decrypted = $this->decrypt($credential->details()->secret());
+        $decrypted = $this->decrypt($credential);
 
-        } elseif ($credential->type() === CredentialEnum::TYPE_PRIVATEKEY) {
-            if ($credential->details()->file()) {
-                $decrypted = $this->decrypt($credential->details()->file());
-            }
-        }
 
         return $this->withTemplate($request, $response, $this->template, [
             'credential' => $credential,
@@ -85,19 +78,27 @@ class CredentialController implements ControllerInterface
     }
 
     /**
-     * @param string $encrypted
+     * @param Credential $credential
      *
      * @return string|bool|null
      */
-    private function decrypt($encrypted)
+    private function decrypt(Credential $credential)
     {
-        try {
-            $decrypted = $this->encryption->decrypt($encrypted);
+        $decrypted = false;
+        $secret = '';
 
-            return $decrypted;
-
-        } catch (Exception $ex) {
-            return null;
+        if ($credential->type() === CredentialEnum::TYPE_AWS_STATIC) {
+            $secret = $credential->details()->secret();
         }
+
+        if ($credential->type() === CredentialEnum::TYPE_PRIVATEKEY) {
+            $secret = $credential->details()->file();
+        }
+
+        if ($secret) {
+            $decrypted = $this->encryption->decrypt($secret);
+        }
+
+        return $decrypted;
     }
 }

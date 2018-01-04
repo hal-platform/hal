@@ -58,13 +58,11 @@
             <tbody>
                 {% for token in tokens %}
                     <tr>
-                        <td>{{ token|shortGUID }}</td>
+                        <td>{{ token|short_guid }}</td>
                         <td>{{ token.name }}</td>
                         <td><code>{{ token.value }}</code></td>
                         <td class="tr">
-                            <a href="{{ uriFor('user.token.remove', {'user': user.id, 'token': token.id}) }}">
-                                Revoke
-                            </a>
+                            <a href="{{ uriFor('user.token.remove', {'user': user.id, 'token': token.id}) }}">Revoke</a>
                         </td>
                     </tr>
                 {% endfor %}

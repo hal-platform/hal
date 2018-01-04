@@ -28,22 +28,18 @@
                 <tr>
                     <th class="t15">ID</th>
                     <th>Environment</th>
-                    <th class="t15"></th>
                 </tr>
             </thead>
             <tbody>
                 {% for environment in envs %}
                     <tr>
-                        <td>{{ environment|shortGUID }}</td>
+                        <td><a href="{{ uriFor('environment', {'environment': environment.id}) }}">{{ environment|short_guid }}</a></td>
                         <td>
                             {% if environment.isProduction %}
                                 {{ macros.status(environment.name, 'info', 'key') }}
                             {% else %}
                                 {{ environment.name }}
                             {% endif %}
-                        </td>
-                        <td class="tr">
-                            <a href="{{ uriFor('environment', {'environment': environment.id}) }}">Manage</a>
                         </td>
                     </tr>
                 {% endfor %}

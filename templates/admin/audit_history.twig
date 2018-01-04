@@ -2,14 +2,14 @@
 {% import 'macros.twig' as macros %}
 {% import 'macros.pagination.twig' as pagination %}
 
-{% set page_title = "Audit History" %}
+{% set page_title = 'Audit History' %}
 
 {% block content %}
     <div class="nav--page">
         <h1>{{ page_title }}</h1>
 
         <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('admin') }}">Back to Admin Dashboard</a>
+            <a class="btn btn--back" href="{{ uriFor('admin') }}">Admin Dashboard</a>
         </p>
     </div>
 

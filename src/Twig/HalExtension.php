@@ -8,8 +8,14 @@
 namespace Hal\UI\Twig;
 
 use Hal\UI\Utility\TimeFormatter;
-use Hal\Core\Entity\Build;
-use Hal\Core\Entity\Release;
+// use Hal\Core\Entity\Build;
+// use Hal\Core\Entity\Release;
+use Hal\Core\Entity\Credential;
+use Hal\Core\Entity\System\UserIdentityProvider;
+use Hal\Core\Entity\System\VersionControlProvider;
+use Hal\Core\Type\CredentialEnum;
+use Hal\Core\Type\IdentityProviderEnum;
+use Hal\Core\Type\VCSProviderEnum;
 use Twig_Extension;
 use Twig_SimpleFilter;
 use Twig_SimpleFunction;
@@ -84,7 +90,13 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFilter('formatBuildId', [$this, 'formatBuildId']),
             new Twig_SimpleFilter('formatPushId', [$this, 'formatPushId']),
             new Twig_SimpleFilter('formatEvent', [$this, 'formatEvent']),
+
             new Twig_SimpleFilter('shortGUID', [$this, 'shortGUID']),
+            new Twig_SimpleFilter('short_guid', [$this, 'shortGUID']),
+
+            // @todo move these to entities?
+            new Twig_SimpleFilter('idp_type', [$this, 'formatIDP']),
+            new Twig_SimpleFilter('credential_type', [$this, 'formatCredential']),
         ];
     }
 
@@ -179,6 +191,54 @@ class HalExtension extends Twig_Extension
         }
 
         return substr($entity, 0, 8);
+    }
+
+    /**
+     * @param mixed $provider
+     *
+     * @return string
+     */
+    public function formatIDP($provider)
+    {
+        if ($provider instanceof UserIdentityProvider) {
+            $provider = $provider->type();
+        }
+
+        switch ($provider) {
+            case IdentityProviderEnum::TYPE_INTERNAL:
+                return 'Internal';
+            case IdentityProviderEnum::TYPE_LDAP:
+                return 'LDAP';
+            case IdentityProviderEnum::TYPE_GITHUB:
+                return 'GitHub.com';
+            case IdentityProviderEnum::TYPE_GITHUB_ENTERPRISE:
+                return 'GitHub Ent.';
+            default:
+                return 'Unknown';
+        }
+    }
+
+    /**
+     * @param mixed $credential
+     *
+     * @return string
+     */
+    public function formatCredential($credential)
+    {
+        if ($credential instanceof Credential) {
+            $credential = $credential->type();
+        }
+
+        switch ($credential) {
+            case CredentialEnum::TYPE_AWS_STATIC:
+                return 'AWS Static Token';
+            case CredentialEnum::TYPE_AWS_ROLE:
+                return 'AWS STS Role';
+            case CredentialEnum::TYPE_PRIVATEKEY:
+                return 'Private Key';
+            default:
+                return 'Unknown';
+        }
     }
 
     /**

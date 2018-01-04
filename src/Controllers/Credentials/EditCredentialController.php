@@ -99,7 +99,7 @@ class EditCredentialController implements ControllerInterface
             'form' => $form,
             'errors' => $this->credentialValidator->errors(),
 
-            'credential_types' => AddCredentialController::HUMAN_READABLE_TYPES
+            'credential_options' => CredentialEnum::options()
         ]);
     }
 

@@ -75,6 +75,6 @@ class Auth
             return $user;
         }
 
-        return $adapter->errors();
+        return null;
     }
 }

@@ -85,7 +85,7 @@ class DashboardController implements ControllerInterface
      */
     private function findFavorites(User $user): array
     {
-        if (!$favorites = $user->settings('favorite_applications')) {
+        if (!$favorites = $user->setting('favorite_applications')) {
             return [];
         }
 

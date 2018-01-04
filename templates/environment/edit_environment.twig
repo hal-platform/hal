@@ -17,6 +17,12 @@
     <form method="post">
 
         <ul class="form-fields form-wrapper">
+
+            <li>
+                <label>ID</label>
+                {{ environment.id|short_guid }}
+            </li>
+
             <li>
                 {% set has_error = form_macros.hasError(errors, 'name') %}
                 <label for="name">Name</label>

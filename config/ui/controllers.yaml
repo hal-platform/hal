@@ -645,9 +645,6 @@ services:
         class: 'Hal\UI\Controllers\Admin\DashboardController'
         arguments:
             - '@admin.dashboard.twig'
-            - '%cookie.encryption.secret%'
-            - '%session.encryption.secret%'
-            - '%hal.pushfile.path%'
     admin.dashboard.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/dashboard.twig']]]
@@ -695,6 +692,10 @@ services:
             - '@doctrine.em'
             - '@json'
             - '@clock'
+            - '%cookie.encryption.secret%'
+            - '%session.encryption.secret%'
+            - '%hal.pushfile.path%'
+
     admin.system_dashboard.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/system_dashboard.twig']]]

@@ -1,7 +1,7 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
 
-{% set page_title = "Cache Management" %}
+{% set page_title = 'Cache Management' %}
 
 {% block content %}
 
@@ -17,32 +17,26 @@
         <h1>{{ page_title }}</h1>
 
         <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('admin') }}">Back to Admin Dashboard</a>
+            <a class="btn btn--back" href="{{ uriFor('admin') }}">Admin Dashboard</a>
         </p>
     </div>
 
-    <ul class="list--bare">
-        <li>
-            <form method="post">
-                <input name="cache_type" type="hidden" value="doctrine">
-                <input type="submit" class="btn btn--action" value="Clear doctrine cache">
-            </form>
-        </li>
+    <p>
+        <form method="post" class="form--inline">
+            <input name="cache_type" type="hidden" value="doctrine">
+            <button class="btn btn--action" type="submit">Clear doctrine cache</button>
+        </form>
 
-        <li>
-            <form method="post">
-                <input name="cache_type" type="hidden" value="permissions">
-                <input type="submit" class="btn btn--action" value="Clear permissions cache">
-            </form>
-        </li>
-        <li>
-            <form method="post">
-                <input name="cache_type" type="hidden" value="opcache">
-                <input type="submit" class="btn btn--action" value="Clear OP cache">
-            </form>
-        </li>
+        <form method="post" class="form--inline">
+            <input name="cache_type" type="hidden" value="permissions">
+            <button class="btn btn--action" type="submit">Clear permissions cache</button>
+        </form>
 
-    </ul>
+        <form method="post" class="form--inline">
+            <input name="cache_type" type="hidden" value="opcache">
+            <button class="btn btn--action" type="submit">Clear OP cache</button>
+        </form>
+    </p>
 
     <h3>Permissions Cache</h3>
     <section>
