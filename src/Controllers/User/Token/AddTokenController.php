@@ -9,7 +9,7 @@ namespace Hal\UI\Controllers\User\Token;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\User;
-use Hal\Core\Entity\UserToken;
+use Hal\Core\Entity\User\UserToken;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Flash;
