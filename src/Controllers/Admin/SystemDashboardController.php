@@ -105,7 +105,7 @@ class SystemDashboardController implements ControllerInterface
             'server_name' => gethostname(),
             'encryption_key' => $this->encryptionKey,
             'session_encryption_key' => $this->sessionEncryptionKey,
-            'release_file' => $deploymentFile
+            'deployment_file' => $deploymentFile
         ]);
     }
 

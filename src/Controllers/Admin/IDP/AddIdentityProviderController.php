@@ -5,22 +5,21 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Environment;
+namespace Hal\UI\Controllers\Admin\IDP;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Flash;
-use Hal\UI\Validator\EnvironmentValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\URI;
 
-class AddEnvironmentController implements ControllerInterface
+class AddIdentityProviderController implements ControllerInterface
 {
     use RedirectableControllerTrait;
     use SessionTrait;
@@ -39,11 +38,6 @@ class AddEnvironmentController implements ControllerInterface
     private $em;
 
     /**
-     * @var EnvironmentValidator
-     */
-    private $envValidator;
-
-    /**
      * @var URI
      */
     private $uri;
@@ -51,18 +45,15 @@ class AddEnvironmentController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param EnvironmentValidator $envValidator
      * @param URI $uri
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        EnvironmentValidator $envValidator,
         URI $uri
     ) {
         $this->template = $template;
         $this->em = $em;
-        $this->envValidator = $envValidator;
 
         $this->uri = $uri;
     }
@@ -78,12 +69,12 @@ class AddEnvironmentController implements ControllerInterface
             $msg = sprintf(self::MSG_SUCCESS, $environment->name());
 
             $this->withFlash($request, Flash::SUCCESS, $msg);
-            return $this->withRedirectRoute($response, $this->uri, 'environments');
+            return $this->withRedirectRoute($response, $this->uri, 'id_providers');
         }
 
         return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
-            'errors' => $this->envValidator->errors(),
+            'errors' => [],
         ]);
     }
 
@@ -91,21 +82,22 @@ class AddEnvironmentController implements ControllerInterface
      * @param array $data
      * @param ServerRequestInterface $request
      *
-     * @return Environment|null
+     * @return UserIdentityProvider|null
      */
-    private function handleForm(array $data, ServerRequestInterface $request): ?Environment
+    private function handleForm(array $data, ServerRequestInterface $request): ?UserIdentityProvider
     {
         if ($request->getMethod() !== 'POST') {
             return null;
         }
 
-        $environment = $this->envValidator->isValid($data['name'], $data['is_production']);
-        if ($environment) {
-            $this->em->persist($environment);
+        $idp = null;
+
+        if ($idp) {
+            $this->em->persist($idp);
             $this->em->flush();
         }
 
-        return $environment;
+        return $idp;
     }
 
     /**
@@ -117,7 +109,6 @@ class AddEnvironmentController implements ControllerInterface
     {
         $form = [
             'name' => $request->getParsedBody()['name'] ?? '',
-            'is_production' => $request->getParsedBody()['is_production'] ?? ''
         ];
 
         return $form;

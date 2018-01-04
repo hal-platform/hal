@@ -1,0 +1,75 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+
+{% set page_title = 'Identity Providers' %}
+
+{% set is_admin = current_authorizations.isSuper() %}
+
+{% block content %}
+    <div class="nav--page">
+        <h1>{{ page_title }}</h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--back" href="{{ uriFor('admin') }}">Admin Dashboard</a>
+        </p>
+    </div>
+
+    {{ block('idp_table') }}
+
+    <p>
+        {% if is_admin %}
+            <a class="btn" href="{{ uriFor('id_providers.add') }}">Add Identity Provider</a>
+        {% else %}
+            {{ macros.disabled_button('Add Identity Provider') }}
+        {% endif %}
+    </p>
+
+{% endblock %}
+
+{% block idp_table %}
+
+    {% if id_providers %}
+        <table class="table--spacing-medium">
+            <thead>
+                <tr>
+                    <th class="t15">ID</th>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for idp in id_providers %}
+                    <tr>
+                        <td>
+                            <a href="{{ uriFor('id_providers', {'id_provider': idp.id}) }}">{{ idp|short_guid }}</a>
+                        </td>
+                        <td>
+                            {{ idp|idp_type }}
+                        </td>
+                        <td>
+                            {{ idp.name }}
+                        </td>
+                        <td>
+                            {% if idp.type == 'internal' %}
+                                N/A
+
+                            {% elseif idp.type == 'ldap' %}
+                                URL: <code>{{ idp.parameter('gh.url') }}</code>
+
+                            {% elseif idp.type == 'gh' %}
+                                TBD
+
+                            {% elseif idp.type == 'ghe' %}
+                                TBD
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>There are no version control providers.</p>
+    {% endif %}
+
+{% endblock %}

@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Environment;
+namespace Hal\UI\Controllers\Admin\Environment;
 
 use Hal\Core\Entity\Environment;
 use Hal\UI\Controllers\TemplatedControllerTrait;

@@ -1,0 +1,26 @@
+{% extends 'base.twig' %}
+{% import 'macros.form.twig' as form_macros %}
+
+{% set page_title = 'Add Identity Provider' %}
+
+{% block content %}
+    <div class="nav--page">
+        <h1>{{ page_title }}</h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--back" href="{{ uriFor('id_providers') }}">Back to IDPs</a>
+        </p>
+    </div>
+
+    {{ form_macros.formErrors(errors) }}
+
+    <form method="post">
+
+        <p>
+            <button class="btn btn--action" type="submit">Add IDP</button>
+            <a href="{{ uriFor('id_providers') }}">Cancel</a>
+        </p>
+
+    </form>
+
+{% endblock %}

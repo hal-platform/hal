@@ -10,28 +10,28 @@
 
     {{ form_macros.formErrors(errors) }}
 
-    {% if idp_providers|length == 1 %}
-        {% set selected_auth = idp_providers|first %}
+    {% if id_providers|length == 1 %}
+        {% set selected_auth = id_providers|first %}
     {% endif %}
 
     {% if selected_auth.type == 'internal' %}
 
-        <h2>Sign In via <b>Internal Auth</b></h2>
+        <h2>Sign in via <b>Internal Auth</b></h2>
         {{ block('internal_signin_form') }}
 
     {% elseif selected_auth.type == 'ldap' %}
 
-        <h2>Sign In via <b>LDAP</b></h2>
+        <h2>Sign in via <b>LDAP</b></h2>
         {{ block('ldap_signin_form') }}
 
     {% elseif selected_auth.type == 'ghe' %}
 
-        <h2>Sign In via <b>GitHub Enterprise</b></h2>
+        <h2>Sign in via <b>GitHub Enterprise</b></h2>
         {{ block('github_enterprise_signin_form') }}
 
     {% elseif selected_auth.type == 'gh' %}
 
-        <h2>Sign In via <b>GitHub.com</b></h2>
+        <h2>Sign in via <b>GitHub.com</b></h2>
         {{ block('github_signin_form') }}
 
     {% else %}

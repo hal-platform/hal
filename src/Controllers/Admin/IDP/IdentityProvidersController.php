@@ -1,22 +1,22 @@
 <?php
 /**
- * @copyright (c) 2016 Quicken Loans Inc.
+ * @copyright (c) 2017 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Environment;
+namespace Hal\UI\Controllers\Admin\IDP;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\Core\Entity\Environment;
-use Hal\Core\Repository\EnvironmentRepository;
+use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
-class EnvironmentsController implements ControllerInterface
+class IdentityProvidersController implements ControllerInterface
 {
     use TemplatedControllerTrait;
 
@@ -26,9 +26,9 @@ class EnvironmentsController implements ControllerInterface
     private $template;
 
     /**
-     * @var EnvironmentRepository
+     * @var EntityRepository
      */
-    private $envRepo;
+    private $idpRepo;
 
     /**
      * @param TemplateInterface $template
@@ -37,7 +37,7 @@ class EnvironmentsController implements ControllerInterface
     public function __construct(TemplateInterface $template, EntityManagerInterface $em)
     {
         $this->template = $template;
-        $this->envRepo = $em->getRepository(Environment::class);
+        $this->idpRepo = $em->getRepository(UserIdentityProvider::class);
     }
 
     /**
@@ -46,7 +46,7 @@ class EnvironmentsController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         return $this->withTemplate($request, $response, $this->template, [
-            'envs' => $this->envRepo->getAllEnvironmentsSorted()
+            'id_providers' => $this->idpRepo->findAll()
         ]);
     }
 }

@@ -96,6 +96,7 @@ class HalExtension extends Twig_Extension
 
             // @todo move these to entities?
             new Twig_SimpleFilter('idp_type', [$this, 'formatIDP']),
+            new Twig_SimpleFilter('vcs_type', [$this, 'formatVCS']),
             new Twig_SimpleFilter('credential_type', [$this, 'formatCredential']),
         ];
     }
@@ -212,6 +213,29 @@ class HalExtension extends Twig_Extension
             case IdentityProviderEnum::TYPE_GITHUB:
                 return 'GitHub.com';
             case IdentityProviderEnum::TYPE_GITHUB_ENTERPRISE:
+                return 'GitHub Ent.';
+            default:
+                return 'Unknown';
+        }
+    }
+
+    /**
+     * @param mixed $provider
+     *
+     * @return string
+     */
+    public function formatVCS($provider)
+    {
+        if ($provider instanceof VersionControlProvider) {
+            $provider = $provider->type();
+        }
+
+        switch ($provider) {
+            case VCSProviderEnum::TYPE_GIT:
+                return 'Git';
+            case VCSProviderEnum::TYPE_GITHUB:
+                return 'GitHub.com';
+            case VCSProviderEnum::TYPE_GITHUB_ENTERPRISE:
                 return 'GitHub Ent.';
             default:
                 return 'Unknown';

@@ -27,7 +27,7 @@ parameters:
             stack:  ['denied.page']
 
         ####################################################################################################################
-        # SIGN-IN CONTROLLERS
+        # sign in / authentication
         ####################################################################################################################
 
         signin:
@@ -39,17 +39,8 @@ parameters:
             route: '/signout'
             stack: ['signout.page']
 
-        ####################################################################################################################
-        # HAL BOOTSTRAP
-        ####################################################################################################################
-
-        hal_bootstrap:
-            method: ['GET', 'POST']
-            route: '/hal-bootstrap'
-            stack: ['hal_bootstrap.page']
-
         ################################################################################################################
-        # HELP ROUTES
+        # help
         ################################################################################################################
 
         latest.release:
@@ -81,7 +72,7 @@ parameters:
             stack: ['help.application_setup.page']
 
         ################################################################################################################
-        # USER ROUTES
+        # users
         ################################################################################################################
 
         users.page1:
@@ -139,7 +130,7 @@ parameters:
                     stack: ['api_internal.settings.favorite_applications.remove']
 
         ################################################################################################################
-        # ORGANIZATION ROUTES
+        # organizations
         ################################################################################################################
 
         organization.add:
@@ -165,7 +156,7 @@ parameters:
                     stack: ['middleware.is_admin', 'middleware.removal_confirmation.organization', 'organization.remove.handler']
 
         ################################################################################################################
-        # APPLICATION ROUTES
+        # applications
         ################################################################################################################
 
         applications:
@@ -293,9 +284,9 @@ parameters:
                             route: '/remove'
                             stack: ['middleware.removal_confirmation.encrypted', 'encrypted.remove.handler']
 
-        ################################################################################################################
-        # SERVER Routes
-        ################################################################################################################
+        ####################################################################################################################
+        # target templates
+        ####################################################################################################################
 
         groups:
             method: 'GET'
@@ -325,38 +316,7 @@ parameters:
                     stack: ['middleware.is_admin', 'middleware.removal_confirmation.group', 'group.remove.handler']
 
         ################################################################################################################
-        # ENVIRONMENT ROUTES
-        ################################################################################################################
-
-        environments:
-            method: 'GET'
-            route: '/environments'
-            stack: ['middleware.signed_in', 'environments.page']
-
-        environment.add:
-            method: ['GET', 'POST']
-            route: '/environments/add'
-            stack: ['middleware.is_admin', 'environment.add.page']
-
-        environment.management:
-            route: '/environments/{environment:%r.guid%}'
-            stack: ['middleware.signed_in', 'middleware.require_entity']
-            routes:
-                environment:
-                    method: 'GET'
-                    route: ''
-                    stack: ['environment.page']
-                environment.edit:
-                    method: ['GET', 'POST']
-                    route: '/edit'
-                    stack: ['middleware.is_admin', 'environment.edit.page']
-                environment.remove:
-                    method: ['GET', 'POST']
-                    route: '/remove'
-                    stack: ['middleware.is_admin', 'middleware.removal_confirmation.environment', 'environment.remove.handler']
-
-        ################################################################################################################
-        # QUEUE ROUTES
+        # queue
         ################################################################################################################
 
         queue:
@@ -375,7 +335,7 @@ parameters:
             stack: ['middleware.signed_in', 'queue.history.page']
 
         ################################################################################################################
-        # BUILD ROUTES
+        # builds
         ################################################################################################################
 
         build:
@@ -398,7 +358,7 @@ parameters:
             stack: ['middleware.signed_in', 'builds.history.page']
 
         ################################################################################################################
-        # Release ROUTES
+        # releases
         ################################################################################################################
 
         release:
@@ -422,8 +382,13 @@ parameters:
             stack: ['middleware.signed_in', 'releases.history.page']
 
         ################################################################################################################
-        # ADMIN ROUTES
+        # administrative
         ################################################################################################################
+
+        hal_bootstrap:
+            method: ['GET', 'POST']
+            route: '/hal-bootstrap'
+            stack: ['hal_bootstrap.page']
 
         admin.management:
             route: '/admin'
@@ -459,7 +424,66 @@ parameters:
                     stack: ['admin.global_banner.page']
 
                 ################################################################################################################
-                # CREDENTIAL ROUTES
+                # admin - environments
+                ################################################################################################################
+
+                environments:
+                    method: 'GET'
+                    route: '/environments'
+                    stack: ['environments.page']
+
+                environment.add:
+                    method: ['GET', 'POST']
+                    route: '/environments/add'
+                    stack: ['environment.add.page']
+
+                environment.management:
+                    route: '/environments/{environment:%r.guid%}'
+                    stack: ['middleware.require_entity']
+                    routes:
+                        environment:
+                            method: 'GET'
+                            route: ''
+                            stack: ['environment.page']
+                        environment.edit:
+                            method: ['GET', 'POST']
+                            route: '/edit'
+                            stack: ['environment.edit.page']
+                        environment.remove:
+                            method: ['GET', 'POST']
+                            route: '/remove'
+                            stack: ['middleware.removal_confirmation.environment', 'environment.remove.handler']
+
+                ################################################################################################################
+                # admin - idp
+                ################################################################################################################
+
+                id_providers:
+                    method: 'GET'
+                    route: '/idp'
+                    stack: ['id_providers.page']
+
+                id_providers.add:
+                    method: ['GET', 'POST']
+                    route: '/idp/add'
+                    stack: ['id_providers.add.page']
+
+                ################################################################################################################
+                # admin - vcs
+                ################################################################################################################
+
+                vcs_providers:
+                    method: 'GET'
+                    route: '/vcs'
+                    stack: ['vcs_providers.page']
+
+                vcs_providers.add:
+                    method: ['GET', 'POST']
+                    route: '/vcs/add'
+                    stack: ['vcs_providers.add.page']
+
+                ################################################################################################################
+                # admin - credentials
                 ################################################################################################################
 
                 credentials:
@@ -492,7 +516,7 @@ parameters:
                             stack: ['middleware.is_super', 'middleware.removal_confirmation.credential', 'credential.remove.handler']
 
                 ################################################################################################################
-                # PERMISSION ROUTES
+                # admin - permissions
                 ################################################################################################################
 
                 admin.permissions:

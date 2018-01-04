@@ -12,11 +12,10 @@
         </p>
     </div>
 
-
     <h2>Server Information</h2>
     <ul class="meta-box">
         <li>
-            <h6>Hostname</h6>
+            <h6>Server Hostname</h6>
             <div class="pre-wrapper">
                 <pre>{{ server_name }}</pre>
             </div>
@@ -30,17 +29,17 @@
         </li>
 
         <li>
-            <h6>Session Encryption key</h6>
+            <h6>Session encryption key</h6>
             <div class="pre-wrapper">
                 <pre>{{ session_encryption_key }}</pre>
             </div>
         </li>
 
         <li>
-            <h6>Hal Release File</h6>
+            <h6>Hal deployment file</h6>
             <div class="pre-wrapper">
-                {% if release_file %}
-                    <pre>{{ release_file }}</pre>
+                {% if deployment_file %}
+                    <pre>{{ deployment_file }}</pre>
                 {% else %}
                     <pre>No release file found. Are you in dev?</pre>
                 {% endif %}

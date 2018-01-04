@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Environment;
+namespace Hal\UI\Controllers\Admin\Environment;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Environment;
@@ -20,13 +20,13 @@ use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\URI;
 
-class EditEnvironmentController implements ControllerInterface
+class AddEnvironmentController implements ControllerInterface
 {
     use RedirectableControllerTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
 
-    private const MSG_SUCCESS = 'Environment "%s" was updated.';
+    private const MSG_SUCCESS = 'Environment "%s" added.';
 
     /**
      * @var TemplateInterface
@@ -72,42 +72,36 @@ class EditEnvironmentController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $environment = $request->getAttribute(Environment::class);
+        $form = $this->getFormData($request);
 
-        $form = $this->getFormData($request, $environment);
-
-        if ($modified = $this->handleForm($form, $request, $environment)) {
+        if ($environment = $this->handleForm($form, $request)) {
             $msg = sprintf(self::MSG_SUCCESS, $environment->name());
 
             $this->withFlash($request, Flash::SUCCESS, $msg);
-            return $this->withRedirectRoute($response, $this->uri, 'environment', ['environment' => $modified->id()]);
+            return $this->withRedirectRoute($response, $this->uri, 'environments');
         }
 
         return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
             'errors' => $this->envValidator->errors(),
-
-            'environment' => $environment
         ]);
     }
 
     /**
      * @param array $data
      * @param ServerRequestInterface $request
-     * @param Environment $environment
      *
      * @return Environment|null
      */
-    private function handleForm(array $data, ServerRequestInterface $request, Environment $environment): ?Environment
+    private function handleForm(array $data, ServerRequestInterface $request): ?Environment
     {
         if ($request->getMethod() !== 'POST') {
             return null;
         }
 
-        $environment = $this->envValidator->isEditValid($environment, $data['name'], $data['is_production']);
-
+        $environment = $this->envValidator->isValid($data['name'], $data['is_production']);
         if ($environment) {
-            $this->em->merge($environment);
+            $this->em->persist($environment);
             $this->em->flush();
         }
 
@@ -116,20 +110,14 @@ class EditEnvironmentController implements ControllerInterface
 
     /**
      * @param ServerRequestInterface $request
-     * @param Environment $environment
      *
      * @return array
      */
-    private function getFormData(ServerRequestInterface $request, Environment $environment)
+    private function getFormData(ServerRequestInterface $request)
     {
-        $isPost = ($request->getMethod() === 'POST');
-
-        $name = $request->getParsedBody()['name'] ?? '';
-        $isProd = $request->getParsedBody()['is_production'] ?? '';
-
         $form = [
-            'name' => $isPost ? $name : $environment->name(),
-            'is_production' => $isPost ? $isProd : $environment->isProduction(),
+            'name' => $request->getParsedBody()['name'] ?? '',
+            'is_production' => $request->getParsedBody()['is_production'] ?? ''
         ];
 
         return $form;
