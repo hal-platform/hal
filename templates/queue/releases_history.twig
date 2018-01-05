@@ -5,24 +5,26 @@
 
 {% set page_title = 'Release History' %}
 
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('queue.history.page1') }}">Queue History</a></li>
+{% endblock %}
+
 {% block content %}
-
-    <div class="nav--page">
-        <h1>Release History</h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('queue.history.page1') }}">Queue History</a>
-            <a class="btn btn--small btn--back" href="{{ uriFor('builds.history.page1') }}">All Builds</a>
-        </p>
-    </div>
-
+    {{ block('links') }}
     {{ pagination.pagination(page, last, 'releases.history') }}
 
     {{ block('releases') }}
 
     {{ pagination.pagination(page, last, 'releases.history') }}
+    {{ block('links') }}
 {% endblock %}
 
+{% block links %}
+    <p>
+        <a class="btn" href="{{ uriFor('queue') }}">Current Job Queue</a>
+        <a class="btn" href="{{ uriFor('builds.history.page1') }}">Build History</a>
+    </p>
+{% endblock %}
 
 {% block releases %}
     <table class="table--spacing-medium">
@@ -72,7 +74,7 @@
                 </tr>
             {% else %}
                 <tr id="js-emptyQueue">
-                    <td colspan="6">There are no builds to display.</td>
+                    <td colspan="6">There are no releases available.</td>
                 </tr>
             {% endfor %}
         </tbody>

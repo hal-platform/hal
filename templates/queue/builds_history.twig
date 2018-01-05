@@ -4,24 +4,27 @@
 {% import 'macros.twig' as macros %}
 {% set js_components = ['job_table_updater'] %}
 
-{% set page_title = "Build History" %}
+{% set page_title = 'Build History' %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('queue.history.page1') }}">Queue History</a></li>
+{% endblock %}
 
 {% block content %}
-    <div class="nav--page">
-        <h1>Build History</h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('queue.history.page1') }}">Queue History</a>
-            <a class="btn btn--small btn--back" href="{{ uriFor('releases.history.page1') }}">All Releases</a>
-        </p>
-    </div>
-
+    {{ block('links') }}
     {{ pagination.pagination(page, last, 'builds.history') }}
 
     {{ block('builds') }}
 
     {{ pagination.pagination(page, last, 'builds.history') }}
+    {{ block('links') }}
+{% endblock %}
 
+{% block links %}
+    <p>
+        <a class="btn" href="{{ uriFor('queue') }}">Current Job Queue</a>
+        <a class="btn" href="{{ uriFor('releases.history.page1') }}">Release History</a>
+    </p>
 {% endblock %}
 
 {% block builds %}
@@ -31,7 +34,7 @@
                 <th>Push</th>
                 <th>Application</th>
                 <th>Env</th>
-                <th>Git</th>
+                <th>Source Control</th>
                 <th class="table-priority-55">User</th>
                 <th class="table-priority-50">Time</th>
             </tr>
@@ -63,7 +66,7 @@
                 </tr>
             {% else %}
                 <tr id="js-emptyQueue">
-                    <td colspan="6">There are no builds to display.</td>
+                    <td colspan="6">There are no builds available.</td>
                 </tr>
             {% endfor %}
         </tbody>

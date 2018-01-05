@@ -24,11 +24,11 @@ services:
     dashboard.page:
         class: 'Hal\UI\Controllers\DashboardController'
         arguments:
-            - '@dashboard.twig'
+            - '@home.twig'
             - '@doctrine.em'
-    dashboard.twig:
+    home.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['dashboard.twig']]]
+        calls: [['setTemplate', ['home.twig']]]
 
     ####################################################################################################################
     # sign in / authentication
@@ -314,14 +314,14 @@ services:
         arguments: ['@encrypted.configuration.twig', '@doctrine.em']
     encrypted.configuration.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['encrypted-configuration/encrypteds.twig']]]
+        calls: [['setTemplate', ['encrypted-configuration/encrypted_configuration.twig']]]
 
     encrypted.page:
         class: 'Hal\UI\Controllers\EncryptedConfiguration\EncryptedController'
         arguments: ['@encrypted.twig', '@decrypter']
     encrypted.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['encrypted-configuration/encrypted.twig']]]
+        calls: [['setTemplate', ['encrypted-configuration/encrypted_property.twig']]]
 
     encrypted.add.page:
         class: 'Hal\UI\Controllers\EncryptedConfiguration\AddEncryptedPropertyController'
@@ -336,7 +336,6 @@ services:
             - '@encrypter'
             - '@validator.encrypted_property'
             - '@uri'
-            - '@doctrine.random'
 
     encrypted.remove.handler:
         class: 'Hal\UI\Controllers\EncryptedConfiguration\RemoveEncryptedPropertyController'
@@ -443,7 +442,7 @@ services:
 
     queue.page:
         class: 'Hal\UI\Controllers\Queue\QueueController'
-        arguments: ['@queue.twig', '@job_queue']
+        arguments: ['@queue.twig', '@doctrine.em']
     queue.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['queue/queue.twig']]]
@@ -461,20 +460,14 @@ services:
 
     builds.history.page:
         class: 'Hal\UI\Controllers\Queue\BuildsHistoryController'
-        arguments:
-            - '@builds.history.twig'
-            - '@doctrine.em'
-            - '@notFoundHandler'
+        arguments: ['@builds.history.twig', '@doctrine.em']
     builds.history.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['queue/builds_history.twig']]]
 
     releases.history.page:
         class: 'Hal\UI\Controllers\Queue\ReleasesHistoryController'
-        arguments:
-            - '@releases.history.twig'
-            - '@doctrine.em'
-            - '@notFoundHandler'
+        arguments: ['@releases.history.twig', '@doctrine.em']
     releases.history.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['queue/releases_history.twig']]]

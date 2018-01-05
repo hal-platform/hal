@@ -9,7 +9,7 @@ namespace Hal\UI\Controllers\Queue;
 
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\Core\Entity\Build;
+use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Repository\BuildRepository;
 use Hal\UI\Controllers\PaginationTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
@@ -35,21 +35,13 @@ class BuildsHistoryController implements ControllerInterface
     private $buildRepo;
 
     /**
-     * @var callable
-     */
-    private $notFound;
-
-    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param callable $notFound
      */
-    public function __construct(TemplateInterface $template, EntityManagerInterface $em, callable $notFound)
+    public function __construct(TemplateInterface $template, EntityManagerInterface $em)
     {
         $this->template = $template;
         $this->buildRepo = $em->getRepository(Build::class);
-
-        $this->notFound = $notFound;
     }
 
     /**
@@ -58,14 +50,9 @@ class BuildsHistoryController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $page = $this->getCurrentPage($request);
-        if ($page === null) {
-            return ($this->notFound)($request, $response);
-        }
 
         $builds = $this->buildRepo->getPagedResults(SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1));
-
-        $total = count($builds);
-        $last = ceil($total / SharedStaticConfiguration::LARGE_PAGE_SIZE);
+        $last = $this->getLastPage($builds, SharedStaticConfiguration::LARGE_PAGE_SIZE);
 
         return $this->withTemplate($request, $response, $this->template, [
             'page' => $page,
