@@ -40,6 +40,22 @@
 
             {% block page_main %}
             <main>
+                {% block breadcrumb %}
+                    <ul class="breadcrumb">
+                        <li><a href="{{ uriFor('dashboard') }}">Home</a></li>
+                        {% block breadcrumb_links %}{% endblock %}
+                       <li>
+                            <b>
+                                {%- if page_title -%}
+                                    {{ page_title }}
+                                {%- else -%}
+                                    Hal
+                                {%- endif -%}
+                            </b>
+                        </li>
+                    </ul>
+                {% endblock %}
+
                 {% embed 'base.flash.twig' %}{% endembed %}
 
                 {# main page content #}

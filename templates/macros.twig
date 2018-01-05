@@ -235,3 +235,18 @@ Build <a href="/build/123456">123456</a>
 
     <button class="btn btn--disabled{{ btn_size }}">{{ text }}</button>
 {% endmacro %}
+
+{% macro user_display_link(user) %}
+    {%- if user is same as(null) -%}
+        None
+
+    {%- elseif user -%}
+        <a href="{{ uriFor('user', {'user': user.id }) }}">
+            {{ user.name|lower }}
+        </a>
+
+    {%- else -%}
+        Unknown
+    {%- endif -%}
+{% endmacro %}
+

@@ -1,18 +1,15 @@
 {% extends 'base.twig' %}
-{% import 'macros.twig' as macros %}
 {% import 'macros.form.twig' as form_macros %}
 
+{% set js_components = ['add_application_form'] %}
 {% set page_title = 'Edit Application' %}
 
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+    <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
+{% endblock %}
+
 {% block content %}
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('applications') }}">Back to Applications</a>
-        </p>
-    </div>
-
     {{ form_macros.formErrors(errors) }}
 
     <form method="post">

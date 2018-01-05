@@ -4,15 +4,11 @@
 {% set js_components = ['add_application_form'] %}
 {% set page_title = 'Add Application' %}
 
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+{% endblock %}
+
 {% block content %}
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('applications') }}">Back to Applications</a>
-        </p>
-    </div>
-
     {{ form_macros.formErrors(errors) }}
 
     <form method="post" class="js-applications-form">

@@ -76,7 +76,10 @@ Example:
 {% macro vcs(application) %}
     {% import 'macros.twig' as macros %}
 
-    {%- if application.provider.type in ['ghe', 'gh'] -%}
+    {%- if application.provider is same as(null) -%}
+        None
+
+    {%- elseif application.provider.type in ['ghe', 'gh'] -%}
         {{ macros.icon('github') }}
         <a href="{{ vcs_url(application) }}">{{ vcs_text(application) }}</a>
 

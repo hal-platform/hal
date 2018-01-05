@@ -7,16 +7,16 @@
 {% set is_admin = current_authorizations.isSuper() %}
 {% set is_removable = is_admin and not applications %}
 
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+{% endblock %}
+
 {% block content %}
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('applications') }}">Back to Applications</a>
-        </p>
-    </div>
-
     <ul class="meta-box">
+        <li>
+            <h6>ID</h6>
+            {{ organization.id|short_guid }}
+        </li>
         <li>
             <h6>Name</h6>
             {{ organization.name }}

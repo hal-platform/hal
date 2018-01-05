@@ -3,16 +3,11 @@
 
 {% set page_title = 'Settings' %}
 
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.name }}</a></li>
+{% endblock %}
+
 {% block content %}
-
-    <div class="nav--page">
-        <h1>User Settings</h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('user', {'user': user.id}) }}">User Profile</a>
-        </p>
-    </div>
-
     <h2>Hal Preferences</h2>
     {{ block('navigation_pref') }}
 

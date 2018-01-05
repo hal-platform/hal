@@ -1,21 +1,11 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
 
-{% set page_title = 'Admin Dashboard' %}
+{% set page_title = 'Administrators' %}
 
 {% set is_admin = current_authorizations.isSuper() %}
 
 {% block content %}
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--back" href="{{ uriFor('admin.system_dashboard') }}">System Dashboard</a>
-        </p>
-    </div>
-
-
-
     <h2>User Management</h2>
     <p>
         <a href="{{ uriFor('users.page1') }}" class="btn btn--primary">
@@ -53,6 +43,7 @@
 
     <h2>Manage Hal System</h2>
     <p>
+        <a href="{{ uriFor('admin.system_dashboard') }}" class="btn">System Dashboard</a>
         <a href="{{ uriFor('vcs_providers') }}" class="btn">Version Control Systems</a>
         <a href="{{ uriFor('admin.cache_management') }}" class="btn">Cache Management</a>
         <a href="{{ uriFor('admin.global_banner') }}" class="btn">Admin Messages</a>

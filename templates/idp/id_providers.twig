@@ -5,15 +5,11 @@
 
 {% set is_admin = current_authorizations.isSuper() %}
 
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+{% endblock %}
+
 {% block content %}
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--back" href="{{ uriFor('admin') }}">Admin Dashboard</a>
-        </p>
-    </div>
-
     {{ block('idp_table') }}
 
     <p>
