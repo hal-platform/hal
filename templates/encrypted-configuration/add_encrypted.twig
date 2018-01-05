@@ -34,8 +34,7 @@
                 <label>Environment</label>
 
                 {% if environments %}
-                    <ul class="list--bare">
-
+                    <ul>
                         {% for environment in environments %}
                             {% set is_selected = form.environment == environment.id ? ' checked' : '' %}
 
@@ -54,7 +53,6 @@
                                 Global (Available in all environments)
                             </label>
                         </li>
-
                     </ul>
                 {% else %}
                     <p>There are no environments.</p>

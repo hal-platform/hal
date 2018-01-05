@@ -70,9 +70,9 @@
 
                 <td class="tr">
                     {% if canEdit %}
-                        <a class="btn btn--destructive" href="{{ uriFor('encrypted.remove', {'application': application.id, 'encrypted': property.id}) }}">Remove</a>
+                        <a class="btn btn--destructive btn--tiny" href="{{ uriFor('encrypted.remove', {'application': application.id, 'encrypted': property.id}) }}">Remove</a>
                     {% else %}
-                        {{ macros.disabled_button('Remove') }}
+                        {{ macros.disabled_button('Remove', 'tiny') }}
                     {% endif %}
                 </td>
             </tr>

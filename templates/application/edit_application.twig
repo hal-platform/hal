@@ -30,7 +30,7 @@
             <li>
                 <label>Organization</label>
                 {% if organizations %}
-                    <ul class="list--bare">
+                    <ul>
 
                         {% for organization in organizations %}
                             {% set is_selected = form.organization == organization.id ? ' checked' : '' %}
@@ -61,7 +61,7 @@
         {% if vcs|length > 0 %}
             <ul class="form-fields form-wrapper">
                 <li>
-                    <ul class="list--bare">
+                    <ul>
                         {% for provider in vcs %}
                             {% set is_selected = form.vcs_provider == provider.id ? ' checked' : '' %}
 

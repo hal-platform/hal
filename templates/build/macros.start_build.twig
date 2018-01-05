@@ -1,0 +1,137 @@
+{% macro build_tabs_branches(application, branches) %}
+    {% import 'macros.twig' as macros %}
+
+    <div id="js-tab--branches" class="tab js-tab-active">
+        <ul class="js-search-list tab-grid">
+            {% for branch in branches %}
+                <li>
+                    {% set unique_id = hash(branch.object.sha ~ '-' ~ branch.name) %}
+
+                    <input
+                        id="{{ unique_id }}"
+                        type="radio"
+                        name="reference"
+                        value="{{ branch.name }}"
+                    >
+
+                    <label for="{{ unique_id }}" title="{{ branch.name }}">
+                        {{ macros.icon('branch') }}
+                        {{ branch.name }} <br />
+
+                        <a href="{{ githubBranchUrl(application.githubOwner, application.githubRepo, branch.name) }}">{{ branch.object.sha|commit }}</a>
+                        {{ macros.icon('github') }}
+                    </label>
+                </li>
+
+            {% else %}
+                <li class="full">There are no branches.</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endmacro %}
+
+{% macro build_tabs_releases(application, tags) %}
+    {% import 'macros.twig' as macros %}
+
+    <div id="js-tab--tags" class="tab">
+        <ul class="js-search-list tab-grid">
+            {% for tag in tags %}
+                <li>
+                    {% set unique_id = hash(tag.object.sha ~ '-' ~ tag.name) %}
+
+                    <input
+                        id="{{ unique_id }}"
+                        type="radio"
+                        name="reference"
+                        value="tag/{{ tag.name }}"
+                    >
+
+                    <label for="{{ unique_id }}">
+                        {{ macros.icon('tag') }}
+                        {{ tag.name }} <br>
+
+                        <a href="{{ githubReleaseUrl(application.github.owner, application.github.repository, tag.name) }}">{{ tag.object.sha|commit }}</a>
+                        {{ macros.icon('github') }}
+                    </label>
+                </li>
+
+            {% else %}
+                <li class="full">There are no tags.</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endmacro %}
+
+{% macro build_tabs_pr_open(application, pull_requests) %}
+    {% import _self as this %}
+
+    {% set pr_icon = 'github-pr--open' %}
+
+    <div id="js-tab--pr-open" class="tab">
+        <ul class="js-search-list tab-grid">
+            {% for pr in pull_requests %}
+                <li>
+                    {{ this.pull_request_button(application, pr, pr_icon) }}
+                </li>
+
+            {% else %}
+                <li class="full">There are no open pull requests.</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endmacro %}
+
+{% macro build_tabs_pr_closed(application, pull_requests) %}
+    {% import _self as this %}
+
+    {% set pr_icon = 'github-pr--closed' %}
+
+    <div id="js-tab--pr-closed" class="tab">
+        <ul class="js-search-list tab-grid">
+            {% for pr in pull_requests %}
+                <li>
+                    {{ this.pull_request_button(application, pr, pr_icon) }}
+                </li>
+
+            {% else %}
+                <li class="full">There are no closed pull requests.</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endmacro %}
+
+{% macro pull_request_button(application, pr, icon_class) %}
+    {% import 'macros.twig' as macros %}
+    {% set unique_id = hash('pr' ~ pr.number) %}
+
+    <input
+        id="{{ unique_id }}"
+        type="radio"
+        name="reference"
+        value="pull/{{ pull.number }}"
+    >
+
+    <label for="{{ unique_id }}" title="{{ pr.title }}">
+        {{ macros.icon('pull', icon_class) }}
+        <span class="js-title">{{ pr.title }}</span>
+        <br />
+
+        <a href="{{ githubPullRequestUrl(application.githubOwner, application.githubRepo, pr.number) }}">PR #{{ pr.number }}</a>
+        {{ macros.icon('github') }}
+        <br />
+
+        {% set label_style = "github-pr" %}
+        {% if pr.head.user.login|lower == current_user.username|lower %}
+            {% set label_style = label_style ~ " github-pr--owner" %}
+        {% endif %}
+
+        <span class="{{ label_style }}">
+            from <span class="pr-label" title="{{ pr.head.user.login }}:{{ pr.head.ref }}">
+                <span class="pr-source">{{ pr.head.user.login }}:</span>{{ pr.head.ref }}
+            </span>
+            <br>
+
+            to <span class="pr-label" title="{{ pr.base.user.login }}:{{ pr.base.ref }}">{{ pr.base.ref }}</span>
+        </span>
+    </label>
+{% endmacro %}

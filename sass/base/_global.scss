@@ -130,6 +130,9 @@ time {
 
 ul, ol {
     margin-top: 1em;
+    margin-left: 0;
+    padding-left: 0;
+    list-style-type: none;
 }
 
 // Remove vertical spacing from nested lists.

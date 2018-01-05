@@ -39,23 +39,20 @@
 {% endblock %}
 
 {% block actions %}
-    <ul class="list--bare">
-        <li><a class="btn" href="{{ uriFor('application.add') }}">Add Application</a></li>
-        <li>
-            {% if is_admin %}
-                <a class="btn btn--action" href="{{ uriFor('organization.edit', {'organization': organization.id}) }}">Edit Organization</a>
-            {% else %}
-                {{ macros.disabled_button('Edit Organization') }}
-            {% endif %}
-        </li>
-        <li>
-            {% if is_removable %}
-                <a class="btn btn--destructive" href="{{ uriFor('organization.remove', {'organization': organization.id}) }}">Remove Organization</a>
-            {% else %}
-                {{ macros.disabled_button('Remove Organization') }}
-            {% endif %}
-        </li>
-    </ul>
+    <p>
+        <a class="btn" href="{{ uriFor('application.add') }}">Add Application</a>
+        {% if is_admin %}
+            <a class="btn btn--action" href="{{ uriFor('organization.edit', {'organization': organization.id}) }}">Edit Organization</a>
+        {% else %}
+            {{ macros.disabled_button('Edit Organization') }}
+        {% endif %}
+
+        {% if is_removable %}
+            <a class="btn btn--destructive" href="{{ uriFor('organization.remove', {'organization': organization.id}) }}">Remove Organization</a>
+        {% else %}
+            {{ macros.disabled_button('Remove Organization') }}
+        {% endif %}
+    </p>
 {% endblock %}
 
 {% block app_table %}

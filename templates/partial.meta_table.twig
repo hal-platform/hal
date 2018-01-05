@@ -1,0 +1,62 @@
+<style>
+    .meta-name { vertical-align: top; }
+    .meta-nowrap {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        max-width: 30em;
+        display: inline-block;
+    }
+    .meta-min { min-height:3em; }
+</style>
+
+<table class="table--spacing-medium">
+    <thead>
+        <tr>
+            <th class="t40">Name</th>
+            <th>Data</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if metadata %}
+            {% for meta in metadata %}
+                <tr>
+                    <td class="meta-name">
+                        <span class="meta-nowrap">{{ meta.name }}</span>
+                    </td>
+
+                    <td>
+                        {% set meta_length = meta.data|length %}
+                        {% set meta_lines = meta.data|occurences("\n") %}
+
+                        {% if meta_lines == 0 %}
+                            {% if meta.data starts with "http://" or meta.data starts with "https://" %}
+                                <a href="{{ meta.data }}" class="meta-nowrap">{{ meta.data }}</a>
+
+                            {% elseif meta_length > 80 %}
+                                <div class="pre-wrapper">
+                                    <pre>{{ meta.data }}</pre>
+                                </div>
+                            {% else %}
+                                <div class="pre-wrapper"><pre>{{ meta.data }}</pre></div>
+                            {% endif %}
+
+                        {% elseif meta_lines > 5 %}
+                            <div class="pre-wrapper">
+                                <pre style="max-height: 10em;" id="meta-{{ meta.id }}">{{ meta.data }}</pre>
+                                <small><a href="#" data-meta-expand="meta-{{ meta.id }}">Show all...</a></small>
+                            </div>
+
+                        {% else %}
+                            <div class="pre-wrapper"><pre>{{ meta.data }}</pre></div>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="2">No metadata found.</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>

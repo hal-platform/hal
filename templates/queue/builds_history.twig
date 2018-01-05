@@ -31,12 +31,11 @@
     <table class="table--spacing-medium">
         <thead>
             <tr>
-                <th>Push</th>
+                <th>Build</th>
                 <th>Application</th>
                 <th>Env</th>
                 <th>Source Control</th>
-                <th class="table-priority-55">User</th>
-                <th class="table-priority-50">Time</th>
+                <th class="table-priority-55">Built On</th>
             </tr>
         </thead>
         <tbody>
@@ -59,14 +58,15 @@
                         {% endif %}
                     </td>
 
-                    <td class="table-priority-50">
+                    <td class="table-priority-55">
                         {{ build.created|html5date }}
+                        by
+                        {{ macros.user_display_link(build.user) }}
                     </td>
-
                 </tr>
             {% else %}
                 <tr id="js-emptyQueue">
-                    <td colspan="6">There are no builds available.</td>
+                    <td colspan="5">There are no builds available.</td>
                 </tr>
             {% endfor %}
         </tbody>

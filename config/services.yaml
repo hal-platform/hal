@@ -91,12 +91,12 @@ services:
             - '%cookie.preferences.ttl%'
 
     service.event_logs:
-        class: 'Hal\UI\Service\EventLogService'
+        class: 'Hal\UI\Service\JobEventsService'
         arguments:
+            - '@doctrine.em'
             - '@redis'
             - '@json'
             - '@clock'
-            - '@doctrine.em'
 
     job_queue:
         class: 'Hal\UI\Service\JobQueueService'

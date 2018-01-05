@@ -9,7 +9,7 @@ namespace Hal\UI\Controllers\Build;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Application;
-use Hal\Core\Entity\Build;
+use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Entity\Environment;
 use Hal\Core\Repository\BuildRepository;
 use Hal\Core\Repository\EnvironmentRepository;

@@ -9,14 +9,14 @@ namespace Hal\UI\Validator;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\User;
+use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Type\JobStatusEnum;
 use Hal\UI\Security\AuthorizationService;
 use Hal\UI\VersionControl\GitHub\GitHubResolver;
 use Hal\UI\VersionControl\VCS;
-use Hal\Core\Entity\Application;
-use Hal\Core\Entity\Build;
-use Hal\Core\Entity\Environment;
-use Hal\Core\Entity\User;
 
 class BuildValidator
 {
@@ -118,7 +118,8 @@ class BuildValidator
             return null;
         }
 
-        if (!$this->authorizationService->getUserAuthorizations($user)->canBuild($application)) {
+        $authorizations = $this->authorizationService->getUserAuthorizations($user);
+        if (!$authorizations->canBuild($application)) {
             $this->addError(self::ERR_NO_PERMISSION);
         }
 
@@ -126,7 +127,7 @@ class BuildValidator
             return null;
         }
 
-        if ($this->validateVCS($application, $reference)) {
+        if (!$ref = $this->validateVCS($application, $reference)) {
             $this->addError(self::ERR_UNKNOWN_REF, 'reference');
         }
 
@@ -139,7 +140,7 @@ class BuildValidator
             $reference = $commit;
         }
 
-        $build = (new Build())
+        $build = (new Build)
             ->withStatus(JobStatusEnum::TYPE_PENDING)
             ->withReference($reference)
             ->withCommit($commit)
@@ -168,6 +169,9 @@ class BuildValidator
         if (!$github) {
             return null;
         }
+
+        $owner = $application->parameter('gh.owner');
+        $repo = $application->parameter('gh.repo');
 
         $resolved = $github->resolver()->resolve($owner, $repo, $reference);
 

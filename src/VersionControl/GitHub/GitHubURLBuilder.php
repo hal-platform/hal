@@ -64,6 +64,31 @@ class GitHubURLBuilder
      *
      * @return string
      */
+    public function githubRefURL($user, $repo, $type, $reference)
+    {
+        switch ($type) {
+            case 'commit':
+                return $this->githubCommitURL($user, $repo, $reference);
+
+            case 'tag':
+                return $this->githubReleaseURL($user, $repo, $reference);
+
+            case 'pull':
+                return $this->githubPullRequestURL($user, $repo, $reference);
+
+            case 'branch':
+            default:
+                return $this->githubBranchURL($user, $repo, $reference);
+        }
+    }
+
+    /**
+     * @param string $user
+     * @param string $repo
+     * @param string $commit
+     *
+     * @return string
+     */
     public function githubCommitURL($user, $repo, $commit)
     {
         return $this->githubRepoURL($user, $repo, sprintf('/commit/%s', $commit));

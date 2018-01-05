@@ -64,6 +64,8 @@ class GitHubExtension extends Twig_Extension
             new Twig_SimpleFunction('githubReleaseUrl', [$this, 'getFakeURL']),
             new Twig_SimpleFunction('githubUserUrl', [$this, 'getFakeURL']),
 
+            new Twig_SimpleFunction('vcs_ref_url', [$this, 'formatVCSReferenceLink']),
+
             new Twig_SimpleFunction('vcs_url', [$this, 'formatVCSLink']),
             new Twig_SimpleFunction('vcs_text', [$this, 'formatVCSText']),
 
@@ -77,14 +79,26 @@ class GitHubExtension extends Twig_Extension
     public function getFilters()
     {
         return [
-            new Twig_SimpleFilter('gitref', [$this, 'resolveGitReference']),
-            new Twig_SimpleFilter('commit', [$this, 'formatGitCommit'])
+            new Twig_SimpleFilter('vcsref', [$this, 'resolveVCSReference']),
+            new Twig_SimpleFilter('commit', [$this, 'formatVCSCommit'])
         ];
     }
 
     public function getFakeURL()
     {
         return 'https://github.example.com';
+    }
+
+    /**
+     * Format a git commit hash for output
+     *
+     * @param string $reference
+     *
+     * @return string
+     */
+    public function formatVCSCommit($reference)
+    {
+        return substr($reference, 0, 7);
     }
 
     /**
@@ -112,6 +126,37 @@ class GitHubExtension extends Twig_Extension
         }
 
         return '';
+    }
+
+    /**
+     * @param Application|null $app
+     * @param string $commit
+     *
+     * @return string
+     */
+    public function formatVCSReferenceLink($app, $reference): string
+    {
+        if (!$app instanceof Application) {
+            return '';
+        }
+
+        $githubs = [VCSProviderEnum::TYPE_GITHUB, VCSProviderEnum::TYPE_GITHUB_ENTERPRISE];
+
+        if ($app->provider() && in_array($app->provider()->type(), $githubs)) {
+            $github = $this->vcs->authenticate($app->provider());
+
+            $ref = $github->resolver()->resolveRefType($reference);
+            return $github->url()->githubRefURL(
+                $app->parameter('gh.owner'),
+                $app->parameter('gh.repo'),
+                ...$ref
+            );
+
+        } elseif ($app->provider() && $app->provider->type() === VCSProviderEnum::TYPE_GITHUB) {
+            return '#';
+        }
+
+        return '#';
     }
 
     /**
@@ -175,42 +220,25 @@ class GitHubExtension extends Twig_Extension
     }
 
     /**
-     * Format a git commit hash for output
-     *
-     * @param string $reference
-     *
-     * @return string
-     */
-    public function formatGitCommit($reference)
-    {
-        return substr($reference, 0, 7);
-    }
-
-    /**
      * Format an arbitrary git reference for display
      *
      * @param string $reference
+     * @param Application|mixed $application
      *
      * @return array
      */
-    public function resolveGitReference($reference)
+    public function resolveVCSReference($reference, $app): array
     {
-        // debug
-        // debug
-        // debug
-        // debug
-        return ['branch', $reference];
-
-        if ($tag = $this->githubResolver->parseRefAsTag($reference)) {
-            return ['tag', $tag];
+        if (!$app instanceof Application) {
+            return ['branch', $reference];
         }
 
-        if ($pull = $this->githubResolver->parseRefAsPull($reference)) {
-            return ['pull', $pull];
-        }
+        $githubs = [VCSProviderEnum::TYPE_GITHUB, VCSProviderEnum::TYPE_GITHUB_ENTERPRISE];
 
-        if ($commit = $this->githubResolver->parseRefAsCommit($reference)) {
-            return ['commit', $commit];
+        if ($app->provider() && in_array($app->provider()->type(), $githubs)) {
+            $github = $this->vcs->authenticate($app->provider());
+
+            return $github->resolver()->resolveRefType($reference);
         }
 
         return ['branch', $reference];

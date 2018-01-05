@@ -18,16 +18,14 @@ use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Security\UserAuthorizations;
 use Hal\UI\Service\StickyEnvironmentService;
-use Hal\UI\Utility\ReleaseSortingTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\UI\VersionControl\VCS;
+use Hal\UI\VersionControl\BuildableRefs;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
 class StartBuildController implements ControllerInterface
 {
-    use ReleaseSortingTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
 
@@ -47,7 +45,7 @@ class StartBuildController implements ControllerInterface
     private $targetRepository;
 
     /**
-     * @var VCS
+     * @var BuildableRefs
      */
     private $vcs;
 
@@ -59,13 +57,13 @@ class StartBuildController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param VCS $vcs
+     * @param BuildableRefs $vcs
      * @param StickyEnvironmentService $stickyService
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        VCS $vcs,
+        BuildableRefs $vcs,
         StickyEnvironmentService $stickyService
     ) {
         $this->template = $template;
@@ -85,28 +83,18 @@ class StartBuildController implements ControllerInterface
         $user = $this->getUser($request);
         $userAuthorizations = $this->getAuthorizations($request);
 
-        $prSorter = $this->sorterPullRequests($user);
-
-        $openPR = $this->getPullRequests($application);
-        $closedPR = $this->getPullRequests($application, false);
-        usort($openPR, $prSorter);
-        usort($closedPR, $prSorter);
-
         $form = $this->getFormData($request, $application);
 
+        $refs = $this->vcs->getVCSData($application);
+        $environments = $this->environmentRepository->getBuildableEnvironmentsByApplication($application);
         $targets = $this->getTargetStatusesForEnvironment($application, $userAuthorizations, $form['environment']);
 
-        return $this->withTemplate($request, $response, $this->template, [
+        return $this->withTemplate($request, $response, $this->template, $refs + $targets + [
             'form' => $form,
 
             'application' => $application,
-            'branches' => $this->getBranches($application),
-            'tags' => $this->getTags($application),
-            'open' => $openPR,
-            'closed' => $closedPR,
-
-            'environments' => $this->environmentRepository->getBuildableEnvironmentsByApplication($application),
-        ] + $targets);
+            'environments' => $environments,
+        ]);
     }
 
     /**
@@ -118,7 +106,7 @@ class StartBuildController implements ControllerInterface
     private function getFormData(ServerRequestInterface $request, Application $application)
     {
         // Automatically select an environment from sticky pref if this is fresh form
-        $env = $request->getParsedBody()['search'] ?? null;
+        $env = $request->getParsedBody()['environment'] ?? null;
         if ($env === null) {
             $env = $this->stickyService->get($request, $application);
         }
@@ -132,122 +120,20 @@ class StartBuildController implements ControllerInterface
     }
 
     /**
-     * Get an array of branches for an application
-     *
      * @param Application $application
      *
      * @return array
      */
-    private function getBranches(Application $application)
+    private function getVCSData(Application $application)
     {
-        $service = $this->getVCSClient($application);
-        if (!$service) {
-            return [];
-        }
-
-        ['service' => $github, 'params' => $params] = $service;
-
-        $branches = $github->branches(...$params);
-
-        // sort master to top, alpha otherwise
-        usort($branches, function ($a, $b) {
-            if ($a['name'] == 'master') {
-                return -1;
-            }
-
-            if ($b['name'] == 'master') {
-                return 1;
-            }
-
-            return strcasecmp($a['name'], $b['name']);
-        });
-
-        return $branches;
+        return [
+            'gh_branches' => $this->getBranches($application),
+            'gh_tags' => $this->getTags($application),
+            'gh_pr_open' => $this->getPullRequests($application, true),
+            'gh_pr_closed' => $this->getPullRequests($application, false),
+        ];
     }
 
-    /**
-     * Get an array of tags for an application
-     *
-     * @param Application $application
-     *
-     * @return array
-     */
-    private function getTags(Application $application)
-    {
-        $service = $this->getVCSClient($application);
-        if (!$service) {
-            return [];
-        }
-
-        ['service' => $github, 'params' => $params] = $service;
-
-        $tags = $github->tags(...$params);
-
-        usort($tags, $this->releaseSorter());
-
-        return array_slice($tags, 0, 25);
-        return $tags;
-    }
-
-    /**
-     * Get pull requests, sort in descending order by number.
-     *
-     * @param Application $application
-     *
-     * @return array
-     */
-    private function getPullRequests(Application $application, $open = true)
-    {
-        $service = $this->getVCSClient($application);
-        if (!$service) {
-            return [];
-        }
-
-        ['service' => $github, 'params' => $params] = $service;
-
-        if ($open) {
-            $pr = $github->openPullRequests(...$params);
-        } else {
-            $pr = $github->closedPullRequests(...$params);
-        }
-
-        return $pr;
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return callable
-     */
-    private function sorterPullRequests(User $user)
-    {
-        $username = $user->username();
-
-        return function ($a, $b) use ($username) {
-            $prA = (int) $a['number'];
-            $prB = (int) $b['number'];
-            $loginA = isset($a['head']['user']['login']) ? strtolower($a['head']['user']['login']) : 'unknown';
-            $loginB = isset($b['head']['user']['login']) ? strtolower($b['head']['user']['login']) : 'unknown';
-
-            if ($loginA === $loginB && $loginA === $username) {
-                // Everyone is owner
-                return ($prA > $prB) ? -1 : 1;
-
-            } elseif ($loginA === $username || $loginB === $username) {
-                // One is owner
-                if ($loginA === $username) {
-                    return -1;
-                }
-
-                if ($loginB === $username) {
-                    return 1;
-                }
-            }
-
-            // No one is owner
-            return ($prA > $prB) ? -1 : 1;
-        };
-    }
 
     /**
      * @param Application $application
@@ -281,34 +167,6 @@ class StartBuildController implements ControllerInterface
         return [
             'can_deploy' => $canPush,
             'available_targets' => $available
-        ];
-    }
-
-    /**
-     * @param Application $application
-     *
-     * @return array
-     */
-    private function getVCSClient(Application $application)
-    {
-        $provider = $application->provider();
-        if (!$provider) {
-            return [];
-        }
-
-        $github = $this->vcs->authenticate($provider);
-        if (!$github) {
-            return [];
-        }
-
-        $params = [
-            $application->parameter('gh.owner'),
-            $application->parameter('gh.repo')
-        ];
-
-        return [
-            'service' => $github,
-            'params' => $params
         ];
     }
 }

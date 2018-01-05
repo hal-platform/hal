@@ -10,9 +10,8 @@ namespace Hal\UI\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Predis\Client as Predis;
-use Hal\Core\Entity\Build;
-use Hal\Core\Entity\JobEvent;
-use Hal\Core\Entity\Release;
+use Hal\Core\Entity\Job;
+use Hal\Core\Entity\Job\JobEvent;
 use QL\MCP\Common\Time\Clock;
 use QL\MCP\Common\Time\TimePoint;
 use QL\Panthor\Utility\JSON;
@@ -22,7 +21,7 @@ use QL\Panthor\Utility\JSON;
  *
  * The agents push logs (without context) to redis, so the logs can be read from the frontend while job are in progress.
  */
-class EventLogService
+class JobEventsService
 {
     const REDIS_LOG_KEY = 'event-logs:%s';
 
@@ -30,6 +29,11 @@ class EventLogService
      * @var Predis
      */
     private $predis;
+
+    /**
+     * @var EntityRepository
+     */
+    private $eventsRepo;
 
     /**
      * @var JSON
@@ -42,37 +46,29 @@ class EventLogService
     private $clock;
 
     /**
-     * @var EntityRepository
-     */
-    private $eventlogsRepository;
-
-    /**
      * @param Predis $predis
      * @param JSON $json
      * @param Clock $clock
      */
-    public function __construct(Predis $predis, JSON $json, Clock $clock, EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, Predis $predis, JSON $json, Clock $clock)
     {
         $this->predis = $predis;
+        $this->eventsRepo = $em->getRepository(JobEvent::class);
+
         $this->json = $json;
         $this->clock = $clock;
-        $this->eventlogsRepository = $em->getRepository(JobEvent::class);
     }
 
     /**
-     * @param Build|Release|null $job
+     * @param Job $job
      *
      * @return JobEvent[]|null
      */
-    public function getLogs($job): ?array
+    public function getEvents(Job $job): ?array
     {
-        if (!$job instanceof Build && !$job instanceof Release) {
-            return [];
-        }
-
         // if finished, get logs from db
-        if (in_array($job->status(), ['success', 'failure', 'removed'], true)) {
-            return $this->eventlogsRepository->findBy(['parent' => $job->id()], ['order' => 'ASC']);
+        if ($job->isFinished()) {
+            return $this->eventsRepo->findBy(['job' => $job], ['order' => 'ASC']);
         }
 
         return $this->getFromRedis($job);
@@ -120,25 +116,23 @@ class EventLogService
     {
         $data = array_replace([
             'id' => '',
-            'stage' => '',
-            'order' => 0,
             'created' => null,
-            'message' => '',
+            'stage' => '',
             'status' => '',
-            'parent_id' => null,
+            'order' => 0,
+            'message' => ''
         ], $data);
 
-        $log = (new JobEvent)
-            ->withID($data['id'])
-            ->withStage($data['event'])
-            ->withOrder($data['order'])
-            ->withMessage($data['message'])
-            ->withStatus($data['status']);
-
         if ($timepoint = $this->clock->fromString($data['created'])) {
-            $log->withCreated($timepoint);
+            $data['created'] = $timepoint;
         }
 
-        return $log;
+        $event = (new JobEvent($data['id'], $data['created']))
+            ->withStage($data['stage'])
+            ->withStatus($data['status'])
+            ->withOrder($data['order'])
+            ->withMessage($data['message']);
+
+        return $event;
     }
 }

@@ -73,41 +73,36 @@
 {% endblock %}
 
 {% block user_actions %}
-    <ul class="list--bare">
-        <li>
-            {% if is_admin or is_super %}
-                <a class="btn btn--action" href="{{ uriFor('admin.permissions.add', {'user': user.id}) }}">Add Permissions</a>
-            {% else %}
-                {{ macros.disabled_button('Add Permissions') }}
-            {% endif %}
-        </li>
-        <li>
-            {% if is_admin or is_super %}
-                <form method="post" action="{{ uriFor('admin.permissions.refresh', {'user': user.id}) }}">
-                    <input class="btn btn--action" type="submit" value="Refresh User Cache">
-                </form>
-            {% else %}
-                {{ macros.disabled_button('Add Permissions') }}
-            {% endif %}
-        </li>
+    <p>
+        {% if is_admin or is_super %}
+            <a class="btn btn--action" href="{{ uriFor('admin.permissions.add', {'user': user.id}) }}">Add Permissions</a>
+        {% else %}
+            {{ macros.disabled_button('Add Permissions') }}
+        {% endif %}
 
-        <li>
-            {% if can_disable %}
-                <form method="post" action="{{ uriFor('user.toggle', {'user': user.id}) }}">
-                    {% if user.isDisabled %}
-                        <input type="submit" class="btn" value="Enable User">
-                        <input type="hidden" name="enable_user"value="1">
-                    {% else %}
-                        <input type="submit" class="btn btn--destructive" value="Disable User">
-                        <input type="hidden" name="disable_user" value="1">
-                    {% endif %}
-                </form>
+        {% if is_admin or is_super %}
+            <form method="post" action="{{ uriFor('admin.permissions.refresh', {'user': user.id}) }}">
+                <input class="btn btn--action" type="submit" value="Refresh User Cache">
+            </form>
+        {% else %}
+            {{ macros.disabled_button('Add Permissions') }}
+        {% endif %}
 
-            {% else %}
-                {{ macros.disabled_button('Disable User') }}
-            {% endif %}
-        </li>
-    </ul>
+        {% if can_disable %}
+            <form method="post" action="{{ uriFor('user.toggle', {'user': user.id}) }}">
+                {% if user.isDisabled %}
+                    <input type="submit" class="btn" value="Enable User">
+                    <input type="hidden" name="enable_user"value="1">
+                {% else %}
+                    <input type="submit" class="btn btn--destructive" value="Disable User">
+                    <input type="hidden" name="disable_user" value="1">
+                {% endif %}
+            </form>
+
+        {% else %}
+            {{ macros.disabled_button('Disable User') }}
+        {% endif %}
+    </p>
 {% endblock %}
 
 {% block token_table %}
@@ -115,7 +110,6 @@
     <small>Personal Access Tokens can be used to access the <a href="{{ uriFor('api.index') }}">Hal API</a>.</small>
 
     {% if tokens %}
-
         <table class="table--spacing-medium">
             <thead>
                 <tr>

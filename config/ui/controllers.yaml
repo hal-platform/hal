@@ -501,13 +501,13 @@ services:
         arguments:
             - '@build.start.twig'
             - '@doctrine.em'
-            - '@vcs'
+            - '@vcs.buildable'
             - '@sticky.environment'
     build.start.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['build/start_build.twig']]]
     build.start.middleware:
-        class: 'Hal\UI\Controllers\Build\BuildMiddleware'
+        class: 'Hal\UI\Controllers\Build\StartBuildMiddleware'
         arguments:
             - '@doctrine.em'
             - '@build.start.validator'

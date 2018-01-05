@@ -10,6 +10,10 @@ services:
                 ghe: '@vcs.github_enterprise'
                 gh: '@vcs.github'
 
+    vcs.buildable:
+        class: 'Hal\UI\VersionControl\BuildableRefs'
+        arguments: ['@vcs']
+
     vcs.github:
         class: 'Hal\UI\VersionControl\VCS\GitHubVCS'
         arguments:

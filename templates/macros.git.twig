@@ -15,7 +15,7 @@ Example:
     {% set sliced = sliced|default(false) %}
     {% set hideTooltip = hideTooltip|default(false) %}
 
-    {% set resolved = build.reference|gitref %}
+    {% set resolved = build.reference|vcsref('') %}
     {% if resolved %}
         {% set type = resolved|first %}
         {% set ref = resolved|last %}
@@ -69,6 +69,32 @@ Link to github repository
 
 Example:
 ```
+<a href="https://github.com/example/repo/commit/6a903f476aa00d155ffbdf4ef2b94f6a754eafb4">6a903f4</a>
+<svg class="icon"><use xlink:href="/icons.svg#commit"></use></svg>
+```
+#}
+{% macro gitcommit(build) %}
+    {% import 'macros.twig' as macros %}
+
+    {% set resolved = build.commit|vcsref('') %}
+    {% if resolved %}
+        {% set ref = resolved|last %}
+
+        <a href="{{ githubCommitUrl(build.application.gitHub.owner, build.application.gitHub.repository, build.commit) }}">
+            {{ ref|commit }}
+        </a>
+        {{ macros.icon('commit') }}
+
+    {% endif %}
+
+{% endmacro %}
+
+
+{#
+Link to github repository
+
+Example:
+```
 <a href="https://github.com/example/repo">example/repo</a>
 <svg class="icon"><use xlink:href="/icons.svg#github"></use></svg>
 ```
@@ -94,7 +120,44 @@ Example:
 {% endmacro %}
 
 {#
-Link to github repository
+Link to vcs ref
+
+Example:
+```
+<a href="https://github.com/example/repo/tree/master">master</a>
+<svg class="icon"><use xlink:href="/icons.svg#branch"></use></svg>
+```
+#}
+{% macro vcs_ref(application, build) %}
+    {% import 'macros.twig' as macros %}
+
+    {% set resolved = build.reference|vcsref(application) %}
+    {% set ref = resolved|last %}
+
+    <a href="{{ vcs_ref_url(build.application, build.reference) }}">
+        {%- if type == 'pull' -%}
+            {%- set icontype = 'pull' -%}
+            Pull Request {{ ref }}
+
+        {%- elseif type == 'tag' -%}
+            {%- set icontype = 'tag' -%}
+            Release {{ ref -}}
+
+        {%- elseif type == 'commit' -%}
+            {%- set icontype = 'commit' -%}
+            Commit {{ ref|commit -}}
+
+        {%- else -%}
+            {%- set icontype = 'branch' -%}
+            {{- ref -}}
+        {%- endif -%}
+    </a>
+    {{ macros.icon(icontype) }}
+
+{% endmacro %}
+
+{#
+Link to vcs commit
 
 Example:
 ```
@@ -102,18 +165,12 @@ Example:
 <svg class="icon"><use xlink:href="/icons.svg#commit"></use></svg>
 ```
 #}
-{% macro gitcommit(build) %}
+{% macro vcs_commit(application, build) %}
     {% import 'macros.twig' as macros %}
 
-    {% set resolved = build.commit|gitref %}
-    {% if resolved %}
-        {% set ref = resolved|last %}
+    {% set resolved = build.commit|vcsref(application) %}
+    {% set ref = resolved|last %}
 
-        <a href="{{ githubCommitUrl(build.application.gitHub.owner, build.application.gitHub.repository, build.commit) }}">
-            {{ ref|commit }}
-        </a>
-        {{ macros.icon('commit') }}
-
-    {% endif %}
-
+    <a href="{{ vcs_ref_url(build.application, ref) }}">{{ ref|commit }}</a>
+    {{ macros.icon('commit') }}
 {% endmacro %}

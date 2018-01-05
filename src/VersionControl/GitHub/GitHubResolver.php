@@ -61,7 +61,7 @@ class GitHubResolver
      * @param string $repo
      * @param string $reference
      *
-     * @return null|array
+     * @return array|null
      */
     public function resolve($user, $repo, $reference): ?array
     {
@@ -86,6 +86,37 @@ class GitHubResolver
         }
 
         return null;
+    }
+
+    /**
+     * Resolve a git reference type in the following format.
+     *
+     * Tag: tag/(tag name)
+     * Pull: pull/(pull request number)
+     * Commit: (commit hash){40}
+     * Branch: (branch name)
+     *
+     * Will return an array of ['type', $ref] or fallback to ['branch', $ref]
+     *
+     * @param string $reference
+     *
+     * @return array|null
+     */
+    public function resolveRefType($reference): ?array
+    {
+        if ($tag = $this->parseRefAsTag($reference)) {
+            return ['tag', $tag];
+        }
+
+        if ($pull = $this->parseRefAsPull($reference)) {
+            return ['pull', $pull];
+        }
+
+        if ($commit = $this->parseRefAsCommit($reference)) {
+            return ['commit', $commit];
+        }
+
+        return ['branch', $reference];
     }
 
     /**
@@ -151,13 +182,10 @@ class GitHubResolver
             return null;
         }
 
-        try {
-            $result = $this->gitReferencesAPI->show($user, $repo, sprintf('tags/%s', $tag));
-        } catch (RuntimeException $e) {
-            return null;
-        }
+        $params = [$user, $repo, sprintf('tags/%s', $tag)];
 
-        return $result['object']['sha'];
+        $data = $this->callGitHub([$this->gitReferencesAPI, 'show'], $params);
+        return $data['object']['sha'] ?? null;
     }
 
     /**
@@ -167,7 +195,7 @@ class GitHubResolver
      * @param string $repo
      * @param string $reference
      *
-     * @return null|string
+     * @return string|null
      */
     private function resolvePull($user, $repo, $reference)
     {
@@ -175,13 +203,10 @@ class GitHubResolver
             return null;
         }
 
-        try {
-            $result = $this->pullRequestAPI->show($user, $repo, $pull);
-        } catch (RuntimeException $e) {
-            return null;
-        }
+        $params = [$user, $repo, $pull];
 
-        return $result['head']['sha'];
+        $data = $this->callGitHub([$this->pullRequestAPI, 'show'], $params);
+        return $data['head']['sha'] ?? null;
     }
 
     /**
@@ -191,7 +216,7 @@ class GitHubResolver
      * @param string $repo
      * @param string $reference
      *
-     * @return null|string
+     * @return string|null
      */
     private function resolveCommit($user, $repo, $reference)
     {
@@ -199,13 +224,10 @@ class GitHubResolver
             return null;
         }
 
-        try {
-            $result = $this->gitCommitsAPI->show($user, $repo, $commit);
-        } catch (RuntimeException $e) {
-            return null;
-        }
+        $params = [$user, $repo, $commit];
 
-        return $result['sha'];
+        $data = $this->callGitHub([$this->gitCommitsAPI, 'show'], $params);
+        return $data['sha'] ?? null;
     }
 
     /**
@@ -215,16 +237,31 @@ class GitHubResolver
      * @param string $repo
      * @param string $branch
      *
-     * @return null|string
+     * @return string|null
      */
     private function resolveBranch($user, $repo, $branch)
     {
+        $params = [$user, $repo, sprintf('heads/%s', $branch)];
+
+        $data = $this->callGitHub([$this->gitReferencesAPI, 'show'], $params);
+        return $data['object']['sha'] ?? null;
+    }
+
+    /**
+     * @param callable $api
+     * @param array $params
+     * @param mixed $default
+     *
+     * @return array|string|null
+     */
+    private function callGitHub(callable $api, array $params = [], $default = null)
+    {
         try {
-            $result = $this->gitReferencesAPI->show($user, $repo, sprintf('heads/%s', $branch));
+            $response = $api(...$params);
         } catch (RuntimeException $e) {
-            return null;
+            $response = $default;
         }
 
-        return $result['object']['sha'];
+        return $response;
     }
 }

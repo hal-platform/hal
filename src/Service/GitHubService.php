@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2016 Quicken Loans Inc.
+ * @copyright (c) 2017 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -17,12 +17,15 @@ use Github\Exception\RuntimeException;
 use Github\ResultPager;
 use Hal\UI\VersionControl\GitHub\GitHubResolver;
 use Hal\UI\VersionControl\GitHub\GitHubURLBuilder;
+use Hal\UI\VersionControl\GitHub\RefSortingTrait;
 
 /**
  * Combine all individual github api services into a giant convenience service.
  */
 class GitHubService
 {
+    use RefSortingTrait;
+
     /**
      * @var GitHubResolver
      */
@@ -110,23 +113,22 @@ class GitHubService
      */
     public function branches($user, $repo): array
     {
-        try {
-            $refs = $this->pager->fetchAll($this->gitReferencesAPI, 'branches', [$user, $repo]);
-        } catch (RuntimeException $e) {
-            $refs = [];
-        }
+        $default = [];
+        $params = [$this->gitReferencesAPI, 'branches', [$user, $repo]];
+
+        $refs = $this->callGitHub([$this->pager, 'fetchAll'], $params, $default);
 
         array_walk($refs, function (&$data) {
             $data['name'] = str_replace('refs/heads/', '', $data['ref']);
         });
+
+        usort($refs, $this->branchSorter());
 
         return $refs;
     }
 
     /**
      * Get most recent closed pull requests for a repository.
-     *
-     * This only gets the most recent 30. If you need more than that, get all of them.
      *
      * It does not appear possible to get both open and closed pull requests from the same api call,
      * even though the api documentation specifies it is.
@@ -137,19 +139,16 @@ class GitHubService
      *
      * @return array
      */
-    public function closedPullRequests($user, $repo, $getAll = false): array
+    public function closedPullRequests($user, $repo): array
     {
-        try {
-            if ($getAll) {
-                $pulls = $this->pager->fetchAll($this->pullRequestAPI, 'all', [$user, $repo, ['state' => 'closed']]);
-            } else {
-                $pulls = $this->pullRequestAPI->all($user, $repo, ['state' => 'closed']);
-            }
-        } catch (RuntimeException $e) {
-            $pulls = [];
-        }
+        $default = [];
+        $params = [$user, $repo, ['state' => 'closed']];
 
-        return $pulls;
+        $refs = $this->callGitHub([$this->pullRequestAPI, 'all'], $params, $default);
+
+        usort($refs, $this->prSorter($user));
+
+        return $refs;
     }
 
     /**
@@ -163,15 +162,16 @@ class GitHubService
      *
      * @return array
      */
-    public function openPullRequests($user, $repo): array
+    public function openPullRequests($user, $repo, $halUser = null): array
     {
-        try {
-            $pulls = $this->pager->fetchAll($this->pullRequestAPI, 'all', [$user, $repo]);
-        } catch (RuntimeException $e) {
-            $pulls = [];
-        }
+        $default = [];
+        $params = [$this->pullRequestAPI, 'all', [$user, $repo]];
 
-        return $pulls;
+        $refs = $this->callGitHub([$this->pager, 'fetchAll'], $params, $default);
+
+        usort($refs, $this->prSorter($halUser));
+
+        return $refs;
     }
 
     /**
@@ -185,13 +185,11 @@ class GitHubService
      */
     public function pullRequest($user, $repo, $number): ?array
     {
-        try {
-            $pull = $this->pullRequestAPI->show($user, $repo, $number);
-        } catch (RuntimeException $e) {
-            $pull = null;
-        }
+        $params = [$user, $repo, $number];
 
-        return $pull;
+        $refs = $this->callGitHub([$this->pullRequestAPI, 'show'], $params);
+
+        return $refs;
     }
 
     /**
@@ -204,11 +202,9 @@ class GitHubService
      */
     public function repository($user, $repo): ?array
     {
-        try {
-            $repository = $this->repoAPI->show($user, $repo);
-        } catch (RuntimeException $e) {
-            $repository = null;
-        }
+        $params = [$user, $repo];
+
+        $refs = $this->callGitHub([$this->repoAPI, 'show'], $params);
 
         return $repository;
     }
@@ -223,15 +219,16 @@ class GitHubService
      */
     public function tags($user, $repo): array
     {
-        try {
-            $refs = $this->pager->fetchAll($this->gitReferencesAPI, 'tags', [$user, $repo]);
-        } catch (RuntimeException $e) {
-            $refs = [];
-        }
+        $default = [];
+        $params = [$this->gitReferencesAPI, 'tags', [$user, $repo]];
+
+        $refs = $this->callGitHub([$this->pager, 'fetchAll'], $params, $default);
 
         array_walk($refs, function (&$data) {
             $data['name'] = str_replace('refs/tags/', '', $data['ref']);
         });
+
+        usort($refs, $this->tagSorter());
 
         return $refs;
     }
@@ -245,13 +242,9 @@ class GitHubService
      */
     public function user($user): ?array
     {
-        try {
-            $user = $this->userAPI->show($user);
-        } catch (RuntimeException $e) {
-            $user = null;
-        }
+        $params = [$user];
 
-        return $user;
+        return $this->callGitHub([$this->userAPI, 'show'], $params, $default);
     }
 
     /**
@@ -266,10 +259,26 @@ class GitHubService
      */
     public function diff($user, $repo, $base, $head)
     {
+        $params = [$user, $repo, $base, $head];
+
+        return $this->callGitHub([$this->repoCommitsAPI, 'compare'], $params);
+    }
+
+    /**
+     * @param callable $api
+     * @param array $params
+     * @param mixed $default
+     *
+     * @return array|string|null
+     */
+    private function callGitHub(callable $api, array $params = [], $default = null)
+    {
         try {
-            return $this->repoCommitsAPI->compare($user, $repo, $base, $head);
+            $response = $api(...$params);
         } catch (RuntimeException $e) {
-            return null;
+            $response = $default;
         }
+
+        return $response;
     }
 }

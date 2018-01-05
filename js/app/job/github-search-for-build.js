@@ -1,5 +1,6 @@
 import 'jquery';
 import { initFilterSearch } from '../util/filter-search';
+import { selectTab } from '../util/tab-selector';
 
 let searchBox = '#js-search-input',
     searchResults = '.js-search-results',
@@ -14,7 +15,6 @@ var $searchBox = null,
     $searchParent = $('.js-search-container'),
 
     $validOptions = $('.js-search-list li input'),
-    $tabAnchors = $('.js-tabs li a'),
     $warning = $('.js-build-warning'),
     $submitButtons = $('form[name="start-build"] input[type="submit"]');
 
@@ -87,13 +87,6 @@ function attachHandlers() {
         $searchBox.trigger('herpderp');
     });
 
-    // add handler for showing/hiding tabs
-    $tabAnchors.on('click', function(e) {
-        selectTab(this);
-        e.preventDefault();
-        e.stopPropagation();
-    });
-
     // Add trigger for submit in case user tabs from search box
     $submitButtons.on('click focus', function() {
         $searchBox.trigger('herpderp');
@@ -116,20 +109,6 @@ function searchByFragment(fragment) {
     $searchBox.val(searchBy);
     $searchBox.trigger('change');
     justwhatexactlyareyoutryingtododave();
-}
-
-function selectTab(el) {
-    var $el = $(el),
-        anchor = $el.attr('name');
-
-    // show tab
-    $('#' + anchor).show().siblings().hide();
-
-    // tab anchor turn active
-    $el.parent('li')
-        .addClass('active')
-        .siblings()
-        .removeClass('active');
 }
 
 function selectSearchResult(element) {

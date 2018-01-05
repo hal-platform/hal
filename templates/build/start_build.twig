@@ -3,93 +3,111 @@
 {% import 'macros.start_deployment.twig' as deploy_macros %}
 {% import 'macros.form.twig' as form_macros %}
 {% import 'build/macros.twig' as build_macros %}
+{% import 'build/macros.start_build.twig' as start_build_macros %}
 
 {% set js_components = ['start_build'] %}
-{% set page_title = 'Start Build : ' ~ application.name %}
+{% set page_title = 'Start Build' %}
+
+{% set alert_message = "Just what do you think you're doing, Dave?" %}
+{% set alert_details = 'I cannot find a git reference for your search query. However if you attempt to build using this query, I will use my enormous intellect to fulfill the mission.' %}
+{% if is_serious_business_mode %}
+    {% set alert_message = 'A git reference cannot be found from your search query. Hal will attempt to resolve this reference on the backend.' %}
+    {% set alert_details = '' %}
+{% endif %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+    <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
+    <li><a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Dashboard</a></li>
+{% endblock %}
 
 {% block content %}
-
-    <div class="nav--page">
-        <h1>Start Build - <b>{{ application.name }}</b></h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Back to Application Dashboard</a>
-        </p>
-    </div>
-
     {{ form_macros.formErrors(errors) }}
 
     <form method="post" name="start-build">
-        {{ block('select_build') }}
+        <h2>Select Source Code</h2>
+        {{ block('select_source_code') }}
+
+        {{ block('start_build_button') }}
+
+        <h2>Select Environment</h2>
         {{ block('select_environment') }}
-        {{ block('start_deploy') }}
+
+        {% if environments %}
+            {{ block('start_build_button') }}
+
+            <h2 class="mbn">Select Target <small>(optional)</small></h2>
+            {{ block('select_deploy_targets') }}
+        {% endif %}
+
+        {{ block('start_build_button') }}
     </form>
 
 {% endblock %}
 
-{% block select_build %}
-    <h2>Select Source Code</h2>
+{% block start_build_button %}
+    <p>
+        <button class="btn btn--action" type="submit">Start Build</button>
+        <a href="{{ uriFor('application.dashboard', {application: application.id}) }}">Cancel</a>
+    </p>
+{% endblock %}
+
+{% block select_source_code %}
+    {# Dynamic warning, for when Hal cannot find a matching radio option #}
+    {% set warning_label = is_serious_business_mode ? 'Start Build?' : 'Start Build. Maybe?' %}
+    <div class="js-build-warning" data-label="Start Build" data-label-warning="{{ warning_label }}">
+        {{ macros.alert('warning', alert_message, alert_details) }}
+    </div>
 
     <ul class="form-fields">
         <li class="mbn js-search-container">
             <label for="js-search-input">Search for a Branch, Tag, Pull Request, or enter a Commit ID.</label>
             <input id="js-search-input" class="text-input" type="text" name="search" autocomplete="off" value="{{ form.search }}" maxlength="200">
 
-            <div class="js-search-drop">
-                <ul class="list--bare js-search-results">
-                    {% for branch in branches %}
+            {% if gh_branches|length or gh_tags|length or gh_pr_open|length or gh_pr_closed|length %}
+                {% set use_dynamic_search = 'js-search-drop' %}
+            {% endif %}
+
+            <div class="{{ use_dynamic_search }}">
+                <ul class="js-search-results">
+                    {% for branch in gh_branches %}
                         {{ build_macros.search('branch', branch) }}
                     {% endfor %}
-                    {% for tag in tags %}
+                    {% for tag in gh_tags %}
                         {{ build_macros.search('release', tag) }}
                     {% endfor %}
-                    {% for pull in open %}
-                        {{ build_macros.search('pull-request', pull) }}
+                    {% for pr in gh_pr_open %}
+                        {{ build_macros.search('pull-request', pr) }}
                     {% endfor %}
-                    {% for pull in closed %}
-                        {{ build_macros.search('pull-request-closed', pull) }}
+                    {% for pr in gh_pr_closed %}
+                        {{ build_macros.search('pull-request-closed', pr) }}
                     {% endfor %}
                 </ul>
             </div>
         </li>
     </ul>
 
-    {# Dynamic warning, for when Hal cannot find a matching radio option #}
-    {% set warningLabel = is_serious_business_mode ? 'Start Build?' : 'Start Build. Maybe?' %}
-    <div class="js-build-warning" data-label="Start Build" data-label-warning="{{ warningLabel }}">
-
-        {% if is_serious_business_mode %}
-            {% set alert_message = 'A git reference cannot be found from your search query. Hal will attempt to resolve this reference on the backend.' %}
-            {% set alert_details = '' %}
-        {% else %}
-            {% set alert_message = "Just what do you think you're doing, Dave?" %}
-            {% set alert_details = 'I cannot find a git reference for your search query.<br>However if you attempt to build using this query, I will use my enormous intellect to fulfill the mission.' %}
-        {% endif %}
-
-        {{ macros.alert('warning', alert_message, alert_details) }}
+    <div class="tabs js-tabs">
+        <a name="js-tab--branches" class="active">{{ macros.icon('branch') }} <span>Branches</span></a>
+        <a name="js-tab--tags">{{ macros.icon('tag') }} <span>Releases</span></a>
+        <a name="js-tab--pr-open">{{ macros.icon('pull', 'github-pr--open') }} <span>Open Pull Requests</span></a>
+        <a name="js-tab--pr-closed">{{ macros.icon('pull', 'github-pr--closed') }} <span>Closed Pull Requests</span></a>
     </div>
-
-    <div><input class="btn btn--action" type="submit" value="Start Build" name="submit"></div>
-
-    {{ block('build_tabs') }}
 
     <div class="tab-content js-tab-content">
-        {{ block('build_tabs_branches') }}
-        {{ block('build_tabs_releases') }}
-        {{ block('build_tabs_open') }}
-        {{ block('build_tabs_closed') }}
+        {{ start_build_macros.build_tabs_branches(application, gh_branches) }}
+        {{ start_build_macros.build_tabs_releases(application, gh_tags) }}
+        {{ start_build_macros.build_tabs_pr_open(application, gh_pr_open) }}
+        {{ start_build_macros.build_tabs_pr_closed(application, gh_pr_closed) }}
     </div>
-
-    <input class="btn btn--action" type="submit" value="Start Build" name="submit">
 {% endblock %}
 
 {% block select_environment %}
-    <h2>Select Environment</h2>
     <p>
         Select <b>Any</b> to create a build that can be deployed to any environment.
     </p>
 
-    <ul class="list--bullet">
+    <ul>
         {% set isSelected = form.environment == '!any' or environments|length == 0 %}
         <li>
             <label for="env-any">
@@ -110,189 +128,25 @@
     </ul>
 {% endblock %}
 
-{% block start_deploy %}
+{% block select_deploy_targets %}
+    <p>
+        Targets will only be deployed to if the build succeeds. Alternatively, you can manually deploy builds once finished.
+    </p>
 
-    {% if environments %}
-        <h2 class="mbn">Select Target <small>(optional)</small></h2>
-        <p><span>Targets will only be triggered if the build succeeds. Alternatively, you can manually deploy builds once finished.</span></p>
+    <table class="table--spacing-medium">
+        <thead>
+            <tr>
+                <th>Deployment</th>
+                <th>Code Reference</th>
+                <th>Last Released</th>
+                <th class="js-toggle-container"></th>
+            </tr>
+        </thead>
 
-        <table class="table--spacing-medium">
-            <thead>
-                <tr>
-                    <th>Deployment</th>
-                    <th>Code Reference</th>
-                    <th>Last Released</th>
-                    <th class="js-toggle-container"></th>
-                </tr>
-            </thead>
-
-            <tbody>
-                {% for target in available_targets %}
-                    {{ deploy_macros.render_deployment_row(target, target.release, '', can_deploy) }}
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <input class="btn btn--action" type="submit" value="Start Build" name="submit">
-    {% endif %}
-
-{% endblock %}
-
-{% block build_tabs %}
-
-    <ul class="list--bare tabs js-tabs">
-        <li class="active">
-            <a name="js-tab--branches">
-                {{ macros.icon('branch') }}
-                <span class="tab-text">Branches</span>
-            </a>
-        </li>
-        <li>
-            <a name="js-tab--tags">
-                {{ macros.icon('tag') }}
-                <span class="tab-text">Releases</span>
-            </a>
-        </li>
-        <li>
-            <a name="js-tab--pr-open">
-                {{ macros.icon('pull', 'github-pr--open') }}
-                <span class="tab-text">Open Pull Requests</span>
-            </a>
-        </li>
-        <li>
-            <a name="js-tab--pr-closed">
-                {{ macros.icon('pull', 'github-pr--closed') }}
-                <span class="tab-text">Closed Pull Requests</span>
-            </a>
-        </li>
-    </ul>
-
-{% endblock %}
-
-{% block build_tabs_branches %}
-    <div id="js-tab--branches" class="tab js-tab-active">
-        <ul class="js-search-list tab-grid">
-            {% for branch in branches %}
-                <li>
-                    {% set uniqueId = hash(branch.object.sha ~ '-' ~ branch.name) %}
-
-                    <input
-                        id="{{ uniqueId }}"
-                        type="radio"
-                        name="reference"
-                        value="{{ branch.name }}"
-                    >
-
-                    <label for="{{ uniqueId }}" title="{{ branch.name }}">
-                        {{ macros.icon('branch') }}
-                        {{ branch.name }} <br />
-
-                        <a href="{{ githubBranchUrl(application.githubOwner, application.githubRepo, branch.name) }}">{{ branch.object.sha|commit }}</a>
-                        {{ macros.icon('github') }}
-                    </label>
-                </li>
-
-            {% else %}
-                <li class="full">There are no branches.</li>
+        <tbody>
+            {% for target in available_targets %}
+                {{ deploy_macros.render_deployment_row(target, target.release, '', can_deploy) }}
             {% endfor %}
-        </ul>
-    </div>
-
-{% endblock %}
-
-{% block build_tabs_releases %}
-    <div id="js-tab--tags" class="tab">
-        <ul class="js-search-list tab-grid">
-            {% for tag in tags %}
-                <li>
-                    {% set uniqueId = hash(tag.object.sha ~ '-' ~ tag.name) %}
-
-                    <input
-                        id="{{ uniqueId }}"
-                        type="radio"
-                        name="reference"
-                        value="tag/{{ tag.name }}"
-                    >
-
-                    <label for="{{ uniqueId }}">
-                        {{ macros.icon('tag') }}
-                        {{ tag.name }} <br />
-
-                        <a href="{{ githubReleaseUrl(application.github.owner, application.github.repository, tag.name) }}">{{ tag.object.sha|commit }}</a>
-                        {{ macros.icon('github') }}
-                    </label>
-                </li>
-
-            {% else %}
-                <li class="full">There are no tags.</li>
-            {% endfor %}
-        </ul>
-    </div>
-{% endblock %}
-
-{% block build_tabs_open %}
-    <div id="js-tab--pr-open" class="tab">
-        <ul class="js-search-list tab-grid">
-            {% for pull in open %}
-                <li>
-                    {% set uniqueId = hash('pr' ~ pull.number) %}
-                    {% set pr_icon = 'github-pr--open' %}
-                    {{ block('pull_request_button') }}
-                </li>
-
-            {% else %}
-                <li class="full">There are no open pull requests.</li>
-            {% endfor %}
-        </ul>
-    </div>
-{% endblock %}
-
-{% block build_tabs_closed %}
-    <div id="js-tab--pr-closed" class="tab">
-        <ul class="js-search-list tab-grid">
-            {% for pull in closed %}
-                <li>
-                    {% set uniqueId = hash('pr' ~ pull.number) %}
-                    {% set pr_icon = 'github-pr--closed' %}
-                    {{ block('pull_request_button') }}
-                </li>
-
-            {% else %}
-                <li class="full">There are no closed pull requests.</li>
-            {% endfor %}
-        </ul>
-    </div>
-{% endblock %}
-
-{% block pull_request_button %}
-    <input
-        id="{{ uniqueId }}"
-        type="radio"
-        name="reference"
-        value="pull/{{ pull.number }}"
-    >
-
-    <label for="{{ uniqueId }}" title="{{ pull.title }}">
-        {{ macros.icon('pull', pr_icon) }}
-        <span class="js-title">{{ pull.title }}</span>
-        <br />
-
-        <a href="{{ githubPullRequestUrl(application.githubOwner, application.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>
-        {{ macros.icon('github') }}
-        <br />
-
-        {% set label_style = "github-pr" %}
-        {% if pull.head.user.login|lower == current_user.username|lower %}
-            {% set label_style = label_style ~ " github-pr--owner" %}
-        {% endif %}
-
-        <span class="{{ label_style }}">
-            from <span class="pr-label" title="{{ pull.head.user.login }}:{{ pull.head.ref }}">
-                <span class="pr-source">{{ pull.head.user.login }}:</span>{{ pull.head.ref }}
-            </span>
-            <br>
-
-            to <span class="pr-label" title="{{ pull.base.user.login }}:{{ pull.base.ref }}">{{ pull.base.ref }}</span>
-        </span>
-    </label>
+        </tbody>
+    </table>
 {% endblock %}

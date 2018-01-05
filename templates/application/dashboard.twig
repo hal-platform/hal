@@ -35,7 +35,7 @@
 {% block env_picker %}
     {% if environments|length > 0 %}
     <h4>Change environment</h4>
-        <ul class="list--bare tabs">
+        <ul class="tabs">
             {% for environment in environments %}
                 {% set is_selected = environment.id == selected_environment.id ? 'active' : '' %}
                 <li class="{{ is_selected }}">
@@ -58,15 +58,13 @@
 
 {% block target_cards %}
     {% if targets %}
-        <div>
-            <ul class="list--bare cards">
-                {% for target in targets %}
-                    <li data-deploy="{{ target.id }}">
-                        {{ app_macros.pushCard(application, target, target.release) }}
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
+        <ul class="cards">
+            {% for target in targets %}
+                <li data-deploy="{{ target.id }}">
+                    {{ app_macros.pushCard(application, target, target.release) }}
+                </li>
+            {% endfor %}
+        </ul>
     {% else %}
         <p>
             This application has no deployment targets

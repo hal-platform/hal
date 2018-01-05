@@ -94,6 +94,12 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFilter('shortGUID', [$this, 'shortGUID']),
             new Twig_SimpleFilter('short_guid', [$this, 'shortGUID']),
 
+            new Twig_SimpleFilter('occurences', function($haystack, $needle) {
+                if (!is_string($haystack) || !is_string($needle)) return 0;
+
+                return substr_count($haystack, $needle);
+            }),
+
             // @todo move these to entities?
             new Twig_SimpleFilter('idp_type', [$this, 'formatIDP']),
             new Twig_SimpleFilter('vcs_type', [$this, 'formatVCS']),

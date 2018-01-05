@@ -18,15 +18,15 @@ use Hal\UI\Validator\ReleaseValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Hal\Core\Entity\Application;
-use Hal\Core\Entity\Build;
 use Hal\Core\Entity\User;
+use Hal\Core\Entity\JobType\Build;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
 
 /**
  * Permission checking is handled by BuildStartValidator
  */
-class BuildMiddleware implements MiddlewareInterface
+class StartBuildMiddleware implements MiddlewareInterface
 {
     use RedirectableControllerTrait;
     use SessionTrait;
@@ -104,21 +104,16 @@ class BuildMiddleware implements MiddlewareInterface
 
         // if validator didn't create a build, add errors and pass through to controller
         if (!$build) {
-            return $next(
-                $this->withContext($request, ['errors' => $this->validator->errors()]),
-                $response
-            );
+            return $next($this->withContext($request, ['errors' => $this->validator->errors()]), $response);
         }
 
         if ($build->environment()) {
-            $deployments = $request->getParsedBody()['deployments'] ?? [];
-            $children = $this->maybeMakeChildren($build, $user, $deployments);
-            if ($deployments && !$children) {
+            $targets = $request->getParsedBody()['deployments'] ?? [];
+            $children = $this->maybeMakeChildren($build, $user, $targets);
+
+            if ($targets && !$children) {
                 // child push validation failed, bomb out.
-                return $next(
-                    $this->withContext($request, ['errors' => $this->pushValidator->errors()]),
-                    $response
-                );
+                return $next( $this->withContext($request, ['errors' => $this->pushValidator->errors()]), $response);
             }
 
             // persist to database

@@ -1,3 +1,4 @@
+import { initTabSelector } from './util/tab-selector';
 import { initGitHubSearch } from './job/github-search-for-build';
 import { initEventLogLoader } from './job/event-log-loader';
 
@@ -29,6 +30,7 @@ let appComponents = {
 
     // jobs - start
     start_build: () => {
+        initTabSelector();
         initGitHubSearch();
         initSelectAllCheckboxes();
     },
