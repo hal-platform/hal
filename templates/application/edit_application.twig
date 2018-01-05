@@ -16,6 +16,11 @@
 
         <ul class="form-fields form-wrapper">
             <li>
+                <label>ID</label>
+                {{ application.id|short_guid }}
+            </li>
+
+            <li>
                 {% set has_error = form_macros.hasError(errors, 'name') %}
                 <label for="name">Name</label>
                 <input type="text" class="text-input{{ has_error ? ' is-error' : '' }}" name="name" id="name" maxlength="100" value="{{ form.name }}" required>

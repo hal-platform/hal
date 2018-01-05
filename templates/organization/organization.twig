@@ -61,19 +61,20 @@
         <table class="table--spacing-medium">
             <thead>
                 <tr>
+                    <th class="t15">ID</th>
                     <th>Application</th>
                     <th class="t40">Source Code</th>
-                    <th class="t15"></th>
+                    <th class="t10"></th>
                 </tr>
             </thead>
             <tbody>
             {% for application in applications %}
                 <tr>
+                    <td><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.id|short_guid }}</a></td>
                     <td>{{ application.name }}</td>
                     <td>{{ git_macros.vcs(application) }}</td>
                     <td>
                         <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Dashboard</a>
-                        <a href="{{ uriFor('application', {'application': application.id}) }}">Manage</a>
                     </td>
                 </tr>
             {% endfor %}

@@ -7,6 +7,9 @@
 
 {% block breadcrumb_links %}
     <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+    {% if application.organization -%}
+        <li><a href="{{ uriFor('organization', {'organization': application.organization.id}) }}">{{ application.organization.name }}</a></li>
+    {%- endif %}
     <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
 {% endblock %}
 
