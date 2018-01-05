@@ -144,7 +144,7 @@ function retrieveNewJobs() {
     // retrieve jobs created since last read
     $.getJSON(endpoint, function(data) {
         if (data.count > 0) {
-            $('#js-emptyQueue').remove();
+            $('#js-empty-queue').remove();
             addJobs(data._embedded.jobs.reverse());
         }
     });

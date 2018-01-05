@@ -221,9 +221,9 @@ Build <a href="/build/123456">123456</a>
 #}
 {% macro job_status_prefix_link(job, prefix) %}
     {% if job is release %}
-        {{ prefix }}<a href="{{ uriFor('release', {'release': job.id}) }}">{{ job|shortGUID }}</a>
+        {{ prefix }}<a href="{{ uriFor('release', {'release': job.id}) }}">{{ job|short_guid }}</a>
     {% else %}
-        {{ prefix }}<a href="{{ uriFor('build', {'build': job.id}) }}">{{ job|shortGUID }}</a>
+        {{ prefix }}<a href="{{ uriFor('build', {'build': job.id}) }}">{{ job|short_guid }}</a>
     {% endif %}
 {% endmacro %}
 

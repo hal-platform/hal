@@ -4,48 +4,50 @@
 <table id="js-queue" class="table--spacing-medium">
     <thead>
         <tr>
-            <th>Type</th>
+            <th>Job</th>
             <th>Application</th>
-            <th>Env → Server</th>
-            <th>Reference</th>
-            <th class="table-priority-55">User</th>
-            <th class="table-priority-50">Time</th>
+            <th>Environment</th>
+            <th>
+                <span class="hint--top" aria-label="Version Control reference or commit">VCS</span>
+                 / Build
+             </th>
+            <th class="table-priority-55">Started On</th>
         </tr>
     </thead>
     <tbody>
         {% if pending %}
             {% for job in pending %}
-                {% if job is build %}
-                    <tr id="build-{{ job.id }}">
-                        <td>{{ macros.job_status_prefix(job) }}</td>
-                        <td><a href="{{ uriFor('application.dashboard', {'application': job.application.id}) }}">{{ job.application.name }}</a></td>
+                <tr id="{{ job.type }}-{{ job.id }}">
+                    <td>{{ macros.job_status_prefix(job) }}</td>
+                    <td><a href="{{ uriFor('application.dashboard', {'application': job.application.id}) }}">{{ job.application.name }}</a></td>
 
-                        <td>{{ job.environment ? job.environment.name : 'Any' }}
+                    <td>
+                        {{ job.environment ? job.environment.name : 'Any' }}
+                        {%- if job.target -%}
+                            → {{ job.target.format() }}
+                        {%- endif -%}
+                    </td>
 
-                        <td>{{ git_macros.gitref(job, true) }}</td>
-                        <td class="table-priority-55">{{ job.user ? job.user.username : 'Unknown' }}</td>
-                        <td class="table-priority-50">{{ job.created|timepoint('h:i:s A') }}</td>
-                    </tr>
-                {% else %}
-                    <tr id="push-{{ job.id }}">
-                        <td>{{ macros.job_status_prefix(job) }}</td>
-                        <td><a href="{{ uriFor('application.dashboard', {'application': job.application.id}) }}">{{ job.application.name }}</a></td>
-
-                        {% if job.deployment %}
-                            <td>{{ job.target.group.environment.name }} → {{ job.target.formatPretty(true) }}</td>
+                    <td>
+                        {% if job is build %}
+                            {{ git_macros.vcs_ref(application, job) }}
+                        {% elseif job is release %}
+                            {{ macros.job_status_prefix_link(job.build, false, false) }}
                         {% else %}
-                            <td>{{ job.build.environment ? job.build.environment.name : 'Any' }} → Unknown</td>
+                            N/A
                         {% endif %}
+                    </td>
 
-                        <td>Build <a href="{{ uriFor('build', {'build': job.build.id}) }}">{{ job.build.id|formatBuildId }}</a></td>
-                        <td class="table-priority-55">{{ job.user ? job.user.username : 'Unknown' }}</td>
-                        <td class="table-priority-50">{{ job.created|timepoint('h:i:s A') }}</td>
-                    </tr>
-                {% endif %}
+                    <td class="table-priority-55">
+                        {{ job.created|timepoint('h:i:s A')  }}
+                        by
+                        {{ macros.user_display_link(job.user) }}
+                    </td>
+                </tr>
             {% endfor %}
         {% else %}
-            <tr id="js-emptyQueue">
-                <td colspan="6">
+            <tr id="js-empty-queue">
+                <td colspan="5">
                     {% if history_view %}
                         There is no queue history for this date.
                     {% else %}

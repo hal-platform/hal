@@ -9,7 +9,7 @@
 
 {% block content %}
     {{ block('links') }}
-    {% include 'partial.pending_job_table.twig' with {'pending': pending} only %}
+    {% include 'partial.pending_job_table.twig' with { 'pending': pending } only %}
     {{ block('links') }}
 {% endblock %}
 

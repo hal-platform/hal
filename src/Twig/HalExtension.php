@@ -8,8 +8,8 @@
 namespace Hal\UI\Twig;
 
 use Hal\UI\Utility\TimeFormatter;
-// use Hal\Core\Entity\Build;
-// use Hal\Core\Entity\Release;
+use Hal\Core\Entity\JobType\Build;
+use Hal\Core\Entity\JobType\Release;
 use Hal\Core\Entity\Credential;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Entity\System\VersionControlProvider;
