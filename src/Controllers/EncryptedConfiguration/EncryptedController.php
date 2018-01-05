@@ -7,7 +7,6 @@
 
 namespace Hal\UI\Controllers\EncryptedConfiguration;
 
-use Exception;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -46,7 +45,8 @@ class EncryptedController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $encrypted = $request->getAttribute(EncryptedProperty::class);
-        $decrypted = $this->decrypt($encrypted->data());
+
+        $decrypted = $this->decrypt($encrypted);
 
         return $this->withTemplate($request, $response, $this->template, [
             'application' => $encrypted->application(),
@@ -58,18 +58,19 @@ class EncryptedController implements ControllerInterface
     }
 
     /**
-     * @param string $encrypted
+     * @param EncryptedProperty $property
      *
-     * @return string|null
+     * @return string|bool|null
      */
-    private function decrypt($encrypted)
+    private function decrypt(EncryptedProperty $property)
     {
-        try {
-            $decrypted = $this->encryption->decrypt($encrypted);
-            return $decrypted;
+        $decrypted = false;
+        $secret = $property->secret();
 
-        } catch (Exception $ex) {
-            return null;
+        if ($secret) {
+            $decrypted = $this->encryption->decrypt($secret);
         }
+
+        return $decrypted;
     }
 }

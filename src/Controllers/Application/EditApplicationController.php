@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Organization;
+use Hal\Core\Entity\System\VersionControlProvider;
 use Hal\Core\Utility\SortingTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
@@ -42,6 +43,7 @@ class EditApplicationController implements ControllerInterface
      */
     private $applicationRepo;
     private $organizationRepo;
+    private $vcsRepo;
 
     /**
      * @var EntityManagerInterface
@@ -74,6 +76,7 @@ class EditApplicationController implements ControllerInterface
 
         $this->applicationRepo = $em->getRepository(Application::class);
         $this->organizationRepo = $em->getRepository(Organization::class);
+        $this->vcsRepo = $em->getRepository(VersionControlProvider::class);
         $this->em = $em;
 
         $this->applicationValidator = $applicationValidator;
@@ -101,7 +104,8 @@ class EditApplicationController implements ControllerInterface
             'errors' => $this->applicationValidator->errors(),
 
             'application' => $application,
-            'organizations' => $this->getOrganizations()
+            'organizations' => $this->getOrganizations(),
+            'vcs' => $this->vcsRepo->findAll()
         ]);
     }
 
@@ -125,7 +129,7 @@ class EditApplicationController implements ControllerInterface
             $data['vcs_provider']
         );
 
-        if ($application->provider()) {
+        if ($application && $application->provider()) {
             $application = $this->applicationValidator->isVCSValid($application, $data);
         }
 
@@ -174,12 +178,13 @@ class EditApplicationController implements ControllerInterface
 
         $form = [
             'name' => $isPost ? $name : $application->name(),
+
             'organization' => $isPost ? $organization : $originalOrganizationID,
             'vcs_provider' => $isPost ? $vcs : $originalVCSID,
 
-            'gh_owner' => $request->getParsedBody()['gh_owner'] ?? $originalGHOwner,
-            'gh_repo' => $request->getParsedBody()['gh_repo'] ?? $originalGHRepo,
-            'git_link' => $request->getParsedBody()['git_link'] ?? $originalGitLink,
+            'gh_owner' => $isPost ? $ghOwner : $originalGHOwner,
+            'gh_repo' => $isPost ? $ghRepo : $originalGHRepo,
+            'git_link' => $isPost ? $gitLink : $originalGitLink,
         ];
 
         return $form;

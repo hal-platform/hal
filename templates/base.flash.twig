@@ -3,9 +3,11 @@
 {# FLASH MESSAGES #}
 {% block flash %}
     {% if flashes.hasMessages() %}
-        {% for flash in flashes.flush() %}
-            {{ macros.alert(flash.type, flash.message, flash.details) }}
-        {% endfor %}
+        <div class="mvs">
+            {% for flash in flashes.flush() %}
+                {{ macros.alert(flash.type, flash.message, flash.details) }}
+            {% endfor %}
+        </div>
     {% endif %}
 {% endblock %}
 

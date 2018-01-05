@@ -50,8 +50,8 @@ class AddApplicationController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $organizationRepo;
     private $applicationRepo;
+    private $organizationRepo;
     private $vcsRepo;
 
     /**
@@ -115,6 +115,7 @@ class AddApplicationController implements ControllerInterface
         return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
             'errors' => $this->applicationValidator->errors(),
+
             'organizations' => $this->getOrganizations(),
             'vcs' => $this->vcsRepo->findAll()
         ]);
@@ -143,7 +144,6 @@ class AddApplicationController implements ControllerInterface
         }
 
         if ($application) {
-            // persist to database
             $this->em->persist($application);
             $this->em->flush();
         }

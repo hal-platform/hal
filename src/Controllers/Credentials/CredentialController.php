@@ -9,7 +9,6 @@ namespace Hal\UI\Controllers\Credentials;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Exception;
 use Hal\Core\Crypto\Encryption;
 use Hal\Core\Entity\Credential;
 use Hal\Core\Entity\Release;
@@ -66,7 +65,6 @@ class CredentialController implements ControllerInterface
         $targets = $this->targetRepository->findBy(['credential' => $credential]);
 
         $decrypted = $this->decrypt($credential);
-
 
         return $this->withTemplate($request, $response, $this->template, [
             'credential' => $credential,

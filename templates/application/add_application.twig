@@ -33,7 +33,6 @@
 
                         {% for organization in organizations %}
                             {% set is_selected = form.organization == organization.id ? ' checked' : '' %}
-
                             <li>
                                 <label for="org-{{ organization.id }}">
                                     <input type="radio" id="org-{{ organization.id }}" name="organization" value="{{ organization.id }}"{{ is_selected }}>

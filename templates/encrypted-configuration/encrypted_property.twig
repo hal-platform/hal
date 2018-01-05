@@ -1,23 +1,28 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
 
-{% set page_title = 'Encrypted Value' %}
+{% set page_title = 'Encrypted Property' %}
+
+{% set is_admin = current_authorizations.isSuper() or current_authorizations.isAdmin() %}
+{% set can_edit = is_admin or current_authorizations.isOwnerOf(application) %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+    <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
+    <li><a href="{{ uriFor('encrypted.configuration', {'application': application.id}) }}">Encrypted Configuration</a></li>
+{% endblock %}
 
 {% block content %}
-
     {% if decryption_error %}
         {{ macros.alert('error', 'Unable to decrypt value! Encryption may be misconfigured.') }}
     {% endif %}
 
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('encrypted.configuration', {'application': application.id}) }}">Back to Encrypted Configuration</a>
-        </p>
-    </div>
-
     <ul class="meta-box">
+        <li>
+            <h6>ID</h6>
+            {{ encrypted.id|short_guid }}
+        </li>
+
         <li>
             <h6>Application</h6>
             {{ application.name }}
@@ -30,6 +35,11 @@
             {% else %}
                 Global (Available in all environments)
             {% endif %}
+        </li>
+
+        <li>
+            <h6>Date Added</h6>
+            {{ encrypted.created|html5date }}
         </li>
     </ul>
 
@@ -51,8 +61,12 @@
 
     </section>
 
-    <ul class="list--bare">
-        <li><a class="btn btn--destructive" href="{{ uriFor('encrypted.remove', {'application': application.id, 'encrypted': encrypted.id}) }}">Remove Property</a></li>
-    </ul>
+    <p>
+        {% if can_edit %}
+            <a class="btn btn--destructive" href="{{ uriFor('encrypted.remove', {'application': application.id, 'encrypted': encrypted.id})}}">Remove Property</a>
+        {% else %}
+            {{ macros.disabled_button('Remove Property') }}
+        {% endif %}
+    </p>
 
 {% endblock %}

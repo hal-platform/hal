@@ -8,15 +8,11 @@
 {% set can_edit = is_admin or current_authorizations.isOwnerOf(application) %}
 {% set can_remove = can_edit %}
 
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+{% endblock %}
+
 {% block content %}
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--back" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Go to Application Dashboard</a>
-        </p>
-    </div>
-
     {{ block('meta') }}
     {{ block('actions') }}
 
@@ -52,14 +48,21 @@
                 None
             {% endif %}
         </li>
+
+        <li>
+            <h6>Date Added</h6>
+            {{ application.created|html5date }}
+        </li>
     </ul>
 {% endblock %}
 
 {% block actions %}
     <p>
+        <a class="btn" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Dashboard</a></li>
         <a class="btn" href="{{ uriFor('encrypted.configuration', {'application': application.id}) }}">Encrypted Configuration</a></li>
         <a class="btn" href="{{ uriFor('targets', {'application': application.id}) }}">Deployment Targets</a></li>
-
+    </p>
+    <p>
         {% if can_edit %}
             <a class="btn btn--action" href="{{ uriFor('application.edit', {'application': application.id}) }}">Edit Application</a>
         {% else %}

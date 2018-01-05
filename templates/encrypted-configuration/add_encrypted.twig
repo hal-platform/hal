@@ -3,79 +3,71 @@
 
 {% set page_title = 'Add Encrypted Configuration' %}
 
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+    <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
+    <li><a href="{{ uriFor('encrypted.configuration', {'application': application.id}) }}">Encrypted Configuration</a></li>
+{% endblock %}
+
 {% block content %}
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
+    {{ form_macros.formErrors(errors) }}
 
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('application', {'application': application.id}) }}">Back to Application</a>
-        </p>
-    </div>
+    <form method="post">
+        <ul class="form-fields form-wrapper">
+            <li>
+                <label for="name">Property Name</label>
+                <input class="text-input" name="name" id="name" maxlength="64" value="{{ form.name }}" required>
+                <small>
+                    This will be uppercased and prefixed with <code>ENCRYPTED_</code> at runtime.
+                </small>
+            </li>
 
+            <li>
+                <label for="decrypted">Value</label>
+                <input class="text-input" name="decrypted" id="decrypted" maxlength="200" value="{{ form.decrypted }}" autocomplete="off" required>
+                <small>
+                    This will be encrypted once saved, and only unencrypted during project build.
+                </small>
+            </li>
 
-    <div class="form-wrapper">
-        {{ form_macros.formErrors(errors) }}
+            <li>
+                <label>Environment</label>
 
-        <form method="post">
-            <ul class="form-fields">
-                <li>
-                    <label for="name">
-                        Property Name
-                    </label>
-                    <input name="name" id="name" maxlength="64" required value="{{ form.name }}" class="text-input">
-                    <small>
-                        This will be uppercased and prefixed with <code>ENCRYPTED_</code> at runtime.
-                    </small>
-                </li>
+                {% if environments %}
+                    <ul class="list--bare">
 
-                <li>
-                    <label for="decrypted">
-                        Value
-                    </label>
-                    <input name="decrypted" id="decrypted" maxlength="200" required value="{{ form.decrypted }}" class="text-input" autocomplete="off">
-                    <small>
-                        This will be encrypted once saved, and only unencrypted during project build.
-                    </small>
-                </li>
+                        {% for environment in environments %}
+                            {% set is_selected = form.environment == environment.id ? ' checked' : '' %}
 
-                <li>
-                    <label>Environment</label>
-
-                    {% if environments %}
-                        <ul class="list--bare">
-
-                            {% for environment in environments %}
-                                {% set is_selected = form.environment == environment.id ? ' checked' : '' %}
-
-                                <li>
-                                    <label for="env-{{ environment.id }}">
-                                        <input type="radio" id="env-{{ environment.id }}" name="environment" value="{{ environment.id }}"{{ is_selected }}>
-                                        {{ environment.name }}
-                                    </label>
-                                </li>
-                            {% endfor %}
-
-                            {% set is_selected = form.organization == 'all' ? ' checked' : '' %}
                             <li>
-                                <label for="env-noop">
-                                    <input type="radio" id="env-noop" name="environment" value="global"{{ is_selected }}>
-                                    Global (Available in all environments)
+                                <label for="env-{{ environment.id }}">
+                                    <input type="radio" id="env-{{ environment.id }}" name="environment" value="{{ environment.id }}"{{ is_selected }}>
+                                    {{ environment.name }}
                                 </label>
                             </li>
+                        {% endfor %}
 
-                        </ul>
-                    {% else %}
-                        <p>There are no environments.</p>
-                    {% endif %}
+                        {% set is_selected = form.organization == 'all' ? ' checked' : '' %}
+                        <li>
+                            <label for="env-noop">
+                                <input type="radio" id="env-noop" name="environment" value="global"{{ is_selected }}>
+                                Global (Available in all environments)
+                            </label>
+                        </li>
 
-                </li>
-            </ul>
+                    </ul>
+                {% else %}
+                    <p>There are no environments.</p>
+                {% endif %}
 
-            <ul class="list--bare">
-                <li><input class="btn btn--action" type="submit" value="Add Encrypted Configuration"></li>
-                <li><a class="btn" href="{{ uriFor('encrypted.configuration', {'application': application.id}) }}">Cancel</a></li>
-            </ul>
-        </form>
-    </div>
+            </li>
+        </ul>
+
+        <p>
+            <button type="submit" class="btn btn--action">Add Encrypted Configuration</button>
+            <a href="{{ uriFor('encrypted.configuration', {'application': application.id}) }}">Cancel</a>
+        </p>
+
+    </form>
 
 {% endblock %}

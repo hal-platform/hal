@@ -61,28 +61,16 @@ class AddEncryptedPropertyMiddleware implements MiddlewareInterface
     private $uri;
 
     /**
-     * @var callable
-     */
-    private $random;
-
-    /**
-     * @var array
-     */
-    private $errors;
-
-    /**
      * @param EntityManagerInterface $em
      * @param Encryption $encrypter
      * @param EncryptedPropertyValidator $validator
      * @param URI $uri
-     * @param callable $random
      */
     public function __construct(
         EntityManagerInterface $em,
         Encryption $encrypter,
         EncryptedPropertyValidator $validator,
-        URI $uri,
-        callable $random
+        URI $uri
     ) {
         $this->em = $em;
         $this->encryptedRepo = $em->getRepository(EncryptedProperty::class);
@@ -91,9 +79,6 @@ class AddEncryptedPropertyMiddleware implements MiddlewareInterface
         $this->encrypter = $encrypter;
         $this->validator = $validator;
         $this->uri = $uri;
-        $this->random = $random;
-
-        $this->errors = [];
     }
 
     /**
@@ -117,10 +102,7 @@ class AddEncryptedPropertyMiddleware implements MiddlewareInterface
 
         // if didn't create a property, add errors and pass through to controller
         if (!$encrypted) {
-            return $next(
-                $this->withContext($request, ['errors' => $this->validator->errors()]),
-                $response
-            );
+            return $next($this->withContext($request, ['errors' => $this->validator->errors()]), $response);
         }
 
         // persist to database
