@@ -1,6 +1,7 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
 {% import 'macros.git.twig' as git_macros %}
+{% import 'macros.form.twig' as form_macros %}
 
 {% set entity_type = 'Unknown Entity' %}
 {% if remove.param == 'organization' %}
@@ -70,7 +71,9 @@
     <p>You're about to permanently remove this <b>{{ entity_type }}</b>. Do you want to continue?</p>
 
     <form method="post">
-        <button type="submit" class="btn btn--destructive">{{ page_title}}</button>
+        {{ form_macros.csrf_input(remove.param ~ '.remove') }}
+
+        <button type="submit" class="btn btn--destructive">{{ page_title }}</button>
         {{ block('cancel_button') }}
     </form>
 

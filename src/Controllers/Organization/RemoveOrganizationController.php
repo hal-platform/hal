@@ -11,10 +11,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Organization;
-use Hal\Core\Entity\UserPermission;
+use Hal\Core\Entity\User\UserPermission;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
-use Hal\UI\Flash;
 use Hal\UI\Security\AuthorizationService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -23,6 +23,7 @@ use QL\Panthor\Utility\URI;
 
 class RemoveOrganizationController implements ControllerInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
 
@@ -72,8 +73,13 @@ class RemoveOrganizationController implements ControllerInterface
     {
         $organization = $request->getAttribute(Organization::class);
 
+        if (!$this->isCSRFValid($request)) {
+            $this->withFlashError($request, $this->CSRFError());
+            return $this->withRedirectRoute($response, $this->uri, 'organization', ['organization' => $organization->id()]);
+        }
+
         if ($this->applicationRepo->findOneBy(['organization' => $organization])) {
-            $this->withFlash($request, Flash::ERROR, self::ERR_HAS_APPLICATIONS);
+            $this->withFlashError($request, self::ERR_HAS_APPLICATIONS);
             return $this->withRedirectRoute($response, $this->uri, 'organization', ['organization' => $organization->id()]);
         }
 
@@ -83,7 +89,7 @@ class RemoveOrganizationController implements ControllerInterface
         $this->em->remove($organization);
         $this->em->flush();
 
-        $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $organization->name()));
+        $this->withFlashSuccess($request, sprintf(self::MSG_SUCCESS, $organization->name()));
         return $this->withRedirectRoute($response, $this->uri, 'applications');
     }
 

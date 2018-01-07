@@ -14,10 +14,10 @@ use Hal\Core\Entity\Organization;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\User\UserPermission;
 use Hal\Core\Type\UserPermissionEnum;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Flash;
 use Hal\UI\Security\AuthorizationService;
 use Hal\UI\Validator\OrganizationValidator;
 use QL\Panthor\ControllerInterface;
@@ -26,6 +26,7 @@ use QL\Panthor\Utility\URI;
 
 class AddOrganizationController implements ControllerInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
@@ -92,7 +93,7 @@ class AddOrganizationController implements ControllerInterface
 
             $msg = sprintf(self::MSG_SUCCESS, $organization->name());
 
-            $this->withFlash($request, Flash::SUCCESS, $msg);
+            $this->withFlashSuccess($request, $msg);
             return $this->withRedirectRoute($response, $this->uri, 'applications');
         }
 
@@ -111,6 +112,10 @@ class AddOrganizationController implements ControllerInterface
     private function handleForm(array $data, ServerRequestInterface $request): ?Organization
     {
         if ($request->getMethod() !== 'POST') {
+            return null;
+        }
+
+        if (!$this->isCSRFValid($request)) {
             return null;
         }
 

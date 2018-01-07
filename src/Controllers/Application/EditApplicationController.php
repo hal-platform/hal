@@ -13,10 +13,10 @@ use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Organization;
 use Hal\Core\Entity\System\VersionControlProvider;
 use Hal\Core\Utility\SortingTrait;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Flash;
 use Hal\UI\Validator\ApplicationValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,6 +26,7 @@ use QL\Panthor\Utility\URI;
 
 class EditApplicationController implements ControllerInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use SortingTrait;
@@ -95,7 +96,7 @@ class EditApplicationController implements ControllerInterface
         if ($modified = $this->handleForm($form, $request, $application)) {
             $message = sprintf(self::MSG_SUCCESS, $application->name());
 
-            $this->withFlash($request, Flash::SUCCESS, $message);
+            $this->withFlashSuccess($request, $message);
             return $this->withRedirectRoute($response, $this->uri, 'application', ['application' => $modified->id()]);
         }
 

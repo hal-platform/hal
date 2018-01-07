@@ -86,8 +86,8 @@
         {% else %}
             {{ macros.disabled_button('Start New Build') }}
         {% endif %}
-        <a class="btn" href="{{ uriFor('build.history.page1', {'application': application.id}) }}">Build History</a>
-        <a class="btn" href="{{ uriFor('release.history.page1', {'application': application.id}) }}">Release History</a>
+        <a class="btn" href="{{ uriFor('builds.page1', {'application': application.id}) }}">Build History</a>
+        <a class="btn" href="{{ uriFor('releases.page1', {'application': application.id}) }}">Release History</a>
         <a class="btn" href="{{ uriFor('application', {'application': application.id}) }}">Manage Application</a>
     </p>
 {% endblock %}

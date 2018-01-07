@@ -93,10 +93,11 @@ parameters:
                     route: ''
                     stack: ['user.page']
 
+# todo - csrf x 4
                 user.toggle:
                     method: 'POST'
                     route: '/toggle'
-                    stack: ['middleware.is_admin', 'user.toggle.handler']
+                    stack: ['middleware.is_admin', 'middleware.require_csrf', 'user.toggle.handler']
 
                 token.management:
                     route: '/tokens'
@@ -105,16 +106,16 @@ parameters:
                         user.token.add:
                             method: 'POST'
                             route: '/add'
-                            stack: ['user.token.add.handler']
+                            stack: ['middleware.require_csrf', 'user.token.add.handler']
                         user.token.remove:
                             method: ['GET', 'POST']
                             route: '/{token:%r.guid%}/revoke'
-                            stack: ['middleware.nested_entity', 'middleware.removal_confirmation.token', 'user.token.remove.handler']
+                            stack: ['middleware.nested_entity', 'middleware.require_csrf', 'middleware.removal_confirmation.token', 'user.token.remove.handler']
 
         settings:
             method: ['GET', 'POST']
             route: '/settings'
-            stack: ['middleware.signed_in', 'user.settings.middleware', 'user.settings.page']
+            stack: ['middleware.signed_in', 'middleware.require_csrf', 'user.settings.middleware', 'user.settings.page']
 
         settings.management:
             route: '/settings/favorite-applications/{application:%r.digit%}'
@@ -136,7 +137,7 @@ parameters:
         organization.add:
             method: ['GET', 'POST']
             route: '/organizations/add'
-            stack: ['middleware.signed_in', 'organization.add.page']
+            stack: ['middleware.signed_in', 'middleware.require_csrf', 'organization.add.page']
 
         organization.management:
             route: '/organizations/{organization:%r.guid%}'
@@ -149,11 +150,11 @@ parameters:
                 organization.edit:
                     method: ['GET', 'POST']
                     route: '/edit'
-                    stack: ['middleware.is_admin', 'organization.edit.page']
+                    stack: ['middleware.is_admin', 'middleware.require_csrf', 'organization.edit.page']
                 organization.remove:
                     method: ['GET', 'POST']
                     route: '/remove'
-                    stack: ['middleware.is_admin', 'middleware.removal_confirmation.organization', 'organization.remove.handler']
+                    stack: ['middleware.is_admin', 'middleware.require_csrf', 'middleware.removal_confirmation.organization', 'organization.remove.handler']
 
         ################################################################################################################
         # applications
@@ -167,7 +168,7 @@ parameters:
         application.add:
             method: ['GET', 'POST']
             route: '/applications/add'
-            stack: ['middleware.signed_in', 'application.add.page']
+            stack: [ 'middleware.signed_in', 'middleware.require_csrf', 'application.add.page']
 
         application.management:
             route: '/applications/{application:%r.guid%}'
@@ -185,11 +186,11 @@ parameters:
                 application.edit:
                     method: ['GET', 'POST']
                     route: '/edit'
-                    stack: ['middleware.is_owner', 'application.edit.page']
+                    stack: ['middleware.is_owner', 'middleware.require_csrf', 'application.edit.page']
                 application.remove:
                     method: ['GET', 'POST']
                     route: '/remove'
-                    stack: ['middleware.is_owner', 'middleware.removal_confirmation.application', 'application.remove.handler']
+                    stack: ['middleware.is_owner', 'middleware.require_csrf', 'middleware.removal_confirmation.application', 'application.remove.handler']
 
                 application_permission.add:
                     method: ['GET', 'POST']
@@ -207,22 +208,22 @@ parameters:
                 build.start:
                     method: ['GET', 'POST']
                     route: '/build'
-                    stack: ['middleware.signed_in', 'middleware.require_entity', 'build.start.middleware', 'build.start.page']
+                    stack: ['middleware.require_csrf', 'build.start.middleware', 'build.start.page']
 
-                build.history.page1:
+                builds.page1:
                     method: 'GET'
                     route: '/builds'
                     stack: ['builds.page']
-                build.history:
+                builds:
                     method: 'GET'
                     route: '/builds/page/{page:%r.digit%}'
                     stack: ['builds.page']
 
-                release.history.page1:
+                releases.page1:
                     method: 'GET'
                     route: '/releases'
                     stack: ['releases.page']
-                release.history:
+                releases:
                     method: 'GET'
                     route: '/releases/page/{page:%r.digit%}'
                     stack: ['releases.page']
@@ -234,7 +235,7 @@ parameters:
                 target.add:
                     method: ['GET', 'POST']
                     route: '/targets/add'
-                    stack: ['middleware.is_owner', 'target.add.middleware', 'target.add.page']
+                    stack: ['middleware.is_owner', 'middleware.require_csrf', 'target.add.middleware', 'target.add.page']
 
                 target.management:
                     route: '/targets/{target:%r.guid%}'
@@ -247,11 +248,11 @@ parameters:
                         target.edit:
                             method: ['GET', 'POST']
                             route: '/edit'
-                            stack: ['middleware.is_owner', 'target.edit.middleware', 'target.edit.page']
+                            stack: ['middleware.is_owner', 'middleware.require_csrf', 'target.edit.middleware', 'target.edit.page']
                         target.remove:
                             method: ['GET', 'POST']
                             route: '/remove'
-                            stack: ['middleware.is_owner', 'middleware.removal_confirmation.target', 'target.remove.handler']
+                            stack: ['middleware.is_owner', 'middleware.require_csrf', 'middleware.removal_confirmation.target', 'target.remove.handler']
 
                         rollback.page1:
                             method: 'GET'
@@ -269,7 +270,7 @@ parameters:
                 encrypted.add:
                     method: ['GET', 'POST']
                     route: '/encrypted-configuration/add'
-                    stack: ['middleware.is_owner', 'encrypted.add.middleware', 'encrypted.add.page']
+                    stack: ['middleware.is_owner', 'middleware.require_csrf', 'encrypted.add.middleware', 'encrypted.add.page']
 
                 encrypted.management:
                     route: '/encrypted-configuration/{encrypted:%r.guid%}'
@@ -282,7 +283,7 @@ parameters:
                         encrypted.remove:
                             method: ['GET', 'POST']
                             route: '/remove'
-                            stack: ['middleware.removal_confirmation.encrypted', 'encrypted.remove.handler']
+                            stack: ['middleware.require_csrf', 'middleware.removal_confirmation.encrypted', 'encrypted.remove.handler']
 
         ####################################################################################################################
         # target templates
@@ -292,11 +293,11 @@ parameters:
             method: 'GET'
             route: '/groups'
             stack: ['middleware.signed_in', 'groups.page']
-
+# todo - csrf x 3
         group.add:
             method: ['GET', 'POST']
             route: '/groups/add'
-            stack: ['middleware.is_admin', 'group.add.page']
+            stack: ['middleware.is_admin', 'middleware.require_csrf', 'group.add.page']
 
         group.management:
             route: '/groups/{group:%r.guid%}'
@@ -309,11 +310,11 @@ parameters:
                 group.edit:
                     method: ['GET', 'POST']
                     route: '/edit'
-                    stack: ['middleware.is_admin', 'group.edit.page']
+                    stack: ['middleware.is_admin', 'middleware.require_csrf', 'group.edit.page']
                 group.remove:
                     method: ['GET', 'POST']
                     route: '/remove'
-                    stack: ['middleware.is_admin', 'middleware.removal_confirmation.group', 'group.remove.handler']
+                    stack: ['middleware.is_admin', 'middleware.require_csrf', 'middleware.removal_confirmation.group', 'group.remove.handler']
 
         ################################################################################################################
         # queue
@@ -338,15 +339,20 @@ parameters:
         # builds
         ################################################################################################################
 
-        build:
-            method: 'GET'
-            route: '/builds/{build:%r.build%}'
-            stack: ['middleware.signed_in', 'middleware.require_entity', 'build.page']
+        build.management:
+            route: '/builds/{build:%r.guid%}'
+            stack: ['middleware.signed_in', 'middleware.require_entity']
+            routes:
 
-        build.start:
-            method: ['GET', 'POST']
-            route: '/applications/{application:%r.digit%}/build[/environment/{environment:%r.digit%}]'
-            stack: ['middleware.signed_in', 'middleware.require_entity', 'build.start.middleware', 'build.start.page']
+                build:
+                    method: 'GET'
+                    route: ''
+                    stack: ['build.page']
+# todo - csrf x 1
+                release.start:
+                    method: ['GET', 'POST']
+                    route: '/release'
+                    stack: ['middleware.require_csrf', 'deploy.select_environment.middleware', 'deploy.middleware', 'release.start.page']
 
         builds.history.page1:
             method: 'GET'
@@ -361,21 +367,20 @@ parameters:
         # releases
         ################################################################################################################
 
-        release:
-            method: 'GET'
-            route: '/releases/{release:%r.release%}'
-            stack: ['middleware.signed_in', 'middleware.require_entity', 'release.page']
+        release.management:
+            route: '/releases/{release:%r.guid%}'
+            stack: ['middleware.signed_in', 'middleware.require_entity']
+            routes:
 
-        release.start:
-            method: ['GET', 'POST']
-            route: '/builds/{build:%r.build%}/release'
-            stack: ['middleware.signed_in', 'middleware.require_entity', 'deploy.select_environment.middleware', 'deploy.middleware', 'release.start.page']
+                release:
+                    method: 'GET'
+                    route: ''
+                    stack: ['release.page']
 
         releases.history.page1:
             method: 'GET'
             route: '/releases'
             stack: ['middleware.signed_in', 'releases.history.page']
-
         releases.history:
             method: 'GET'
             route: '/releases/page/{page:%r.digit%}'
@@ -421,7 +426,7 @@ parameters:
                 admin.global_banner:
                     method: ['GET', 'POST']
                     route: '/global-banner'
-                    stack: ['admin.global_banner.page']
+                    stack: ['middleware.require_csrf', 'admin.global_banner.page']
 
                 ################################################################################################################
                 # admin - environments
@@ -435,7 +440,7 @@ parameters:
                 environment.add:
                     method: ['GET', 'POST']
                     route: '/environments/add'
-                    stack: ['environment.add.page']
+                    stack: ['middleware.require_csrf', 'environment.add.page']
 
                 environment.management:
                     route: '/environments/{environment:%r.guid%}'
@@ -448,11 +453,11 @@ parameters:
                         environment.edit:
                             method: ['GET', 'POST']
                             route: '/edit'
-                            stack: ['environment.edit.page']
+                            stack: ['middleware.require_csrf', 'environment.edit.page']
                         environment.remove:
                             method: ['GET', 'POST']
                             route: '/remove'
-                            stack: ['middleware.removal_confirmation.environment', 'environment.remove.handler']
+                            stack: ['middleware.require_csrf', 'middleware.removal_confirmation.environment', 'environment.remove.handler']
 
                 ################################################################################################################
                 # admin - idp
@@ -466,7 +471,7 @@ parameters:
                 id_providers.add:
                     method: ['GET', 'POST']
                     route: '/idp/add'
-                    stack: ['id_providers.add.page']
+                    stack: ['middleware.require_csrf', 'id_providers.add.page']
 
                 ################################################################################################################
                 # admin - vcs
@@ -480,7 +485,7 @@ parameters:
                 vcs_providers.add:
                     method: ['GET', 'POST']
                     route: '/vcs/add'
-                    stack: ['vcs_providers.add.page']
+                    stack: ['middleware.require_csrf', 'vcs_providers.add.page']
 
                 ################################################################################################################
                 # admin - credentials
@@ -494,7 +499,7 @@ parameters:
                 credential.add:
                     method: ['GET', 'POST']
                     route: '/credentials/add'
-                    stack: ['middleware.is_super', 'credential.add.page']
+                    stack: ['middleware.require_csrf', 'middleware.is_super', 'credential.add.page']
 
                 credential.management:
                     route: '/credentials/{credential:%r.guid%}'
@@ -508,12 +513,12 @@ parameters:
                         credential.edit:
                             method: ['GET', 'POST']
                             route: '/edit'
-                            stack: ['credential.edit.page']
+                            stack: ['middleware.require_csrf', 'credential.edit.page']
 
                         credential.remove:
                             method: ['GET', 'POST']
                             route: '/remove'
-                            stack: ['middleware.is_super', 'middleware.removal_confirmation.credential', 'credential.remove.handler']
+                            stack: ['middleware.is_super', 'middleware.require_csrf', 'middleware.removal_confirmation.credential', 'credential.remove.handler']
 
                 ################################################################################################################
                 # admin - permissions

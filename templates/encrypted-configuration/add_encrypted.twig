@@ -10,9 +10,11 @@
 {% endblock %}
 
 {% block content %}
-    {{ form_macros.formErrors(errors) }}
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
 
     <form method="post">
+        {{ form_macros.csrf_input('encrypted.add') }}
+
         <ul class="form-fields form-wrapper">
             <li>
                 <label for="name">Property Name</label>

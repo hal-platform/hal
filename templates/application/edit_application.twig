@@ -10,9 +10,10 @@
 {% endblock %}
 
 {% block content %}
-    {{ form_macros.formErrors(errors) }}
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
 
     <form method="post" class="js-applications-form">
+        {{ form_macros.csrf_input('application.edit') }}
 
         <ul class="form-fields form-wrapper">
             <li>

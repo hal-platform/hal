@@ -3,18 +3,16 @@
 
 {% set page_title = 'Add Identity Provider' %}
 
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+    <li><a href="{{ uriFor('id_providers') }}">Identity Providers</a></li>
+{% endblock %}
+
 {% block content %}
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--back" href="{{ uriFor('id_providers') }}">Back to IDPs</a>
-        </p>
-    </div>
-
-    {{ form_macros.formErrors(errors) }}
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
 
     <form method="post">
+        {{ form_macros.csrf_input('id_providers.add') }}
 
         <p>
             <button class="btn btn--action" type="submit">Add IDP</button>

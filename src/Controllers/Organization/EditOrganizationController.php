@@ -9,10 +9,10 @@ namespace Hal\UI\Controllers\Organization;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Organization;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Flash;
 use Hal\UI\Validator\OrganizationValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -22,6 +22,7 @@ use QL\Panthor\Utility\URI;
 
 class EditOrganizationController implements ControllerInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
@@ -79,7 +80,7 @@ class EditOrganizationController implements ControllerInterface
         if ($modified = $this->handleForm($form, $request, $organization)) {
             $msg = sprintf(self::MSG_SUCCESS, $organization->name());
 
-            $this->withFlash($request, Flash::SUCCESS, $msg);
+            $this->withFlashSuccess($request, $msg);
             return $this->withRedirectRoute($response, $this->uri, 'organization', ['organization' => $modified->id()]);
         }
 
@@ -101,6 +102,10 @@ class EditOrganizationController implements ControllerInterface
     private function handleForm(array $data, ServerRequestInterface $request, Organization $organization): ?Organization
     {
         if ($request->getMethod() !== 'POST') {
+            return null;
+        }
+
+        if (!$this->isCSRFValid($request)) {
             return null;
         }
 

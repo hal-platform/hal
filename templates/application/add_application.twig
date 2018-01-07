@@ -9,13 +9,14 @@
 {% endblock %}
 
 {% block content %}
-    {{ form_macros.formErrors(errors) }}
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
 
     <form method="post" class="js-applications-form">
+        {{ form_macros.csrf_input('application.add') }}
 
         <ul class="form-fields form-wrapper">
             <li>
-                {% set has_error = form_macros.hasError(errors, 'name') %}
+                {% set has_error = form_macros.has_error(errors, 'name') %}
                 <label for="name">Name</label>
                 <input type="text" class="text-input{{ has_error ? ' is-error' : '' }}" name="name" id="name" maxlength="100" value="{{ form.name }}" required>
                 <small>

@@ -22,9 +22,11 @@
 {% endblock %}
 
 {% block content %}
-    {{ form_macros.formErrors(errors) }}
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
 
     <form method="post" name="start-build">
+        {{ form_macros.csrf_input('build.start') }}
+
         <h2>Select Source Code</h2>
         {{ block('select_source_code') }}
 

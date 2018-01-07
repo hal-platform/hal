@@ -1,5 +1,6 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
+{% import 'macros.form.twig' as form_macros %}
 
 {% set page_title = 'Admin Messages' %}
 
@@ -8,6 +9,8 @@
 {% endblock %}
 
 {% block content %}
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
+
     {{ block('meta') }}
     {{ block('form') }}
 
@@ -39,7 +42,9 @@
                 {% endif %}
 
                 <form method="post" style="display:inline">
+                    {{ form_macros.csrf_input('admin.global_banner') }}
                     <input type="hidden" name="remove" value="1">
+
                     <input class="btn btn--tiny btn--destructive" type="submit" name="submit" value="Remove Banner">
                 </form>
 
@@ -61,6 +66,8 @@
 {% block form %}
     <h2>Global Banner</h2>
     <form method="post">
+        {{ form_macros.csrf_input('admin.global_banner') }}
+
         <ul class="form-fields">
             <li>
                 <label for="message">Global Message</label>

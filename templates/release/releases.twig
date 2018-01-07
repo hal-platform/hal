@@ -16,7 +16,7 @@
 
     {% include 'partial.release_table.twig' with {'releases': releases} only %}
 
-    {{ pagination.pagination(page, last, 'release.history', {'application': application.id}, {search: search_filter}) }}
+    {{ pagination.pagination(page, last, 'releases', {'application': application.id}, {search: search_filter}) }}
 {% endblock %}
 
 {% block search %}

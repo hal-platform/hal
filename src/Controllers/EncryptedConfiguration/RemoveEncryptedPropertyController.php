@@ -8,9 +8,9 @@
 namespace Hal\UI\Controllers\EncryptedConfiguration;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
-use Hal\UI\Flash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Hal\Core\Entity\Application;
@@ -20,6 +20,7 @@ use QL\Panthor\Utility\URI;
 
 class RemoveEncryptedPropertyController implements ControllerInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
 
@@ -53,11 +54,15 @@ class RemoveEncryptedPropertyController implements ControllerInterface
         $application = $request->getAttribute(Application::class);
         $encrypted = $request->getAttribute(EncryptedProperty::class);
 
+        if (!$this->isCSRFValid($request)) {
+            $this->withFlashError($request, $this->CSRFError());
+            return $this->withRedirectRoute($response, $this->uri, 'encrypted.configuration', ['application' => $environment->id()]);
+        }
+
         $this->em->remove($encrypted);
         $this->em->flush();
 
-        $message = sprintf(self::MSG_SUCCESS, $encrypted->name());
-        $this->withFlash($request, Flash::SUCCESS, $message);
+        $this->withFlashSuccess($request, sprintf(self::MSG_SUCCESS, $encrypted->name()));
         return $this->withRedirectRoute($response, $this->uri, 'encrypted.configuration', ['application' => $application->id()]);
     }
 }

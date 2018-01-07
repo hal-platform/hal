@@ -18,3 +18,39 @@
 {% macro hasError(errors, field) -%}
     {{- errors[field] ? '1' : '' -}}
 {%- endmacro %}
+
+{% macro form_errors(errors, csrf_error) %}
+    {% import _self as self_macros %}
+    {{ self_macros.csrf_error(csrf_error) }}
+
+    {% if errors %}
+        <ul class="error-list">
+            {% for field_name, field_errors in errors %}
+                {% if field_errors is iterable %}
+                    {% for error in field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% else %}
+                    <li>{{ field_errors }}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+{% endmacro %}
+
+{% macro has_error(errors, field) -%}
+    {{- errors[field] ? '1' : '' -}}
+{%- endmacro %}
+
+{% macro csrf_input(form_name) -%}
+    <input type="hidden" name="_csrf_authenticity" value="{{ csrf_token(form_name) }}">
+{%- endmacro %}
+
+{% macro csrf_error(csrf_error) -%}
+    {% if csrf_error is same as(true) %}
+        <ul class="error-list">
+            <li>CSRF validation failed. Please resubmit the form.</li>
+        </ul>
+    {% endif %}
+{%- endmacro %}

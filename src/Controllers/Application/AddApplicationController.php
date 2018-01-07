@@ -16,10 +16,10 @@ use Hal\Core\Entity\System\VersionControlProvider;
 use Hal\Core\Entity\User\UserPermission;
 use Hal\Core\Type\UserPermissionEnum;
 use Hal\Core\Utility\SortingTrait;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Flash;
 use Hal\UI\Security\AuthorizationService;
 use Hal\UI\Validator\ApplicationValidator;
 use Psr\Http\Message\ResponseInterface;
@@ -30,6 +30,7 @@ use QL\Panthor\Utility\URI;
 
 class AddApplicationController implements ControllerInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use SortingTrait;
@@ -108,7 +109,7 @@ class AddApplicationController implements ControllerInterface
 
             $msg = sprintf(self::MSG_SUCCESS, $application->name());
 
-            $this->withFlash($request, Flash::SUCCESS, $msg);
+            $this->withFlashSuccess($request, $msg);
             return $this->withRedirectRoute($response, $this->uri, 'applications');
         }
 
@@ -130,6 +131,10 @@ class AddApplicationController implements ControllerInterface
     private function handleForm(array $data, ServerRequestInterface $request): ?Application
     {
         if ($request->getMethod() !== 'POST') {
+            return null;
+        }
+
+        if (!$this->isCSRFValid($request)) {
             return null;
         }
 

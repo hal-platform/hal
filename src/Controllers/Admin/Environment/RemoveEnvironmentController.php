@@ -10,9 +10,9 @@ namespace Hal\UI\Controllers\Admin\Environment;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Environment;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
-use Hal\UI\Flash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -20,6 +20,7 @@ use QL\Panthor\Utility\URI;
 
 class RemoveEnvironmentController implements ControllerInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
 
@@ -52,6 +53,11 @@ class RemoveEnvironmentController implements ControllerInterface
     {
         $environment = $request->getAttribute(Environment::class);
 
+        if (!$this->isCSRFValid($request)) {
+            $this->withFlashError($request, $this->CSRFError());
+            return $this->withRedirectRoute($response, $this->uri, 'environment', ['environment' => $environment->id()]);
+        }
+
         // @todo handle all entities that may depend on env:
         // - build, release
         // - target
@@ -61,7 +67,7 @@ class RemoveEnvironmentController implements ControllerInterface
         $this->em->remove($environment);
         $this->em->flush();
 
-        $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $environment->name()));
+        $this->withFlashSuccess($request, sprintf(self::MSG_SUCCESS, $environment->name()));
         return $this->withRedirectRoute($response, $this->uri, 'environments');
     }
 }

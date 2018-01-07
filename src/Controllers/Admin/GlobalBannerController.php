@@ -7,10 +7,10 @@
 
 namespace Hal\UI\Controllers\Admin;
 
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Flash;
 use Hal\UI\System\GlobalBannerService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -20,6 +20,7 @@ use QL\Panthor\Utility\URI;
 
 class GlobalBannerController implements ControllerInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
@@ -63,7 +64,7 @@ class GlobalBannerController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         if ($msg = $this->handleForm($request)) {
-            $this->withFlash($request, Flash::SUCCESS, $msg);
+            $this->withFlashSuccess($request, $msg);
             return $this->withRedirectRoute($response, $this->uri, 'admin.global_banner');
         }
 
@@ -81,7 +82,11 @@ class GlobalBannerController implements ControllerInterface
     private function handleForm(ServerRequestInterface $request): string
     {
         if ($request->getMethod() !== 'POST') {
-            return false;
+            return '';
+        }
+
+        if (!$this->isCSRFValid($request)) {
+            return '';
         }
 
         $message = $request->getParsedBody()['message'] ?? '';

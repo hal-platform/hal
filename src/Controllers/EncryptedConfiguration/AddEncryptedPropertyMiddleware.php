@@ -9,10 +9,10 @@ namespace Hal\UI\Controllers\EncryptedConfiguration;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Flash;
 use Hal\UI\Utility\ValidatorTrait;
 use Hal\UI\Validator\EncryptedPropertyValidator;
 use Psr\Http\Message\ResponseInterface;
@@ -27,6 +27,7 @@ use QL\Panthor\Utility\URI;
 
 class AddEncryptedPropertyMiddleware implements MiddlewareInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
@@ -90,6 +91,10 @@ class AddEncryptedPropertyMiddleware implements MiddlewareInterface
             return $next($request, $response);
         }
 
+        if (!$this->isCSRFValid($request)) {
+            return $next($request, $response);
+        }
+
         $application = $request->getAttribute(Application::class);
 
         $form = [
@@ -109,8 +114,7 @@ class AddEncryptedPropertyMiddleware implements MiddlewareInterface
         $this->em->persist($encrypted);
         $this->em->flush();
 
-        $message = sprintf(self::MSG_SUCCESS, $encrypted->name());
-        $this->withFlash($request, Flash::SUCCESS, $message);
+        $this->withFlashSuccess($request, sprintf(self::MSG_SUCCESS, $encrypted->name()));
         return $this->withRedirectRoute($response, $this->uri, 'encrypted.configuration', ['application' => $application->id()]);
     }
 }

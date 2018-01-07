@@ -8,10 +8,10 @@
 namespace Hal\UI\Controllers\Build;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Flash;
 use Hal\UI\Service\StickyEnvironmentService;
 use Hal\UI\Validator\BuildValidator;
 use Hal\UI\Validator\ReleaseValidator;
@@ -28,6 +28,7 @@ use QL\Panthor\Utility\URI;
  */
 class StartBuildMiddleware implements MiddlewareInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
@@ -89,6 +90,10 @@ class StartBuildMiddleware implements MiddlewareInterface
             return $next($request, $response);
         }
 
+        if (!$this->isCSRFValid($request)) {
+            return $next($request, $response);
+        }
+
         $application = $request->getAttribute(Application::class);
         $user = $this->getUser($request);
 
@@ -133,10 +138,7 @@ class StartBuildMiddleware implements MiddlewareInterface
         }
 
         // flash and redirect
-        $this
-            ->getFlash($request)
-            ->withMessage(Flash::SUCCESS, self::WAIT_FOR_IT);
-
+        $this->withFlashSuccess($request, self::WAIT_FOR_IT);
         return $this->withRedirectRoute($response, $this->uri, 'build', ['build' => $build->id()]);
     }
 

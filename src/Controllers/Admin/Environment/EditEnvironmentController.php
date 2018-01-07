@@ -9,10 +9,10 @@ namespace Hal\UI\Controllers\Admin\Environment;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Environment;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Flash;
 use Hal\UI\Validator\EnvironmentValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -22,6 +22,7 @@ use QL\Panthor\Utility\URI;
 
 class EditEnvironmentController implements ControllerInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
@@ -77,9 +78,7 @@ class EditEnvironmentController implements ControllerInterface
         $form = $this->getFormData($request, $environment);
 
         if ($modified = $this->handleForm($form, $request, $environment)) {
-            $msg = sprintf(self::MSG_SUCCESS, $environment->name());
-
-            $this->withFlash($request, Flash::SUCCESS, $msg);
+            $this->withFlashSuccess($request, sprintf(self::MSG_SUCCESS, $environment->name()));
             return $this->withRedirectRoute($response, $this->uri, 'environment', ['environment' => $modified->id()]);
         }
 
@@ -101,6 +100,10 @@ class EditEnvironmentController implements ControllerInterface
     private function handleForm(array $data, ServerRequestInterface $request, Environment $environment): ?Environment
     {
         if ($request->getMethod() !== 'POST') {
+            return null;
+        }
+
+        if (!$this->isCSRFValid($request)) {
             return null;
         }
 

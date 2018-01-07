@@ -11,9 +11,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Credential;
 use Hal\Core\Entity\Target;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
-use Hal\UI\Flash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -21,10 +21,12 @@ use QL\Panthor\Utility\URI;
 
 class RemoveCredentialController implements ControllerInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
 
     private const MSG_SUCCESS = '"%s" credential removed.';
+    private const MSG_ERR_INTERNAL = 'Cannot remove internal credential "%s". Contact the administrator.';
 
     /**
      * @var EntityManagerInterface
@@ -61,10 +63,13 @@ class RemoveCredentialController implements ControllerInterface
         $credential = $request->getAttribute(Credential::class);
         $authorizations = $this->getAuthorizations($request);
 
-        if ($credential->isInternal() && !$authorizations->isSuper()) {
-            $message = sprintf('Cannot remove internal credential "%s". Contact the administrator.', $credential->name());
-            $this->withFlash($request, Flash::ERROR, $message);
+        if (!$this->isCSRFValid($request)) {
+            $this->withFlashError($request, $this->CSRFError());
+            return $this->withRedirectRoute($response, $this->uri, 'credential', ['credential' => $credential->id()]);
+        }
 
+        if ($credential->isInternal() && !$authorizations->isSuper()) {
+            $this->withFlashError($request, sprintf(self::MSG_ERR_INTERNAL, $credential->name()));
             return $this->withRedirectRoute($response, $this->uri, 'credential', ['credential' => $credential->id()]);
         }
 
@@ -78,7 +83,7 @@ class RemoveCredentialController implements ControllerInterface
         $this->em->remove($credential);
         $this->em->flush();
 
-        $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $credential->name()));
+        $this->withFlashSuccess($request, sprintf(self::MSG_SUCCESS, $credential->name()));
         return $this->withRedirectRoute($response, $this->uri, 'credentials');
     }
 }

@@ -11,10 +11,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Target;
-use Hal\Core\Entity\UserPermission;
+use Hal\Core\Entity\User\UserPermission;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
-use Hal\UI\Flash;
 use Hal\UI\Security\AuthorizationService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -23,6 +23,7 @@ use QL\Panthor\Utility\URI;
 
 class RemoveApplicationController implements ControllerInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
 
@@ -71,6 +72,11 @@ class RemoveApplicationController implements ControllerInterface
     {
         $application = $request->getAttribute(Application::class);
 
+        if (!$this->isCSRFValid($request)) {
+            $this->withFlashError($request, $this->CSRFError());
+            return $this->withRedirectRoute($response, $this->uri, 'application', ['application' => $application->id()]);
+        }
+
         // Remove targets and permissions first
         $this->removeTargets($application);
         $this->removePermissions($application);
@@ -80,7 +86,7 @@ class RemoveApplicationController implements ControllerInterface
 
         $msg = sprintf(self::MSG_SUCCESS, $application->name());
 
-        $this->withFlash($request, Flash::SUCCESS, $msg);
+        $this->withFlashSuccess($request, $msg);
         return $this->withRedirectRoute($response, $this->uri, 'applications');
     }
 
