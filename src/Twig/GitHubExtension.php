@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2016 Quicken Loans Inc.
+ * @copyright (c) 2017 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -12,15 +12,13 @@ use Hal\Core\Entity\Application;
 use Hal\Core\Type\VCSProviderEnum;
 use Hal\UI\VersionControl\VCS;
 use QL\MCP\Cache\CachingTrait;
-use Twig_Extension;
-use Twig_SimpleFilter;
-use Twig_SimpleFunction;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
+use Twig\Extension\AbstractExtension;
 
-class GitHubExtension extends Twig_Extension
+class GitHubExtension extends AbstractExtension
 {
     use CachingTrait;
-
-    const NAME = 'github';
 
     /**
      * @var VCS
@@ -38,38 +36,30 @@ class GitHubExtension extends Twig_Extension
     /**
      * @inheritDoc
      */
-    public function getName()
-    {
-        return self::NAME;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getFunctions()
     {
         return [
-            // new Twig_SimpleFunction('githubRepoUrl', [$this->urlBuilder, 'githubRepoURL']),
-            // new Twig_SimpleFunction('githubCommitUrl', [$this->urlBuilder, 'githubCommitURL']),
-            // new Twig_SimpleFunction('githubBranchUrl', [$this->urlBuilder, 'githubBranchURL']),
-            // new Twig_SimpleFunction('githubPullRequestUrl', [$this->urlBuilder, 'githubPullRequestURL']),
-            // new Twig_SimpleFunction('githubReferenceUrl', [$this->urlBuilder, 'githubReferenceURL']),
-            // new Twig_SimpleFunction('githubReleaseUrl', [$this->urlBuilder, 'githubReleaseURL']),
-            // new Twig_SimpleFunction('githubUserUrl', [$this->urlBuilder, 'githubUserUrl']),
-            new Twig_SimpleFunction('githubRepoUrl', [$this, 'getFakeURL']),
-            new Twig_SimpleFunction('githubCommitUrl', [$this, 'getFakeURL']),
-            new Twig_SimpleFunction('githubBranchUrl', [$this, 'getFakeURL']),
-            new Twig_SimpleFunction('githubPullRequestUrl', [$this, 'getFakeURL']),
-            new Twig_SimpleFunction('githubReferenceUrl', [$this, 'getFakeURL']),
-            new Twig_SimpleFunction('githubReleaseUrl', [$this, 'getFakeURL']),
-            new Twig_SimpleFunction('githubUserUrl', [$this, 'getFakeURL']),
+            // new TwigFunction('githubRepoUrl', [$this->urlBuilder, 'githubRepoURL']),
+            // new TwigFunction('githubCommitUrl', [$this->urlBuilder, 'githubCommitURL']),
+            // new TwigFunction('githubBranchUrl', [$this->urlBuilder, 'githubBranchURL']),
+            // new TwigFunction('githubPullRequestUrl', [$this->urlBuilder, 'githubPullRequestURL']),
+            // new TwigFunction('githubReferenceUrl', [$this->urlBuilder, 'githubReferenceURL']),
+            // new TwigFunction('githubReleaseUrl', [$this->urlBuilder, 'githubReleaseURL']),
+            // new TwigFunction('githubUserUrl', [$this->urlBuilder, 'githubUserUrl']),
+            new TwigFunction('githubRepoUrl', [$this, 'getFakeURL']),
+            new TwigFunction('githubCommitUrl', [$this, 'getFakeURL']),
+            new TwigFunction('githubBranchUrl', [$this, 'getFakeURL']),
+            new TwigFunction('githubPullRequestUrl', [$this, 'getFakeURL']),
+            new TwigFunction('githubReferenceUrl', [$this, 'getFakeURL']),
+            new TwigFunction('githubReleaseUrl', [$this, 'getFakeURL']),
+            new TwigFunction('githubUserUrl', [$this, 'getFakeURL']),
 
-            new Twig_SimpleFunction('vcs_ref_url', [$this, 'formatVCSReferenceLink']),
+            new TwigFunction('vcs_ref_url', [$this, 'formatVCSReferenceLink']),
 
-            new Twig_SimpleFunction('vcs_url', [$this, 'formatVCSLink']),
-            new Twig_SimpleFunction('vcs_text', [$this, 'formatVCSText']),
+            new TwigFunction('vcs_url', [$this, 'formatVCSLink']),
+            new TwigFunction('vcs_text', [$this, 'formatVCSText']),
 
-            new Twig_SimpleFunction('githubCommitIsCurrent', [$this, 'commitIsCurrent'])
+            new TwigFunction('githubCommitIsCurrent', [$this, 'commitIsCurrent'])
         ];
     }
 
@@ -79,8 +69,8 @@ class GitHubExtension extends Twig_Extension
     public function getFilters()
     {
         return [
-            new Twig_SimpleFilter('vcsref', [$this, 'resolveVCSReference']),
-            new Twig_SimpleFilter('commit', [$this, 'formatVCSCommit'])
+            new TwigFilter('vcsref', [$this, 'resolveVCSReference']),
+            new TwigFilter('commit', [$this, 'formatVCSCommit'])
         ];
     }
 

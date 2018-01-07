@@ -56,6 +56,7 @@ services:
         arguments:
             - '@doctrine.em'
             - '@service.authorization'
+            - '@csrf'
             - '@uri'
         calls:
             - ['setLoggerMessageFactory', ['@mcp.logger.factory']]

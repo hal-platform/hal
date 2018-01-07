@@ -78,4 +78,28 @@ trait SessionTrait
 
         return $request;
     }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param string $message
+     * @param string $details
+     *
+     * @return ServerRequestInterface
+     */
+    private function withFlashSuccess(ServerRequestInterface $request, string $message, string $details = ''): ServerRequestInterface
+    {
+        return $this->withFlash($request, Flash::SUCCESS, $message, $details);
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param string $message
+     * @param string $details
+     *
+     * @return ServerRequestInterface
+     */
+    private function withFlashError(ServerRequestInterface $request, string $message, string $details = ''): ServerRequestInterface
+    {
+        return $this->withFlash($request, Flash::ERROR, $message, $details);
+    }
 }

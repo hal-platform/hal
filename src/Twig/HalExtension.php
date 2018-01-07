@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2016 Quicken Loans Inc.
+ * @copyright (c) 2017 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -16,15 +16,13 @@ use Hal\Core\Entity\System\VersionControlProvider;
 use Hal\Core\Type\CredentialEnum;
 use Hal\Core\Type\IdentityProviderEnum;
 use Hal\Core\Type\VCSProviderEnum;
-use Twig_Extension;
-use Twig_SimpleFilter;
-use Twig_SimpleFunction;
-use Twig_SimpleTest;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
+use Twig\TwigTest;
+use Twig\Extension\AbstractExtension;
 
-class HalExtension extends Twig_Extension
+class HalExtension extends AbstractExtension
 {
-    const NAME = 'hal';
-
     /**
      * @var TimeFormatter
      */
@@ -48,16 +46,6 @@ class HalExtension extends Twig_Extension
     }
 
     /**
-     * Get the extension name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return self::NAME;
-    }
-
-    /**
      * Get an array of Twig Functions
      *
      * @return array
@@ -66,11 +54,11 @@ class HalExtension extends Twig_Extension
     {
         return [
             // util
-            new Twig_SimpleFunction('html5duration', [$this->time, 'html5duration'], ['is_safe' => ['html']]),
-            new Twig_SimpleFunction('hash', [$this, 'hash']),
+            new TwigFunction('html5duration', [$this->time, 'html5duration'], ['is_safe' => ['html']]),
+            new TwigFunction('hash', [$this, 'hash']),
 
             // user
-            new Twig_SimpleFunction('getAvatarLink', [$this, 'getAvatarLink']),
+            new TwigFunction('getAvatarLink', [$this, 'getAvatarLink']),
         ];
     }
 
@@ -82,28 +70,28 @@ class HalExtension extends Twig_Extension
     public function getFilters()
     {
         return [
-            new Twig_SimpleFilter('reldate', [$this->time, 'relative']),
-            new Twig_SimpleFilter('html5date', [$this->time, 'html5'], ['is_safe' => ['html']]),
+            new TwigFilter('reldate', [$this->time, 'relative']),
+            new TwigFilter('html5date', [$this->time, 'html5'], ['is_safe' => ['html']]),
 
-            new Twig_SimpleFilter('jsonPretty', [$this, 'jsonPretty'], ['is_safe' => ['html']]),
+            new TwigFilter('jsonPretty', [$this, 'jsonPretty'], ['is_safe' => ['html']]),
 
-            new Twig_SimpleFilter('formatBuildId', [$this, 'formatBuildId']),
-            new Twig_SimpleFilter('formatPushId', [$this, 'formatPushId']),
-            new Twig_SimpleFilter('formatEvent', [$this, 'formatEvent']),
+            new TwigFilter('formatBuildId', [$this, 'formatBuildId']),
+            new TwigFilter('formatPushId', [$this, 'formatPushId']),
+            new TwigFilter('formatEvent', [$this, 'formatEvent']),
 
-            new Twig_SimpleFilter('shortGUID', [$this, 'shortGUID']),
-            new Twig_SimpleFilter('short_guid', [$this, 'shortGUID']),
+            new TwigFilter('shortGUID', [$this, 'shortGUID']),
+            new TwigFilter('short_guid', [$this, 'shortGUID']),
 
-            new Twig_SimpleFilter('occurences', function($haystack, $needle) {
+            new TwigFilter('occurences', function($haystack, $needle) {
                 if (!is_string($haystack) || !is_string($needle)) return 0;
 
                 return substr_count($haystack, $needle);
             }),
 
             // @todo move these to entities?
-            new Twig_SimpleFilter('idp_type', [$this, 'formatIDP']),
-            new Twig_SimpleFilter('vcs_type', [$this, 'formatVCS']),
-            new Twig_SimpleFilter('credential_type', [$this, 'formatCredential']),
+            new TwigFilter('idp_type', [$this, 'formatIDP']),
+            new TwigFilter('vcs_type', [$this, 'formatVCS']),
+            new TwigFilter('credential_type', [$this, 'formatCredential']),
         ];
     }
 
@@ -115,10 +103,10 @@ class HalExtension extends Twig_Extension
     public function getTests()
     {
         return [
-            new Twig_SimpleTest('build', function ($entity) {
+            new TwigTest('build', function ($entity) {
                 return $entity instanceof Build;
             }),
-            new Twig_SimpleTest('release', function ($entity) {
+            new TwigTest('release', function ($entity) {
                 return $entity instanceof Release;
             })
         ];

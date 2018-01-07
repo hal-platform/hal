@@ -19,6 +19,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
+use function random_bytes;
 
 class SignInHandler implements MiddlewareInterface
 {
@@ -126,6 +127,7 @@ class SignInHandler implements MiddlewareInterface
         $session = $this->getSession($request);
 
         $session->clear();
+        $session->set(UserSessionGlobalMiddleware::ID_ATTRIBUTE, bin2hex(random_bytes(32)));
         $session->set(UserSessionGlobalMiddleware::SESSION_ATTRIBUTE, $user->id());
         // $session->set('is_first_login', $isFirstLogin);
 

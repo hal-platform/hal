@@ -1,11 +1,3 @@
-parameters:
-    twig.globals:
-        application_title: '%application.title%'
-        application_environment: '%application.environment%'
-        application_sha: '%application.sha%'
-        application_version: '%application.version%'
-        hal_administrators_email: '%administrator_email%'
-
 services:
 
     ######################################################################################################################
@@ -35,7 +27,6 @@ services:
     validator.permissions:
         class: 'Hal\UI\Validator\PermissionsValidator'
         arguments: ['@doctrine.em']
-    #
 
     build.start.validator:
         class: 'Hal\UI\Validator\BuildValidator'
@@ -67,15 +58,15 @@ services:
             - '@utility.time.formatter'
             - '%gravatar.fallback%'
 
-    twig.extension.hal.global:
-        class: 'Hal\UI\Twig\GlobalExtension'
-        arguments: ['%twig.globals%']
-
     twig.extension.github:
         class: 'Hal\UI\Twig\GitHubExtension'
         arguments: ['@vcs']
         calls:
             - ['setCache', ['@twig.extension.github.cache']]
+
+    twig.extension.security:
+        class: 'Hal\UI\Twig\SecurityExtension'
+        arguments: ['@csrf']
 
     twig.extension.github.cache:
         parent: 'cache.memory'
@@ -85,5 +76,10 @@ services:
         parent: 'panthor.twig.environment'
         calls:
             - ['addExtension', ['@twig.extension.hal']]
-            - ['addExtension', ['@twig.extension.hal.global' ]]
             - ['addExtension', ['@twig.extension.github']]
+            - ['addExtension', ['@twig.extension.security']]
+            - ['addGlobal', ['application_title', '%application.title%']]
+            - ['addGlobal', ['application_environment', '%application.environment%']]
+            - ['addGlobal', ['application_sha', '%application.sha%']]
+            - ['addGlobal', ['application_version', '%application.version%']]
+            - ['addGlobal', ['hal_administrators_email', '%administrator_email%']]

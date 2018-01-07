@@ -15,6 +15,7 @@ use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Security\AuthorizationService;
+use Hal\UI\Security\CSRFManager;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\MCP\Logger\MessageFactoryInterface;
@@ -35,7 +36,9 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
     use SessionTrait;
     use TemplatedControllerTrait;
 
+    public const ID_ATTRIBUTE = 'session_id';
     public const SESSION_ATTRIBUTE = 'user_id';
+    public const CSRF_ATTRIBUTE = 'csrf';
     public const USER_ATTRIBUTE = 'current_user';
     public const AUTHORIZATIONS_ATTRIBUTE = 'current_authorizations';
 
@@ -53,6 +56,11 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
     private $authorizationService;
 
     /**
+     * @var CSRFManager
+     */
+    private $csrf;
+
+    /**
      * @var URI
      */
     private $uri;
@@ -65,17 +73,20 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
     /**
      * @param EntityManagerInterface $em
      * @param AuthorizationService $authorizationService
+     * @param CSRFManager $csrf
      * @param URI $uri
      */
     public function __construct(
         EntityManagerInterface $em,
         AuthorizationService $authorizationService,
+        CSRFManager $csrf,
         URI $uri
     ) {
         $this->userRepo = $em->getRepository(User::class);
         $this->permissionRepo = $em->getRepository(UserPermission::class);
 
         $this->authorizationService = $authorizationService;
+        $this->csrf = $csrf;
         $this->uri = $uri;
     }
 
@@ -85,6 +96,11 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         $session = $this->getSession($request);
+        $sessionID = $session->get(self::ID_ATTRIBUTE);
+
+        if ($csrfs = $session->get(self::CSRF_ATTRIBUTE)) {
+            $this->csrf->loadCSRFs($csrfs, $sessionID);
+        }
 
         // If no user-id, continue on seamlessly.
         if (!$userID = $session->get(self::SESSION_ATTRIBUTE)) {
@@ -103,11 +119,16 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
 
         $this->attachUserToLogger($user);
 
+        // Save user to request attributes
         $request = $this->appendUserToRequest($request, $user);
         $request = $this->appendAuthorizationsToRequest($request, $user);
 
-        // Save user to request attributes
-        return $next($request, $response);
+        $response = $next($request, $response);
+
+        // Set the CSRFs so they can be rendered back out
+        $session->set(self::CSRF_ATTRIBUTE, $this->csrf->getCSRFs());
+
+        return $response;
     }
 
     /**
