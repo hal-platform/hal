@@ -13,7 +13,6 @@ use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Utility\ValidatorTrait;
 use Hal\UI\Validator\EncryptedPropertyValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -31,7 +30,6 @@ class AddEncryptedPropertyMiddleware implements MiddlewareInterface
     use RedirectableControllerTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
-    use ValidatorTrait;
 
     const MSG_SUCCESS = 'Encrypted Property "%s" added.';
 

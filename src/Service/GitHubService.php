@@ -18,6 +18,7 @@ use Github\ResultPager;
 use Hal\UI\VersionControl\GitHub\GitHubResolver;
 use Hal\UI\VersionControl\GitHub\GitHubURLBuilder;
 use Hal\UI\VersionControl\GitHub\RefSortingTrait;
+use Http\Client\Exception\RequestException;
 
 /**
  * Combine all individual github api services into a giant convenience service.
@@ -275,6 +276,10 @@ class GitHubService
     {
         try {
             $response = $api(...$params);
+
+        } catch (RequestException $e) {
+            $response = $default;
+
         } catch (RuntimeException $e) {
             $response = $default;
         }

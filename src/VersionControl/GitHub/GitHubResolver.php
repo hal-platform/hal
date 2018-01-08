@@ -12,6 +12,7 @@ use Github\Api\GitData\Commits as CommitsAPI;
 use Github\Api\GitData\References as ReferencesAPI;
 use Github\Api\PullRequest as PullRequestAPI;
 use Github\Exception\RuntimeException;
+use Http\Client\Exception\RequestException;
 
 class GitHubResolver
 {
@@ -258,6 +259,10 @@ class GitHubResolver
     {
         try {
             $response = $api(...$params);
+
+        } catch (RequestException $e) {
+            $response = $default;
+
         } catch (RuntimeException $e) {
             $response = $default;
         }

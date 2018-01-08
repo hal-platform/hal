@@ -41,7 +41,7 @@
                             <a href="{{ uriFor('id_providers', {'id_provider': idp.id}) }}">{{ idp|short_guid }}</a>
                         </td>
                         <td>
-                            {{ idp|idp_type }}
+                            {{ idp.formatType() }}
                         </td>
                         <td>
                             {{ idp.name }}

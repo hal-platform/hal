@@ -41,7 +41,7 @@
                             <a href="{{ uriFor('vcs_providers', {'vcs_provider': vcs.id}) }}">{{ vcs|short_guid }}</a>
                         </td>
                         <td>
-                            {{ vcs|vcs_type }}
+                            {{ vcs.formatType() }}
                         </td>
                         <td>
                             {{ vcs.name }}

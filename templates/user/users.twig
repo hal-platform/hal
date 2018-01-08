@@ -38,7 +38,7 @@
                             {% endif %}
                         </td>
                         <td>
-                            {{ user.provider|idp_type }}
+                            {{ user.provider.formatType() }}
                         </td>
                         <td>
                             {{ user.name }}
