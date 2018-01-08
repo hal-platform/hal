@@ -348,11 +348,11 @@ parameters:
                     method: 'GET'
                     route: ''
                     stack: ['build.page']
-# todo - csrf x 1
+
                 release.start:
                     method: ['GET', 'POST']
                     route: '/release'
-                    stack: ['middleware.require_csrf', 'deploy.select_environment.middleware', 'deploy.middleware', 'release.start.page']
+                    stack: ['middleware.require_csrf', 'deploy.middleware', 'release.start.page']
 
         builds.history.page1:
             method: 'GET'

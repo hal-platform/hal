@@ -7,19 +7,19 @@
 
 namespace Hal\UI\Controllers\Build;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Service\JobEventsService;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Hal\Core\Entity\Target;
 use Hal\Core\Entity\ScheduledAction;
 use Hal\Core\Entity\Job\JobMeta;
 use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Entity\JobType\Release;
+use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\Service\JobEventsService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class BuildController implements ControllerInterface
 {
@@ -45,9 +45,9 @@ class BuildController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param JobEventsService $eventsService
-     * @param EntityManager $em
+     * @param EntityManagerInterface $em
      */
-    public function __construct(TemplateInterface $template, JobEventsService $eventsService, EntityManager $em)
+    public function __construct(TemplateInterface $template, JobEventsService $eventsService, EntityManagerInterface $em)
     {
         $this->template = $template;
         $this->eventsService = $eventsService;

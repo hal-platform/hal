@@ -35,21 +35,13 @@ class UsersController implements ControllerInterface
     private $userRepo;
 
     /**
-     * @var callable
-     */
-    private $notFound;
-
-    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param callable $notFound
      */
-    public function __construct(TemplateInterface $template, EntityManagerInterface $em, callable $notFound)
+    public function __construct(TemplateInterface $template, EntityManagerInterface $em)
     {
         $this->template = $template;
         $this->userRepo = $em->getRepository(User::class);
-
-        $this->notFound = $notFound;
     }
 
     /**
@@ -58,14 +50,9 @@ class UsersController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $page = $this->getCurrentPage($request);
-        if ($page === null) {
-            return ($this->notFound)($request, $response);
-        }
 
         $users = $this->userRepo->getPagedResults(SharedStaticConfiguration::HUGE_PAGE_SIZE, ($page-1));
-
-        $total = count($users);
-        $last = ceil($total / SharedStaticConfiguration::HUGE_PAGE_SIZE);
+        $last = $this->getLastPage($users, SharedStaticConfiguration::HUGE_PAGE_SIZE);
 
         return $this->withTemplate($request, $response, $this->template, [
             'page' => $page,

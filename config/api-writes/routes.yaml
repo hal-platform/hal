@@ -12,5 +12,5 @@ parameters:
                     stack: ['middleware.api_writes_require_entity', 'build.start.api']
                 api.deploy:
                     method: 'POST'
-                    route: '/builds/{build:%r.build%}/deploy'
+                    route: '/builds/{build:%r.guid%}/deploy'
                     stack: ['middleware.api_writes_require_entity', 'deploy.api']

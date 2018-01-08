@@ -159,7 +159,7 @@ class StartBuildController implements ControllerInterface
             ];
         }
 
-        $available = $this->targetRepository->getByApplicationAndEnvironment($application, $environment);
+        $available = $this->targetRepository->findBy(['application' => $application, 'environment' => $environment]);
 
         $canPush = $userAuthorizations->canDeploy($application, $environment);
 

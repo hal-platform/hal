@@ -148,7 +148,7 @@ parameters:
                 ################################################################################################################
 
                 api.build.management:
-                    route: '/builds/{build:%r.build%}'
+                    route: '/builds/{build:%r.guid%}'
                     stack: ['middleware.api_require_entity']
                     routes:
                         api.build:
@@ -176,7 +176,7 @@ parameters:
                 ################################################################################################################
 
                 api.releases.management:
-                    route: '/releases/{release:%r.release%}'
+                    route: '/releases/{release:%r.guid%}'
                     stack: ['middleware.api_require_entity']
                     routes:
                         api.release:
