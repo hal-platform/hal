@@ -3,33 +3,31 @@
 {% import 'macros.git.twig' as git_macros %}
 {% import 'macros.pagination.twig' as pagination %}
 
-{% set page_title = 'Release History : ' ~ application.name %}
+{% set page_title = 'Rollback to previous deployment' %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+    <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
+    <li><a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Dashboard</a></li>
+{% endblock %}
 
 {% block content %}
-
-    <div class="nav--page">
-        <h1>Release History - <b>{{ application.name }}</b> to <b>{{ target.format(true) }}</b></h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Back to Application Dashboard</a>
-        </p>
-    </div>
 
     <h2>Target Details</h2>
     <ul class="meta-box">
         <li>
             <h6>Environment</h6>
-            <a href="{{ uriFor('environment', {'environment': target.group.environment.id}) }}">{{ target.group.environment.name }}</a>
+            <a href="{{ uriFor('environment', {'environment': target.environment.id}) }}">{{ target.environment.name }}</a>
         </li>
 
         <li>
             <h6>Target</h6>
-            <a href="{{ uriFor('target', {'application': target.application.id, 'target': target.id}) }}">{{ target.format(true) }}</a>
+            <a href="{{ uriFor('target', {'application': target.application.id, 'target': target.id}) }}">{{ target.name }}</a>
         </li>
 
         <li>
             <h6>Parameters</h6>
-            {{ target.formatParameters() }}
+            <code>{{ target.formatParameters() }}</code>
         </li>
 
         {% if target.url %}
@@ -45,74 +43,71 @@
         To rollback, simply choose a build, click <b>rollback</b>, and you'll be able to initate a new release.
     </p>
 
-    {% set canRollback = current_authorizations.canDeploy(application, target.group.environment) %}
+    {% set can_rollback = current_authorizations.canDeploy(application, target.environment) %}
 
     <h2>Release History</h2>
     <table class="table--spacing-medium">
         <thead>
             <tr>
-                <th>Build</th>
                 <th>Release</th>
-                <th class="table-priority-45">Reference</th>
-                <th class="table-priority-50">Commit</th>
-                <th>Released</th>
-                <th>User</th>
-                {% if canRollback %}
-                    <th class="t10"></th>
-                {% endif %}
+                <th>Build</th>
+                <th>Version Control</th>
+                <th>Deployed On</th>
+                <th class="t10"></th>
             </tr>
         </thead>
         <tbody>
-            {% for release in releases %}
-            <tr>
-                <td><a href="{{ uriFor('build', {'build': release.build.id}) }}">{{ release.build.id|formatBuildId }}</a></td>
-                <td>
-                    {% set statusClass = 'status-icon--info' %}
-                    {% if release.status == 'success' %}
-                        {% set statusClass = 'status-icon--success' %}
-                    {% elseif release.status == 'failure' %}
-                        {% set statusClass = 'status-icon--error' %}
-                    {% endif %}
-                    <span class="{{ statusClass }}">
-                        Release <a href="{{ uriFor('release', {'release': release.id}) }}">{{ release.id|formatPushId }}</a>
-                    </span>
-                </td>
+            {% if releases %}
+                {% for release in releases %}
+                    <tr>
+                        <td>
+                            {{ macros.job_status_prefix(release, true, false) }}
+                        </td>
 
-                <td class="table-priority-45">
-                    {{ git_macros.gitref(release.build, true) }}
-                </td>
-                <td class="table-priority-50">
-                    {{ git_macros.gitcommit(release.build) }}
-                </td>
-                <td>{{ release.end|html5date }}</td>
-                <td>
-                    {% if release.user %}
-                        <a href="{{ uriFor('user', {'user': release.user.id}) }}">{{ release.user.username }}</a>
-                    {% else %}
-                        Unknown
-                    {% endif %}
-                </td>
+                        <td><a href="{{ uriFor('build', {'build': release.build.id}) }}">{{ release.build.id|short_guid }}</a></td>
 
-                {% if canRollback %}
-                    <td class="tr">
-                        {% if release.build.status == 'removed' %}
-                            Removed
-                        {% elseif release.status == 'success'%}
-                            <a class="btn btn--tiny" href="{{ uriFor('release.start', {'build': release.build.id}, {'target': target.id}) }}">Rollback</a>
-                        {% endif %}
-                    </td>
-                {% endif %}
-            </tr>
+                        <td>
+                            {{ git_macros.vcs_ref(application, release.build) }}
+                            {{ git_macros.vcs_commit(application, release.build) }}
+                        </td>
+                        <td>
+                            {{ release.created|html5date }}
+                            by
+                            {{ macros.user_display_link(release.user) }}
+                        </td>
+
+                        <td class="tr">
+                            {% if release.build.status == 'removed' %}
+                                Removed
+                                {{ macros.status('Removed', 'error', 'spam-2') }}
+                            {% elseif release.inProgress() %}
+                                {{ macros.status('Please Wait', 'info', 'clock') }}
+                            {% elseif release.isSuccess() %}
+                                {% if can_rollback %}
+                                    <a class="btn btn--tiny" href="{{ uriFor('release.start', {'build': release.build.id}, {'target': target.id}) }}">Rollback</a>
+                                {% else %}
+                                    {{ macros.disabled_button('Rollback', 'tiny') }}
+                                {% endif %}
+                            {% else %}
+                                Cannot deploy
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
             {% else %}
-            <tr>
-                <td colspan="{{ canRollback ? 6 : 5 }}">
-                    There is no release history for this target.
-                </td>
-            </tr>
-            {% endfor %}
+                <tr>
+                    <td colspan="5">
+                        There is no release history for this target.
+                    </td>
+                </tr>
+            {% endif %}
         </tbody>
     </table>
 
     {{ pagination.pagination(page, last, 'rollback', {'application': application.id, 'target': target.id}) }}
+
+    <p>
+        <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Cancel</a>
+    </p>
 
 {% endblock %}

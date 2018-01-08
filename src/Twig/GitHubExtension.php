@@ -179,14 +179,14 @@ class GitHubExtension extends AbstractExtension
     /**
      * Check if a commit hash is the most recent for a given Github user, repo, and reference
      *
-     * @param string $user
+     * @param Application|null $application
      * @param string $repo
      * @param string $reference
      * @param string $commit
      *
      * @return bool
      */
-    public function commitIsCurrent($user, $repo, $reference, $commit)
+    public function commitIsCurrent($app,  $reference, $commit)
     {
         // debug
         // debug

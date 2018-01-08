@@ -24,7 +24,7 @@
                     <td>
                         {{ job.environment ? job.environment.name : 'Any' }}
                         {%- if job.target -%}
-                            → {{ job.target.format() }}
+                            → {{ job.target.name }}
                         {%- endif -%}
                     </td>
 

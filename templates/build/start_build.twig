@@ -1,9 +1,9 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
-{% import 'macros.start_deployment.twig' as deploy_macros %}
 {% import 'macros.form.twig' as form_macros %}
 {% import 'build/macros.twig' as build_macros %}
 {% import 'build/macros.start_build.twig' as start_build_macros %}
+{% import 'release/macros.start_deploy.twig' as deploy_macros %}
 
 {% set js_components = ['start_build'] %}
 {% set page_title = 'Start Build' %}
@@ -146,21 +146,22 @@
     <table class="table--spacing-medium">
         <thead>
             <tr>
-                <th>Deployment</th>
-                <th>Code Reference</th>
-                <th>Last Released</th>
-                <th class="js-toggle-container"></th>
+                <th>Target</th>
+                <th class="t30">Last Code Deployed</th>
+                <th class="t30">Last Deployed On</th>
+                <th class="t15"></th>
+
             </tr>
         </thead>
 
         <tbody>
             {% if available_targets %}
                 {% for target in available_targets %}
-                    {{ deploy_macros.render_deployment_row(target, target.release, '', can_deploy) }}
+                    {{ deploy_macros.render_deployment_row(target, target.lastJob, '', can_deploy) }}
                 {% endfor %}
             {% else %}
                 <tr>
-                    <td colspan="3">No targets available.</td>
+                    <td colspan="4">No targets available.</td>
                 </tr>
             {% endif %}
         </tbody>

@@ -9,14 +9,13 @@ namespace Hal\UI\Controllers\Release;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\Core\Entity\Build;
-use Hal\Core\Entity\Release;
 use Hal\Core\Entity\Target;
 use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\JobType\Build;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Flash;
 use Hal\UI\Service\StickyEnvironmentService;
 use Hal\UI\Validator\ReleaseValidator;
 use Psr\Http\Message\ResponseInterface;
@@ -26,11 +25,14 @@ use QL\Panthor\Utility\URI;
 
 class DeployMiddleware implements MiddlewareInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
 
-    const WAIT_FOR_IT = "The release has been queued and will be deployed shortly.";
+    public const SELECTED_ENVIRONMENT_ATTRIBUTE = 'selected_environment';
+
+    private const WAIT_FOR_IT = "The release has been queued and will be deployed shortly.";
 
     /**
      * @var EntityManagerInterface
@@ -45,8 +47,8 @@ class DeployMiddleware implements MiddlewareInterface
     /**
      * @var EntityRepository
      */
-    private $environmentRepository;
-    private $targetRepository;
+    private $environmentRepo;
+    private $targetRepo;
 
     /**
      * @var StickyEnvironmentService
@@ -70,8 +72,8 @@ class DeployMiddleware implements MiddlewareInterface
         StickyEnvironmentService $stickyService,
         URI $uri
     ) {
-        $this->environmentRepository = $em->getRepository(Environment::class);
-        $this->targetRepository = $em->getRepository(Target::class);
+        $this->environmentRepo = $em->getRepository(Environment::class);
+        $this->targetRepo = $em->getRepository(Target::class);
         $this->em = $em;
 
         $this->validator = $validator;
@@ -85,59 +87,120 @@ class DeployMiddleware implements MiddlewareInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         $build = $request->getAttribute(Build::class);
-        $environment = $this->getDeploymentEnvironment($request);
+        $form = $this->getFormData($request);
 
-        if ($request->getMethod() !== 'POST' || !$build->isSuccess() || !$environment) {
+        $context = ['form' => $form];
+
+        if (!$selectedEnvironment = $this->getSelectedEnvironment($request, $build)) {
+            return $next($request, $response);
+        }
+
+        $context[self::SELECTED_ENVIRONMENT_ATTRIBUTE] = $selectedEnvironment;
+        $request = $request->withAttribute(self::SELECTED_ENVIRONMENT_ATTRIBUTE, $selectedEnvironment);
+
+        if ($request->getMethod() !== 'POST') {
+            $request = $this->withContext($request, $context);
+            return $next($request, $response);
+        }
+
+        if (!$this->isCSRFValid($request)) {
+            $request = $this->withContext($request, $context);
             return $next($request, $response);
         }
 
         $user = $this->getUser($request);
-        $targets = $request->getParsedBody()['targets'] ?? [];
         $application = $build->application();
 
-        // passed separately, in case one day we support cross-env builds?
-        $releases = $this->validator->isValid($application, $user, $environment, $build, $targets);
+        $releases = $this->validator->isValid($application, $user, $selectedEnvironment, $build, $form['targets']);
 
         // Pass through to controller if errors
         if (!$releases) {
-            return $next(
-                $this->withContext($request, ['errors' => $this->validator->errors()]),
-                $response
-            );
+            $request = $this->withContext($request, $context + ['errors' => $this->validator->errors()]);
+            return $next($request, $response);
         }
 
-        // commit pushes
+        $this->saveChanges($releases);
+
+        // override sticky environment
+        $response = $this->stickyService->save($request, $response, $application->id(), $selectedEnvironment->id());
+
+        $this->withFlashSuccess($request, self::WAIT_FOR_IT);
+        return $this->withRedirectRoute($response, $this->uri, 'application.dashboard', ['application' => $application->id()]);
+    }
+
+    /**
+     * @param array $releases
+     *
+     * @return array
+     */
+    private function saveChanges(array $releases)
+    {
         foreach ($releases as $release) {
             // record pushes as active push on each deployment
             $target = $release->target();
-            $target->withRelease($release);
+            $target->withLastJob($release);
 
             $this->em->persist($target);
             $this->em->persist($release);
         }
 
         $this->em->flush();
-
-        // override sticky environment
-        $response = $this->stickyService->save($request, $response, $application->id(), $environment->id());
-
-        // flash and redirect
-        $this
-            ->getFlash($request)
-            ->withMessage(Flash::SUCCESS, self::WAIT_FOR_IT);
-
-        return $this->withRedirectRoute($response, $this->uri, 'application.dashboard', ['application' => $application->id()]);
     }
 
     /**
-     * The selected environment should have been populated by the previous middleware.
-     *
      * @param ServerRequestInterface $request
      *
-     * @return Environment
+     * @return array
      */
-    private function getDeploymentEnvironment(ServerRequestInterface $request)
+    private function getFormData(ServerRequestInterface $request)
     {
-        return $request->getAttribute(SelectEnvironmentMiddleware::SELECTED_ENVIRONMENT_ATTRIBUTE);
+        $data = $request->getParsedBody();
+
+        // load selected target, but only if fresh form and not posted
+        if ($request->getMethod() !== 'POST') {
+            $selected = $request->getQueryParams()['target'] ?? '';
+            $data['targets'] = $selected ? [$selected] : [];
+        }
+
+        $form = [
+            'targets' => $data['targets'] ?? [],
+        ];
+
+        return $form;
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param Build $build
+     *
+     * @return Environment|null
+     */
+    private function getSelectedEnvironment(ServerRequestInterface $request, Build $build)
+    {
+        if ($build->environment()) {
+            return $build->environment();
+        }
+
+        $queryString = $request->getQueryParams();
+
+        // used for rollbacks
+        $targetID = $queryString['target'] ?? '';
+
+        // used for env picker
+        $environmentID = $queryString['environment'] ?? '';
+
+        if ($targetID && $target = $this->targetRepo->find($targetID)) {
+            if ($target instanceof Target) {
+                return $target->environment();
+            }
+        }
+
+        if ($environmentID && $environment = $this->environmentRepo->find($environmentID)) {
+            if ($environment instanceof Environment) {
+                return $environment;
+            }
+        }
+
+        return null;
     }
 }

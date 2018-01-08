@@ -7,8 +7,8 @@
 
 {% block breadcrumb_links %}
     <li><a href="{{ uriFor('applications') }}">Applications</a></li>
-    <li><a href="{{ uriFor('application', {'application': build.application.id}) }}">{{ build.application.name }}</a></li>
-    <li><a href="{{ uriFor('application.dashboard', {'application': build.application.id}) }}">Dashboard</a></li>
+    <li><a href="{{ uriFor('application', {'application': release.application.id}) }}">{{ release.application.name }}</a></li>
+    <li><a href="{{ uriFor('application.dashboard', {'application': release.application.id}) }}">Dashboard</a></li>
 {% endblock %}
 
 {% block content %}
@@ -46,7 +46,8 @@
         <li>
             <h6>Target</h6>
             {% if release.target %}
-                <a href="{{ uriFor('group', {'group': release.target.group.id}) }}">{{ release.target.format }}</a>
+                {{ release.environment.name }} →
+                <a href="{{ uriFor('target', {'application': release.application.id, 'target': release.target.id}) }}">{{ release.target.name }}</a>
             {% else %}
                 Unknown
             {% endif %}
@@ -54,7 +55,7 @@
 
         <li>
             <h6>Parameters</h6>
-            {{ release.target.formatParameters }}
+            <code>{{ release.target.formatParameters() }}</code>
         </li>
 
         {% if release.target and release.target.url %}

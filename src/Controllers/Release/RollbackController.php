@@ -9,8 +9,8 @@ namespace Hal\UI\Controllers\Release;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Application;
-use Hal\Core\Entity\Release;
 use Hal\Core\Entity\Target;
+use Hal\Core\Entity\JobType\Release;
 use Hal\Core\Repository\ReleaseRepository;
 use Hal\UI\Controllers\PaginationTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
@@ -36,21 +36,13 @@ class RollbackController implements ControllerInterface
     private $releaseRepository;
 
     /**
-     * @var callable
-     */
-    private $notFound;
-
-    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param callable $notFound
      */
-    public function __construct(TemplateInterface $template, EntityManagerInterface $em, callable $notFound)
+    public function __construct(TemplateInterface $template, EntityManagerInterface $em)
     {
         $this->template = $template;
         $this->releaseRepository = $em->getRepository(Release::class);
-
-        $this->notFound = $notFound;
     }
 
     /**
@@ -62,14 +54,9 @@ class RollbackController implements ControllerInterface
         $target = $request->getAttribute(Target::class);
 
         $page = $this->getCurrentPage($request);
-        if ($page === null) {
-            return ($this->notFound)($request, $response);
-        }
 
         $releases = $this->releaseRepository->getByTarget($target, SharedStaticConfiguration::SMALL_PAGE_SIZE, ($page - 1));
-
-        $total = count($releases);
-        $last = ceil($total / SharedStaticConfiguration::SMALL_PAGE_SIZE);
+        $last = $this->getLastPage($releases, SharedStaticConfiguration::SMALL_PAGE_SIZE);
 
         return $this->withTemplate($request, $response, $this->template, [
             'page' => $page,

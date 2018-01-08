@@ -3,25 +3,27 @@
     {% import 'macros.git.twig' as git_macros %}
 
     {% set is_selected = (target.id == selected) %}
-    {% set in_progress = target.status in ['pending', 'running', 'deploying'] %}
-    {% set needs_credentials = target.group.isAWS() and not target.credential %}
+    {% set needs_credentials = target.isAWS() and not target.credential %}
 
     <tr>
         <td>
-            <span class="hint--right" aria-label="{{ target.group.format }}: {{ target.format }}">
-                {{ target.format(false) }}
+            <span class="hint--right" aria-label="{{ target.formatType() ~ ': ' ~ target.formatParameters() }}">
+                {{ target.name }}
             </span>
         </td>
         {% if release %}
             {% set build = release.build %}
 
             <td>
-                {% set is_gitref_current = githubCommitIsCurrent(build.application.github.owner, build.application.github.repository, build.reference, build.commit) %}
-                {{ git_macros.gitref(build, true, is_gitref_current) }}
-                ({{ git_macros.gitcommit(build) }})
+                {# todo #}
+                {% set is_gitref_current = githubCommitIsCurrent(build.application, build.reference, build.commit) %}
+                {# todo #}
+
+                {{ git_macros.vcs_ref(build.application, build) }}
+                {{ git_macros.vcs_commit(build.application, build) }}
             </td>
             <td>
-                {% if in_progress %}
+                {% if release.inProgress() %}
                     Now
                 {% else %}
                     {{ release.created|html5date }}
@@ -31,13 +33,13 @@
         {% else %}
 
             {# No successful releases #}
-            <td></td>
-            <td></td>
+            <td>Never deployed</td>
+            <td>Never deployed</td>
 
         {% endif %}
 
-        <td>
-            {% if in_progress %}
+        <td class="tr">
+            {% if release.inProgress() %}
                 {{ macros.status('Please Wait', 'info', 'clock') }}
 
             {% elseif needs_credentials %}

@@ -44,22 +44,14 @@ class ReleasesController implements ControllerInterface
     private $environmentRepo;
 
     /**
-     * @var callable
-     */
-    private $notFound;
-
-    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param callable $notFound
      */
-    public function __construct(TemplateInterface $template, EntityManagerInterface $em, callable $notFound)
+    public function __construct(TemplateInterface $template, EntityManagerInterface $em)
     {
         $this->template = $template;
         $this->releaseRepo = $em->getRepository(Release::class);
         $this->environmentRepo = $em->getRepository(Environment::class);
-
-        $this->notFound = $notFound;
     }
 
     /**
@@ -71,14 +63,9 @@ class ReleasesController implements ControllerInterface
         $searchFilter = $request->getQueryParams()['search'] ?? '';
 
         $page = $this->getCurrentPage($request);
-        if ($page === null) {
-            return ($this->notFound)($request, $response);
-        }
 
         $releases = $this->getReleases($application, ($page - 1), $searchFilter);
-
-        $total = count($releases);
-        $last = ceil($total / SharedStaticConfiguration::LARGE_PAGE_SIZE);
+        $last = $this->getLastPage($releases, SharedStaticConfiguration::LARGE_PAGE_SIZE);
 
         return $this->withTemplate($request, $response, $this->template, [
             'page' => $page,

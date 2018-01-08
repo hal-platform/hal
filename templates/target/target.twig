@@ -104,6 +104,20 @@
             <h6>Date Added</h6>
             {{ target.created|html5date }}
         </li>
+
+        <li>
+            <h6>What's currently deployed</h6>
+            {% if target.lastJob %}
+                {{ macros.job_status_prefix(target.lastJob, false, false) }}
+                on
+                {{ target.lastJob.created|html5date }}
+                by
+                {{ macros.user_display_link(target.lastJob.user) }}
+            {% else %}
+                Nothing!
+            {% endif %}
+        </li>
+
     </ul>
 {% endblock %}
 

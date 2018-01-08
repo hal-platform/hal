@@ -20,6 +20,11 @@
     <h2>Build Status</h2>
     {{ block('build_status') }}
 
+    {% if releases|length > 1 and releases|length < 10 %}
+        <h2>Deployment History</h2>
+        {{ block('deployment_history') }}
+    {% endif %}
+
     {% if scheduled %}
         <h2>Scheduled Actions</h2>
         {{ block('scheduled_actions') }}
@@ -92,13 +97,45 @@
             <li>
                 <h6>Deployed to</h6>
                 {% if releases|length == 1 %}
-                    {{ macros.job_status(releases|first, false) }} (Push <a href="#">{{ releases|first|short_guid }}</a>)
+                    {% set last_job = releases|first %}
+                    {{ macros.job_status_prefix(last_job, false, false) }}
+                    on
+                    {{ last_job.created|html5date }}
+                    by
+                    {{ macros.user_display_link(last_job.user) }}
                 {% elseif releases|length > 10 %}
                     This build was used in {{ releases|length }} separate deployments.
                 {% endif %}
             </li>
         {% endif %}
     </ul>
+{% endblock %}
+
+{% block deployment_history %}
+    <table class="table--spacing-medium">
+        <thead>
+            <tr>
+                <th class="t20">Release</th>
+                <th class="t20">Time</th>
+                <th>Deployment Target</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for release in releases %}
+                <tr>
+                    <td>{{ macros.job_status_prefix(release, false, false) }}</td>
+                    <td>{{ release.created|html5date }}</td>
+                    <td>
+                        {% if release.id == release.target.lastJob.id %}
+                            {{ macros.status('LIVE', 'success') }}
+                        {% endif %}
+                        {{ release.environment.name }} →
+                        <a href="{{ uriFor('target', {'application': release.application.id, 'target': release.target.id}) }}">{{ release.target.name }}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
 
 {% block deploy_build_button %}

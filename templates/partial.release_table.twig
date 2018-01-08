@@ -15,20 +15,16 @@
             <td>{{ macros.job_status_prefix(release, true) }}</td>
             <td>
                 {% if release.target %}
-                    {{ release.target.group.environment.name }} → {{ release.target.format(true) }}
+                    {{ release.target.environment.name }} → {{ release.target.name }}
                 {% else %}
                     Unknown
                 {% endif %}
             </td>
-            <td>Build <a href="{{ uriFor('build', {'build': release.build.id}) }}">{{ release.build.id|shortGUID }}</a></td>
+            <td>Build <a href="{{ uriFor('build', {'build': release.build.id}) }}">{{ release.build.id|short_guid }}</a></td>
             <td>
                 {{ release.created|html5date }}
                 by
-                {% if release.user %}
-                    {{ release.user.username }}
-                {% else %}
-                    Unknown
-                {% endif %}
+                {{ macros.user_display_link(release.user) }}
             </td>
         </tr>
     {% else %}

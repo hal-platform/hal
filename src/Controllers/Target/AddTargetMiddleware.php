@@ -28,8 +28,8 @@ class AddTargetMiddleware implements MiddlewareInterface
     use SessionTrait;
     use TemplatedControllerTrait;
 
-    const MSG_SUCCESS = 'Deployment target added.';
-    const MSG_MORE_LIKE_THIS = <<<'HTML'
+    private const MSG_SUCCESS = 'Deployment target added.';
+    private const MSG_MORE_LIKE_THIS = <<<'HTML'
 Add more like this? <a href="%s">Continue adding deployment targets.</a>
 HTML;
 

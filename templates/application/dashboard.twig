@@ -1,6 +1,6 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
-{% import 'application/macros.twig' as app_macros %}
+{% import 'application/macros.dashboard.twig' as app_macros %}
 {% set js_components = ['application_dashboard'] %}
 
 {% set page_title = 'Application Dashboard' %}
@@ -63,7 +63,7 @@
         <ul class="cards">
             {% for target in targets %}
                 <li data-deploy="{{ target.id }}">
-                    {{ app_macros.pushCard(application, target, target.release) }}
+                    {{ app_macros.push_card(application, target, target.lastJob) }}
                 </li>
             {% endfor %}
         </ul>
