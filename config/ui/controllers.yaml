@@ -361,10 +361,7 @@ services:
 
     target.add.page:
         class: 'Hal\UI\Controllers\Target\AddTargetController'
-        arguments:
-            - '@target.add.twig'
-            - '@doctrine.em'
-            - '@uri'
+        arguments: ['@target.add.twig', '@doctrine.em']
     target.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['target/add_target.twig']]]

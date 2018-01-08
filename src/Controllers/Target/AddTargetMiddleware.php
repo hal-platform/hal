@@ -11,25 +11,22 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Environment;
 use Hal\Core\Repository\EnvironmentRepository;
-use Hal\UI\Controllers\APITrait;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Flash;
 use Hal\UI\Validator\TargetValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
 
 class AddTargetMiddleware implements MiddlewareInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
-    use APITrait, TemplatedControllerTrait {
-        APITrait::withNewBody insteadof TemplatedControllerTrait;
-    }
+    use TemplatedControllerTrait;
 
     const MSG_SUCCESS = 'Deployment target added.';
     const MSG_MORE_LIKE_THIS = <<<'HTML'
@@ -54,7 +51,7 @@ HTML;
     /**
      * @var EnvironmentRepository
      */
-    private $environmentRepository;
+    private $environmentRepo;
 
     /**
      * @param EntityManagerInterface $em
@@ -67,7 +64,7 @@ HTML;
         URI $uri
     ) {
         $this->em = $em;
-        $this->environmentRepository = $this->em->getRepository(Environment::class);
+        $this->environmentRepo = $this->em->getRepository(Environment::class);
 
         $this->validator = $validator;
         $this->uri = $uri;
@@ -78,37 +75,44 @@ HTML;
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if ($request->getMethod() !== 'POST') {
-            return $next($request, $response);
-        }
-
-        $selected = $request->getQueryParams();
         $application = $request->getAttribute(Application::class);
         $form = $this->getFormData($request);
 
-        $target = $this->validator->isValid($application, ...array_values($form));
+        $context = ['form' => $form];
 
-        if (!$target) {
-            return $next(
-                $this->withContext($request, ['errors' => $this->validator->errors()]),
-                $response
-            );
+        if (!$selectedEnvironment = $this->getSelectedEnvironment($request)) {
+            return $next($request, $response);
         }
 
-        // persist to database
+        $context['selected_environment'] = $selectedEnvironment;
+        $request = $request->withAttribute('selected_environment', $selectedEnvironment);
+
+        if ($request->getMethod() !== 'POST') {
+            $request = $this->withContext($request, $context);
+            return $next($request, $response);
+        }
+
+        if (!$this->isCSRFValid($request)) {
+            $request = $this->withContext($request, $context);
+            return $next($request, $response);
+        }
+
+        $target = $this->validator->isValid($application, $selectedEnvironment, $form['deployment_type'], $form);
+
+        if (!$target) {
+            $request = $this->withContext($request, $context + ['errors' => $this->validator->errors()]);
+            return $next($request, $response);
+        }
+
         $this->em->persist($target);
         $this->em->flush();
 
         // Clear cached query for buildable environments
-        $this->environmentRepository->clearBuildableEnvironmentsByApplication($application);
+        $this->environmentRepo->clearBuildableEnvironmentsByApplication($application);
 
-        $formPage = $this->uri->uriFor(
-            'target.add',
-            ['application' => $application->id()],
-            ['environment' => $target->group()->environment()->id()]
-        );
+        $formPage = $this->uri->uriFor('target.add', ['application' => $application->id()], ['environment' => $target->environment()->id()]);
 
-        $this->withFlash($request, Flash::SUCCESS, self::MSG_SUCCESS, sprintf(self::MSG_MORE_LIKE_THIS, $formPage));
+        $this->withFlashSuccess($request, self::MSG_SUCCESS, sprintf(self::MSG_MORE_LIKE_THIS, $formPage));
         return $this->withRedirectRoute($response, $this->uri, 'targets', ['application' => $application->id()]);
     }
 
@@ -119,30 +123,41 @@ HTML;
      */
     private function getFormData(ServerRequestInterface $request)
     {
+        $data = $request->getParsedBody();
+        $type = $data['deployment_type'] ?? '';
+
         $form = [
-            'group' => $request->getParsedBody()['group'] ?? '',
+            'deployment_type' => $type,
+            'template' => $data['template'] ?? '',
 
-            'name' => $request->getParsedBody()['name'] ?? '',
-            'path' => $request->getParsedBody()['path'] ?? '',
+            'name' => $data['name'] ?? '',
+            'url' => $data['url'] ?? '',
 
-            'cd_name' => $request->getParsedBody()['cd_name'] ?? '',
-            'cd_group' => $request->getParsedBody()['cd_group'] ?? '',
-            'cd_config' => $request->getParsedBody()['cd_config'] ?? '',
-
-            'eb_name' => $request->getParsedBody()['eb_name'] ?? '',
-            'eb_environment' => $request->getParsedBody()['eb_environment'] ?? '',
-
-            's3_method' => $request->getParsedBody()['s3_method'] ?? '',
-            's3_bucket' => $request->getParsedBody()['s3_bucket'] ?? '',
-            's3_local_path' => $request->getParsedBody()['s3_local_path'] ?? '',
-            's3_remote_path' => $request->getParsedBody()['s3_remote_path'] ?? '',
-
-            'script_context' => $request->getParsedBody()['script_context'] ?? '',
-
-            'url' => $request->getParsedBody()['url'] ?? '',
-            'credential' => $request->getParsedBody()['credential'] ?? ''
+            'script_context' => $data['script_context'] ?? '',
+            'credential' => $data['credential'] ?? ''
         ];
 
-        return $form;
+        return $form + $this->validator->getTargetFormData($request, $type, null);
+    }
+
+    /**
+     * @param mixed $selected
+     *
+     * @return Environment|null
+     */
+    private function getSelectedEnvironment(ServerRequestInterface $request)
+    {
+        $selected = $request->getQueryParams()['environment'] ?? '';
+
+        if (!$selected) {
+            return null;
+        }
+
+        $env = $this->environmentRepo->find($selected);
+        if ($env) {
+            return $env;
+        }
+
+        return null;
     }
 }

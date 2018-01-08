@@ -38,7 +38,7 @@
         {% if environments %}
             {{ block('start_build_button') }}
 
-            <h2 class="mbn">Select Target <small>(optional)</small></h2>
+            <h2>Select Deployment Targets <small>(optional)</small></h2>
             {{ block('select_deploy_targets') }}
         {% endif %}
 
@@ -110,19 +110,19 @@
     </p>
 
     <ul>
-        {% set isSelected = form.environment == '!any' or environments|length == 0 %}
+        {% set is_selected = form.environment == '!any' or environments|length == 0 ? ' checked' : '' %}
         <li>
             <label for="env-any">
-                <input class="js-environment-selector" id="env-any" type="radio" name="environment" value="!any"{{ isSelected ? ' checked' : '' }}>
+                <input class="js-environment-selector" id="env-any" type="radio" name="environment" value="!any"{{ is_selected }}>
                 Any (deploy to any environment)
             </label>
         </li>
 
         {% for env in environments %}
-            {% set isSelected = form.environment == env.id %}
+            {% set is_selected = form.environment == env.id ? ' checked' : '' %}
             <li>
                 <label for="env-{{ env.id }}">
-                    <input class="js-environment-selector" id="env-{{ env.id }}" type="radio" name="environment" value="{{ env.id }}"{{ isSelected ? 'checked' : '' }}>
+                    <input class="js-environment-selector" id="env-{{ env.id }}" type="radio" name="environment" value="{{ env.id }}"{{ is_selected }}>
                     {{ env.name }}
                 </label>
             </li>
@@ -132,8 +132,16 @@
 
 {% block select_deploy_targets %}
     <p>
-        Targets will only be deployed to if the build succeeds. Alternatively, you can manually deploy builds once finished.
+        Schedule an action to automatically trigger after this build is complete. Alternatively, you can manually deploy builds once finished.
     </p>
+
+    <ul>
+        {% set is_selected = form.environment == '!any' or environments|length == 0 ? ' checked' : '' %}
+        <li>
+            <h4>Condition</h4>
+            <p>On Success</p>
+        </li>
+    </ul>
 
     <table class="table--spacing-medium">
         <thead>
@@ -146,9 +154,15 @@
         </thead>
 
         <tbody>
-            {% for target in available_targets %}
-                {{ deploy_macros.render_deployment_row(target, target.release, '', can_deploy) }}
-            {% endfor %}
+            {% if available_targets %}
+                {% for target in available_targets %}
+                    {{ deploy_macros.render_deployment_row(target, target.release, '', can_deploy) }}
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="3">No targets available.</td>
+                </tr>
+            {% endif %}
         </tbody>
     </table>
 {% endblock %}

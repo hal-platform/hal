@@ -76,7 +76,7 @@ class VCS
             return $vcsService;
         }
 
-        $this->errors = $adapter->errors();
+        $this->importErrors($adapter->errors());
         return null;
     }
 }

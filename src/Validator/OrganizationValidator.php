@@ -14,7 +14,7 @@ use Hal\Core\Entity\Organization;
 class OrganizationValidator
 {
     use ValidatorErrorTrait;
-    use NewValidatorTrait;
+    use ValidatorTrait;
 
     private const REGEX_CHARACTER_WHITESPACE = '\f\n\r\t\v';
     private const ERR_NAME_CHARACTERS = 'Name must not contain tabs or newlines';

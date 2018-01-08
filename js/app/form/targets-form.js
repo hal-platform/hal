@@ -17,7 +17,8 @@ function initTargetForm() {
 function attach($container) {
     let $options = $container
         .find(SELECTOR)
-        .find(`[data-${OPTION_DATA_ATTRIBUTE}]`);
+        .filter(`[data-${OPTION_DATA_ATTRIBUTE}]`);
+        // .find(`[data-${OPTION_DATA_ATTRIBUTE}]`);  # if <select>
 
     toggle($container, $options);
 
@@ -29,7 +30,8 @@ function attach($container) {
 function changeHandler($container) {
     return (e) => {
         let $options = $(e.target)
-            .find(`[data-${OPTION_DATA_ATTRIBUTE}]`);
+            .filter(`[data-${OPTION_DATA_ATTRIBUTE}]`);
+            // .find(`[data-${OPTION_DATA_ATTRIBUTE}]`); # if <select>
 
         toggle($container, $options);
     };
@@ -37,8 +39,13 @@ function changeHandler($container) {
 
 function toggle($container, $options) {
     let selectedType = $options
-        .filter(':selected')
+        .filter(':checked')
+        // .filter(':selected') # if <select>
         .data(OPTION_DATA_ATTRIBUTE);
+
+    if (!selectedType) {
+        return;
+    }
 
     $container
         .find(HIDEABLE_FIELDS)

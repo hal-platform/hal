@@ -1,235 +1,223 @@
 {% extends 'base.twig' %}
 {% import 'macros.form.twig' as form_macros %}
 
-{% set page_title = 'Edit Target : ' ~ application.name %}
+{% set page_title = 'Edit Target' %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+    <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
+    <li><a href="{{ uriFor('targets', {'application': application.id}) }}">Deployment Targets</a></li>
+    <li><a href="{{ uriFor('target', {'application': application.id, 'target': target.id}) }}">{{ target.name}}</a></li>
+{% endblock %}
 
 {% block content %}
-    <h1>Edit Target - <b>{{ application.name }}</b></h1>
-
-    <ul class="meta-box">
-        <li>
-            <h6>Application</h6>
-            <a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a>
-        </li>
-
-        <li>
-            <h6>Group</h6>
-            <a href="{{ uriFor('group', {'group': target.group.id}) }}">{{ target.group.format }}</a>
-        </li>
-
-        <li>
-            <h6>Environment</h6>
-            {{ target.group.environment.name }}
-        </li>
-    </ul>
-
-    <h4>Type</h4>
-    <p>{{ target.group.formatHumanType }}</p>
+    {{ block('meta') }}
 
     {{ form_macros.form_errors(errors, is_csrf_error) }}
 
-    <div class="form-wrapper">
+    <h4>Type</h4>
+    <p>{{ target.formatType() }}</p>
 
-        <form method="post">
-            {{ form_macros.csrf_input('target.edit') }}
+    <form method="post">
+        {{ form_macros.csrf_input('target.edit') }}
 
-            <ul class="form-fields">
+        <ul class="form-fields form-wrapper">
 
-                <li>
-                    <label for="name">Name</label>
-                    <input class="text-input" type="text" name="name" id="name" maxlength="80" value="{{ form.name }}" pattern="^[^\n\t]+">
-                    <small class="additional">
-                        Optionally, give a deployment a unique name for easy reference or to avoid confusion with multiple deployments to the same group.
-                    </small>
-                </li>
+            <li>
+                <label for="template">Template</label>
+                {% if templates %}
+                    <select class="select-input" name="template" id="template" required data-target-select>
+                        <option></option>
+                        {% for template in templates %}
+                            {% set isSelected = (template.id == form.template) %}
+                            <option value="{{ template.id }}"{{ isSelected ? ' selected' : '' }} data-target-type="{{ template.type }}">{{ template.format() }}</option>
+                        {% endfor %}
+                    </select>
+                {% else %}
+                    No templates available.
+                {% endif %}
+            </li>
 
-                <li>
-                    <label for="url">URL</label>
-                    <input class="text-input" type="url" name="url" id="url" maxlength="200" value="{{ form.url }}">
-                    <small class="additional">Add a URL to help users find where the code is deployed.</small>
-                </li>
+            <li>
+                <label for="name">Name</label>
+                <input class="text-input" type="text" name="name" id="name" maxlength="80" value="{{ form.name }}" pattern="^[^\n\t]+">
+            </li>
 
-                {#
-                    RSYNC
-                #}
-                <li>
-                    {% set isDisabled = (target.group.type == 'rsync') ? '' : ' disabled' %}
-                    <label for="path">
-                        File path
-                        <small class="additional">
-                            <b>Rsync groups only</b><br>
-                        </small>
-                    </label>
-                    <input class="text-input" type="text" name="path" id="path" maxlength="200" value="{{ form.path }}" pattern="^\/[^\n\t]+"{{ isDisabled }}>
-                    <small class="additional">
-                        The absolute path to the file directory on the group.
+            <li>
+                <label for="url">URL</label>
+                <input class="text-input" type="url" name="url" id="url" maxlength="200" value="{{ form.url }}" placeholder="https://{{ selected_environment.name }}.example.com">
+                <small><b>Optional.</b> Add a URL to help users find where the project is deployed.</small>
+            </li>
+
+            <li>
+                <label for="script_context">Script Context</label>
+                <input class="text-input" type="text" name="script_context" id="script_context" maxlength="100" value="{{ form.script_context }}">
+                <small>
+                    <b>Optional.</b> Pass extra context text or data to your scripts and commands in your <code>.hal9000.yml</code> configuration.
+                    <b style="color:indianred">Do not use this for secrets!</b>
+                </small>
+            </li>
+
+            {#
+                RSYNC
+            #}
+            {% if target.type in ['rsync'] %}
+                <li data-type-specific data-rsync>
+                    <label for="rsync_servers">Server hostnames</label>
+                    <input class="text-input" type="text" name="rsync_servers" id="rsync_servers" maxlength="200" value="{{ form.rsync_servers }}">
+                    <small>
+                        The absolute path to the file directory on the server.
                         Paths must begin with a forward slash (/).
                     </small>
                 </li>
 
-                {#
-                    Script
-                #}
-                <li>
-                    <label for="script_context">
-                        Script Context
-                    </label>
-                    <input class="text-input" type="text" name="script_context" id="script_context" maxlength="100" value="{{ form.script_context }}" pattern="^[^\n\t]+">
-                    <small class="additional">
-                        Optionally, pass extra context text or data to your scripts and commands in your <code>.hal9000.yml</code> configuration.
-                        <b>Do not use this for secrets!</b>
+                <li data-type-specific data-rsync>
+                    <label for="rsync_path">File path</label>
+                    <input class="text-input" type="text" name="rsync_path" id="rsync_path" maxlength="200" value="{{ form.rsync_path }}" pattern="^\/[^\n\t]+">
+                    <small>
+                        The absolute path to the file directory on the server.
+                        Paths must begin with a forward slash (/).
                     </small>
                 </li>
+            {% endif %}
 
-                {#
-                    CodeDeploy
-                #}
-                <li>
-                    {% set isDisabled = (target.group.type == 'cd') ? '' : ' disabled' %}
-                    <label for="cd_name">
-                        CodeDeploy Application Name
-                        <small class="additional">
-                            <b>CD groups only</b>
-                        </small>
-                    </label>
-                    <input class="text-input" type="text" name="cd_name" id="cd_name" maxlength="100" value="{{ form.cd_name }}" pattern="^[^\n\t]+"{{ isDisabled }}>
-                </li>
-
-                <li>
-                    {% set isDisabled = (target.group.type == 'cd') ? '' : ' disabled' %}
-                    <label for="cd_group">
-                        CodeDeploy Deployment Group
-                        <small class="additional">
-                            <b>CD groups only</b>
-                        </small>
-                    </label>
-                    <input class="text-input" type="text" name="cd_group" id="cd_group" maxlength="100" value="{{ form.cd_group }}" pattern="^[^\n\t]+"{{ isDisabled }}>
-                </li>
-
-                <li>
-                    {% set isDisabled = (target.group.type == 'cd') ? '' : ' disabled' %}
-                    <label for="cd_config">
-                        CodeDeploy Configuration
-                        <small class="additional">
-                            <b>CD groups only</b>
-                        </small>
-                    </label>
-                    <input class="text-input" type="text" name="cd_config" id="cd_config" maxlength="100" value="{{ form.cd_config }}" pattern="^[^\n\t]+"{{ isDisabled }}>
-                </li>
-
-                {#
-                    Elastic Beanstalk
-                #}
-                <li>
-                    {% set isDisabled = (target.group.type == 'eb') ? '' : ' disabled' %}
-                    <label for="eb_name">
-                        Elastic Beanstalk Application Name
-                        <small class="additional">
-                            <b>EB groups only</b>
-                        </small>
-                    </label>
-                    <input class="text-input" type="text" name="eb_name" id="eb_name" maxlength="100" value="{{ form.eb_name }}" pattern="^[^\n\t]+"{{ isDisabled }}>
-                </li>
-
-                <li>
-                    {% set isDisabled = (target.group.type == 'eb') ? '' : ' disabled' %}
-                    <label for="eb_environment">
-                        Elastic Beanstalk Environment Name or ID
-                        <small class="additional">
-                            <b>EB groups only</b>
-                        </small>
-                    </label>
-                    <input class="text-input" type="text" name="eb_environment" id="eb_environment" maxlength="100" value="{{ form.eb_environment }}" pattern="^[^\n\t]+"{{ isDisabled }}>
-                </li>
-
-                {#
-                    S3
-                #}
-                {% set isDisabled = (target.group.type in ['s3', 'eb', 'cd']) ? '' : ' disabled' %}
-                <li>
-                    <label for="s3_bucket">
-                        S3 Bucket
-                        <small class="additional">
-                            <b>S3, CD and EB groups only</b>
-                        </small>
-                    </label>
-                    <input class="text-input" type="text" name="s3_bucket" id="s3_bucket" maxlength="100" value="{{ form.s3_bucket }}" pattern="^[^\n\t]+"{{ isDisabled }}>
-                </li>
-
-                {% set isDisabled = (target.group.type == 's3') ? '' : ' disabled' %}
+            {#
+                AWS
+            #}
+            {% if target.type in ['s3', 'cd', 'eb'] %}
                 <li data-type-specific data-s3 data-eb data-cd>
-                    <label for="s3_method">
-                        S3 Method
-                    </label>
-                    <select class="select-input" name="s3_method" id="s3_method"{{ isDisabled }}>
-                        {% for method in s3_methods %}
-                            {% set isSelected = (method == form.s3_method) %}
-                            <option value="{{ method }}"{{ isSelected ? ' selected' : '' }}>{{ method }}</option>
+                    <label for="aws_region">AWS Region</label>
+                    <select class="select-input" name="aws_region" id="aws_region">
+                        <option></option>
+                        {% for region in aws_regions %}
+                            {% set is_selected = form.aws_region == region ? ' selected' : '' %}
+                            <option value="{{ region }}"{{ is_selected }}>{{ region }}</option>
                         {% endfor %}
                     </select>
                 </li>
+            {% endif %}
 
-                {% set isDisabled = (target.group.type in ['s3', 'eb', 'cd']) ? '' : ' disabled' %}
-                <li data-type-specific data-s3 data-eb data-cd>
-                    <label for="s3_local_path">
-                        S3 Local Path
-                    </label>
-                    <input class="text-input" type="text" name="s3_local_path" id="s3_local_path" maxlength="100" value="{{ form.s3_local_path }}" pattern="^[^\n\t]+"{{ isDisabled }}>
-                    <small>
-                        <br>Leave blank to use <code>.</code>.
-                    </small>
+            {#
+                CodeDeploy
+            #}
+            {% if target.type in ['cd'] %}
+                <li data-type-specific data-cd>
+                    <label for="cd_name">CodeDeploy Application Name</label>
+                    <input class="text-input" type="text" name="cd_name" id="cd_name" maxlength="100" value="{{ form.cd_name }}">
                 </li>
 
+                <li data-type-specific data-cd>
+                    <label for="cd_group">CodeDeploy Deployment Group</label>
+                    <input class="text-input" type="text" name="cd_group" id="cd_group" maxlength="100" value="{{ form.cd_group }}">
+                </li>
+
+                <li data-type-specific data-cd>
+                    <label for="cd_config">CodeDeploy Configuration</label>
+                    <input class="text-input" type="text" name="cd_config" id="cd_config" maxlength="100" value="{{ form.cd_config }}">
+                </li>
+            {% endif %}
+
+            {#
+                Elastic Beanstalk
+            #}
+            {% if target.type in ['eb'] %}
+                <li data-type-specific data-eb>
+                    <label for="eb_name">Elastic Beanstalk Application Name</label>
+                    <input class="text-input" type="text" name="eb_name" id="eb_name" maxlength="100" value="{{ form.eb_name }}">
+                </li>
+
+                <li data-type-specific data-eb>
+                    <label for="eb_environment">Elastic Beanstalk Environment Name or ID</label>
+                    <input class="text-input" type="text" name="eb_environment" id="eb_environment" maxlength="100" value="{{ form.eb_environment }}">
+                </li>
+            {% endif %}
+
+            {#
+                S3
+            #}
+            {% if target.type in ['s3', 'cd', 'eb'] %}
+                {% if target.type in ['s3'] %}
+                    <li data-type-specific data-s3>
+                        <label for="s3_method">S3 Method</label>
+                        <select class="select-input" name="s3_method" id="s3_method">
+                            <option></option>
+                            {% for method in s3_methods %}
+                                {% set is_selected = form.s3_method == method ? ' selected' : '' %}
+                                <option value="{{ method }}"{{ is_selected }}>{{ method }}</option>
+                            {% endfor %}
+                        </select>
+                    </li>
+
+
+                    <li data-type-specific data-s3>
+                        <label for="s3_local_path">S3 Local Path</label>
+                        <input class="text-input" type="text" name="s3_local_path" id="s3_local_path" maxlength="100" value="{{ form.s3_local_path }}">
+                        <small>
+                            Leave blank to use <code>.</code>.
+                        </small>
+                    </li>
+                {% endif %}
+
+                <li data-type-specific data-s3 data-eb data-cd>
+                    <label for="s3_bucket">S3 Bucket</label>
+                    <input class="text-input" type="text" name="s3_bucket" id="s3_bucket" maxlength="100" value="{{ form.s3_bucket }}">
+                </li>
+
+                <li data-type-specific data-s3 data-eb data-cd>
+                    <label for="s3_remote_path">S3 Remote Path</label>
+                    <input class="text-input" type="text" name="s3_remote_path" id="s3_remote_path" maxlength="100" value="{{ form.s3_remote_path }}">
+                    <small>
+                        Available placeholders:
+                        <ul class="inline-list--comma">
+                            <li><code>$APPID</code></li>
+                            <li><code>$APPNAME</code></li>
+                            <li><code>$BUILDID</code></li>
+                            <li><code>$PUSHID</code></li>
+                            <li><code>$DATE</code> (YYYYMMDD)</li>
+                            <li><code>$TIME</code> (HHMMSS)</li>
+                        </ul>
+                        <br>Leave blank to use <code>$PUSHID.tar.gz</code> (S3) or <code>$APPID/$PUSHID.(zip|tar.gz)</code> (EB, CD).
+                    </small>
+                </li>
+            {% endif %}
+
+            {#
+                S3, EB, CD
+            #}
             <li data-type-specific data-s3 data-eb data-cd>
-                <label for="s3_remote_path">
-                    S3 Remote Path
-                </label>
-                <input class="text-input" type="text" name="s3_remote_path" id="s3_remote_path" maxlength="100" value="{{ form.s3_remote_path }}" pattern="^[^\n\t]+"{{ isDisabled }}>
-                <small class="additional">
-                    Available placeholders:
-                    <ul class="inline-list--comma">
-                        <li><code>$APPID</code></li>
-                        <li><code>$APPNAME</code></li>
-                        <li><code>$BUILDID</code></li>
-                        <li><code>$PUSHID</code></li>
-                        <li><code>$DATE</code> (YYYYMMDD)</li>
-                        <li><code>$TIME</code> (HHMMSS)</li>
-                    </ul>
-                    <br>Leave blank to use <code>$PUSHID.tar.gz</code> (S3) or <code>$APPID/$PUSHID.(zip|tar.gz)</code> (EB, CD).
+                <label for="credential">Credentials</label>
+                <select class="select-input" name="credential" id="credential">
+                    <option></option>
+                    {% for credential in credentials %}
+                        {% set is_selected = form.credential == credential.id ? ' selected' : '' %}
+                        <option value="{{ credential.id }}"{{ is_selected }}>{{ credential.name }} ({{ credential.formatType() }})</option>
+                    {% endfor %}
+                </select>
+                <small>
+                    Credentials are required for AWS-based deployments.
                 </small>
             </li>
+        </ul>
 
-                {#
-                    S3, EB, CD
-                #}
-                <li>
-                    <label for="credential">Credentials</label>
-                    <select class="select-input" name="credential" id="credential">
-                        <option></option>
-                        {% for credential in credentials %}
-                            {% set isSelected = (credential.id == form.credential) %}
+        <p>
+            <button class="btn btn--action" type="submit">Save Changes</button>
+            <a href="{{ uriFor('target', {'application': application.id, 'target': target.id}) }}">Cancel</a>
+        </p>
 
-                            {% if credential.type == 'aws' %}
-                                {% set type = 'AWS' %}
-                            {% else %}
-                                {% set type = 'Private Key' %}
-                            {% endif %}
+    </form>
 
-                            <option value="{{ credential.id }}"{{ isSelected ? ' selected' : '' }}>{{ credential.name }} ({{ type }})</option>
-                        {% endfor %}
-                    </select>
-                    <small class="additional">
-                        Credentials must be assigned for AWS-based deployments.
-                    </small>
-                </li>
+{% endblock %}
 
-            </ul>
+{% block meta %}
+    <ul class="meta-box">
+        <li>
+            <h6>Application</h6>
+            {{ application.name }}
+        </li>
 
-            <ul class="list--bare">
-                <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
-                <li><a class="btn" href="{{ uriFor('target', {'application': application.id, 'target': target.id}) }}">Cancel</a></li>
-            </ul>
-        </form>
-    </div>
-
+        <li>
+            <h6>Environment</h6>
+            {{ target.environment.name }}
+        </li>
+    </ul>
 {% endblock %}

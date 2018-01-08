@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2016 Quicken Loans Inc.
+ * @copyright (c) 2017 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -15,9 +15,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Target;
 use Hal\Core\Entity\Environment;
-use Hal\Core\Entity\Group;
 use Hal\Core\Repository\EnvironmentRepository;
-use Hal\Core\Type\EnumType\GroupEnum;
 use Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -35,8 +33,6 @@ class TargetsController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $groupRepo;
-    private $applicationRepo;
     private $targetRepo;
 
     /**
@@ -52,7 +48,6 @@ class TargetsController implements ControllerInterface
     {
         $this->template = $template;
         $this->environmentRepo = $em->getRepository(Environment::class);
-        $this->groupRepo = $em->getRepository(Group::class);
         $this->targetRepo = $em->getRepository(Target::class);
     }
 
@@ -63,53 +58,43 @@ class TargetsController implements ControllerInterface
     {
         $application = $request->getAttribute(Application::class);
 
-        $environments = $this->getEnvironmentsAsAssocArray();
+        $environments = $this->environmentRepo->getAllEnvironmentsSorted();
+        $targets = $this->targetRepo->findBy(['application' => $application]);
 
         return $this->withTemplate($request, $response, $this->template, [
-            'environments' => $environments,
             'application' => $application,
 
-            'targets_by_env' => $this->environmentalizeTargets($application, $environments)
+            'sorted_targets' => $this->environmentalizeTargets($environments, $targets)
         ]);
     }
 
     /**
-     * @return Environment[]
-     */
-    private function getEnvironmentsAsAssocArray()
-    {
-        $environments = $this->environmentRepo->getAllEnvironmentsSorted();
-
-        $envs = [];
-        foreach ($environments as $env) {
-            $envs[$env->name()] = $env;
-        }
-
-        return $envs;
-    }
-
-    /**
-     * @param Application $application
-     * @param Environment[] $environments
+     * @param array $environments
+     * @param array $targets
      *
      * @return array
      */
-    private function environmentalizeTargets(Application $application, array $environments)
+    private function environmentalizeTargets(array $environments, array $targets)
     {
-        $targets = $this->targetRepo->findBy(['application' => $application]);
         $sorter = $this->targetSorter();
         usort($targets, $sorter);
 
-        $env = [];
+        $sorted = [];
+
         foreach ($environments as $environment) {
-            $env[$environment->name()] = [];
+            $sorted[$environment->id()] = [
+                'environment' => $environment,
+                'targets' => []
+            ];
         }
 
         foreach ($targets as $target) {
-            $name = $target->group()->environment()->name();
-            $env[$name][] = $target;
+            $id = $target->environment()->id();
+            $sorted[$id]['targets'][] = $target;
         }
 
-        return $env;
+        return array_filter($sorted, function($e) {
+            return count($e['targets']) !== 0;
+        });
     }
 }

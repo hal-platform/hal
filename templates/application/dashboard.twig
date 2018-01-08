@@ -37,25 +37,24 @@
 
 {% block env_picker %}
     {% if environments|length > 0 %}
-    <h4>Change environment</h4>
+        <h4>Change environment</h4>
         <ul class="tabs">
             {% for environment in environments %}
                 {% set is_selected = environment.id == selected_environment.id ? 'active' : '' %}
-                <li class="{{ is_selected }}">
-                    <a href="{{ uriFor('application.dashboard', {'application': application.id}, {'environment': environment.id}) }}">
+                <li>
+                    <a href="{{ uriFor('application.dashboard', {'application': application.id}, {'environment': environment.id}) }}" class="{{ is_selected }}">
                         <span class="tab-text">{{ environment.name }}</span>
                     </a>
                 </li>
             {% endfor %}
 
             {% set is_selected = selected_environment == '' ? 'active' : '' %}
-            <li class="{{ is_selected }}">
-                <a href="{{ uriFor('application.dashboard', {'application': application.id}, {'environment': ''}) }}">
+            <li>
+                <a href="{{ uriFor('application.dashboard', {'application': application.id}, {'environment': ''}) }}" class="{{ is_selected }}">
                     <span class="tab-text">None</span>
                 </a>
             </li>
         </ul>
-
     {% endif %}
 {% endblock %}
 

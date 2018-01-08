@@ -5,110 +5,39 @@
 
 {% set can_edit = current_authorizations.isSuper() or current_authorizations.isOwnerOf(application) %}
 
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+    <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
+    <li><a href="{{ uriFor('targets', {'application': application.id}) }}">Deployment Targets</a></li>
+{% endblock %}
+
 {% block content %}
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
+    {{ block('meta') }}
 
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('application', {'application': application.id}) }}">Back to Application</a>
-        </p>
-    </div>
-
-    <ul class="meta-box">
-        <li>
-            <h6>Application</h6>
-            {{ application.name }}
-        </li>
-
-        <li>
-            <h6>Target Template</h6>
-            {{ target.group.format(false) }}
-        </li>
-
-        <li>
-            <h6>Environment</h6>
-            {{ target.group.environment.name }}
-        </li>
-    </ul>
+    <h4>ID</h4>
+    <p>{{ target.id|short_guid }}</p>
 
     <h4>Name</h4>
-    <p>{{ target.name ?: 'None' }}</p>
+    <p>{{ target.name }}</p>
 
     <h4>Type</h4>
-    <p>{{ target.group.format }}</p>
+    <p>{{ target.formatType() }}</p>
 
     <h4>Credentials</h4>
     <p>
         {% if target.credential %}
-            {{ target.credential.name }}
-            {% if target.credential.type == 'aws_static' %}
-                (AWS Static Key)
-            {% elseif target.credential.type == 'aws_role' %}
-                (AWS Role)
-            {% elseif target.credential.type == 'privatekey' %}
-                (Private Key)
-            {% endif %}
-        {% elseif target.group.isAWS %}
+            {{ target.credential.name }} ({{ target.credential.formatType() }})
+        {% elseif target.isAWS() %}
             {{ macros.status('None', 'error', 'spam-2') }}
         {% else %}
             None
         {% endif %}
     </p>
 
-    {% if target.group.type == 'rsync' %}
-
-        <h4>File path</h4>
-        <p><code>{{ target.parameter('path') }}</code></p>
-
-    {% elseif target.group.type == 'eb' %}
-
-        <h4>Elastic Beanstalk Application Name</h4>
-        <p><code>{{ target.parameter('application') }}</code></p>
-
-        <h4>Elastic Beanstalk Environment</h4>
-        <p><code>{{ target.parameter('environment') }}</code></p>
-
-        <h4>S3 Bucket</h4>
-        <p><code>{{ target.parameter('bucket') }}</code></p>
-
-        <h4>S3 File</h4>
-        <p><code>{{ target.parameter('path') ?: '$APPID/$PUSHID.zip' }}</code></p>
-
-    {% elseif target.group.type == 's3' %}
-
-        <h4>S3 Method</h4>
-        <p><code>{{ target.parameter('s3_method') }}</code></p>
-
-        <h4>S3 Bucket</h4>
-        <p><code>{{ target.parameter('bucket') }}</code></p>
-
-        <h4>S3 Source</h4>
-        <p><code>{{ target.parameter('source') ?: '.' }}</code></p>
-
-        <h4>S3 Destination</h4>
-        <p><code>{{ target.parameter('path') }}</code></p>
-
-    {% elseif target.group.type == 'cd' %}
-
-        <h4>CodeDeploy Application Name</h4>
-        <p><code>{{ target.parameter('application') }}</code></p>
-
-        <h4>CodeDeploy Deployment Group</h4>
-        <p><code>{{ target.parameter('group') }}</code></p>
-
-        <h4>CodeDeploy Configuration</h4>
-        <p><code>{{ target.parameter('configuration') }}</code></p>
-
-        <h4>S3 Bucket</h4>
-        <p><code>{{ target.parameter('bucket') }}</code></p>
-
-        <h4>S3 File</h4>
-        <p><code>{{ target.parameter('path') ?: '$APPID/$PUSHID.zip' }}</code></p>
-
-    {% endif %}
-
     <h4>Script Context</h4>
-    <p><code>{{ target.parameter('context') ?: 'None' }}</code></p>
+    <p>
+        <code>{{ target.parameter('context') ?: 'None' }}</code>
+    </p>
 
     <h4>URL</h4>
     <p>
@@ -119,23 +48,163 @@
         {% endif %}
     </p>
 
-    <ul class="list--bare">
+    <hr>
+
+    {% if target.type == 'rsync' %}
+        {{ block('rsync_meta') }}
+
+    {% elseif target.type == 'script' %}
+        {{ block('script_meta') }}
+
+    {% elseif target.type == 'eb' %}
+        {{ block('eb_meta') }}
+
+    {% elseif target.type == 's3' %}
+        {{ block('s3_meta') }}
+
+    {% elseif target.type == 'cd' %}
+        {{ block('cd_meta') }}
+
+    {% endif %}
+
+    <p>
+        {% if can_edit %}
+            <a class="btn btn--action" href="{{ uriFor('target.edit', {'application': application.id, 'target': target.id}) }}">Edit Target</a></li>
+        {% else %}
+            {{ macros.disabled_button('Edit Target') }}
+        {% endif %}
+
+        {% if can_edit %}
+            <a class="btn btn--destructive" href="{{ uriFor('target.remove', {'application': application.id, 'target': target.id}) }}">Remove Target</a></li>
+        {% else %}
+            {{ macros.disabled_button('Remove Target') }}
+        {% endif %}
+    </p>
+
+{% endblock %}
+
+{% block meta %}
+    <ul class="meta-box">
         <li>
-            <a class="btn" href="{{ uriFor('targets', {'application': application.id}) }}">Deployment Targets</a>
+            <h6>Application</h6>
+            {{ application.name }}
         </li>
+
         <li>
-            {% if can_edit %}
-                <a class="btn btn--action" href="{{ uriFor('target.edit', {'application': application.id, 'target': target.id}) }}">Edit Target</a></li>
-            {% else %}
-                {{ macros.disabled_button('Edit Target') }}
-            {% endif %}
+            <h6>Environment</h6>
+            {{ target.environment.name }}
+        </li>
+
         <li>
-            {% if can_edit %}
-                <a class="btn btn--destructive" href="{{ uriFor('target.remove', {'application': application.id, 'target': target.id}) }}">Remove Target</a></li>
-            {% else %}
-                {{ macros.disabled_button('Remove Target') }}
-            {% endif %}
+            <h6>Target Template</h6>
+            {{ target.template ? target.template.name: 'None' }}
+        </li>
+
+        <li>
+            <h6>Date Added</h6>
+            {{ target.created|html5date }}
         </li>
     </ul>
+{% endblock %}
 
+{% block rsync_meta %}
+    <h4>Servers</h4>
+    <p>
+        <code>{{ target.parameter('servers') }}</code>
+    </p>
+
+    <h4>File path</h4>
+    <p>
+        <code>{{ target.parameter('path') }}</code>
+    </p>
+{% endblock %}
+
+{% block script_meta %}
+
+{% endblock %}
+
+{% block cd_meta %}
+    <h4>AWS Region</h4>
+    <p>
+        <code>{{ target.parameter('region') }}</code>
+    </p>
+
+    <h4>CodeDeploy Application Name</h4>
+    <p>
+        <code>{{ target.parameter('application') }}</code>
+    </p>
+
+    <h4>CodeDeploy Deployment Group</h4>
+    <p>
+        <code>{{ target.parameter('group') }}</code>
+    </p>
+
+    <h4>CodeDeploy Configuration</h4>
+    <p>
+        <code>{{ target.parameter('configuration') }}</code>
+    </p>
+
+    <h4>S3 Bucket</h4>
+    <p>
+        <code>{{ target.parameter('bucket') }}</code>
+    </p>
+
+    <h4>S3 File</h4>
+    <p>
+        <code>{{ target.parameter('path') ?: '$APPID/$PUSHID.zip' }}</code>
+    </p>
+{% endblock %}
+
+{% block eb_meta %}
+    <h4>AWS Region</h4>
+    <p>
+        <code>{{ target.parameter('region') }}</code>
+    </p>
+
+    <h4>Elastic Beanstalk Application Name</h4>
+    <p>
+        <code>{{ target.parameter('application') }}</code>
+    </p>
+
+    <h4>Elastic Beanstalk Environment</h4>
+    <p>
+        <code>{{ target.parameter('environment') }}</code>
+    </p>
+
+    <h4>S3 Bucket</h4>
+    <p>
+        <code>{{ target.parameter('bucket') }}</code>
+    </p>
+
+    <h4>S3 File</h4>
+    <p>
+        <code>{{ target.parameter('path') ?: '$APPID/$PUSHID.zip' }}</code>
+    </p>
+{% endblock %}
+
+{% block s3_meta %}
+    <h4>AWS Region</h4>
+    <p>
+        <code>{{ target.parameter('region') }}</code>
+    </p>
+
+    <h4>S3 Method</h4>
+    <p>
+        <code>{{ target.parameter('s3_method') }}</code>
+    </p>
+
+    <h4>S3 Bucket</h4>
+    <p>
+        <code>{{ target.parameter('bucket') }}</code>
+    </p>
+
+    <h4>S3 Source</h4>
+    <p>
+        <code>{{ target.parameter('source') ?: '.' }}</code>
+    </p>
+
+    <h4>S3 Destination</h4>
+    <p>
+        <code>{{ target.parameter('path') }}</code>
+    </p>
 {% endblock %}

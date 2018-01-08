@@ -134,7 +134,6 @@ class StartBuildController implements ControllerInterface
         ];
     }
 
-
     /**
      * @param Application $application
      * @param UserAuthorizations $userAuthorizations

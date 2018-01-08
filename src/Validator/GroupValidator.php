@@ -17,7 +17,7 @@ use Hal\Core\AWS\AWSAuthenticator;
 class GroupValidator
 {
     use ValidatorErrorTrait;
-    use NewValidatorTrait;
+    use ValidatorTrait;
 
     private const REGEX_CHARACTER_CLASS_HOST = '[a-zA-Z0-9]{1}[a-zA-Z0-9\.\-]{1,59}(\:[0-9]{1,5})?';
 

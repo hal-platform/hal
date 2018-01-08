@@ -155,7 +155,7 @@
         </li>
         <li>
             <h6>Type</h6>
-            {{ remove.entity|credential_type }}
+            {{ remove.entity.formatType() }}
         </li>
     </ul>
 {% endblock %}
@@ -206,15 +206,15 @@
         </li>
         <li>
             <h6>Environment</h6>
-            {{ remove.entity.group.environment.name }}
+            {{ remove.entity.environment.name }}
         </li>
         <li>
             <h6>Name</h6>
-            {{ remove.entity.name ?: 'None' }}
+            {{ remove.entity.name }}
         </li>
         <li>
             <h6>Type</h6>
-            {{ remove.entity.group.format(true) }}
+            {{ remove.entity.formatType() }}
         </li>
     </ul>
 {% endblock %}

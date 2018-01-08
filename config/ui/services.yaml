@@ -46,7 +46,31 @@ services:
 
     target.validator:
         class: 'Hal\UI\Validator\TargetValidator'
-        arguments: ['@doctrine.em']
+        arguments:
+            - '@doctrine.em'
+            -
+                cd: '@target.cd.validator'
+                eb: '@target.eb.validator'
+                rsync: '@target.rsync.validator'
+                s3: '@target.s3.validator'
+                script: '@target.script.validator'
+
+    target.cd.validator:
+        class: 'Hal\UI\Validator\Targets\CodeDeployValidator'
+        arguments: ['@target.s3.validator']
+
+    target.eb.validator:
+        class: 'Hal\UI\Validator\Targets\ElasticBeanstalkValidator'
+        arguments: ['@target.s3.validator']
+
+    target.rsync.validator:
+        class: 'Hal\UI\Validator\Targets\RSyncValidator'
+
+    target.s3.validator:
+        class: 'Hal\UI\Validator\Targets\S3Validator'
+
+    target.script.validator:
+        class: 'Hal\UI\Validator\Targets\ScriptValidator'
 
     ######################################################################################################################
     # TWIG TEMPLATING

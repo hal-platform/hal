@@ -196,18 +196,22 @@ class HalExtension extends AbstractExtension
     public function formatIDP($provider)
     {
         if ($provider instanceof UserIdentityProvider) {
-            $provider = $provider->type();
+            return $provider->formatType();
         }
 
         switch ($provider) {
             case IdentityProviderEnum::TYPE_INTERNAL:
                 return 'Internal';
+
             case IdentityProviderEnum::TYPE_LDAP:
                 return 'LDAP';
+
             case IdentityProviderEnum::TYPE_GITHUB:
                 return 'GitHub.com';
+
             case IdentityProviderEnum::TYPE_GITHUB_ENTERPRISE:
                 return 'GitHub Ent.';
+
             default:
                 return 'Unknown';
         }
@@ -221,16 +225,19 @@ class HalExtension extends AbstractExtension
     public function formatVCS($provider)
     {
         if ($provider instanceof VersionControlProvider) {
-            $provider = $provider->type();
+            return $provider->formatType();
         }
 
         switch ($provider) {
             case VCSProviderEnum::TYPE_GIT:
                 return 'Git';
+
             case VCSProviderEnum::TYPE_GITHUB:
                 return 'GitHub.com';
+
             case VCSProviderEnum::TYPE_GITHUB_ENTERPRISE:
                 return 'GitHub Ent.';
+
             default:
                 return 'Unknown';
         }
@@ -244,16 +251,19 @@ class HalExtension extends AbstractExtension
     public function formatCredential($credential)
     {
         if ($credential instanceof Credential) {
-            $credential = $credential->type();
+            return $credential->formatType();
         }
 
         switch ($credential) {
-            case CredentialEnum::TYPE_AWS_STATIC:
-                return 'AWS Static Token';
             case CredentialEnum::TYPE_AWS_ROLE:
                 return 'AWS STS Role';
+
+            case CredentialEnum::TYPE_AWS_STATIC:
+                return 'AWS Static Token';
+
             case CredentialEnum::TYPE_PRIVATEKEY:
                 return 'Private Key';
+
             default:
                 return 'Unknown';
         }

@@ -6,16 +6,24 @@
 
 {% set page_title = 'Add Deployment Target' %}
 
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+    <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
+    <li><a href="{{ uriFor('targets', {'application': application.id}) }}">Deployment Targets</a></li>
+{% endblock %}
+
 {% block content %}
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
+    {{ block('meta') }}
 
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('targets', {'application': application.id}) }}">Back to Deployment Targets</a>
-            <a class="btn btn--small btn--back" href="{{ uriFor('application', {'application': application.id}) }}">Manage Application</a>
-        </p>
-    </div>
+    {% if selected_environment %}
+        {{ block('add_form') }}
+    {% else %}
+        {{ block('env_picker') }}
+    {% endif %}
 
+{% endblock %}
+
+{% block meta %}
     <ul class="meta-box">
         <li>
             <h6>Application</h6>
@@ -30,81 +38,90 @@
             </li>
         {% endif %}
     </ul>
-
-    {% if selected_environment %}
-        <div class="form-wrapper js-targets-form">
-            {{ form_macros.formErrors(errors) }}
-
-            {{ block('add_form') }}
-        </div>
-    {% else %}
-        {{ block('env_picker') }}
-    {% endif %}
-
 {% endblock %}
 
 {% block env_picker %}
-
     <p>
-        Select a datacenter provider and environment.
+        Select an environment to add deployment configuration.
     </p>
 
-    <ul class="list--bare">
+    <p>
         {% for env in environments %}
-            <li>
-                <a class="btn" href="{{ uriFor('target.add', {'application': application.id}, {'environment': env.id}) }}">
-                    {% if env.isProduction %}
-                        {{ macros.icon('key') }}
-                    {% endif %}
-                    {{ env.name }}
-                </a>
-            </li>
+            <a class="btn" href="{{ uriFor('target.add', {'application': application.id}, {'environment': env.id}) }}">
+                {% if env.isProduction %}
+                    {{ macros.icon('key') }}
+                {% endif %}
+                {{ env.name }}
+            </a>
         {% endfor %}
-    </ul>
+    </p>
 
 {% endblock %}
 
 {% block add_form %}
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
 
-    <form method="post" action="{{ uriFor('target.add', {application: application.id}, {'environment': selected_environment.id}) }}">
+    <form method="post" class="js-targets-form" action="{{ uriFor('target.add', {application: application.id}, {'environment': selected_environment.id}) }}">
+        {{ form_macros.csrf_input('target.add') }}
 
-        <ul class="form-fields">
+        <ul class="form-fields form-wrapper">
             <li>
-                <label for="group">Template</label>
-                <select class="select-input" name="group" id="group" required data-target-select>
-                    <option></option>
-                    {% for group in groups %}
-                        {% set isSelected = (group.id == form.group) %}
-                        <option value="{{ group.id }}"{{ isSelected ? ' selected' : '' }} data-target-type="{{ group.type }}">{{ group.format(false) }}</option>
+                <label for="template">Template</label>
+                {% if templates %}
+                    <select class="select-input" name="template" id="template" required data-target-select>
+                        <option></option>
+                        {% for template in templates %}
+                            {% set isSelected = (template.id == form.template) %}
+                            <option value="{{ template.id }}"{{ isSelected ? ' selected' : '' }} data-target-type="{{ template.type }}">{{ template.format() }}</option>
+                        {% endfor %}
+                    </select>
+                {% else %}
+                    No templates available.
+                {% endif %}
+            </li>
+
+            <li>
+                <label>Deployment Type</label>
+                <ul>
+                    {% for type in deployment_types %}
+                        {% set is_selected = form.deployment_type == type ? ' checked' : '' %}
+                        <li>
+                            <label for="type-{{ type }}">
+                                <input type="radio" id="type-{{ type }}" name="deployment_type" value="{{ type }}" data-target-select data-target-type="{{ type }}"{{ is_selected }}>
+                                {% if type == 'rsync' -%}
+                                    RSync (On-premises Linux)
+                                {%- elseif type == 'eb' -%}
+                                    Elastic Beanstalk (AWS)
+                                {%- elseif type == 'cd' -%}
+                                    CodeDeploy (AWS)
+                                {%- elseif type == 's3' -%}
+                                    S3 (AWS)
+                                {%- elseif type == 'script' -%}
+                                    Script (Any)
+                                {%- endif %}
+                            </label>
+                        </li>
                     {% endfor %}
-                </select>
+                </ul>
             </li>
 
             <li>
                 <label for="name">Name</label>
-                <input class="text-input" type="text" name="name" id="name" maxlength="80" value="{{ form.name }}" pattern="^[^\n\t]+">
-                <small class="additional">
-                    Optionally, give a target a unique name.
-                </small>
+                <input class="text-input" type="text" name="name" id="name" maxlength="80" value="{{ form.name }}" required>
             </li>
 
             <li>
                 <label for="url">URL</label>
-                <input class="text-input" type="url" name="url" id="url" maxlength="200" value="{{ form.url }}">
-                <small class="additional">Add a URL to help users find where the code is deployed.</small>
+                <input class="text-input" type="url" name="url" id="url" maxlength="200" value="{{ form.url }}" placeholder="https://{{ selected_environment.name }}.example.com">
+                <small><b>Optional.</b> Add a URL to help users find where the project is deployed.</small>
             </li>
 
-            {#
-                Script
-            #}
             <li>
-                <label for="script_context">
-                    Script Context
-                </label>
-                <input class="text-input" type="text" name="script_context" id="script_context" maxlength="100" value="{{ form.script_context }}" pattern="^[^\n\t]+">
-                <small class="additional">
-                    Optionally, pass extra context text or data to your scripts and commands in your <code>.hal9000.yml</code> configuration.
-                    <b>Do not use this for secrets!</b>
+                <label for="script_context">Script Context</label>
+                <input class="text-input" type="text" name="script_context" id="script_context" maxlength="100" value="{{ form.script_context }}">
+                <small>
+                    <b>Optional.</b> Pass extra context text or data to your scripts and commands in your <code>.hal9000.yml</code> configuration.
+                    <b style="color:indianred">Do not use this for secrets!</b>
                 </small>
             </li>
 
@@ -112,45 +129,56 @@
 
         <hr>
 
-        <ul class="form-fields">
+        <ul class="form-fields form-wrapper">
 
             {#
                 RSYNC
             #}
             <li data-type-specific data-rsync>
-                <label for="path">
-                    File path
-                </label>
-                <input class="text-input" type="text" name="path" id="path" maxlength="200" value="{{ form.path }}" pattern="^\/[^\n\t]+">
-                <small class="additional">
+                <label for="rsync_servers">Server hostnames</label>
+                <input class="text-input" type="text" name="rsync_servers" id="rsync_servers" maxlength="200" value="{{ form.rsync_servers }}">
+                <small>
                     The absolute path to the file directory on the server.
                     Paths must begin with a forward slash (/).
                 </small>
             </li>
 
+            <li data-type-specific data-rsync>
+                <label for="rsync_path">File path</label>
+                <input class="text-input" type="text" name="rsync_path" id="rsync_path" maxlength="200" value="{{ form.rsync_path }}" pattern="^\/[^\n\t]+">
+                <small>
+                    The absolute path to the file directory on the server.
+                    Paths must begin with a forward slash (/).
+                </small>
+            </li>
+
+            <li data-type-specific data-s3 data-eb data-cd>
+                <label for="aws_region">AWS Region</label>
+                <select class="select-input" name="aws_region" id="aws_region">
+                    <option></option>
+                    {% for region in aws_regions %}
+                        {% set is_selected = form.aws_region == region ? ' selected' : '' %}
+                        <option value="{{ region }}"{{ is_selected }}>{{ region }}</option>
+                    {% endfor %}
+                </select>
+            </li>
 
             {#
                 CodeDeploy
             #}
             <li data-type-specific data-cd>
-                <label for="cd_name">
-                    CodeDeploy Application Name
-                </label>
-                <input class="text-input" type="text" name="cd_name" id="cd_name" maxlength="100" value="{{ form.cd_name }}" pattern="^[^\n\t]+">
+                <label for="cd_name">CodeDeploy Application Name</label>
+                <input class="text-input" type="text" name="cd_name" id="cd_name" maxlength="100" value="{{ form.cd_name }}">
             </li>
 
             <li data-type-specific data-cd>
-                <label for="cd_group">
-                    CodeDeploy Deployment Group
-                </label>
-                <input class="text-input" type="text" name="cd_group" id="cd_group" maxlength="100" value="{{ form.cd_group }}" pattern="^[^\n\t]+">
+                <label for="cd_group">CodeDeploy Deployment Group</label>
+                <input class="text-input" type="text" name="cd_group" id="cd_group" maxlength="100" value="{{ form.cd_group }}">
             </li>
 
             <li data-type-specific data-cd>
-                <label for="cd_config">
-                    CodeDeploy Configuration
-                </label>
-                <input class="text-input" type="text" name="cd_config" id="cd_config" maxlength="100" value="{{ form.cd_config }}" pattern="^[^\n\t]+">
+                <label for="cd_config">CodeDeploy Configuration</label>
+                <input class="text-input" type="text" name="cd_config" id="cd_config" maxlength="100" value="{{ form.cd_config }}">
             </li>
 
 
@@ -158,57 +186,46 @@
                 Elastic Beanstalk
             #}
             <li data-type-specific data-eb>
-                <label for="eb_name">
-                    Elastic Beanstalk Application Name
-                </label>
-                <input class="text-input" type="text" name="eb_name" id="eb_name" maxlength="100" value="{{ form.eb_name }}" pattern="^[^\n\t]+">
+                <label for="eb_name">Elastic Beanstalk Application Name</label>
+                <input class="text-input" type="text" name="eb_name" id="eb_name" maxlength="100" value="{{ form.eb_name }}">
             </li>
 
             <li data-type-specific data-eb>
-                <label for="eb_environment">
-                    Elastic Beanstalk Environment Name or ID
-                </label>
-                <input class="text-input" type="text" name="eb_environment" id="eb_environment" maxlength="100" value="{{ form.eb_environment }}" pattern="^[^\n\t]+">
+                <label for="eb_environment">Elastic Beanstalk Environment Name or ID</label>
+                <input class="text-input" type="text" name="eb_environment" id="eb_environment" maxlength="100" value="{{ form.eb_environment }}">
             </li>
 
             {#
                 S3
             #}
             <li data-type-specific data-s3 data-eb data-cd>
-                <label for="s3_bucket">
-                    S3 Bucket
-                </label>
-                <input class="text-input" type="text" name="s3_bucket" id="s3_bucket" maxlength="100" value="{{ form.s3_bucket }}" pattern="^[^\n\t]+">
+                <label for="s3_bucket">S3 Bucket</label>
+                <input class="text-input" type="text" name="s3_bucket" id="s3_bucket" maxlength="100" value="{{ form.s3_bucket }}">
             </li>
 
-            <li data-type-specific data-s3 data-eb data-cd>
-                <label for="s3_method">
-                    S3 Method
-                </label>
+            <li data-type-specific data-s3>
+                <label for="s3_method">S3 Method</label>
                 <select class="select-input" name="s3_method" id="s3_method">
+                    <option></option>
                     {% for method in s3_methods %}
-                        {% set isSelected = (method == form.s3_method) %}
-                        <option value="{{ method }}"{{ isSelected ? ' selected' : '' }}>{{ method }}</option>
+                        {% set is_selected = form.s3_method == method ? ' selected' : '' %}
+                        <option value="{{ method }}"{{ is_selected }}>{{ method }}</option>
                     {% endfor %}
                 </select>
             </li>
 
-            <li data-type-specific data-s3 data-eb data-cd>
-                <label for="s3_local_path">
-                    S3 Local Path
-                </label>
-                <input class="text-input" type="text" name="s3_local_path" id="s3_local_path" maxlength="100" value="{{ form.s3_local_path }}" pattern="^[^\n\t]+">
+            <li data-type-specific data-s3>
+                <label for="s3_local_path">S3 Local Path</label>
+                <input class="text-input" type="text" name="s3_local_path" id="s3_local_path" maxlength="100" value="{{ form.s3_local_path }}">
                 <small>
-                    <br>Leave blank to use <code>.</code>.
+                    Leave blank to use <code>.</code>.
                 </small>
             </li>
 
             <li data-type-specific data-s3 data-eb data-cd>
-                <label for="s3_remote_path">
-                    S3 Remote Path
-                </label>
-                <input class="text-input" type="text" name="s3_remote_path" id="s3_remote_path" maxlength="100" value="{{ form.s3_remote_path }}" pattern="^[^\n\t]+">
-                <small class="additional">
+                <label for="s3_remote_path">S3 Remote Path</label>
+                <input class="text-input" type="text" name="s3_remote_path" id="s3_remote_path" maxlength="100" value="{{ form.s3_remote_path }}">
+                <small>
                     Available placeholders:
                     <ul class="inline-list--comma">
                         <li><code>$APPID</code></li>
@@ -222,34 +239,25 @@
                 </small>
             </li>
 
-            <li data-type-specific data-s3 data-eb data-cd data-elb>
+            <li data-type-specific data-s3 data-eb data-cd>
                 <label for="credential">Credentials</label>
                 <select class="select-input" name="credential" id="credential">
                     <option></option>
                     {% for credential in credentials %}
-                        {% set isSelected = (credential.id == form.credential) %}
-
-                        {% if credential.type == 'aws_assume' %}
-                            {% set type = 'AWS Role' %}
-                        {% elseif credential.type == 'aws_static' %}
-                            {% set type = 'AWS Static' %}
-                        {% else %}
-                            {% set type = 'N/A' %}
-                        {% endif %}
-
-                        <option value="{{ credential.id }}"{{ isSelected ? ' selected' : '' }}>{{ credential.name }} ({{ type }})</option>
+                        {% set is_selected = form.credential == credential.id ? ' selected' : '' %}
+                        <option value="{{ credential.id }}"{{ is_selected }}>{{ credential.name }} ({{ credential.formatType() }})</option>
                     {% endfor %}
                 </select>
-                <small class="additional">
+                <small>
                     Credentials are required for AWS-based deployments.
                 </small>
             </li>
         </ul>
 
-        <ul class="list--bare">
-            <li><input class="btn btn--action" type="submit" value="Add Target"></li>
-            <li><a class="btn" href="{{ uriFor('targets', {'application': application.id}) }}">Cancel</a></li>
-        </ul>
+        <p>
+            <button class="btn btn--action" type="submit">Add Target</button>
+            <a href="{{ uriFor('targets', {'application': application.id}) }}">Cancel</a>
+        </p>
 
     </form>
 

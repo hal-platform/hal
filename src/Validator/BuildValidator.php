@@ -21,7 +21,7 @@ use Hal\UI\VersionControl\VCS;
 class BuildValidator
 {
     use ValidatorErrorTrait;
-    use NewValidatorTrait;
+    use ValidatorTrait;
 
     const ERR_NO_PERMISSION = 'You do not have permission to create a build for this application.';
     const ERR_UNKNOWN_REF = 'You must select a valid git reference.';

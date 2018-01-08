@@ -20,7 +20,7 @@ use Hal\Core\Crypto\Encryption;
 class EncryptedPropertyValidator
 {
     use ValidatorErrorTrait;
-    use NewValidatorTrait;
+    use ValidatorTrait;
 
     private const REGEX_CHARACTER_CLASS_NAME = '0-9A-Z_';
     private const REGEX_CHARACTER_WHITESPACE = '\f\n\r\t\v';

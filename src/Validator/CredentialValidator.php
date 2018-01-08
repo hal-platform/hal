@@ -19,7 +19,7 @@ use Hal\Core\Type\CredentialEnum;
 class CredentialValidator
 {
     use ValidatorErrorTrait;
-    use NewValidatorTrait;
+    use ValidatorTrait;
 
     private const REGEX_CHARACTER_CLASS_USERNAME = '0-9a-zA-Z_.-';
     private const REGEX_CHARACTER_CLASS_PATH = '0-9a-zA-Z_.-\\\/\ \:';

@@ -20,7 +20,7 @@ use Hal\UI\VersionControl\VCS;
 class ApplicationValidator
 {
     use ValidatorErrorTrait;
-    use NewValidatorTrait;
+    use ValidatorTrait;
 
     private const REGEX_CHARACTER_CLASS_GITHUB = '0-9a-zA-Z_.-';
     private const REGEX_CHARACTER_WHITESPACE = '\f\n\r\t\v';

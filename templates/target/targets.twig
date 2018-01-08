@@ -28,7 +28,7 @@
         a single environment (such as multiple regions, servers, or canary/blue/green environments).
     </p>
 
-    {% if targets_by_env %}
+    {% if sorted_targets %}
         <table class="table--spacing-medium">
             <thead>
                 <tr>
@@ -39,39 +39,51 @@
                 </tr>
             </thead>
 
-            {% for name, targets in targets_by_env %}
-                {% set environment = environments[name] %}
+            {% for sorted in sorted_targets %}
+                {% set environment = sorted.environment %}
+                {% set targets = sorted.targets %}
 
-                {% if targets %}
-                    <tbody>
+                <tbody>
+                    <tr>
+                        <th colspan="4" class="table-mid-header">
+                            <a href="{{ uriFor('environment', {'environment': environment.id}) }}">{{ environment.name }}</a>
+                            <a href="{{ uriFor('target.add', {'application': application.id}, {'environment': environment.id}) }}" style="float: right" >Add More Targets</a>
+                        </th>
+                    </tr>
+
+                    {% for target in targets %}
                         <tr>
-                            <th colspan="4" class="table-mid-header">
-                                <a href="{{ uriFor('environment', {'environment': environment.id}) }}">{{ environment.name }}</a>
-                            </th>
-                        </tr>
+                            <td>
+                                <a href="{{ uriFor('target', {'application': application.id, 'target': target.id}) }}">{{ target.id|short_guid }}</a>
+                            </td>
+                            <td>
+                                {% if target.isAWS() and not target.credential -%}
+                                    <span class="hint--right" aria-label="No credentials are assigned.">{{ macros.status_icon('', 'error') }}</span>
+                                {%- endif %}
+                                {{ target.formatType() }}
+                            </td>
+                            <td>{{ target.name }}</td>
+                            <td>
+                                {% if target.type == 'rsync' %}
+                                    Path: <code>{{ target.formatParameters() }}</code>
 
-                        {% for target in targets %}
-                            <tr>
-                                <td>
-                                    <a href="{{ uriFor('target', {'application': application.id, 'target': target.id}) }}">{{ target.id|short_guid }}</a>
-                                </td>
-                                <td>{{ target.format() }}</td>
-                                <td>
-                                    {% if target.group.isAWS() and not target.credential -%}
-                                        <span class="hint--right" aria-label="No credentials are assigned.">{{ macros.status_icon('', 'error') }}</span>
-                                    {%- endif %}
-                                    {{ target.format(false) }}
-                                </td>
-                                <td>
-                                    {{ target.group.format(true) }}: {{ target.formatParameters() }}
-                                </td>
-                                <td>
-                                    <a href="{{ uriFor('target', {'application': target.application.id, 'target': target.id}) }}">Manage</a>
-                                </td>
-                            <tr>
-                        {% endfor %}
-                    </tbody>
-                {% endif %}
+                                {% elseif target.type == 'eb' %}
+                                    Beanstalk Environment: <code>{{ target.formatParameters() }}</code>
+
+                                {% elseif target.type == 's3' %}
+                                    Bucket/Object: <code>{{ target.formatParameters() }}</code>
+
+                                {% elseif target.type == 'cd' %}
+                                    CodeDeploy Group: <code>{{ target.formatParameters() }}</code>
+
+                                {% elseif target.type == 'script' %}
+                                    Context: <code>{{ target.formatParameters() }}</code>
+
+                                {% endif %}
+                            </td>
+                        <tr>
+                    {% endfor %}
+                </tbody>
             {% endfor %}
         </table>
     {% else %}

@@ -130,7 +130,7 @@ class ApplicationDashboardController implements ControllerInterface
         $targets = [];
 
         if ($selectedEnvironment) {
-            $targets = $this->targetRepository->getByApplicationAndEnvironment($application, $selectedEnvironment);
+            $targets = $this->targetRepository->findBy(['application' => $application, 'environment' => $selectedEnvironment]);
         }
 
         usort($targets, $this->targetSorter());

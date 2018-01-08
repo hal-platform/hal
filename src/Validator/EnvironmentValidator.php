@@ -14,7 +14,7 @@ use Hal\Core\Entity\Environment;
 class EnvironmentValidator
 {
     use ValidatorErrorTrait;
-    use NewValidatorTrait;
+    use ValidatorTrait;
 
     private const REGEX_CHARACTER_CLASS_NAME = '0-9a-z_.-';
     private const REGEX_CHARACTER_WHITESPACE = '\f\n\r\t\v';

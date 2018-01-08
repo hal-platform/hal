@@ -12,9 +12,9 @@ use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Target;
 use Hal\Core\Entity\Environment;
 use Hal\Core\Repository\EnvironmentRepository;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
-use Hal\UI\Flash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -22,6 +22,7 @@ use QL\Panthor\Utility\URI;
 
 class RemoveTargetController implements ControllerInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
 
@@ -62,13 +63,18 @@ class RemoveTargetController implements ControllerInterface
         $application = $request->getAttribute(Application::class);
         $target = $request->getAttribute(Target::class);
 
+        if (!$this->isCSRFValid($request)) {
+            $this->withFlashError($request, $this->CSRFError());
+            return $this->withRedirectRoute($response, $this->uri, 'target', ['application' => $application->id(), 'target' => $target->id()]);
+        }
+
         $this->em->remove($target);
         $this->em->flush();
 
         // Clear cached query for buildable environments
         $this->environmentRepository->clearBuildableEnvironmentsByApplication($application);
 
-        $this->withFlash($request, Flash::SUCCESS, self::MSG_SUCCESS);
+        $this->withFlashSuccess($request, self::MSG_SUCCESS);
         return $this->withRedirectRoute($response, $this->uri, 'targets', ['application' => $application->id()]);
     }
 }

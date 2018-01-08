@@ -7,7 +7,7 @@
 
 namespace Hal\UI\Validator;
 
-trait NewValidatorTrait
+trait ValidatorTrait
 {
     /**
      * @param string $value

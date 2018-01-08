@@ -20,8 +20,8 @@ use Hal\UI\Security\AuthorizationService;
 
 class ReleaseValidator
 {
-    use NewValidatorTrait;
     use ValidatorErrorTrait;
+    use ValidatorTrait;
 
     const ERR_NO_DEPS = 'You must select at least one target.';
     const ERR_NO_PERM = 'You attempted to push to "%s" but do not have permission.';

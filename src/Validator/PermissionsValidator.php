@@ -18,8 +18,8 @@ use Hal\UI\Security\UserAuthorizations;
 
 class PermissionsValidator
 {
-    use NewValidatorTrait;
     use ValidatorErrorTrait;
+    use ValidatorTrait;
 
     private const ERR_INVALID_TYPE = 'Please select a valid permission type.';
     private const ERR_CANNOT_ADD_SUPER = 'You are not allowed to add super permissions.';
