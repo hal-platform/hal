@@ -2,9 +2,11 @@ import { initTabSelector } from './util/tab-selector';
 import { initGitHubSearch } from './job/github-search-for-build';
 import { initEventLogLoader } from './job/event-log-loader';
 
-import { initTargetForm } from './form/targets-form';
-import { initApplicationForm } from './form/applications-form';
-import { initCredentialForm } from './form/credentials-form';
+import { initApplicationForm } from './form/application-form';
+import { initCredentialForm } from './form/credential-form';
+import { initTargetForm } from './form/target-form';
+import { initUserForm } from './form/user-form';
+
 import { initSelectAllCheckboxes } from './form/select-all-checkbox';
 import { initApplicationPermissions } from './form/manage-application-permissions';
 
@@ -26,6 +28,9 @@ let appComponents = {
     },
     add_credential_form: () => {
         initCredentialForm();
+    },
+    add_user_form: () => {
+        initUserForm();
     },
 
     // jobs - start

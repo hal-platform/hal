@@ -1,11 +1,12 @@
 import 'jquery';
 
-const FORM_SELECTOR = '.js-targets-form';
-const SELECTOR = '[data-target-select]';
-const OPTION_DATA_ATTRIBUTE = 'target-type';
-const HIDEABLE_FIELDS = '[data-type-specific]';
-
+const FIELD = 'target'
 const VALID_TYPES = ['rsync', 'eb', 'cd', 's3', 'elb', 'script'];
+
+const FORM_SELECTOR = `.js-${FIELD}-form`;
+const SELECTOR = `[data-${FIELD}-select]`;
+const OPTION_DATA_ATTRIBUTE = `${FIELD}-type`;
+const HIDEABLE_FIELDS = '[data-type-specific]';
 
 function initTargetForm() {
     let $container = $(FORM_SELECTOR);
@@ -42,10 +43,6 @@ function toggle($container, $options) {
         .filter(':checked')
         // .filter(':selected') # if <select>
         .data(OPTION_DATA_ATTRIBUTE);
-
-    if (!selectedType) {
-        return;
-    }
 
     $container
         .find(HIDEABLE_FIELDS)

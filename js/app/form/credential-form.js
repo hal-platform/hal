@@ -1,11 +1,12 @@
 import 'jquery';
 
-const FORM_SELECTOR = '.js-credentials-form';
-const SELECTOR = '[data-credential-select]';
-const OPTION_DATA_ATTRIBUTE = 'credential-type';
-const HIDEABLE_FIELDS = '[data-type-specific]';
-
+const FIELD = 'credential'
 const VALID_TYPES = ['aws_role', 'aws_static', 'privatekey'];
+
+const FORM_SELECTOR = `.js-${FIELD}-form`;
+const SELECTOR = `[data-${FIELD}-select]`;
+const OPTION_DATA_ATTRIBUTE = `${FIELD}-type`;
+const HIDEABLE_FIELDS = '[data-type-specific]';
 
 function initCredentialForm() {
     let $container = $(FORM_SELECTOR);
@@ -39,10 +40,6 @@ function toggle($container, $options) {
     let selectedType = $options
         .filter(':checked')
         .data(OPTION_DATA_ATTRIBUTE);
-
-    if (!selectedType) {
-        return;
-    }
 
     $container
         .find(HIDEABLE_FIELDS)

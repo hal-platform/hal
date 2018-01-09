@@ -61,18 +61,18 @@
 {% block add_form %}
     {{ form_macros.form_errors(errors, is_csrf_error) }}
 
-    <form method="post" class="js-targets-form" action="{{ uriFor('target.add', {application: application.id}, {'environment': selected_environment.id}) }}">
+    <form method="post" class="js-target-form">
         {{ form_macros.csrf_input('target.add') }}
 
         <ul class="form-fields form-wrapper">
             <li>
                 <label for="template">Template</label>
                 {% if templates %}
-                    <select class="select-input" name="template" id="template" required data-target-select>
+                    <select class="select-input" name="template" id="template">
                         <option></option>
                         {% for template in templates %}
-                            {% set isSelected = (template.id == form.template) %}
-                            <option value="{{ template.id }}"{{ isSelected ? ' selected' : '' }} data-target-type="{{ template.type }}">{{ template.format() }}</option>
+                            {% set is_selected = template.id == form.template ? ' selected' : '' %}
+                            <option value="{{ template.id }}"{{ is_selected }}>{{ template.name }}</option>
                         {% endfor %}
                     </select>
                 {% else %}
@@ -83,6 +83,14 @@
             <li>
                 <label>Deployment Type</label>
                 <ul>
+                    {% set is_selected = form.deployment_type == '' ? ' checked' : '' %}
+                    <li>
+                        <label for="type-noop">
+                            <input type="radio" id="type-noop" name="deployment_type" value="" data-target-select data-target-type=""{{ is_selected }}>
+                            None
+                        </label>
+                    </li>
+
                     {% for type in deployment_types %}
                         {% set is_selected = form.deployment_type == type ? ' checked' : '' %}
                         <li>

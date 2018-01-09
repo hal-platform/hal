@@ -1,6 +1,8 @@
 {% extends 'base.twig' %}
 {% import 'macros.form.twig' as form_macros %}
 
+{% set js_components = ['add_target_form'] %}
+
 {% set page_title = 'Edit Target' %}
 
 {% block breadcrumb_links %}
@@ -18,19 +20,18 @@
     <h4>Type</h4>
     <p>{{ target.formatType() }}</p>
 
-    <form method="post">
+    <form method="post" class="js-target-form">
         {{ form_macros.csrf_input('target.edit') }}
 
         <ul class="form-fields form-wrapper">
-
             <li>
                 <label for="template">Template</label>
                 {% if templates %}
-                    <select class="select-input" name="template" id="template" required data-target-select>
+                    <select class="select-input" name="template" id="template">
                         <option></option>
                         {% for template in templates %}
-                            {% set isSelected = (template.id == form.template) %}
-                            <option value="{{ template.id }}"{{ isSelected ? ' selected' : '' }} data-target-type="{{ template.type }}">{{ template.format() }}</option>
+                            {% set is_selected = template.id == form.template ? ' selected' : '' %}
+                            <option value="{{ template.id }}"{{ is_selected }}>{{ template.name }}</option>
                         {% endfor %}
                     </select>
                 {% else %}

@@ -12,7 +12,7 @@
 {% block content %}
     {{ form_macros.form_errors(errors, is_csrf_error) }}
 
-    <form method="post" class="js-applications-form">
+    <form method="post" class="js-vcs-form">
         {{ form_macros.csrf_input('application.edit') }}
 
         <ul class="form-fields form-wrapper">
@@ -68,6 +68,14 @@
             <ul class="form-fields form-wrapper">
                 <li>
                     <ul>
+                        {% set is_selected = form.vcs_provider == '' ? ' checked' : '' %}
+                        <li>
+                            <label for="vcs-noop">
+                                <input type="radio" id="vcs-noop" name="vcs_provider" value="" data-vcs-select data-vcs-type=""{{ is_selected }}>
+                                Do not add source control
+                            </label>
+                        </li>
+
                         {% for provider in vcs %}
                             {% set is_selected = form.vcs_provider == provider.id ? ' checked' : '' %}
 
@@ -78,14 +86,6 @@
                                 </label>
                             </li>
                         {% endfor %}
-
-                        {% set is_selected = form.vcs_provider == '' ? ' checked' : '' %}
-                        <li>
-                            <label for="vcs-noop">
-                                <input type="radio" id="vcs-noop" name="vcs_provider" value="" data-vcs-select data-vcs-type="noop"{{ is_selected }}>
-                                Do not add source control
-                            </label>
-                        </li>
                     </ul>
 
                     {{ block('gh_provider_form') }}

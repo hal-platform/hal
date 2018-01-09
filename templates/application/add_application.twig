@@ -11,7 +11,7 @@
 {% block content %}
     {{ form_macros.form_errors(errors, is_csrf_error) }}
 
-    <form method="post" class="js-applications-form">
+    <form method="post" class="js-vcs-form">
         {{ form_macros.csrf_input('application.add') }}
 
         <ul class="form-fields form-wrapper">
@@ -65,7 +65,7 @@
                         {% set is_selected = form.vcs_provider == '' ? ' checked' : '' %}
                         <li>
                             <label for="vcs-noop">
-                                <input type="radio" id="vcs-noop" name="vcs_provider" value="" data-vcs-select data-vcs-type="noop"{{ is_selected }}>
+                                <input type="radio" id="vcs-noop" name="vcs_provider" value="" data-vcs-select data-vcs-type=""{{ is_selected }}>
                                 Do not add source control
                             </label>
                         </li>

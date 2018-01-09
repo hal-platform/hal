@@ -1,13 +1,14 @@
 import 'jquery';
 
-const FORM_SELECTOR = '.js-applications-form';
-const SELECTOR = '[data-vcs-select]';
-const OPTION_DATA_ATTRIBUTE = 'vcs-type';
+const FIELD = 'idp'
+const VALID_TYPES = ['internal', 'gh', 'ghe', 'ldap'];
+
+const FORM_SELECTOR = `.js-${FIELD}-form`;
+const SELECTOR = `[data-${FIELD}-select]`;
+const OPTION_DATA_ATTRIBUTE = `${FIELD}-type`;
 const HIDEABLE_FIELDS = '[data-type-specific]';
 
-const VALID_TYPES = ['gh', 'ghe', 'git'];
-
-function initApplicationForm() {
+function initUserForm() {
     let $container = $(FORM_SELECTOR);
     if ($container.length > 0) {
         attach($container);
@@ -40,10 +41,6 @@ function toggle($container, $options) {
         .filter(':checked')
         .data(OPTION_DATA_ATTRIBUTE);
 
-    if (!selectedType) {
-        return;
-    }
-
     $container
         .find(HIDEABLE_FIELDS)
         .hide();
@@ -55,4 +52,4 @@ function toggle($container, $options) {
     }
 }
 
-export { initApplicationForm };
+export { initUserForm };
