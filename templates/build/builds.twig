@@ -32,7 +32,7 @@
         <input class="btn" type="submit" value="Filter">
 
         {% if search_filter %}
-            <a class="btn btn--action" href="{{ uriFor('build.history.page1', {'application': application.id}) }}">Reset</a>
+            <a class="btn btn--action" href="{{ uriFor('build.history', {'application': application.id}) }}">Reset</a>
         {% endif %}
     </form>
 {% endblock %}

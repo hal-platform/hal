@@ -14,7 +14,7 @@
                 {% endif %}
 
                 {% if last_job %}
-                    <a class="rollback icon--link" href="{{ uriFor('rollback.page1', {'application': application.id, 'target': target.id}) }}">
+                    <a class="rollback icon--link" href="{{ uriFor('rollback', {'application': application.id, 'target': target.id}) }}">
                         <span class="hint--top" aria-label="View deployment history or rollback to a successful build">
                             {{- macros.icon('revert') -}}
                         </span>

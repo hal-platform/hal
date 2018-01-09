@@ -75,13 +75,9 @@ parameters:
         # users
         ################################################################################################################
 
-        users.page1:
-            method: 'GET'
-            route: '/users'
-            stack: ['middleware.signed_in', 'users.page']
         users:
             method: 'GET'
-            route: '/users/page/{page:%r.digit%}'
+            route: '/users[/page/{page:%r.digit%}]'
             stack: ['middleware.signed_in', 'users.page']
 
         user.management:
@@ -97,7 +93,7 @@ parameters:
                 user.toggle:
                     method: 'POST'
                     route: '/toggle'
-                    stack: ['middleware.is_admin', 'middleware.require_csrf', 'user.toggle.handler']
+                    stack: ['middleware.is_super', 'middleware.require_csrf', 'user.toggle.handler']
 
                 token.management:
                     route: '/tokens'
@@ -210,22 +206,14 @@ parameters:
                     route: '/build'
                     stack: ['middleware.require_csrf', 'build.start.middleware', 'build.start.page']
 
-                builds.page1:
-                    method: 'GET'
-                    route: '/builds'
-                    stack: ['builds.page']
                 builds:
                     method: 'GET'
-                    route: '/builds/page/{page:%r.digit%}'
+                    route: '/builds[/page/{page:%r.digit%}]'
                     stack: ['builds.page']
 
-                releases.page1:
-                    method: 'GET'
-                    route: '/releases'
-                    stack: ['releases.page']
                 releases:
                     method: 'GET'
-                    route: '/releases/page/{page:%r.digit%}'
+                    route: '/releases[/page/{page:%r.digit%}]'
                     stack: ['releases.page']
 
                 targets:
@@ -254,13 +242,9 @@ parameters:
                             route: '/remove'
                             stack: ['middleware.is_owner', 'middleware.require_csrf', 'middleware.removal_confirmation.target', 'target.remove.handler']
 
-                        rollback.page1:
-                            method: 'GET'
-                            route: '/releases'
-                            stack: ['release.rollback.page']
                         rollback:
                             method: 'GET'
-                            route: '/releases/page/{page:%r.digit%}'
+                            route: '/releases[/page/{page:%r.digit%}]'
                             stack: ['release.rollback.page']
 
                 encrypted.configuration:
@@ -325,14 +309,9 @@ parameters:
             route: '/queue'
             stack: ['middleware.signed_in', 'queue.page']
 
-        queue.history.page1:
-            method: 'GET'
-            route: '/queue-history'
-            stack: ['middleware.signed_in', 'queue.history.page']
-
         queue.history:
             method: 'GET'
-            route: '/queue-history/date/{date:%r.date%}'
+            route: '/queue-history[/date/{date:%r.date%}]'
             stack: ['middleware.signed_in', 'queue.history.page']
 
         ################################################################################################################
@@ -354,13 +333,9 @@ parameters:
                     route: '/release'
                     stack: ['middleware.require_csrf', 'deploy.middleware', 'release.start.page']
 
-        builds.history.page1:
-            method: 'GET'
-            route: '/builds'
-            stack: ['middleware.signed_in', 'builds.history.page']
         builds.history:
             method: 'GET'
-            route: '/builds/page/{page:%r.digit%}'
+            route: '/builds[/page/{page:%r.digit%}]'
             stack: ['middleware.signed_in', 'builds.history.page']
 
         ################################################################################################################
@@ -377,13 +352,9 @@ parameters:
                     route: ''
                     stack: ['release.page']
 
-        releases.history.page1:
-            method: 'GET'
-            route: '/releases'
-            stack: ['middleware.signed_in', 'releases.history.page']
         releases.history:
             method: 'GET'
-            route: '/releases/page/{page:%r.digit%}'
+            route: '/releases[/page/{page:%r.digit%}]'
             stack: ['middleware.signed_in', 'releases.history.page']
 
         ################################################################################################################
@@ -404,13 +375,9 @@ parameters:
                     route: ''
                     stack: ['admin.dashboard.page']
 
-                admin.audit_history.page1:
-                    method: 'GET'
-                    route: '/audit-history'
-                    stack: ['admin.audit_history.page']
                 admin.audit_history:
                     method: 'GET'
-                    route: '/audit-history/page/{page:%r.digit%}'
+                    route: '/audit-history[/page/{page:%r.digit%}]'
                     stack: ['admin.audit_history.page']
 
                 admin.system_dashboard:

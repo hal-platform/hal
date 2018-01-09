@@ -7,7 +7,7 @@
 {% set page_title = 'Build History' %}
 
 {% block breadcrumb_links %}
-    <li><a href="{{ uriFor('queue.history.page1') }}">Queue History</a></li>
+    <li><a href="{{ uriFor('queue.history') }}">Queue History</a></li>
 {% endblock %}
 
 {% block content %}
@@ -23,7 +23,7 @@
 {% block links %}
     <p>
         <a class="btn" href="{{ uriFor('queue') }}">Current Job Queue</a>
-        <a class="btn" href="{{ uriFor('releases.history.page1') }}">Release History</a>
+        <a class="btn" href="{{ uriFor('releases.history') }}">Release History</a>
     </p>
 {% endblock %}
 

@@ -7,9 +7,11 @@
 
 namespace Hal\UI\Controllers;
 
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Hal\UI\API\Hyperlink;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+
 
 trait PaginationTrait
 {
@@ -38,6 +40,24 @@ trait PaginationTrait
         }
 
         return $page;
+    }
+
+    /**
+     * Destructure actual array of entities from a Paginator.
+     *
+     * @param Paginator $paginator
+     *
+     * @return array
+     */
+    private function getEntitiesForPage(Paginator $paginator): array
+    {
+        $entities = [];
+
+        foreach ($paginator as $entity) {
+            $entities[] = $entity;
+        }
+
+        return $entities;
     }
 
     /**

@@ -8,11 +8,11 @@
 {% block content %}
     <h2>User Management</h2>
     <p>
-        <a href="{{ uriFor('users.page1') }}" class="btn btn--primary">
+        <a href="{{ uriFor('users') }}" class="btn">
             {{ macros.icon('users') }} Users
         </a>
 
-        <a href="{{ uriFor('admin.permissions') }}" class="btn btn--primary">
+        <a href="{{ uriFor('admin.permissions') }}" class="btn">
             {{ macros.icon('safe') }} Permissions
         </a>
     </p>
@@ -32,11 +32,11 @@
     <p>
         <a href="{{ uriFor('id_providers') }}" class="btn">Identity Providers</a>
 
-        <a href="{{ uriFor('credentials') }}" class="btn btn--primary">
+        <a href="{{ uriFor('credentials') }}" class="btn">
             {{ macros.icon('locked') }} Credentials
         </a>
 
-        <a href="{{ uriFor('admin.audit_history.page1') }}" class="btn btn--primary">
+        <a href="{{ uriFor('admin.audit_history') }}" class="btn">
             {{ macros.icon('watch') }} Audit History
         </a>
     </p>
