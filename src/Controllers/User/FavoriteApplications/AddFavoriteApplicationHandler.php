@@ -7,7 +7,7 @@
 
 namespace Hal\UI\Controllers\User\FavoriteApplications;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
@@ -34,7 +34,7 @@ class AddFavoriteApplicationHandler implements ControllerInterface
     const MSG_SUCCESS = 'Application "%s" added to favorites.';
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $em;
 
@@ -49,11 +49,11 @@ class AddFavoriteApplicationHandler implements ControllerInterface
     private $json;
 
     /**
-     * @param EntityManager $em
+     * @param EntityManagerInterface $em
      * @param URI $uri
      * @param JSON $json
      */
-    public function __construct(EntityManager $em, URI $uri, JSON $json)
+    public function __construct(EntityManagerInterface $em, URI $uri, JSON $json)
     {
         $this->em = $em;
         $this->uri = $uri;

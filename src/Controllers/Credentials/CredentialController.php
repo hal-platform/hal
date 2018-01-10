@@ -11,7 +11,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Crypto\Encryption;
 use Hal\Core\Entity\Credential;
-use Hal\Core\Entity\Release;
 use Hal\Core\Entity\Target;
 use Hal\Core\Type\CredentialEnum;
 use Hal\UI\Controllers\TemplatedControllerTrait;
@@ -37,7 +36,7 @@ class CredentialController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $targetRepository;
+    private $targetRepo;
 
     /**
      * @param TemplateInterface $template
@@ -52,7 +51,7 @@ class CredentialController implements ControllerInterface
         $this->template = $template;
         $this->encryption = $encryption;
 
-        $this->targetRepository = $em->getRepository(Target::class);
+        $this->targetRepo = $em->getRepository(Target::class);
     }
 
     /**
@@ -62,7 +61,7 @@ class CredentialController implements ControllerInterface
     {
         $credential = $request->getAttribute(Credential::class);
 
-        $targets = $this->targetRepository->findBy(['credential' => $credential]);
+        $targets = $this->targetRepo->findBy(['credential' => $credential]);
 
         $decrypted = $this->decrypt($credential);
 
