@@ -22,7 +22,7 @@ class ApplicationValidator
     use ValidatorErrorTrait;
     use ValidatorTrait;
 
-    private const REGEX_CHARACTER_CLASS_GITHUB = '0-9a-zA-Z_.-';
+    private const REGEX_CHARACTER_CLASS_GITHUB = 'a-zA-Z0-9_\.\-';
     private const REGEX_CHARACTER_WHITESPACE = '\f\n\r\t\v';
 
     private const ERR_DESCRIPTION_CHARACTERS = 'Name must not contain tabs or newlines';
@@ -69,7 +69,7 @@ class ApplicationValidator
     {
         $this->resetErrors();
 
-        $this->validate($name);
+        $this->validateName($name);
 
         if ($this->hasErrors()) {
             return null;
@@ -113,7 +113,7 @@ class ApplicationValidator
     {
         $this->resetErrors();
 
-        $this->validate($name);
+        $this->validateName($name);
 
         if ($this->hasErrors()) {
             return null;
@@ -218,16 +218,16 @@ class ApplicationValidator
     /**
      * @param string $name
      *
-     * @return bool
+     * @return void
      */
-    private function validate($name): bool
+    private function validateName($name)
     {
         if (!$this->validateIsRequired($name) || !$this->validateSanityCheck($name)) {
             $this->addRequiredError('Name', 'name');
         }
 
         if ($this->hasErrors()) {
-            return false;
+            return;
         }
 
         if (!$this->validateLength($name, 3, 100)) {
@@ -235,14 +235,12 @@ class ApplicationValidator
         }
 
         if ($this->hasErrors()) {
-            return false;
+            return;
         }
 
         if (!$this->validateCharacterBlacklist($name, self::REGEX_CHARACTER_WHITESPACE)) {
             $this->addError(self::ERR_NAME_CHARACTERS, 'name');
         }
-
-        return !$this->hasErrors();
     }
 
     /**
@@ -288,6 +286,14 @@ class ApplicationValidator
      */
     private function validateGithubRepo(GitHubService $github, $owner, $repo)
     {
+        if (!$this->validateCharacterWhitelist($owner, self::REGEX_CHARACTER_CLASS_GITHUB)) {
+            $this->addError(self::ERR_NAME_CHARACTERS, 'gh_owner');
+        }
+
+        if (!$this->validateCharacterWhitelist($repo, self::REGEX_CHARACTER_CLASS_GITHUB)) {
+            $this->addError(self::ERR_NAME_CHARACTERS, 'gh_repo');
+        }
+
         if (!$github->repository($owner, $repo)) {
             $this->addError(self::ERR_GITHUB_INVALID_REPO, 'gh_owner');
             return false;

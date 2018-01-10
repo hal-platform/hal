@@ -8,7 +8,7 @@
     <h1>Hal Deployment System</h1>
     <p>It deploys code to other, less capable machines.</p>
 
-    {{ form_macros.formErrors(errors) }}
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
 
     {% if id_providers|length == 1 %}
         {% set selected_auth = id_providers|first %}
@@ -45,6 +45,8 @@
 
 {% block internal_signin_form %}
     <form action="?idp={{ selected_auth.id }}" method="post">
+        {{ form_macros.csrf_input('signin') }}
+
         <ul class="form-fields form-wrapper">
             <li>
                 <label for="username">Username</label>
@@ -64,6 +66,8 @@
 
 {% block ldap_signin_form %}
     <form action="?idp={{ selected_auth.id }}" method="post">
+        {{ form_macros.csrf_input('signin') }}
+
         <ul class="form-fields form-wrapper">
             <li>
                 <label for="username">Username</label>

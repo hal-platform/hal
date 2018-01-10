@@ -33,11 +33,16 @@ parameters:
         signin:
             method: ['GET', 'POST']
             route: '/signin'
-            stack: ['signin.middleware', 'signin.page']
+            stack: ['middleware.require_csrf', 'signin.middleware', 'signin.page']
         signout:
-            method: 'GET'
+            method: 'POST'
             route: '/signout'
             stack: ['signout.page']
+
+        signin.setup:
+            method: ['GET', 'POST']
+            route: '/signin-setup/{user:%r.guid%}/{setup_token:%r.guid%}'
+            stack: ['middleware.require_entity', 'middleware.require_csrf', 'signin.setup.page']
 
         ################################################################################################################
         # help
@@ -80,6 +85,11 @@ parameters:
             route: '/users[/page/{page:%r.digit%}]'
             stack: ['middleware.signed_in', 'users.page']
 
+        user.add:
+            method: ['GET', 'POST']
+            route: '/users/add'
+            stack: ['middleware.signed_in', 'middleware.is_super', 'middleware.require_csrf', 'user.add.page']
+
         user.management:
             route: '/users/{user:%r.guid%}'
             stack: ['middleware.signed_in', 'middleware.require_entity']
@@ -89,23 +99,31 @@ parameters:
                     route: ''
                     stack: ['user.page']
 
-# todo - csrf x 4
-                user.toggle:
+
+                user.disable:
                     method: 'POST'
-                    route: '/toggle'
-                    stack: ['middleware.is_super', 'middleware.require_csrf', 'user.toggle.handler']
+                    route: '/disable'
+                    stack: ['middleware.is_super', 'middleware.require_csrf', 'user.disable.handler']
+                user.enable:
+                    method: 'POST'
+                    route: '/enable'
+                    stack: ['middleware.is_super', 'middleware.require_csrf', 'user.disable.handler']
+                user.regenerate_setup:
+                    method: 'POST'
+                    route: '/regenerate-setup-token'
+                    stack: ['middleware.is_super', 'middleware.require_csrf', 'user.regenerate_setup.handler']
 
                 token.management:
                     route: '/tokens'
                     stack: ['middleware.is_admin_or_self']
                     routes:
-                        user.token.add:
+                        user_token.add:
                             method: 'POST'
                             route: '/add'
                             stack: ['middleware.require_csrf', 'user.token.add.handler']
-                        user.token.remove:
+                        user_token.remove:
                             method: ['GET', 'POST']
-                            route: '/{token:%r.guid%}/revoke'
+                            route: '/{user_token:%r.guid%}/revoke'
                             stack: ['middleware.nested_entity', 'middleware.require_csrf', 'middleware.removal_confirmation.token', 'user.token.remove.handler']
 
         settings:
@@ -364,7 +382,7 @@ parameters:
         hal_bootstrap:
             method: ['GET', 'POST']
             route: '/hal-bootstrap'
-            stack: ['hal_bootstrap.page']
+            stack: ['middleware.require_csrf', 'hal_bootstrap.page']
 
         admin.management:
             route: '/admin'

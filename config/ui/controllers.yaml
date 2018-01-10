@@ -37,9 +37,9 @@ services:
     signin.page:
         class: 'Hal\UI\Controllers\SignInController'
         arguments:
+            - '@signin.twig'
             - '@doctrine.em'
             - '@uri'
-            - '@signin.twig'
     signin.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['signin.twig']]]
@@ -48,10 +48,22 @@ services:
         arguments:
             - '@doctrine.em'
             - '@auth'
+            - '@user_session.handler'
             - '@uri'
     signout.page:
         class: 'Hal\UI\Controllers\SignOutController'
         arguments: ['@uri']
+
+    signin.setup.page:
+        class: 'Hal\UI\Controllers\SignInSetupController'
+        arguments:
+            - '@signin.setup.twig'
+            - '@doctrine.em'
+            - '@clock'
+            - '@uri'
+    signin.setup.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['signin_setup.twig']]]
 
     ####################################################################################################################
     # GITHUB OAUTH CONTROLLERS
@@ -135,6 +147,7 @@ services:
             - '@user.twig'
             - '@service.authorization'
             - '@service.authorization_hydrator'
+            - '@clock'
     user.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['user/user.twig']]]
@@ -146,9 +159,26 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['user/users.twig']]]
 
-    user.toggle.handler:
-        class: 'Hal\UI\Controllers\User\ToggleUserController'
+    user.add.page:
+        class: 'Hal\UI\Controllers\User\AddUserController'
+        arguments:
+            - '@user.add.twig'
+            - '@doctrine.em'
+            - '@user.validator'
+            - '@uri'
+    user.add.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['user/add_user.twig']]]
+
+    user.disable.handler:
+        class: 'Hal\UI\Controllers\User\DisableUserController'
         arguments: ['@doctrine.em', '@uri']
+    user.regenerate_setup.handler:
+        class: 'Hal\UI\Controllers\User\RegenerateSetupTokenController'
+        arguments:
+            - '@doctrine.em'
+            - '@user.validator'
+            - '@uri'
 
     user.settings.page:
         class: 'Hal\UI\Controllers\User\SettingsController'
@@ -168,7 +198,6 @@ services:
         arguments:
             - '@doctrine.em'
             - '@uri'
-
     user.token.remove.handler:
         class: 'Hal\UI\Controllers\User\Token\RemoveTokenController'
         arguments: ['@doctrine.em', '@uri']

@@ -1,5 +1,6 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
+{% import 'macros.form.twig' as form_macros %}
 
 {% set page_title = 'Settings' %}
 
@@ -12,7 +13,10 @@
     {{ block('navigation_pref') }}
 
     <h2>Personal Access Tokens</h2>
-    {{ block('access_tokens') }}
+    <small>Personal Access Tokens can be used to access the <a href="{{ uriFor('api.index') }}">Hal API</a>.</small>
+
+    {% include 'user/partial.tokens.twig' with { 'user': user, 'is_owner': is_token_owner } only %}
+    {{ block('add_token_form') }}
 
 {% endblock %}
 
@@ -37,49 +41,20 @@
     </form>
 {% endblock %}
 
-{% block access_tokens %}
-    <small>Personal Access Tokens can be used to access the <a href="{{ uriFor('api.index') }}">Hal API</a>.</small>
-
-    {% if tokens %}
-        <table class="table--spacing-medium">
-            <thead>
-                <tr>
-                    <th class="t10">ID</th>
-                    <th>Name</th>
-                    <th>Token Secret</th>
-                    <th class="t10"></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for token in tokens %}
-                    <tr>
-                        <td>{{ token|short_guid }}</td>
-                        <td>{{ token.name }}</td>
-                        <td><code>{{ token.value }}</code></td>
-                        <td class="tr">
-                            <a href="{{ uriFor('user.token.remove', {'user': user.id, 'token': token.id}) }}">Revoke</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>You have no personal access tokens saved.</p>
-    {% endif %}
-
-
+{% block add_token_form %}
     <h3>Add new personal access token</h3>
-    <form action="{{ uriFor('user.token.add', {'user': user.id}) }}" method="post">
 
-        <div class="form-wrapper">
-            <label for="token-name">Token Name</label>
-            <input type="text" class="text-input" name="name" id="token-name" maxlength="50" required>
-        </div>
+    <form action="{{ uriFor('user_token.add', {'user': user.id}) }}" method="post">
+        {{ form_macros.csrf_input('user_token.add') }}
+        <ul class="form-wrapper">
+            <li>
+                <label for="token-name">Token Name</label>
+                <input type="text" class="text-input" name="name" id="token-name" maxlength="50" required>
+            </li>
+        </ul>
 
         <p>
             <button class="btn btn--action" type="submit">Generate Token</button>
         </p>
-
     </form>
-
 {% endblock %}

@@ -22,6 +22,11 @@ class SignInController implements ControllerInterface
     use TemplatedControllerTrait;
 
     /**
+     * @var TemplateInterface
+     */
+    private $template;
+
+    /**
      * @var EntityRepository
      */
     private $idpRepo;
@@ -32,19 +37,15 @@ class SignInController implements ControllerInterface
     private $uri;
 
     /**
-     * @var TemplateInterface
-     */
-    private $template;
-
-    /**
+     * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param URI $uri
-     * @param TemplateInterface $template
      */
-    public function __construct(EntityManagerInterface $em, URI $uri, TemplateInterface $template)
+    public function __construct(TemplateInterface $template, EntityManagerInterface $em, URI $uri)
     {
         $this->template = $template;
         $this->uri = $uri;
+
         $this->idpRepo = $em->getRepository(UserIdentityProvider::class);
     }
 

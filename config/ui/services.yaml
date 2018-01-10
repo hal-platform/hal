@@ -72,6 +72,10 @@ services:
     target.script.validator:
         class: 'Hal\UI\Validator\Targets\ScriptValidator'
 
+    user.validator:
+        class: 'Hal\UI\Validator\UserValidator'
+        arguments: ['@doctrine.em', '@clock']
+
     ######################################################################################################################
     # TWIG TEMPLATING
     ######################################################################################################################

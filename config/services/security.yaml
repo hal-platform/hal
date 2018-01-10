@@ -43,6 +43,13 @@ services:
         class: 'Hal\UI\Security\CSRFManager'
         arguments: ['@clock']
 
+    user_session.handler:
+        class: 'Hal\UI\Security\UserSessionHandler'
+        arguments:
+            - '@doctrine.em'
+            - '@service.authorization'
+            - '@clock'
+
     ####################################################################################################################
     # crypto
     ####################################################################################################################

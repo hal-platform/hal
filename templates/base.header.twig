@@ -42,7 +42,11 @@
                         <li><a href="{{ uriFor('settings') }}">{{ macros.icon('settings') }} Settings</a></li>
 
                         <li><a href="{{ uriFor('help') }}">{{ macros.icon('question') }} Help</a></li>
-                        <li><a href="{{ uriFor('signout') }}">{{ macros.icon('sign-out') }} Sign Out</a></li>
+                        <li>
+                            <form method="post" action="{{ uriFor('signout') }}">
+                                <button type="submit">{{ macros.icon('sign-out') }} Sign Out</button>
+                            </form>
+                        </li>
                     </ul>
 
                 {% else %}

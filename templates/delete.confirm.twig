@@ -18,7 +18,7 @@
     {% set entity_type = 'Environment' %}
 {% elseif remove.param == 'credential' %}
     {% set entity_type = 'Credential' %}
-{% elseif remove.param == 'token' %}
+{% elseif remove.param == 'user_token' %}
     {% set entity_type = 'User Token' %}
 {% endif %}
 
@@ -48,6 +48,7 @@
 {% endblock %}
 
 {% block content %}
+
     {% if remove.param == 'organization' %}
         {{ block('organization_meta') }}
     {% elseif remove.param == 'application' %}
@@ -63,7 +64,7 @@
     {% elseif remove.param == 'credential' %}
         {{ block('credential_meta') }}
 
-    {% elseif remove.param == 'token' %}
+    {% elseif remove.param == 'user_token' %}
         {{ block('token_meta') }}
     {% endif %}
 
@@ -248,11 +249,16 @@
     <ul class="meta-box">
         <li>
             <h6>ID</h6>
-            {{ remove.entity.id }}
+            {{ remove.entity|short_guid }}
         </li>
         <li>
             <h6>Name</h6>
             {{ remove.entity.name }}
+        </li>
+
+        <li>
+            <h6>User</h6>
+            {{ remove.entity.user.name }}
         </li>
     </ul>
 {% endblock %}

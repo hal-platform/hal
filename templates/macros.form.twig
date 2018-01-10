@@ -47,6 +47,14 @@
     <input type="hidden" name="_csrf_authenticity" value="{{ csrf_token(form_name) }}">
 {%- endmacro %}
 
+{% macro csrf_token(form_name) -%}
+    {{ csrf_token(form_name) }}
+{%- endmacro %}
+
+{% macro csrf_input_raw(token) -%}
+    <input type="hidden" name="_csrf_authenticity" value="{{ token }}">
+{%- endmacro %}
+
 {% macro csrf_error(csrf_error) -%}
     {% if csrf_error is same as(true) %}
         <ul class="error-list">

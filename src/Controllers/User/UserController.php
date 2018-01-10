@@ -17,6 +17,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
+use QL\MCP\Common\Time\Clock;
 
 class UserController implements ControllerInterface
 {
@@ -39,18 +40,27 @@ class UserController implements ControllerInterface
     private $authorizationHydrator;
 
     /**
+     * @var Clock
+     */
+    private $clock;
+
+    /**
      * @param TemplateInterface $template
      * @param AuthorizationService $authorizationService
      * @param AuthorizationHydrator $authorizationHydrator
+     * @param Clock $clock
      */
     public function __construct(
         TemplateInterface $template,
         AuthorizationService $authorizationService,
-        AuthorizationHydrator $authorizationHydrator
+        AuthorizationHydrator $authorizationHydrator,
+        Clock $clock
     ) {
         $this->template = $template;
         $this->authorizationService = $authorizationService;
         $this->authorizationHydrator = $authorizationHydrator;
+
+        $this->clock = $clock;
     }
 
     /**
@@ -67,7 +77,9 @@ class UserController implements ControllerInterface
             'user' => $user,
             'user_authorizations' => $authorizations,
             'user_permissions' => $permissions,
+
             'can_disable' => $this->canDisableUser($authorizations, $loggedInUserAuth),
+            'is_setup_token_expired' => $this->isSetupTokenExpired($user),
 
             'tokens' => $user->tokens()->toArray()
         ]);
@@ -90,5 +102,25 @@ class UserController implements ControllerInterface
         }
 
         return false;
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    private function isSetupTokenExpired(User $user)
+    {
+        $expiry = $user->parameter('internal.setup_token_expiry');
+        if (!$expiry) {
+            return false;
+        }
+
+        $expiry = $this->clock->fromString($expiry);
+        if (!$expiry) {
+            return false;
+        }
+
+        return !$this->clock->inRange($expiry, null, '5 minutes');
     }
 }

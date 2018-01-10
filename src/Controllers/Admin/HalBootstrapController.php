@@ -18,6 +18,7 @@ use Hal\Core\Entity\System\VersionControlProvider;
 use Hal\Core\Type\IdentityProviderEnum;
 use Hal\Core\Type\UserPermissionEnum;
 use Hal\Core\Type\VCSProviderEnum;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
@@ -34,6 +35,7 @@ class HalBootstrapController implements ControllerInterface
 {
     const SETTING_IS_BOOTSTRAPPED = 'hal.is_configured';
 
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
@@ -110,6 +112,10 @@ class HalBootstrapController implements ControllerInterface
     private function handleForm(ServerRequestInterface $request): ?string
     {
         if ($request->getMethod() !== 'POST') {
+            return null;
+        }
+
+        if (!$this->isCSRFValid($request)) {
             return null;
         }
 

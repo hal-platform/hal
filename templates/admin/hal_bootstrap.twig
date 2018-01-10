@@ -5,13 +5,13 @@
 
 {% block content %}
 
-    <h1 class="mbn">Hal Bootstrap Configurator</h1>
+    <h1>Hal Bootstrap Configurator</h1>
     <p>
         This is the Hal bootstrap.
         Set up Hal so users can sign-in and build their projects.
     </p>
 
-    {{ form_macros.formErrors(errors) }}
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
 
     {{ block('bootstrap_form') }}
 
@@ -19,6 +19,7 @@
 
 {% block bootstrap_form %}
     <form method="post">
+        {{ form_macros.csrf_input('hal_bootstrap') }}
 
         <h2>Configure Identity Providers</h2>
         <p>

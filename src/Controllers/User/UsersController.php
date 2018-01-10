@@ -51,8 +51,9 @@ class UsersController implements ControllerInterface
     {
         $page = $this->getCurrentPage($request);
 
-        $users = $this->userRepo->getPagedResults(SharedStaticConfiguration::HUGE_PAGE_SIZE, ($page-1));
-        $last = $this->getLastPage($users, SharedStaticConfiguration::HUGE_PAGE_SIZE);
+        $paginator = $this->userRepo->getPagedResults(SharedStaticConfiguration::HUGE_PAGE_SIZE, ($page - 1));
+        $last = $this->getLastPage($paginator, SharedStaticConfiguration::HUGE_PAGE_SIZE);
+        $users = $this->getEntitiesForPage($paginator);
 
         return $this->withTemplate($request, $response, $this->template, [
             'page' => $page,

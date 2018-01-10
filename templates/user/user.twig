@@ -1,28 +1,24 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
+{% import 'macros.form.twig' as form_macros %}
 
-{% set page_title = 'User' %}
+{% set page_title = user.name %}
 
-{% set is_admin = current_authorizations.isAdmin %}
-{% set is_super = current_authorizations.isSuper %}
+{% set is_super = current_authorizations.isSuper() %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+    <li><a href="{{ uriFor('users') }}">Users</a></li>
+{% endblock %}
 
 {% block content %}
-
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('users.page1') }}">Back to Users</a>
-        </p>
-    </div>
-
     <div style="display:flex">
         <div style="flex: 0 1 auto; margin-right:1em;">
-            <img src="{{ getAvatarLink(user.email) }}">
+            <img src="{{ get_gravatar_link(user.email) }}">
         </div>
         <div style="flex: 0 1 auto">
 
-            <h2 class="mbn">
+            <h2>
                 {% if is_serious_business_mode %}
                     {{ user.name }}
                 {% else %}
@@ -30,58 +26,97 @@
                 {% endif %}
             </h2>
 
-            <h4 class="mtn">Astronaut</h4>
-            <p>Discovery One</p>
+            <h4>
+                Astronaut
+                <br><small>Discovery One</small>
+            </h4>
         </div>
     </div>
 
-    <h2>User Info</h2>
-    <ul class="meta-box">
-        <li>
-            <h6>User ID</h6>
-            {{ user.id }}
-        </li>
-    </ul>
+    {{ block('meta') }}
+
+    {% if is_super %}
+        <h2>Administrator Actions</h2>
+        {{ block('user_actions') }}
+    {% endif %}
 
     <h2>Contact</h2>
     <ul class="meta-box">
         <li>
-            <h6>Email</h6>
-            {{ user.email ? user.email : 'None' }}
+            <h6>Name</h6>
+            {{ user.name }}
         </li>
 
         <li>
-            <h6>Username</h6>
-            {{ user.username }}
+            <h6>Email</h6>
+            {{ user.parameter('email') ? user.parameter('email') : 'None' }}
         </li>
     </ul>
 
-    <h2>Authorizations</h2>
+    <h2>Access and Authorizations</h2>
     {% include 'partial.user_permissions.twig' with {
         user: user,
         authorizations: user_authorizations,
         permissions: user_permissions
     } only %}
 
-    <h2>User Actions</h2>
-    {{ block('user_actions') }}
+    {% if is_super %}
+        <h2>Personal Access Tokens</h2>
+        <small>Personal Access Tokens can be used to access the <a href="{{ uriFor('api.index') }}">Hal API</a>.</small>
 
-    {% if is_admin %}
-        {{ block('token_table') }}
+        {% include 'user/partial.tokens.twig' with { 'user': user, 'is_owner': false } only %}
     {% endif %}
 
 {% endblock %}
 
+{% block meta %}
+    <ul class="meta-box">
+        <li>
+            <h6>User ID</h6>
+            {{ user.id|short_guid }}
+        </li>
+
+        <li>
+            <h6>ID Provider</h6>
+            {{ user.provider.formatType() }}
+            {% if is_super %}
+                <ul class="mts">
+                    <li>
+                        <b>Provider User ID: </b> {{ user.providerUniqueID }}
+                    </li>
+                    <li>
+                        <b>Sign-In Status:</b>
+                        {% if user.parameter('internal.setup_token') %}
+                            {% if is_setup_token_expired %}
+                                {{ macros.status('Setup token is expired.', 'error') }}
+                            {% else %}
+                                {{ macros.status('Pending user set up of their password', 'notice') }}
+                            {% endif %}
+                        {% else %}
+                        {{ macros.status('Valid', 'success') }}
+                        {% endif %}
+                    </li>
+                </ul>
+            {% endif %}
+        </li>
+
+        <li>
+            <h6>Date Added</h6>
+            {{ user.created|html5date }}
+        </li>
+    </ul>
+{% endblock %}
+
 {% block user_actions %}
-    <p>
-        {% if is_admin or is_super %}
-            <a class="btn btn--action" href="{{ uriFor('admin.permissions.add', {'user': user.id}) }}">Add Permissions</a>
+    <div class="meta-box">
+        {% if is_super %}
+            <a class="btn" href="{{ uriFor('admin.permissions.add', {'user': user.id}) }}">Add Permissions</a>
         {% else %}
             {{ macros.disabled_button('Add Permissions') }}
         {% endif %}
 
-        {% if is_admin or is_super %}
-            <form method="post" action="{{ uriFor('admin.permissions.refresh', {'user': user.id}) }}">
+        {% if is_super %}
+            <form method="post" action="{{ uriFor('admin.permissions.refresh', {'user': user.id}) }}" class="form--inline">
                 <input class="btn btn--action" type="submit" value="Refresh User Cache">
             </form>
         {% else %}
@@ -89,52 +124,28 @@
         {% endif %}
 
         {% if can_disable %}
-            <form method="post" action="{{ uriFor('user.toggle', {'user': user.id}) }}">
-                {% if user.isDisabled %}
-                    <input type="submit" class="btn" value="Enable User">
-                    <input type="hidden" name="enable_user"value="1">
-                {% else %}
-                    <input type="submit" class="btn btn--destructive" value="Disable User">
-                    <input type="hidden" name="disable_user" value="1">
-                {% endif %}
-            </form>
-
+            {% if user.isDisabled %}
+                <form method="post" action="{{ uriFor('user.enable', {'user': user.id}) }}" class="form--inline">
+                    {{ form_macros.csrf_input('user.enable') }}
+                    <button type="submit" class="btn btn--action">Enable User</a>
+                </form>
+            {% else %}
+                <form method="post" action="{{ uriFor('user.disable', {'user': user.id}) }}" class="form--inline">
+                    {{ form_macros.csrf_input('user.disable') }}
+                    <button type="submit" class="btn btn--destructive">Disable User</a>
+                </form>
+            {% endif %}
         {% else %}
             {{ macros.disabled_button('Disable User') }}
         {% endif %}
-    </p>
-{% endblock %}
 
-{% block token_table %}
-    <h2>Access Tokens</h2>
-    <small>Personal Access Tokens can be used to access the <a href="{{ uriFor('api.index') }}">Hal API</a>.</small>
-
-    {% if tokens %}
-        <table class="table--spacing-medium">
-            <thead>
-                <tr>
-                    <th class="t10">ID</th>
-                    <th>Name</th>
-                    <th>Token Secret</th>
-                    <th class="t10"></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for token in user.tokens %}
-                    <tr>
-                        <td>{{ token|shortGUID }}</td>
-                        <td>{{ token.name }}</td>
-                        <td>{{ macros.status('Not Available', 'info', 'locked') }}</td>
-                        <td>
-                            <a href="{{ uriFor('user.token.remove', {'user': user.id, 'token': token.id}) }}">
-                                Revoke
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>User has no personal access tokens saved.</p>
-    {% endif %}
+        {% if is_super %}
+            <form method="post" action="{{ uriFor('user.regenerate_setup', {'user': user.id}) }}" class="form--inline">
+                {{ form_macros.csrf_input('user.regenerate_setup') }}
+                <button type="submit" class="btn btn--action">Regenerate user setup token</button>
+            </form>
+        {% else %}
+            {{ macros.disabled_button('Regenerate user setup token') }}
+        {% endif %}
+    </div>
 {% endblock %}

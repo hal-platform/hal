@@ -63,7 +63,7 @@ services:
 
     middleware.removal_confirmation.token:
         class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
-        arguments: ['@middleware.removal_confirmation.twig', 'token']
+        arguments: ['@middleware.removal_confirmation.twig', 'user_token']
     middleware.removal_confirmation.organization:
         class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
         arguments: ['@middleware.removal_confirmation.twig', 'organization']

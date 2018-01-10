@@ -12,17 +12,17 @@ use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
-use Hal\UI\Middleware\UserSessionGlobalMiddleware;
 use Hal\UI\Security\Auth;
+use Hal\UI\Security\UserSessionHandler;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
-use function random_bytes;
 
 class SignInHandler implements MiddlewareInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
@@ -35,9 +35,9 @@ class SignInHandler implements MiddlewareInterface
     const ERR_AUTH_MISCONFIGURED = 'No valid Identity Provider was found. Hal may be misconfigured.';
 
     /**
-     * @var Auth
+     * @var EntityManagerInterface
      */
-    private $auth;
+    private $em;
 
     /**
      * @var EntityRepository
@@ -45,9 +45,14 @@ class SignInHandler implements MiddlewareInterface
     private $idpRepo;
 
     /**
-     * @var EntityManagerInterface
+     * @var Auth
      */
-    private $em;
+    private $auth;
+
+    /**
+     * @var UserSessionHandler
+     */
+    private $userHandler;
 
     /**
      * @var URI
@@ -55,21 +60,23 @@ class SignInHandler implements MiddlewareInterface
     private $uri;
 
     /**
-     * @param Auth $auth
      * @param EntityManagerInterface $em
+     * @param Auth $auth
+     * @param UserSessionHandler $userHandler
      * @param URI $uri
-     * @param callable $random
      */
     public function __construct(
         EntityManagerInterface $em,
         Auth $auth,
+        UserSessionHandler $userHandler,
         URI $uri
     ) {
-        $this->auth = $auth;
-        $this->uri = $uri;
-
-        $this->idpRepo = $em->getRepository(UserIdentityProvider::class);
         $this->em = $em;
+        $this->idpRepo = $em->getRepository(UserIdentityProvider::class);
+
+        $this->auth = $auth;
+        $this->userHandler = $userHandler;
+        $this->uri = $uri;
     }
 
     /**
@@ -78,6 +85,10 @@ class SignInHandler implements MiddlewareInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         if ($request->getMethod() !== 'POST') {
+            return $next($request, $response);
+        }
+
+        if (!$this->isCSRFValid($request)) {
             return $next($request, $response);
         }
 
@@ -124,11 +135,8 @@ class SignInHandler implements MiddlewareInterface
         //     $isFirstLogin = true;
         // }
 
-        $session = $this->getSession($request);
 
-        $session->clear();
-        $session->set(UserSessionGlobalMiddleware::ID_ATTRIBUTE, bin2hex(random_bytes(32)));
-        $session->set(UserSessionGlobalMiddleware::SESSION_ATTRIBUTE, $user->id());
+        $session = $this->userHandler->startNewSession($request, $user->id());
         // $session->set('is_first_login', $isFirstLogin);
 
         if ($redirectURL && strpos($redirectURL, '/') === 0) {

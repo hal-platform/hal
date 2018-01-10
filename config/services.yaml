@@ -54,8 +54,7 @@ services:
     slim.global_middleware.user_session:
         class: 'Hal\UI\Middleware\UserSessionGlobalMiddleware'
         arguments:
-            - '@doctrine.em'
-            - '@service.authorization'
+            - '@user_session.handler'
             - '@csrf'
             - '@uri'
         calls:

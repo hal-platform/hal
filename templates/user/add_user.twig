@@ -1,0 +1,102 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+{% import 'macros.form.twig' as form_macros %}
+
+{% set js_components = ['add_user_form'] %}
+{% set page_title = 'Add User' %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+    <li><a href="{{ uriFor('users') }}">Users</a></li>
+{% endblock %}
+
+{% block content %}
+    {% if id_providers %}
+        {{ block('add_user_form') }}
+
+    {% else %}
+        {{ block('err_no_idps') }}
+    {% endif %}
+
+{% endblock %}
+
+{% block err_no_idps %}
+
+    {{ macros.alert('error', 'No identity providers are configured. Cannot add users to system.') }}
+    <p>
+        Before users can be added, at least one identity provider must be configured in <b>System Settings</b>.
+    </p>
+
+    <p><a href="{{ uriFor('id_providers') }}">Go to Identity Providers</a></p>
+
+{% endblock %}
+
+{% block add_user_form %}
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
+
+    <form method="post" class="js-idp-form">
+        {{ form_macros.csrf_input('user.add') }}
+
+        <ul class="form-fields form-wrapper">
+            <li>
+                {% set has_error = form_macros.has_error(errors, 'name') ? ' is-error' : '' %}
+                <label for="name">Name</label>
+                <input type="text" class="text-input{{ has_error }}" name="name" id="name" maxlength="100" value="{{ form.name }}" required>
+                <small>
+                    User's name (Can be a username or real name)
+                </small>
+            </li>
+        </ul>
+
+        <h4>Identity Provider</h4>
+        {% if id_providers|length > 0 %}
+            <ul class="form-fields form-wrapper">
+                <li>
+                    <ul>
+                        {% set is_selected = form.id_provider == '' ? ' checked' : '' %}
+                        <li>
+                            <label for="idp-noop">
+                                <input type="radio" id="idp-noop" name="id_provider" value="" data-idp-select data-idp-type=""{{ is_selected }}>
+                                None
+                            </label>
+                        </li>
+
+                        {% for provider in id_providers %}
+                            {% set is_selected = form.id_provider == provider.id ? ' checked' : '' %}
+
+                            <li>
+                                <label for="idp-{{ provider.id }}">
+                                    <input type="radio" id="idp-{{ provider.id }}" name="id_provider" value="{{ provider.id }}" data-idp-select data-idp-type="{{ provider.type }}"{{ is_selected }}>
+                                    {{ provider.name }} ({{ provider.type }})
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+
+                {{ block('internal_provider_form') }}
+            </ul>
+
+        {% else %}
+            <p>No identity providers are configured.</p>
+        {% endif %}
+
+        <p>
+            <button class="btn btn--action" type="submit">Add User</button>
+            <a href="{{ uriFor('users') }}">Cancel</a>
+        </p>
+
+    </form>
+{% endblock %}
+
+{% block internal_provider_form %}
+    <li data-type-specific data-internal>
+        {% set has_error = form_macros.has_error(errors, 'internal_username') ? ' is-error' : '' %}
+
+        <label for="internal-username">Internal Username</label>
+        <input type="text" class="text-input{{ has_error }}" name="internal_username" id="internal-username" value="{{ form.internal_username }}" maxlength="100">
+        <small>
+            This is the username used to sign-in to Hal. It must be unique.
+        </small>
+    </li>
+{% endblock %}

@@ -41,7 +41,8 @@ class SettingsController implements ControllerInterface
 
         return $this->withTemplate($request, $response, $this->template, [
             'user' => $currentUser,
-            'tokens' => $currentUser->tokens()->toArray()
+            'tokens' => $currentUser->tokens()->toArray(),
+            'is_token_owner' => true
         ]);
     }
 }

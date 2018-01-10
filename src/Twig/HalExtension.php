@@ -58,7 +58,7 @@ class HalExtension extends AbstractExtension
             new TwigFunction('hash', [$this, 'hash']),
 
             // user
-            new TwigFunction('getAvatarLink', [$this, 'getAvatarLink']),
+            new TwigFunction('get_gravatar_link', [$this, 'getGravatarLink']),
         ];
     }
 
@@ -291,7 +291,7 @@ class HalExtension extends AbstractExtension
      *
      * @return string
      */
-    public function getAvatarLink($email, $size = 100)
+    public function getGravatarLink($email, $size = 100)
     {
         $email = strtolower(trim($email));
         // $scheme = ($this->request->getScheme() === 'https') ? 'https' : 'http';

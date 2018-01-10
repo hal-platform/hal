@@ -10,21 +10,29 @@ namespace Hal\UI\Controllers\User\Token;
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\User\UserToken;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
-use Hal\UI\Flash;
+use Hal\UI\Validator\ValidatorTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use QL\MCP\Common\GUID;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
 class AddTokenController implements ControllerInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
+    use ValidatorTrait;
 
-    const MSG_SUCCESS = 'Token "%s" created successfully.';
-    const ERR_NAME_REQUIRED = 'Token name is required to create a token.';
+    private const MSG_SUCCESS = 'Token "%s" created successfully.';
+
+    private const ERR_NAME_REQUIRED = 'Token name is required to create a token.';
+    private const ERR_CSRF_OR_STATE = 'An error occurred. Please try again.';
+
+    private const REGEX_CHARACTER_WHITESPACE = '\f\n\r\t\v';
 
     /**
      * @var EntityManagerInterface
@@ -35,11 +43,6 @@ class AddTokenController implements ControllerInterface
      * @var URI
      */
     private $uri;
-
-    /**
-     * @var callable
-     */
-    private $random;
 
     /**
      * @param EntityManagerInterface $em
@@ -58,17 +61,52 @@ class AddTokenController implements ControllerInterface
     {
         $user = $request->getAttribute(User::class);
 
-        $name = $request->getParsedBody()['name'] ?? '';
-
-        if (!$name) {
-            $this->withFlash($request, Flash::ERROR, self::ERR_NAME_REQUIRED);
+        if (!$this->isCSRFValid($request)) {
+            $this->withFlashError($request, self::ERR_CSRF_OR_STATE);
             return $this->withRedirectRoute($response, $this->uri, 'settings');
         }
 
-        $token = $this->generateToken($user, $name);
+        if (!$token = $this->handleForm($user, $request)) {
+            $this->withFlashError($request, self::ERR_NAME_REQUIRED);
+            return $this->withRedirectRoute($response, $this->uri, 'settings');
+        }
 
-        $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $token->name()));
+        $this->em->persist($token);
+        $this->em->merge($user);
+
+        $this->em->flush();
+
+        $this->withFlashSuccess($request, sprintf(self::MSG_SUCCESS, $token->name()));
         return $this->withRedirectRoute($response, $this->uri, 'settings');
+    }
+
+    /**
+     * @param User $user
+     * @param ServerRequestInterface $request
+     *
+     * @return UserToken|null
+     */
+    private function handleForm(User $user, ServerRequestInterface $request): ?UserToken
+    {
+        if ($request->getMethod() !== 'POST') {
+            return null;
+        }
+
+        if (!$this->isCSRFValid($request)) {
+            return null;
+        }
+
+        $name = $request->getParsedBody()['name'] ?? '';
+
+        if (!$this->validateLength($name, 5, 100)) {
+            return null;
+        }
+
+        if (!$this->validateCharacterBlacklist($name, self::REGEX_CHARACTER_WHITESPACE)) {
+            return null;
+        }
+
+        return $this->generateToken($user, $name);
     }
 
     /**
@@ -80,15 +118,16 @@ class AddTokenController implements ControllerInterface
     private function generateToken(User $user, $name): UserToken
     {
         // @todo encrypt
-        $secret = bin2hex(random_bytes(20));
+        $secret = GUID::create()->format(GUID::STANDARD | GUID::HYPHENATED);
 
         $token = (new UserToken)
             ->withName($name)
             ->withValue($secret)
             ->withUser($user);
 
-        $this->em->persist($token);
-        $this->em->flush();
+        $user
+            ->tokens()
+            ->add($token);
 
         return $token;
     }

@@ -10,9 +10,9 @@ namespace Hal\UI\Controllers\User\Token;
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\User\UserToken;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
-use Hal\UI\Flash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -20,10 +20,13 @@ use QL\Panthor\Utility\URI;
 
 class RemoveTokenController implements ControllerInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
 
-    const MSG_SUCCESS = 'Token "%s" has been revoked.';
+    private const MSG_SUCCESS = 'Token "%s" has been revoked.';
+
+    private const ERR_CSRF_OR_STATE = 'An error occurred. Please try again.';
 
     /**
      * @var EntityManagerInterface
@@ -55,15 +58,18 @@ class RemoveTokenController implements ControllerInterface
 
         $currentUser = $this->getUser($request);
 
+        $routeParams = ($user === $currentUser) ? ['settings'] : ['user', ['user' => $user->id()]];
+
+        if (!$this->isCSRFValid($request)) {
+            $this->withFlashError($request, self::ERR_CSRF_OR_STATE);
+            return $this->withRedirectRoute($response, $this->uri, ...$routeParams);
+        }
+
         $this->em->remove($token);
         $this->em->flush();
 
-        $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $token->name()));
+        $this->withFlashSuccess($request, sprintf(self::MSG_SUCCESS, $token->name()));
 
-        if ($user === $currentUser) {
-            return $this->withRedirectRoute($response, $this->uri, 'settings');
-        } else {
-            return $this->withRedirectRoute($response, $this->uri, 'user', ['user' => $user->id()]);
-        }
+        return $this->withRedirectRoute($response, $this->uri, ...$routeParams);
     }
 }
