@@ -209,12 +209,12 @@ parameters:
                 application_permission.add:
                     method: ['GET', 'POST']
                     route: '/permissions/add'
-                    stack: ['middleware.is_owner', 'application.permission_add.page']
+                    stack: ['middleware.is_owner', 'middleware.require_csrf', 'application.permission_add.page']
 
                 application_permission.remove:
                     method: ['GET', 'POST']
                     route: '/permissions/remove'
-                    stack: ['middleware.is_owner', 'application.permission_remove.page']
+                    stack: ['middleware.is_owner', 'middleware.require_csrf', 'application.permission_remove.page']
 
                 # are these application routes or build/release routes?
                 # It's nice to be able to use route groups to nest common url prefixes.

@@ -101,7 +101,7 @@ class GitHubResolver
      *
      * @param string $reference
      *
-     * @return array|null
+     * @return array
      */
     public function resolveRefType($reference): ?array
     {

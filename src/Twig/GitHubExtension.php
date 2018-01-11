@@ -111,7 +111,7 @@ class GitHubExtension extends AbstractExtension
                 $app->parameter('gh.repo')
             );
 
-        } elseif ($app->provider() && $app->provider->type() === VCSProviderEnum::TYPE_GITHUB) {
+        } elseif ($app->provider() && $app->provider()->type() === VCSProviderEnum::TYPE_GITHUB) {
             return $app->parameter('git.link');
         }
 
@@ -120,7 +120,7 @@ class GitHubExtension extends AbstractExtension
 
     /**
      * @param Application|null $app
-     * @param string $commit
+     * @param string $reference
      *
      * @return string
      */

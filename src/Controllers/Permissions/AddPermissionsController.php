@@ -56,8 +56,8 @@ class AddPermissionsController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $applicationRepository;
-    private $organizationRepository;
+    private $applicationRepo;
+    private $organizationRepo;
 
     /**
      * @var JSON
@@ -111,8 +111,8 @@ class AddPermissionsController implements ControllerInterface
         $this->authorizationService = $authorizationService;
 
         $this->em = $em;
-        $this->applicationRepository = $em->getRepository(Application::class);
-        $this->organizationRepository = $em->getRepository(Organization::class);
+        $this->applicationRepo = $em->getRepository(Application::class);
+        $this->organizationRepo = $em->getRepository(Organization::class);
 
         $this->authorizationHydrator = $authorizationHydrator;
     }
@@ -222,7 +222,7 @@ class AddPermissionsController implements ControllerInterface
             }
         }
 
-        $applications = $this->applicationRepository->findBy([], ['name' => 'ASC']);
+        $applications = $this->applicationRepo->findBy([], ['name' => 'ASC']);
 
         $data = $noOrg = [];
         foreach ($applications as $app) {

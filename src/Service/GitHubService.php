@@ -205,7 +205,7 @@ class GitHubService
     {
         $params = [$user, $repo];
 
-        $refs = $this->callGitHub([$this->repoAPI, 'show'], $params);
+        $repository = $this->callGitHub([$this->repoAPI, 'show'], $params);
 
         return $repository;
     }

@@ -2,79 +2,94 @@
 {% import 'macros.twig' as macros %}
 {% import 'macros.git.twig' as git_macros %}
 {% import 'macros.form.twig' as form_macros %}
+
 {% set js_components = ['application_permissions'] %}
 
 {% set page_title = 'Grant Application Permissions' %}
 
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+    {% if application.organization -%}
+        <li><a href="{{ uriFor('organization', {'organization': application.organization.id}) }}">{{ application.organization.name }}</a></li>
+    {%- endif %}
+    <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
+{% endblock %}
+
 {% block content %}
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('application', {'application': application.id}) }}">Back to Application</a>
-        </p>
-    </div>
-
     {{ block('meta') }}
 
     <h2>Add Permissions</h2>
-
-    <div class="form-wrapper">
-        {{ form_macros.formErrors(errors) }}
-
-        <form method="post">
-            <ul class="form-fields">
-                <li>
-                    <label>Users</label>
-                    <small class="additional">
-                        Grant access to multiple users at once.
-                    </small>
-
-                    <ul class="list--bare js-app-permissions">
-                        {% if form.users|length == 0 %}
-                            {% for i in 0..1 %}
-                                <li><input class="text-input" type="text" name="users[]" list="users-datalist" placeholder="Type or select a user..." value="{{ form.users[i] }}"></li>
-                            {% endfor %}
-                        {% else %}
-                            {% for user in form.users %}
-                                <li><input class="text-input" type="text" name="users[]" list="users-datalist" placeholder="Type or select a user..." value="{{ user }}"></li>
-                            {% endfor %}
-                        {% endif %}
-                    </ul>
-
-                    <datalist id="users-datalist">
-                        {% for u in users %}
-                            <option value="{{ u.username|lower }}">{{ u.name }}{% if u.username ends with '-' %} (dash){% endif %}</option>
-                        {% endfor %}
-                    </datalist>
-                </li>
-
-                <li>
-                    <label>Permission Type</label>
-                    <ul class="list--bare">
-                        {% for user_type in availableTypes %}
-                            {% set is_selected = form.type == user_type ? ' checked' : '' %}
-                            <li>
-                                <label for="perm-{{ user_type }}">
-                                    <input type="radio" id="perm-{{ user_type }}" name="type" value="{{ user_type }}"{{ is_selected }}>
-                                    {{ user_type|capitalize }}
-                                </label>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </li>
-            </ul>
-
-            <ul class="list--bare">
-                <li><input class="btn btn--action" type="submit" value="Add Permissions"></li>
-                <li><a class="btn" href="{{ uriFor('application', {'application': application.id}) }}">Cancel</a></li>
-            </ul>
-        </form>
-    </div>
+    {{ block('add_permission_form') }}
 
     <h2>Permission Levels</h2>
     {% include 'permissions/partial.permission_descriptions.twig' %}
+{% endblock %}
 
+{% block add_permission_form %}
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
+
+    <form method="post">
+        {{ form_macros.csrf_input('application_permission.add') }}
+
+        <ul class="form-fields form-wrapper">
+            <li>
+                <label>Users</label>
+                <small>
+                    Grant access to multiple users at once.
+                </small>
+
+                <ul class="js-app-permissions">
+                    {% if form.users|length == 0 %}
+                        {% for i in 0..1 %}
+                            <li class="mvs">
+                                <input class="text-input" type="text" name="users[]" list="users-datalist" placeholder="Type or select a user..." value="{{ form.users[i] }}">
+                            </li>
+                        {% endfor %}
+                    {% else %}
+                        {% for user in form.users %}
+                            <li class="mvs">
+                                <input class="text-input" type="text" name="users[]" list="users-datalist" placeholder="Type or select a user..." value="{{ user }}">
+                            </li>
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+
+                <datalist id="users-datalist">
+                    {% for u in users %}
+                        <option value="{{ u.id }}">{{ u.name }} ({{ u.provider.type }})</option>
+                    {% endfor %}
+                </datalist>
+            </li>
+
+            <li>
+                <label>Permission Type</label>
+                <ul>
+                    {% set is_selected = form.type == '' ? ' checked' : '' %}
+                    <li>
+                        <label for="perm-noop">
+                            <input type="radio" id="perm-noop" name="type" value="" {{ is_selected }}>
+                            None
+                        </label>
+                    </li>
+
+                    {% for user_type in available_types %}
+                        {% set is_selected = form.type == user_type ? ' checked' : '' %}
+                        <li>
+                            <label for="perm-{{ user_type }}">
+                                <input type="radio" id="perm-{{ user_type }}" name="type" value="{{ user_type }}"{{ is_selected }}>
+                                {{ user_type }}
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
+
+        <p>
+            <button class="btn btn--action" type="submit">Add Permissions</button>
+            <a href="{{ uriFor('application', {'application': application.id}) }}">Cancel</a>
+        </p>
+    </form>
 {% endblock %}
 
 {% block meta %}
@@ -82,6 +97,17 @@
         <li>
             <h6>Application</h6>
             {{ application.name }}
+        </li>
+
+        <li>
+            <h6>Organization</h6>
+            {% if application.organization %}
+                <a href="{{ uriFor('organization', {'organization': application.organization.id}) }}">
+                    {{ application.organization.name }}
+                </a>
+            {% else %}
+                None
+            {% endif %}
         </li>
 
         <li>

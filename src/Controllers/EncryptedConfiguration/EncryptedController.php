@@ -60,7 +60,7 @@ class EncryptedController implements ControllerInterface
     /**
      * @param EncryptedProperty $property
      *
-     * @return string|bool|null
+     * @return string|null
      */
     private function decrypt(EncryptedProperty $property)
     {
