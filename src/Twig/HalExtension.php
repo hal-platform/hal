@@ -74,14 +74,11 @@ class HalExtension extends AbstractExtension
             new TwigFilter('reldate', [$this->time, 'relative']),
             new TwigFilter('html5date', [$this->time, 'html5'], ['is_safe' => ['html']]),
 
-            new TwigFilter('jsonPretty', [$this, 'jsonPretty'], ['is_safe' => ['html']]),
+            new TwigFilter('json_pretty', [$this, 'formatPrettyJSON'], ['is_safe' => ['html']]),
 
-            new TwigFilter('formatBuildId', [$this, 'formatBuildId']),
-            new TwigFilter('formatPushId', [$this, 'formatPushId']),
             new TwigFilter('formatEvent', [$this, 'formatEvent']),
 
-            new TwigFilter('shortGUID', [$this, 'shortGUID']),
-            new TwigFilter('short_guid', [$this, 'shortGUID']),
+            new TwigFilter('short_guid', [$this, 'formatShortGUID']),
 
             new TwigFilter('occurences', function($haystack, $needle) {
                 if (!is_string($haystack) || !is_string($needle)) return 0;
@@ -123,7 +120,7 @@ class HalExtension extends AbstractExtension
      *
      * @return string
      */
-    public function jsonPretty($json)
+    public function formatPrettyJSON($json)
     {
         $raw = json_decode($json, true);
 
@@ -133,34 +130,6 @@ class HalExtension extends AbstractExtension
         }
 
         return json_encode($raw, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-    }
-
-    /**
-     * @param string|int $id
-     *
-     * @return string
-     */
-    public function formatBuildId($id)
-    {
-        if (preg_match('#^b[a-zA-Z0-9]{1}.[a-zA-Z0-9]{7}$#', $id)) {
-            return strtolower(substr($id, 6));
-        }
-
-        return substr($id, 0, 10);
-    }
-
-    /**
-     * @param string|int $id
-     *
-     * @return string
-     */
-    public function formatPushId($id)
-    {
-        if (preg_match('#^p[a-zA-Z0-9]{1}.[a-zA-Z0-9]{7}$#', $id)) {
-            return strtolower(substr($id, 6));
-        }
-
-        return substr($id, 0, 10);
     }
 
     /**
@@ -183,7 +152,7 @@ class HalExtension extends AbstractExtension
      *
      * @return string
      */
-    public function shortGUID($entity)
+    public function formatShortGUID($entity)
     {
         if (is_object($entity) && is_callable([$entity, 'id'])) {
             $entity = $entity->id();

@@ -25,6 +25,12 @@
     }
 }
 
+.table--topped {
+    tbody td {
+        vertical-align: top;
+    }
+}
+
 th.table-mid-header {
     background: $bright-blue;
     color: $white;
