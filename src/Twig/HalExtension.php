@@ -11,6 +11,7 @@ use Hal\UI\Utility\TimeFormatter;
 use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Entity\JobType\Release;
 use Hal\Core\Entity\Credential;
+use Hal\Core\Entity\Organization;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Entity\System\VersionControlProvider;
 use Hal\Core\Type\CredentialEnum;
@@ -108,6 +109,9 @@ class HalExtension extends AbstractExtension
             }),
             new TwigTest('release', function ($entity) {
                 return $entity instanceof Release;
+            }),
+            new TwigTest('organization', function ($entity) {
+                return $entity instanceof Organization;
             })
         ];
     }

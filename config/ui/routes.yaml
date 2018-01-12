@@ -206,16 +206,6 @@ parameters:
                     route: '/remove'
                     stack: ['middleware.is_owner', 'middleware.require_csrf', 'middleware.removal_confirmation.application', 'application.remove.handler']
 
-                application_permission.add:
-                    method: ['GET', 'POST']
-                    route: '/permissions/add'
-                    stack: ['middleware.is_owner', 'middleware.require_csrf', 'application.permission_add.page']
-
-                application_permission.remove:
-                    method: ['GET', 'POST']
-                    route: '/permissions/remove'
-                    stack: ['middleware.is_owner', 'middleware.require_csrf', 'application.permission_remove.page']
-
                 # are these application routes or build/release routes?
                 # It's nice to be able to use route groups to nest common url prefixes.
 
@@ -374,6 +364,45 @@ parameters:
             method: 'GET'
             route: '/releases[/page/{page:%r.digit%}]'
             stack: ['middleware.signed_in', 'releases.history.page']
+
+        ################################################################################################################
+        # permissions
+        ################################################################################################################
+
+        permissions.management:
+            route: ''
+            stack: ['middleware.signed_in', 'middleware.require_entity']
+
+            routes:
+                application_permissions.management:
+                    route: '/applications/{application:%r.guid%}/permissions'
+                    stack: ['middleware.is_owner']
+
+                    routes:
+                        application_permissions.add:
+                            method: ['GET', 'POST']
+                            route: '/add'
+                            stack: ['middleware.require_csrf', 'application_permissions_add.page']
+
+                        application_permissions.remove:
+                            method: ['GET', 'POST']
+                            route: '/remove'
+                            stack: ['middleware.require_csrf', 'application_permissions_remove.page']
+
+                organization_permissions.management:
+                    route: '/organizations/{organization:%r.guid%}/permissions'
+                    stack: ['middleware.is_owner']
+
+                    routes:
+                        organization_permissions.add:
+                            method: ['GET', 'POST']
+                            route: '/add'
+                            stack: ['middleware.require_csrf', 'organization_permissions_add.page']
+
+                        organization_permissions.remove:
+                            method: ['GET', 'POST']
+                            route: '/remove'
+                            stack: ['middleware.require_csrf', 'organization_permissions_remove.page']
 
         ################################################################################################################
         # administrative

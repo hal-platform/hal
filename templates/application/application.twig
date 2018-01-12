@@ -20,7 +20,7 @@
     {{ block('actions') }}
 
     <h2>Authorization and Permissions</h2>
-    {{ block('authorization_and_permissions') }}
+    {% include 'permissions/partial.permissions.twig' with { 'application': application, 'permissions': permissions, 'can_edit': can_edit } %}
 
 {% endblock %}
 
@@ -78,51 +78,4 @@
             {{ macros.disabled_button('Remove Application') }}
         {% endif %}
     </p>
-{% endblock %}
-
-{% block authorization_and_permissions %}
-    <div class="meta-box">
-        <small>
-            Owners can
-                manage this application,
-                deploy to non-production environments, and
-                grant others access.
-
-            Administrators can also manage and deploy this application.
-        </small>
-
-        {% if permissions %}
-            <ul class="list--bullet">
-                {% for permission in permissions %}
-                    {% set from_org = permission.organization ? '- organization' : '' %}
-                    <li>
-                        {{ macros.user_display_link(permission.user) }}
-                        ({{ permission.type }}{{ from_org }})
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <hr>
-            <p>
-                No users currently have deployment or management permissions.
-                This application can be managed by administrators only. Contact an administrator
-                if you would like to self-service and manage your application.
-            </p>
-        {% endif %}
-
-        <p>
-            {% if can_edit %}
-                <a class="btn" href="{{ uriFor('application_permission.add', {'application': application.id})}}">Grant access to other users</a>
-            {% else %}
-                {{ macros.disabled_button('Grant access to other users') }}
-            {% endif %}
-
-            {% if can_edit and permissions %}
-                <a href="{{ uriFor('application_permission.remove', {'application': application.id}) }}">Manage or revoke permissions</a>
-            {% else %}
-                {{ macros.disabled_button('Manage or revoke permissions') }}
-            {% endif %}
-        </p>
-
-    </div>
 {% endblock %}

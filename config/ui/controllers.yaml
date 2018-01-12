@@ -309,28 +309,6 @@ services:
             - '@service.authorization'
             - '@uri'
 
-    application.permission_add.page:
-        class: 'Hal\UI\Controllers\Application\AddApplicationPermissionController'
-        arguments:
-            - '@application.permission_add.twig'
-            - '@doctrine.em'
-            - '@service.authorization'
-            - '@uri'
-    application.permission_add.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['application/add_permission.twig']]]
-
-    application.permission_remove.page:
-        class: 'Hal\UI\Controllers\Application\RemoveApplicationPermissionController'
-        arguments:
-            - '@application.permission_remove.twig'
-            - '@doctrine.em'
-            - '@service.authorization'
-            - '@uri'
-    application.permission_remove.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['application/remove_permission.twig']]]
-
     ####################################################################################################################
     # applications - encrypted configuration
     ####################################################################################################################
@@ -791,6 +769,54 @@ services:
     credential.remove.handler:
         class: 'Hal\UI\Controllers\Credentials\RemoveCredentialController'
         arguments: ['@doctrine.em', '@uri']
+
+    ####################################################################################################################
+    # permissions
+    ####################################################################################################################
+
+    application_permissions_add.page:
+        class: 'Hal\UI\Controllers\Permissions\AddEntityPermissionsController'
+        arguments:
+            - '@application_permissions_add.twig'
+            - '@doctrine.em'
+            - '@service.authorization'
+            - '@uri'
+    application_permissions_add.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['permissions/add_application_permissions.twig']]]
+
+    application_permissions_remove.page:
+        class: 'Hal\UI\Controllers\Permissions\RemoveEntityPermissionsController'
+        arguments:
+            - '@application_permissions_remove.twig'
+            - '@doctrine.em'
+            - '@service.authorization'
+            - '@uri'
+    application_permissions_remove.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['permissions/remove_application_permissions.twig']]]
+
+    organization_permissions_add.page:
+        class: 'Hal\UI\Controllers\Permissions\AddEntityPermissionsController'
+        arguments:
+            - '@organization_permissions_add.twig'
+            - '@doctrine.em'
+            - '@service.authorization'
+            - '@uri'
+    organization_permissions_add.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['permissions/add_organization_permissions.twig']]]
+
+    organization_permissions_remove.page:
+        class: 'Hal\UI\Controllers\Permissions\RemoveEntityPermissionsController'
+        arguments:
+            - '@organization_permissions_remove.twig'
+            - '@doctrine.em'
+            - '@service.authorization'
+            - '@uri'
+    organization_permissions_remove.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['permissions/remove_organization_permissions.twig']]]
 
     ####################################################################################################################
     # admin - permissions

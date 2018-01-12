@@ -51,7 +51,7 @@
                     {%- endif %}
                 </li>
                 <li>
-                    <b>Source Code:</b>
+                    <b>Version Control:</b>
                     {% if last_job -%}
                         {# todo #}
                         {% set is_gitref_current = githubCommitIsCurrent(last_job.build.application, last_job.build.reference, last_job.build.commit) %}

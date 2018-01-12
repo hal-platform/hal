@@ -5,6 +5,7 @@
 {% set page_title = 'Organization' %}
 
 {% set is_admin = current_authorizations.isSuper() %}
+{% set can_edit = is_admin or current_authorizations.isOwnerOf(organization) %}
 {% set is_removable = is_admin and not applications %}
 
 {% block breadcrumb_links %}
@@ -36,6 +37,9 @@
 
     {{ block('actions') }}
 
+    <h2>Authorization and Permissions</h2>
+    {% include 'permissions/partial.permissions.twig' with { 'organization': organization, 'permissions': permissions, 'can_edit': can_edit } %}
+
 {% endblock %}
 
 {% block actions %}
@@ -63,7 +67,7 @@
                 <tr>
                     <th class="t15">ID</th>
                     <th>Application</th>
-                    <th class="t40">Source Code</th>
+                    <th class="t40">Version Control</th>
                     <th class="t10"></th>
                 </tr>
             </thead>

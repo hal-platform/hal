@@ -1,0 +1,51 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+{% import 'macros.git.twig' as git_macros %}
+{% import 'macros.form.twig' as form_macros %}
+
+{% set js_components = ['application_permissions'] %}
+
+{% set page_title = 'Grant Permissions' %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+    {% if application.organization -%}
+        <li><a href="{{ uriFor('organization', {'organization': application.organization.id}) }}">{{ application.organization.name }}</a></li>
+    {%- endif %}
+    <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
+{% endblock %}
+
+{% block content %}
+    {{ block('meta') }}
+
+    <h2>Add Permissions</h2>
+    {% include 'permissions/partial.add_permissions.twig' with { 'application': application } %}
+
+    <h2>Permission Levels</h2>
+    {% include 'permissions/partial.permission_descriptions.twig' %}
+{% endblock %}
+
+{% block meta %}
+    <ul class="meta-box">
+        <li>
+            <h6>Application</h6>
+            {{ application.name }}
+        </li>
+
+        <li>
+            <h6>Organization</h6>
+            {% if application.organization %}
+                <a href="{{ uriFor('organization', {'organization': application.organization.id}) }}">
+                    {{ application.organization.name }}
+                </a>
+            {% else %}
+                None
+            {% endif %}
+        </li>
+
+        <li>
+            <h6>Version Control</h6>
+            {{ git_macros.vcs(application) }}
+        </li>
+    </ul>
+{% endblock %}
