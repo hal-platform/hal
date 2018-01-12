@@ -11,7 +11,7 @@
             </tr>
         </thead>
         <tbody>
-            {% if user.tokens %}
+            {% if user.tokens|length > 0 %}
                 {% for token in user.tokens %}
                     <tr>
                         <td>{{ token|short_guid }}</td>

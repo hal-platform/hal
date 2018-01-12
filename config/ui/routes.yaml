@@ -404,6 +404,32 @@ parameters:
                             route: '/remove'
                             stack: ['middleware.require_csrf', 'organization_permissions_remove.page']
 
+                ################################################################################################################
+                # admin - permissions
+                ################################################################################################################
+
+                admin.permissions:
+                    method: 'GET'
+                    route: '/admin/permissions[/page/{page:%r.digit%}]'
+                    stack: ['admin.permissions.page']
+
+                user_permissions.management:
+                    route: '/users/{user:%r.guid%}/permissions'
+                    stack: ['middleware.require_entity', 'middleware.nested_entity']
+                    routes:
+                        admin.permissions.refresh:
+                            method: 'POST'
+                            route: '/refresh'
+                            stack: ['admin.permissions.refresh.handler']
+                        admin.permissions.add:
+                            method: ['GET', 'POST']
+                            route: '/add'
+                            stack: ['admin.permissions.add.page']
+                        admin.permissions.remove:
+                            method: ['GET', 'POST']
+                            route: '/{user_permission:%r.guid%}/remove'
+                            stack: ['admin.permissions.remove.middleware', 'admin.permissions.remove.handler']
+
         ################################################################################################################
         # administrative
         ################################################################################################################
@@ -533,29 +559,3 @@ parameters:
                             method: ['GET', 'POST']
                             route: '/remove'
                             stack: ['middleware.is_super', 'middleware.require_csrf', 'middleware.removal_confirmation.credential', 'credential.remove.handler']
-
-                ################################################################################################################
-                # admin - permissions
-                ################################################################################################################
-
-                admin.permissions:
-                    method: 'GET'
-                    route: '/permissions'
-                    stack: ['admin.permissions.page']
-
-                user_permissions.management:
-                    route: '/users/{user:%r.guid%}'
-                    stack: ['middleware.require_entity', 'middleware.nested_entity']
-                    routes:
-                        admin.permissions.refresh:
-                            method: 'POST'
-                            route: '/refresh'
-                            stack: ['admin.permissions.refresh.handler']
-                        admin.permissions.add:
-                            method: ['GET', 'POST']
-                            route: '/add'
-                            stack: ['admin.permissions.add.page']
-                        admin.permissions.remove:
-                            method: ['GET', 'POST']
-                            route: '/permission/{user_permission:%r.guid%}/remove'
-                            stack: ['admin.permissions.remove.middleware', 'admin.permissions.remove.handler']

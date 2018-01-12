@@ -9,28 +9,19 @@ namespace Hal\UI\Controllers\Permissions;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\Core\Entity\UserPermission;
+use Hal\Core\Entity\User\UserPermission;
 use Hal\Core\Type\UserPermissionEnum;
-use Hal\UI\Controllers\SessionTrait;
+use Hal\UI\Controllers\PaginationTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\SharedStaticConfiguration;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
-/**
- * Super:
- *     Add any.
- *     Remove Lead, ButtonPusher
- *
- * ButtonPusher:
- *     Add Lead, ButtonPusher
- *     Remove Lead
- *
- */
 class PermissionsController implements ControllerInterface
 {
-    use SessionTrait;
+    use PaginationTrait;
     use TemplatedControllerTrait;
 
     /**
@@ -41,7 +32,7 @@ class PermissionsController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $userPermissionsRepo;
+    private $permissionRepo;
 
     /**
      * @param TemplateInterface $template
@@ -50,8 +41,7 @@ class PermissionsController implements ControllerInterface
     public function __construct(TemplateInterface $template, EntityManagerInterface $em)
     {
         $this->template = $template;
-
-        $this->userPermissionsRepo = $em->getRepository(UserPermission::class);
+        $this->permissionRepo = $em->getRepository(UserPermission::class);
     }
 
     /**
@@ -59,52 +49,24 @@ class PermissionsController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $permissions = $this->userPermissionsRepo->findAll();
-        $types = $this->getTypes($permissions);
+        $page = $this->getCurrentPage($request);
 
-        // sort
-        $sorter = $this->permissionSorter();
+        $paginator = $this->permissionRepo->getPagedResults(SharedStaticConfiguration::MASSIVE_PAGE_SIZE, ($page - 1));
+        $last = $this->getLastPage($paginator, SharedStaticConfiguration::MASSIVE_PAGE_SIZE);
+        $permissions = $this->getEntitiesForPage($paginator);
 
-        usort($types['member'], $sorter);
-        usort($types['owner'], $sorter);
-        usort($types['admin'], $sorter);
+        [$permissions, $adminCount] = $this->collateByUser($permissions);
 
         return $this->withTemplate($request, $response, $this->template, [
-            'user_types' => $types,
-            'members' => $this->collateByUser($types['member']),
-            'owners' => $this->collateByUser($types['owner'] ?? []),
-            'admins' => $this->collateByUser($types['admin'] ?? [])
+            'page' => $page,
+            'last' => $last,
+
+            'permissions' => $permissions,
+
+            // @todo - this is naive - only counts the current size
+            // Need a separate service to track number of users of a type
+            'admin_count' => $adminCount,
         ]);
-    }
-
-    /**
-     * Get all bucket all permissions into their types
-     *
-     * @param array $permissions
-     *
-     * @return array
-     */
-    private function getTypes(array $permissions)
-    {
-        $collated = [
-            'member' => [],
-            'owner' => [],
-            'admin' => [],
-        ];
-
-        $admins = [UserPermissionEnum::TYPE_ADMIN, UserPermissionEnum::TYPE_SUPER];
-
-        foreach ($permissions as $permission) {
-            if (in_array($permission->type(), $admins, true)) {
-                $type = 'admin';
-            } else {
-                $type = $permission->type();
-            }
-
-            $collated[$type][] = $permission;
-        }
-
-        return $collated;
     }
 
     /**
@@ -116,35 +78,29 @@ class PermissionsController implements ControllerInterface
     {
         $users = [];
 
-        foreach ($permissions as $t) {
-            if (!isset($users[$t->user()->id()])) {
-                $users[$t->user()->id()] = [
-                    'user' => $t->user(),
+        $adminCount = 0;
+
+        foreach ($permissions as $perm) {
+            $id = $perm->user()->id();
+
+            if (!isset($users[$id])) {
+                $users[$id] = [
+                    'user' => $perm->user(),
                     'permissions' => []
                 ];
             }
 
-            $users[$t->user()->id()]['permissions'][] = $t;
+            if ($perm->type() === UserPermissionEnum::TYPE_ADMIN || $perm->type() === UserPermissionEnum::TYPE_SUPER) {
+                $adminCount++;
+            }
+
+            $users[$id]['permissions'][] = $perm;
         }
 
         usort($users, function ($a, $b) {
-            return strcasecmp($a['user']->username(), $b['user']->username());
+            return strcasecmp($a['user']->name(), $b['user']->name());
         });
 
-        return $users;
-    }
-
-
-    /**
-     * @return callable
-     */
-    private function permissionSorter()
-    {
-        return function ($a, $b) {
-            $a = $a->user()->username();
-            $b = $b->user()->username();
-
-            return strcasecmp($a, $b);
-        };
+        return [$users, $adminCount];
     }
 }

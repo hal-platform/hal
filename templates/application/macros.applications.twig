@@ -1,4 +1,4 @@
-{% macro app_row(currentUser, application, allow_collapse) %}
+{% macro app_row(current_user, application, allow_collapse) %}
     {% import 'macros.twig' as macros %}
     {% import 'macros.git.twig' as git_macros %}
 
@@ -7,8 +7,9 @@
     {% else %}
         <tr>
     {% endif %}
+
         <td>
-            {% if application.id in currentUser.setting('favorite_applications') %}
+            {% if application.id in current_user.setting('favorite_applications') %}
                 <form method="post"
                       action="{{ uriFor('settings.favorite_applications.remove', {'application': application.id}) }}"
                       data-app-id="{{ application.id }}"
@@ -45,5 +46,6 @@
             <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Dashboard</a>
             • <a href="{{ uriFor('application', {'application': application.id}) }}">Manage</a>
         </td>
+
     </tr>
 {% endmacro %}

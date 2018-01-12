@@ -19,23 +19,19 @@
     <li>
         <h6>Authorization Tiers</h6>
 
-        {% set tiers = authorizations.getTiers %}
-
-        {% if tiers %}
-            <ul class="list--bullet">
-                {% if authorizations.isMember %}
-                    <li>{{ macros.status('Member', 'info') }}</li>
-                {% endif %}
-                {% if authorizations.isOwner %}
-                    <li>{{ macros.status('Owner', 'notice') }}</li>
-                {% endif %}
-                {% if authorizations.isAdmin %}
-                    <li>{{ macros.status('Admin', 'warning') }}</li>
-                {% endif %}
-                {% if authorizations.isSuper %}
-                    <li>{{ macros.status('Super', 'error') }}</li>
-                {% endif %}
-            </ul>
+        {% if authorizations.getTiers() %}
+            {% if authorizations.isMember() %}
+                {{ macros.status('Member', 'info') }}
+            {% endif %}
+            {% if authorizations.isOwner() %}
+                {{ macros.status('Owner', 'notice') }}
+            {% endif %}
+            {% if authorizations.isAdmin() %}
+                {{ macros.status('Admin', 'warning') }}
+            {% endif %}
+            {% if authorizations.isSuper() %}
+                {{ macros.status('Super', 'error') }}
+            {% endif %}
         {% else %}
             None
         {% endif %}
@@ -43,14 +39,14 @@
 
     <li>
         <h6>Member</h6>
-        {% if permissions.isMember %}
+        {% if authorizations.isMember() %}
             <ul class="list--bullet">
                 {% for permission in permissions.member %}
                     <li>
                         {% if permission.application %}
                             <a href="{{ uriFor('application', {'application': permission.application.id}) }}">{{ permission.application.name }}</a>
                         {% elseif permission.organization %}
-                            <a href="{{ uriFor('organization', {'organization': permission.organization.id}) }}">{{ permission.organization.name }}</a>
+                            {{ macros.status('Organization', 'info') }} <a href="{{ uriFor('organization', {'organization': permission.organization.id}) }}">{{ permission.organization.name }}</a>
                         {% else %}
                             Unknown
                         {% endif %}
@@ -64,14 +60,14 @@
 
     <li>
         <h6>Owner</h6>
-        {% if permissions.isOwner %}
+        {% if authorizations.isOwner() %}
             <ul class="list--bullet">
                 {% for permission in permissions.owner %}
                     <li>
                         {% if permission.application %}
                             <a href="{{ uriFor('application', {'application': permission.application.id}) }}">{{ permission.application.name }}</a>
                         {% elseif permission.organization %}
-                            <a href="{{ uriFor('organization', {'organization': permission.organization.id}) }}">{{ permission.organization.name }}</a>
+                            {{ macros.status('Organization', 'info') }} <a href="{{ uriFor('organization', {'organization': permission.organization.id}) }}">{{ permission.organization.name }}</a>
                         {% else %}
                             Unknown
                         {% endif %}
