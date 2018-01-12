@@ -259,7 +259,7 @@ class TargetValidator
     }
 
     /**
-     * @param string $name
+     * @param string $groupID
      *
      * @return bool
      */

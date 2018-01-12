@@ -8,6 +8,7 @@
 namespace Hal\UI\Controllers\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Service\StickyEnvironmentService;
 use Hal\UI\SharedStaticConfiguration;
@@ -17,8 +18,7 @@ use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Target;
 use Hal\Core\Entity\Environment;
 use Hal\Core\Entity\JobType\Build;
-use Hal\Core\Repository\BuildRepository;
-use Hal\Core\Repository\TargetRepository;
+use Hal\Core\Repository\JobType\BuildRepository;
 use Hal\Core\Repository\EnvironmentRepository;
 use Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
@@ -40,7 +40,7 @@ class ApplicationDashboardController implements ControllerInterface
     private $buildRepository;
 
     /**
-     * @var TargetRepository
+     * @var EntityRepository
      */
     private $targetRepository;
 

@@ -37,7 +37,7 @@ class Auth
 
     /**
      * @param string $type
-     * @param ???? $adapter
+     * @param mixed $adapter
      *
      * @return void
      */

@@ -83,7 +83,7 @@ class RemoveApplicationPermissionController implements ControllerInterface
 
         $permissions = $this->getPermissions($application);
         if (!$permissions) {
-            $this->withFlashError($request,self::MSG_NO_PERMS_TO_REVOKE);
+            $this->withFlashError($request, self::MSG_NO_PERMS_TO_REVOKE);
             return $this->withRedirectRoute($response, $this->uri, 'application', ['application' => $application->id()]);
         }
 
@@ -177,9 +177,8 @@ class RemoveApplicationPermissionController implements ControllerInterface
 
             $p = $data['permissions'] ?? [];
         } else {
-            $p = array_map(function($v) {
+            $p = array_map(function ($v) {
                 return $v->id();
-                return strlen($v) !== 0;
             }, $existing);
         }
 

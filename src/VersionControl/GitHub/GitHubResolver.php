@@ -43,9 +43,12 @@ class GitHubResolver
      */
     public function __construct(Client $client)
     {
-        $this->gitReferencesAPI = $client->api('git_data')->references();
-        $this->gitCommitsAPI = $client->api('git_data')->commits();
-        $this->pullRequestAPI = $client->api('pull_request');
+        $gitData = $client->api('git_data');
+
+        $this->gitReferencesAPI = new ReferencesAPI($client);
+        $this->gitCommitsAPI = new CommitsAPI($client);
+
+        $this->pullRequestAPI = new PullRequestAPI($client);
     }
 
     /**

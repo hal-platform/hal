@@ -85,8 +85,8 @@ class ApplicationsController implements ControllerInterface
     }
 
     /**
-     * @param User $settings
-     * @param array $grouped
+     * @param User $user
+     * @param array $groupApps
      *
      * @return Application[]
      */

@@ -25,7 +25,9 @@ class ApplicationValidator
     private const REGEX_CHARACTER_CLASS_GITHUB = 'a-zA-Z0-9_\.\-';
     private const REGEX_CHARACTER_WHITESPACE = '\f\n\r\t\v';
 
-    private const ERR_DESCRIPTION_CHARACTERS = 'Name must not contain tabs or newlines';
+    private const ERR_NAME_CHARACTERS = 'Name must not contain tabs or newlines';
+    private const ERR_GITHUB_CHARACTERS = 'GitHub usernames and repos must contain only alphanumeric characaters and (_ . -)';
+
     private const ERR_DUPE_NAME = 'An application with this name already exists';
     private const ERR_INVALID_ORG = 'Please select an organization for this application';
     private const ERR_INVALID_VCS = 'Please select a version control provider for this application';
@@ -287,11 +289,11 @@ class ApplicationValidator
     private function validateGithubRepo(GitHubService $github, $owner, $repo)
     {
         if (!$this->validateCharacterWhitelist($owner, self::REGEX_CHARACTER_CLASS_GITHUB)) {
-            $this->addError(self::ERR_NAME_CHARACTERS, 'gh_owner');
+            $this->addError(self::ERR_GITHUB_CHARACTERS, 'gh_owner');
         }
 
         if (!$this->validateCharacterWhitelist($repo, self::REGEX_CHARACTER_CLASS_GITHUB)) {
-            $this->addError(self::ERR_NAME_CHARACTERS, 'gh_repo');
+            $this->addError(self::ERR_GITHUB_CHARACTERS, 'gh_repo');
         }
 
         if (!$github->repository($owner, $repo)) {

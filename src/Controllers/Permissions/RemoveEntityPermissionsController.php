@@ -93,7 +93,7 @@ class RemoveEntityPermissionsController implements ControllerInterface
 
         $permissions = $this->getPermissions($entity);
         if (!$permissions) {
-            $this->withFlashError($request,self::MSG_NO_PERMS_TO_REVOKE);
+            $this->withFlashError($request, self::MSG_NO_PERMS_TO_REVOKE);
             return $this->withRedirectRoute($response, $this->uri, ...$routeParams);
         }
 
@@ -118,7 +118,7 @@ class RemoveEntityPermissionsController implements ControllerInterface
     /**
      * Get all permissions to an application, excluding global (admins).
      *
-     * @param Application|Organization $application
+     * @param Application|Organization $entity
      *
      * @return array
      */
@@ -195,9 +195,8 @@ class RemoveEntityPermissionsController implements ControllerInterface
 
             $p = $data['permissions'] ?? [];
         } else {
-            $p = array_map(function($v) {
+            $p = array_map(function ($v) {
                 return $v->id();
-                return strlen($v) !== 0;
             }, $existing);
         }
 

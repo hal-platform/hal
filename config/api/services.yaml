@@ -45,14 +45,12 @@ services:
 
     api_normalizer.event:
         class: 'Hal\UI\API\Normalizer\EventNormalizer'
-        arguments: ['@doctrine.em']
 
     api_normalizer.organization:
         class: 'Hal\UI\API\Normalizer\OrganizationNormalizer'
 
     api_normalizer.release:
         class: 'Hal\UI\API\Normalizer\ReleaseNormalizer'
-        arguments: ['@api_normalizer.environment']
 
     api_normalizer.application:
         class: 'Hal\UI\API\Normalizer\ApplicationNormalizer'

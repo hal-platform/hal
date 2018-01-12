@@ -110,7 +110,7 @@ class RemoveFavoriteApplicationHandler implements ControllerInterface
             return;
         }
 
-        array_filter($favorites, function($appID) use ($application) {
+        array_filter($favorites, function ($appID) use ($application) {
             return ($appID === $application->id());
         });
 

@@ -14,6 +14,7 @@ use Hal\Core\Entity\User;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
 use Hal\UI\Validator\ValidatorErrorTrait;
+use Symfony\Component\Ldap\Adapter\AdapterInterface;
 use Symfony\Component\Ldap\Ldap;
 use Symfony\Component\Ldap\LdapInterface;
 use Symfony\Component\Ldap\Exception\LdapException;
@@ -84,12 +85,7 @@ class LDAPAuth
             return null;
         }
 
-        $fqUsername = $username;
-        if ($domain = $idp->parameter(self::PARAM_DOMAIN)) {
-            $fqUsername = $domain . '\\' . $fqUsername;
-        }
-
-        $data = $this->retrieveUser($ldap, $fqUsername, $username, $password);
+        $data = $this->retrieveUser($idp, $ldap, $username, $password);
 
         if (!$data) {
             $this->addError(self::ERR_USER_NOT_FOUND);
@@ -114,17 +110,22 @@ class LDAPAuth
     }
 
     /**
+     * @param UserIdentityProvider $idp
      * @param LdapInterface $ldap
-     * @param string $fqUsername
      * @param string $username
      * @param string $password
      *
      * @return array|null
      */
-    private function retrieveUser(LdapInterface $ldap, $fqUsername, $username, $password)
+    private function retrieveUser(UserIdentityProvider $idp, LdapInterface $ldap, $username, $password)
     {
+        $fqUsername = $username;
+        if ($domain = $idp->parameter(self::PARAM_DOMAIN)) {
+            $fqUsername = $domain . '\\' . $fqUsername;
+        }
+
         try {
-            $this->ldap->bind($fqUsername, $password);
+            $ldap->bind($fqUsername, $password);
 
         } catch (Exception $ex) {
             // Symfony suppresses errors, but our error handler does not properly ignore suppressed errors.
@@ -141,9 +142,9 @@ class LDAPAuth
             return null;
         }
 
-        $baseDN = $this->ldap->escape($dn);
-        $userObject = $this->ldap->escape($object);
-        $usernameAttribute = $this->ldap->escape($attribute);
+        $baseDN = $ldap->escape($dn);
+        $userObject = $ldap->escape($object);
+        $usernameAttribute = $ldap->escape($attribute);
 
         $query = sprintf('(&(objectclass=%s)(%s=%s))', $userObject, $usernameAttribute, $username);
         $attributes = [
@@ -166,7 +167,7 @@ class LDAPAuth
      */
     private function getUserData(LdapInterface $ldap, $baseDN, $query, array $attributes)
     {
-        $query = $this->ldap->query($baseDN, $query, [
+        $query = $ldap->query($baseDN, $query, [
             'filter' => array_values($attributes)
         ]);
 
@@ -185,7 +186,7 @@ class LDAPAuth
                 return null;
             }
 
-            if ($map === 'objectGUID') {
+            if ($adAttr === 'objectGUID') {
                 $value = unpack("H*hex", $value)['hex'];
             }
 

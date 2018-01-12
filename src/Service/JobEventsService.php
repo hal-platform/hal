@@ -75,7 +75,7 @@ class JobEventsService
     }
 
     /**
-     * @param Build|Release $job
+     * @param Job $job
      *
      * @return JobEvent[]|null
      */
@@ -89,22 +89,24 @@ class JobEventsService
             return [];
         }
 
-        $logs = [];
+        $events = [];
         foreach ($data as $json) {
             $decoded = $this->json->decode($json);
 
             if (is_array($decoded)) {
-                $log = $this->derez($decoded);
-                $logs[] = $log;
-                $log->withParentID($job->id());
+                $event = $this
+                    ->derez($decoded)
+                    ->withJob($job);
+
+                $events[] = $event;
             }
         }
 
-        usort($logs, function ($a, $b) {
+        usort($events, function ($a, $b) {
             return ($a->order() > $b->order()) ? 1 : -1;
         });
 
-        return $logs;
+        return $events;
     }
 
     /**

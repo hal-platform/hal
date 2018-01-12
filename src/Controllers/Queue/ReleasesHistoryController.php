@@ -9,7 +9,7 @@ namespace Hal\UI\Controllers\Queue;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\JobType\Release;
-use Hal\Core\Repository\ReleaseRepository;
+use Hal\Core\Repository\JobType\ReleaseRepository;
 use Hal\UI\Controllers\PaginationTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\SharedStaticConfiguration;

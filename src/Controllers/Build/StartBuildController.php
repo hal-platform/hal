@@ -8,11 +8,11 @@
 namespace Hal\UI\Controllers\Build;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Target;
 use Hal\Core\Entity\Environment;
 use Hal\Core\Entity\User;
-use Hal\Core\Repository\TargetRepository;
 use Hal\Core\Repository\EnvironmentRepository;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
@@ -40,7 +40,7 @@ class StartBuildController implements ControllerInterface
     private $environmentRepository;
 
     /**
-     * @var TargetRepository
+     * @var EntityRepository
      */
     private $targetRepository;
 
@@ -116,21 +116,6 @@ class StartBuildController implements ControllerInterface
             'search' => $request->getParsedBody()['search'] ?? '',
             'reference' => $request->getParsedBody()['reference'] ?? '',
             'gitref' => $request->getParsedBody()['gitref'] ?? ''
-        ];
-    }
-
-    /**
-     * @param Application $application
-     *
-     * @return array
-     */
-    private function getVCSData(Application $application)
-    {
-        return [
-            'gh_branches' => $this->getBranches($application),
-            'gh_tags' => $this->getTags($application),
-            'gh_pr_open' => $this->getPullRequests($application, true),
-            'gh_pr_closed' => $this->getPullRequests($application, false),
         ];
     }
 

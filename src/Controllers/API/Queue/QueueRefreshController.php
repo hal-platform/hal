@@ -10,6 +10,8 @@ namespace Hal\UI\Controllers\API\Queue;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\JobType\Build;
+use Hal\Core\Entity\JobType\Release;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
@@ -18,8 +20,6 @@ use Hal\UI\API\Normalizer\ReleaseNormalizer;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\Build;
-use Hal\Core\Entity\Release;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 

@@ -8,8 +8,8 @@
 namespace Hal\UI\Controllers\Permissions;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\User\UserPermission;
+use Hal\Core\Repository\User\UserPermissionRepository;
 use Hal\Core\Type\UserPermissionEnum;
 use Hal\UI\Controllers\PaginationTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
@@ -30,7 +30,7 @@ class PermissionsController implements ControllerInterface
     private $template;
 
     /**
-     * @var EntityRepository
+     * @var UserPermissionRepository
      */
     private $permissionRepo;
 

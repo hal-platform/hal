@@ -79,12 +79,7 @@ class HalExtension extends AbstractExtension
             new TwigFilter('formatEvent', [$this, 'formatEvent']),
 
             new TwigFilter('short_guid', [$this, 'formatShortGUID']),
-
-            new TwigFilter('occurences', function($haystack, $needle) {
-                if (!is_string($haystack) || !is_string($needle)) return 0;
-
-                return substr_count($haystack, $needle);
-            }),
+            new TwigFilter('occurences', [$this, 'findOccurences']),
 
             // @todo move these to entities?
             new TwigFilter('idp_type', [$this, 'formatIDP']),
@@ -111,6 +106,22 @@ class HalExtension extends AbstractExtension
                 return $entity instanceof Organization;
             })
         ];
+    }
+
+
+    /**
+     * @param string $needle
+     * @param string $haystack
+     *
+     * @return int
+     */
+    public function findOccurences($needle, $haystack)
+    {
+        if (!is_string($haystack) || !is_string($needle)) {
+            return 0;
+        }
+
+        return substr_count($haystack, $needle);
     }
 
     /**
@@ -243,22 +254,6 @@ class HalExtension extends AbstractExtension
     }
 
     /**
-     * Get a simple hash for a provided value.
-     *
-     * @param mixed $data
-     *
-     * @return string
-     */
-    public function hash($data)
-    {
-        if (!is_string($data)) {
-            $data = json_encode($data);
-        }
-
-        return md5($data);
-    }
-
-    /**
      * @param string $email
      * @param int $size
      *
@@ -278,5 +273,21 @@ class HalExtension extends AbstractExtension
             $size,
             urlencode($default)
         );
+    }
+
+    /**
+     * Get a simple hash for a provided value.
+     *
+     * @param mixed $data
+     *
+     * @return string
+     */
+    public function hash($data)
+    {
+        if (!is_string($data)) {
+            $data = json_encode($data);
+        }
+
+        return md5($data);
     }
 }

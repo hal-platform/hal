@@ -39,7 +39,7 @@ class TargetNormalizer implements ResourceNormalizerInterface
 
         return new Hyperlink(
             ['api.target', ['target' => $target->id()]],
-            $target->format(true)
+            $target->name()
         );
     }
 
@@ -59,9 +59,7 @@ class TargetNormalizer implements ResourceNormalizerInterface
             'id' => $target->id(),
             'name' => $target->name(),
             'url' => $target->url(),
-            'parameters' => $this->fillParameters($target),
-            'pretty_name' => $target->format(false),
-            'detail' => sprintf('%s: %s', $target->group()->format(), $target->formatParameters()),
+            'parameters' => $this->fillParameters($target)
         ];
 
         $links = [
@@ -73,7 +71,8 @@ class TargetNormalizer implements ResourceNormalizerInterface
 
         $resource = new HypermediaResource($data, $links, [
             'application' => $target->application(),
-            'group' => $target->group()
+            'environment' => $target->environment(),
+            'template' => $target->template()
         ]);
 
         $resource->withEmbedded($embed);
@@ -83,13 +82,7 @@ class TargetNormalizer implements ResourceNormalizerInterface
 
     private function fillParameters(Target $target)
     {
-        $group = $target->group();
-
-        if (!$group instanceof Group) {
-            return [];
-        }
-
-        $type = $group->type();
+        $type = $target->type();
 
         switch ($type) {
             case GroupEnum::TYPE_S3:

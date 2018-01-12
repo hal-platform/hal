@@ -8,6 +8,7 @@
 namespace Hal\UI\Validator;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Target;
 use Hal\Core\Entity\Environment;
@@ -33,7 +34,7 @@ class ReleaseValidator
     const ERR_MISSING_CREDENTIALS = 'Attempted to initiate push to "%s", but credentials are missing.';
 
     /**
-     * @var TargetRepository
+     * @var EntityRepository
      */
     private $targetRepo;
 
@@ -130,7 +131,7 @@ class ReleaseValidator
 
         $processes = [];
         foreach ($targets as $target) {
-            $process = (new JobProcess)
+            $process = (new ScheduledAction)
                 ->withStatus(ScheduledActionStatusEnum::TYPE_PENDING)
                 ->withMessage($user)
 

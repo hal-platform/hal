@@ -9,9 +9,9 @@ namespace Hal\UI\Controllers\API\Release;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\Core\Entity\Build;
-use Hal\Core\Entity\Target;
 use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\JobType\Build;
+use Hal\Core\Entity\Target;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
@@ -142,6 +142,6 @@ class DeployController implements ControllerInterface
             return null;
         }
 
-        return $target->group()->environment();
+        return $target->environment();
     }
 }

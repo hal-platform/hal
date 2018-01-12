@@ -7,32 +7,13 @@
 
 namespace Hal\UI\API\Normalizer;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
-use Hal\Core\Entity\Build;
-use Hal\Core\Entity\JobEvent;
-use Hal\Core\Entity\Release;
+use Hal\Core\Entity\Job\JobEvent;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResourceNormalizerInterface;
 
 class EventNormalizer implements ResourceNormalizerInterface
 {
-    /**
-     * @var EntityRepository
-     */
-    private $buildRepository;
-    private $releaseRepository;
-
-    /**
-     * @param EntityManagerInterface $entityManager
-     */
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->buildRepository = $entityManager->getRepository(Build::class);
-        $this->releaseRepository = $entityManager->getRepository(Release::class);
-    }
-
     /**
      * @param JobEvent $input
      *
@@ -92,19 +73,8 @@ class EventNormalizer implements ResourceNormalizerInterface
             'self' => $this->link($event)
         ];
 
-        $build = null;
-        if (mb_substr($event->parentID(), 0, 1)  == 'b') {
-            $build = $this->buildRepository->find($event->parentID());
-        }
-
-        $release = null;
-        if (mb_substr($event->parentID(), 0, 1)  == 'r') {
-            $release = $this->releaseRepository->find($event->parentID());
-        }
-
         $resource = new HypermediaResource($data, $links, [
-            'build' => $build,
-            'release' => $release
+            'job' => $event->job()
         ]);
 
         $resource->withEmbedded($embed);

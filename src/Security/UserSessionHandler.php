@@ -47,8 +47,7 @@ class UserSessionHandler
     /**
      * @param EntityManagerInterface $em
      * @param AuthorizationService $authorizationService
-     * @param CSRFManager $csrf
-     * @param URI $uri
+     * @param Clock $clock
      */
     public function __construct(
         EntityManagerInterface $em,
@@ -197,5 +196,4 @@ class UserSessionHandler
 
         return $request;
     }
-
 }

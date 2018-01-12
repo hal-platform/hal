@@ -141,7 +141,7 @@ HTML;
     }
 
     /**
-     * @param mixed $selected
+     * @param ServerRequestInterface $request
      *
      * @return Environment|null
      */

@@ -54,7 +54,7 @@ class UserNormalizer implements ResourceNormalizerInterface
 
         return new Hyperlink(
             ['api.user', ['user' => $user->id()]],
-            $user->username()
+            $user->name()
         );
     }
 
@@ -73,9 +73,8 @@ class UserNormalizer implements ResourceNormalizerInterface
 
         $data = [
             'id' => $user->id(),
-            'username' => $user->username(),
             'name' => $user->name(),
-            'email' => $user->email(),
+            // 'email' => $user->email(),
             'is_disabled' => $user->isDisabled(),
             'permissions' => [
                 'member' => $authorizations->isMember(),

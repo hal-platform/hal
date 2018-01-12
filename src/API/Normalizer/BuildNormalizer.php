@@ -7,7 +7,7 @@
 
 namespace Hal\UI\API\Normalizer;
 
-use Hal\Core\Entity\Build;
+use Hal\Core\Entity\JobType\Build;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResourceNormalizerInterface;
@@ -97,8 +97,8 @@ class BuildNormalizer implements ResourceNormalizerInterface
      */
     private function buildLinks(Build $build)
     {
-        $ghOwner = $build->application()->gitHub()->owner();
-        $ghRepo = $build->application()->gitHub()->repository();
+        // $ghOwner = $build->application()->gitHub()->owner();
+        // $ghRepo = $build->application()->gitHub()->repository();
 
         $links = [
             'self' => $this->link($build),

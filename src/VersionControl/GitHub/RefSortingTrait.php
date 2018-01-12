@@ -7,8 +7,8 @@
 
 namespace Hal\UI\VersionControl\GitHub;
 
-use Hal\Hal\Core\Entity\User;
-use Hal\Hal\Core\Type\IdentityProviderEnum;
+use Hal\Core\Entity\User;
+use Hal\Core\Type\IdentityProviderEnum;
 
 trait RefSortingTrait
 {

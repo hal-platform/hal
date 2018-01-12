@@ -151,7 +151,7 @@ class TokenMiddleware implements MiddlewareInterface
             return;
         }
 
-        $name = sprintf('Token: %s', $user->username());
+        $name = sprintf('Token: %s', $user->name());
         $this->factory->setDefaultProperty(MessageInterface::USER_NAME, $name);
     }
 }

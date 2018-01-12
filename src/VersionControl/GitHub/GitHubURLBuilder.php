@@ -10,7 +10,7 @@ namespace Hal\UI\VersionControl\GitHub;
 class GitHubURLBuilder
 {
     /**
-     * @var GitHubService
+     * @var GitHubResolver
      */
     private $resolver;
 
@@ -60,7 +60,8 @@ class GitHubURLBuilder
     /**
      * @param string $user
      * @param string $repo
-     * @param string $commit
+     * @param string $type
+     * @param string $reference
      *
      * @return string
      */

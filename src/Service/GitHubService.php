@@ -79,13 +79,13 @@ class GitHubService
         $this->urlBuilder = $builder;
         $this->pager = $pager;
 
-        $this->gitReferencesAPI = $client->api('git_data')->references();
-        $this->pullRequestAPI = $client->api('pull_request');
+        $this->gitReferencesAPI = new ReferencesAPI($client);
+        $this->pullRequestAPI = new PullRequestAPI($client);
 
-        $this->repoAPI = $client->api('repo');
-        $this->repoCommitsAPI = $client->api('repo')->commits();
+        $this->repoAPI = new RepoAPI($client);
+        $this->repoCommitsAPI = new RepoCommitsAPI($client);
 
-        $this->userAPI = $client->api('user');
+        $this->userAPI = new UserAPI($client);
     }
 
     /**
@@ -136,7 +136,6 @@ class GitHubService
      *
      * @param string $user
      * @param string $repo
-     * @param bool $getAll
      *
      * @return array
      */
@@ -245,7 +244,7 @@ class GitHubService
     {
         $params = [$user];
 
-        return $this->callGitHub([$this->userAPI, 'show'], $params, $default);
+        return $this->callGitHub([$this->userAPI, 'show'], $params);
     }
 
     /**

@@ -81,9 +81,9 @@ class AddVersionControlController implements ControllerInterface
      * @param array $data
      * @param ServerRequestInterface $request
      *
-     * @return UserIdentityProvider|null
+     * @return VersionControlProvider|null
      */
-    private function handleForm(array $data, ServerRequestInterface $request): ?UserIdentityProvider
+    private function handleForm(array $data, ServerRequestInterface $request): ?VersionControlProvider
     {
         if ($request->getMethod() !== 'POST') {
             return null;

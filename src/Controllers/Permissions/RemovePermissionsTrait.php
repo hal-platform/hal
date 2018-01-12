@@ -43,7 +43,6 @@ trait RemovePermissionsTrait
 
         // Super can do this
         if ($currentUserPerms->isSuper()) {
-
             $supers = $this->removalEM
                 ->getRepository(UserPermission::class)
                 ->findBy(['type' => UserPermissionEnum::TYPE_SUPER]);
@@ -60,7 +59,6 @@ trait RemovePermissionsTrait
 
         // Admin can do this
         if ($currentUserPerms->isAdmin()) {
-
             // Cannot remove supers
             if ($type === UserPermissionEnum::TYPE_SUPER) {
                 $this->reason = $this->ERR_NOPE_SUPER;

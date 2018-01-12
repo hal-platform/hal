@@ -93,7 +93,7 @@ class TargetsController implements ControllerInterface
             $sorted[$id]['targets'][] = $target;
         }
 
-        return array_filter($sorted, function($e) {
+        return array_filter($sorted, function ($e) {
             return count($e['targets']) !== 0;
         });
     }

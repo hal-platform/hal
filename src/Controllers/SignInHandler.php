@@ -100,7 +100,7 @@ class SignInHandler implements MiddlewareInterface
         }
 
         $idp = $this->idpRepo->find($providerID);
-        if (!$idp) {
+        if (!$idp instanceof UserIdentityProvider) {
             return $next($request, $response);
         }
 
@@ -149,7 +149,7 @@ class SignInHandler implements MiddlewareInterface
     /**
      * @param ServerRequestInterface $request
      * @param string $error
-     * @param string|null $field
+     * @param string $field
      *
      * @return ServerRequestInterface
      */

@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Entity\Target;
 use Hal\Core\Entity\Environment;
-use Hal\Core\Repository\TargetRepository;
+use Hal\Core\Repository\EnvironmentRepository;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
@@ -36,12 +36,12 @@ class StartReleaseController implements ControllerInterface
     private $template;
 
     /**
-     * @var TargetRepository
+     * @var EntityRepository
      */
     private $targetRepo;
 
     /**
-     * @var EntityRepository
+     * @var EnvironmentRepository
      */
     private $environmentRepo;
 

@@ -84,7 +84,6 @@ class RSyncValidator implements TargetValidatorInterface
         $type = TargetEnum::TYPE_RSYNC;
 
         if ($target && $request->getMethod() !== 'POST') {
-
             $data["${type}_path"] = $target->parameter(Target::PARAM_REMOTE_PATH);
             $data["${type}_servers"] = $target->parameter('servers');
         }

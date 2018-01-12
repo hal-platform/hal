@@ -54,15 +54,17 @@ class RemoveEncryptedPropertyController implements ControllerInterface
         $application = $request->getAttribute(Application::class);
         $encrypted = $request->getAttribute(EncryptedProperty::class);
 
+        $routeParams = ['encrypted.configuration', ['application' => $application->id()]];
+
         if (!$this->isCSRFValid($request)) {
             $this->withFlashError($request, $this->CSRFError());
-            return $this->withRedirectRoute($response, $this->uri, 'encrypted.configuration', ['application' => $environment->id()]);
+            return $this->withRedirectRoute($response, $this->uri, ...$routeParams);
         }
 
         $this->em->remove($encrypted);
         $this->em->flush();
 
         $this->withFlashSuccess($request, sprintf(self::MSG_SUCCESS, $encrypted->name()));
-        return $this->withRedirectRoute($response, $this->uri, 'encrypted.configuration', ['application' => $application->id()]);
+        return $this->withRedirectRoute($response, $this->uri, ...$routeParams);
     }
 }

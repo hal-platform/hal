@@ -12,7 +12,6 @@ use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Target;
 use Hal\Core\Entity\Environment;
-use Hal\Core\Repository\TargetRepository;
 use Hal\Core\Utility\SortingTrait;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
@@ -20,7 +19,6 @@ use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-
 use QL\Panthor\ControllerInterface;
 
 class TargetsController implements ControllerInterface
@@ -34,13 +32,9 @@ class TargetsController implements ControllerInterface
     private $formatter;
 
     /**
-     * @var TargetRepository
-     */
-    private $targetRepo;
-
-    /**
      * @var EntityRepository
      */
+    private $targetRepo;
     private $environmentRepo;
 
     /**
@@ -65,11 +59,13 @@ class TargetsController implements ControllerInterface
         // Optional filter
         $environment = $this->getEnvironment($request);
 
+        $findBy = ['application' => $application];
+
         if ($environment) {
-            $targets = $this->targetRepo->getByApplicationAndEnvironment($application, $environment);
-        } else {
-            $targets = $this->targetRepo->findBy(['application' => $application]);
+            $findBy['environment'] = $environment;
         }
+
+        $targets = $this->targetRepo->findBy($findBy);
 
         usort($targets, $this->targetSorter());
 

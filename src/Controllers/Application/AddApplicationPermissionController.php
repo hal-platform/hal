@@ -340,7 +340,7 @@ class AddApplicationPermissionController implements ControllerInterface
         }
 
         // Filter out empty inputs
-        $users = array_filter($users, function($v) {
+        $users = array_filter($users, function ($v) {
             return strlen($v) !== 0;
         });
 

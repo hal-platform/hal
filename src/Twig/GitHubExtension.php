@@ -92,85 +92,94 @@ class GitHubExtension extends AbstractExtension
     }
 
     /**
-     * @param Application|null $app
+     * @param Application|null $application
      *
      * @return string
      */
-    public function formatVCSLink($app): string
+    public function formatVCSLink($application): string
     {
-        if (!$app instanceof Application) {
+        if (!$application instanceof Application) {
             return '';
         }
 
+        $provider = $application->provider();
         $githubs = [VCSProviderEnum::TYPE_GITHUB, VCSProviderEnum::TYPE_GITHUB_ENTERPRISE];
 
-        if ($app->provider() && in_array($app->provider()->type(), $githubs)) {
-            $github = $this->vcs->authenticate($app->provider());
-            return $github->url()->githubRepoURL(
-                $app->parameter('gh.owner'),
-                $app->parameter('gh.repo')
-            );
+        if ($provider) {
+            if (in_array($provider->type(), $githubs)) {
+                $github = $this->vcs->authenticate($application->provider());
+                return $github->url()->githubRepoURL(
+                    $application->parameter('gh.owner'),
+                    $application->parameter('gh.repo')
+                );
 
-        } elseif ($app->provider() && $app->provider()->type() === VCSProviderEnum::TYPE_GITHUB) {
-            return $app->parameter('git.link');
+            } elseif ($provider === VCSProviderEnum::TYPE_GITHUB) {
+                return $application->parameter('git.link');
+            }
         }
 
         return '';
     }
 
     /**
-     * @param Application|null $app
+     * @param Application|null $application
      * @param string $reference
      *
      * @return string
      */
-    public function formatVCSReferenceLink($app, $reference): string
+    public function formatVCSReferenceLink($application, $reference): string
     {
-        if (!$app instanceof Application) {
+        if (!$application instanceof Application) {
             return '';
         }
 
+        $provider = $application->provider();
         $githubs = [VCSProviderEnum::TYPE_GITHUB, VCSProviderEnum::TYPE_GITHUB_ENTERPRISE];
 
-        if ($app->provider() && in_array($app->provider()->type(), $githubs)) {
-            $github = $this->vcs->authenticate($app->provider());
+        if ($provider) {
+            if (in_array($provider->type(), $githubs)) {
+                $github = $this->vcs->authenticate($application->provider());
 
-            $ref = $github->resolver()->resolveRefType($reference);
-            return $github->url()->githubRefURL(
-                $app->parameter('gh.owner'),
-                $app->parameter('gh.repo'),
-                ...$ref
-            );
+                $ref = $github->resolver()->resolveRefType($reference);
+                return $github->url()->githubRefURL(
+                    $application->parameter('gh.owner'),
+                    $application->parameter('gh.repo'),
+                    ...$ref
+                );
 
-        } elseif ($app->provider() && $app->provider->type() === VCSProviderEnum::TYPE_GITHUB) {
-            return '#';
+            } elseif ($provider === VCSProviderEnum::TYPE_GIT) {
+                return '#';
+            }
         }
 
         return '#';
     }
 
     /**
-     * @param Application|null
+     * @param Application|null $application
      *
      * @return string
      */
-    public function formatVCSText($app): string
+    public function formatVCSText($application): string
     {
-        if (!$app instanceof Application) {
+        if (!$application instanceof Application) {
             return '';
         }
 
+        $provider = $application->provider();
         $githubs = [VCSProviderEnum::TYPE_GITHUB, VCSProviderEnum::TYPE_GITHUB_ENTERPRISE];
 
-        if ($app->provider() && in_array($app->provider()->type(), $githubs)) {
-            return sprintf(
-                '%s/%s',
-                $app->parameter('gh.owner'),
-                $app->parameter('gh.repo')
-            );
+        if ($provider) {
+            if (in_array($provider->type(), $githubs)) {
+                return sprintf(
+                    '%s/%s',
+                    $application->parameter('gh.owner'),
+                    $application->parameter('gh.repo')
+                );
 
-        } elseif ($app->provider() && $app->provider->type() === VCSProviderEnum::TYPE_GITHUB) {
-            return 'clone';
+            } elseif ($provider->type() === VCSProviderEnum::TYPE_GIT) {
+                return 'clone';
+            }
         }
 
         return '';
@@ -180,19 +189,21 @@ class GitHubExtension extends AbstractExtension
      * Check if a commit hash is the most recent for a given Github user, repo, and reference
      *
      * @param Application|null $application
-     * @param string $repo
      * @param string $reference
      * @param string $commit
      *
      * @return bool
      */
-    public function commitIsCurrent($app,  $reference, $commit)
+    public function commitIsCurrent($application, $reference, $commit)
     {
         // debug
         // debug
         // debug
         // debug
         return false;
+
+        $user = '';
+        $repo = '';
 
         // cache ref comparisons in memory
         $key = md5($user . $repo . $reference . $commit);
@@ -201,7 +212,7 @@ class GitHubExtension extends AbstractExtension
             return $isCurrent;
         }
 
-        $latest = $this->resolveRefToLatestCommit($user, $repo, $reference);
+        $latest = $this->resolveRefToLatestCommit($application, $reference);
         $isCurrent = ($latest == $commit) ? true : false;
 
         $this->setToCache($key, $isCurrent, 120);
@@ -217,18 +228,21 @@ class GitHubExtension extends AbstractExtension
      *
      * @return array
      */
-    public function resolveVCSReference($reference, $app): array
+    public function resolveVCSReference($reference, $application): array
     {
-        if (!$app instanceof Application) {
+        if (!$application instanceof Application) {
             return ['branch', $reference];
         }
 
+        $provider = $application->provider();
         $githubs = [VCSProviderEnum::TYPE_GITHUB, VCSProviderEnum::TYPE_GITHUB_ENTERPRISE];
 
-        if ($app->provider() && in_array($app->provider()->type(), $githubs)) {
-            $github = $this->vcs->authenticate($app->provider());
+        if ($provider) {
+            if (in_array($provider->type(), $githubs)) {
+                $github = $this->vcs->authenticate($provider);
 
-            return $github->resolver()->resolveRefType($reference);
+                return $github->resolver()->resolveRefType($reference);
+            }
         }
 
         return ['branch', $reference];
@@ -237,28 +251,23 @@ class GitHubExtension extends AbstractExtension
     /**
      * Check if a commit hash is the most recent for a given Github user, repo, and reference
      *
-     * @param string $user
-     * @param string $repo
+     * @param Application $application
      * @param string $reference
      *
      * @return string|null
      */
-    private function resolveRefToLatestCommit($user, $repo, $reference)
+    private function resolveRefToLatestCommit(Application $application, $reference)
     {
-        $key = md5($user . $repo . $reference);
+        $key = md5($application->id() . $reference);
 
         if (null !== ($latest = $this->getFromCache($key))) {
             return $latest;
         }
 
-        try {
-            $resolve = $this->githubResolver->resolve($user, $repo, $reference);
-            $latest = (is_array($resolve)) ? $resolve[1] : null;
+        // $resolve = $this->githubResolver->resolve($user, $repo, $reference);
+        $resolve = '';
+        $latest = (is_array($resolve)) ? $resolve[1] : null;
 
-        // Fuck off weird errors
-        } catch (Exception $ex) {
-            $latest = null;
-        }
 
         $this->setToCache($key, $latest, 15);
 

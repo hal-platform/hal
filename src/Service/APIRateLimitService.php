@@ -104,9 +104,9 @@ class APIRateLimitService
      */
     private function cacheKey($user, $routeName)
     {
-        $username = $user ? $user->username() : 'anonymous';
+        $userID = $user ? $user->id() : 'anonymous';
 
-        return sprintf(self::RATE_LIMIT_KEY, $username, $routeName);
+        return sprintf(self::RATE_LIMIT_KEY, $userID, $routeName);
     }
 
     /**

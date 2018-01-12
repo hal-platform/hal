@@ -48,7 +48,7 @@ class StartBuildMiddleware implements MiddlewareInterface
     /**
      * @var ReleaseValidator
      */
-    private $pushValidator;
+    private $releaseValidator;
 
     /**
      * @var StickyEnvironmentService
@@ -63,20 +63,20 @@ class StartBuildMiddleware implements MiddlewareInterface
     /**
      * @param EntityManagerInterface $em
      * @param BuildValidator $validator
-     * @param ReleaseValidator $pushValidator
+     * @param ReleaseValidator $releaseValidator
      * @param StickyEnvironmentService $stickyService
      * @param URI $uri
      */
     public function __construct(
         EntityManagerInterface $em,
         BuildValidator $validator,
-        ReleaseValidator $pushValidator,
+        ReleaseValidator $releaseValidator,
         StickyEnvironmentService $stickyService,
         URI $uri
     ) {
         $this->em = $em;
         $this->validator = $validator;
-        $this->pushValidator = $pushValidator;
+        $this->releaseValidator = $releaseValidator;
         $this->stickyService = $stickyService;
         $this->uri = $uri;
     }
@@ -118,7 +118,7 @@ class StartBuildMiddleware implements MiddlewareInterface
 
             if ($targets && !$children) {
                 // child push validation failed, bomb out.
-                return $next( $this->withContext($request, ['errors' => $this->pushValidator->errors()]), $response);
+                return $next($this->withContext($request, ['errors' => $this->releaseValidator->errors()]), $response);
             }
 
             // persist to database
@@ -145,22 +145,22 @@ class StartBuildMiddleware implements MiddlewareInterface
     /**
      * @param Build $build
      * @param User $user
-     * @param array|null $deployments
+     * @param array $targets
      *
      * @return array|null
      */
-    private function maybeMakeChildren(Build $build, User $user, ?array $deployments)
+    private function maybeMakeChildren(Build $build, User $user, array $targets)
     {
-        if (!$deployments) {
+        if (!$targets) {
             return null;
         }
 
-        return $this->pushValidator->isProcessValid(
+        return $this->releaseValidator->isScheduledJobValid(
             $build->application(),
             $user,
             $build->environment(),
             $build,
-            $deployments
+            $targets
         );
     }
 }

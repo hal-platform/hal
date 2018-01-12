@@ -69,7 +69,6 @@ class ApplicationNormalizer implements ResourceNormalizerInterface
 
         $data = [
             'id' => $application->id(),
-            'key' => $application->identifier(),
             'name' => $application->name()
         ];
 

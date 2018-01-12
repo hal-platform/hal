@@ -22,7 +22,6 @@ use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Flash;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -90,12 +89,12 @@ class HalBootstrapController implements ControllerInterface
         }
 
         $setting = $this->idpRepo->findOneBy(['name' => self::SETTING_IS_BOOTSTRAPPED]);
-        if ($setting && $setting->value()) {
+        if ($setting instanceof SystemSetting && $setting->value()) {
             return $this->withRedirectRoute($response, $this->uri, 'dashboard');
         }
 
         if ($msg = $this->handleForm($request)) {
-            $this->withFlash($request, Flash::SUCCESS, $msg);
+            $this->withFlashSuccess($request, $msg);
             return $this->withRedirectRoute($response, $this->uri, 'signin');
         }
 

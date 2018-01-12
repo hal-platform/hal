@@ -1,3 +1,7 @@
 parameters:
     ignoreErrors:
-        - '#unknown class Hal\\Core\\Entity\\AWSStaticCredentia.#'
+        - '#Hal\\Core\\Type\\GroupEnum#'
+        - '#Hal\\Core\\Entity\\Group#'
+    excludes_analyse:
+        - %rootDir%/../../../src/Controllers/Group/*
+        - %rootDir%/../../../src/Controllers/API/*

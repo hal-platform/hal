@@ -51,11 +51,10 @@ class CSRFManager
     {
         $secret = random_bytes(self::SECRET_BYTES);
 
-        $time = $this->clock->read();
         $scope = $this->generateScope($form);
         $stored = implode('.', [$scope, bin2hex($secret)]);
 
-        $this->saveToken($stored, $time);
+        $this->saveToken($stored);
 
         $token = $this->encodeToken($secret);
 
