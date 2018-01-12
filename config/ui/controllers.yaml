@@ -829,38 +829,26 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['permissions/permissions.twig']]]
 
-    admin.permissions.add.page:
+    user_permissions.add.page:
         class: 'Hal\UI\Controllers\Permissions\AddPermissionsController'
         arguments:
-            - '@admin.permissions.add.twig'
-            - '@doctrine.em'
-            - '@json'
-            - '@uri'
+            - '@user_permissions.add.twig'
             - '@validator.permissions'
             - '@service.authorization'
             - '@service.authorization_hydrator'
-        calls:
-            - ['setCache', ['@cache']]
-            - ['setCacheTTL', ['%cache.page.ttl%']]
-    admin.permissions.add.twig:
+            - '@uri'
+    user_permissions.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['permissions/add_permission.twig']]]
 
-    admin.permissions.remove.handler:
+    user_permissions.remove.page:
         class: 'Hal\UI\Controllers\Permissions\RemovePermissionsController'
-        arguments: ['@service.authorization', '@uri']
-    admin.permissions.remove.middleware:
-        class: 'Hal\UI\Controllers\Permissions\RemovePermissionsMiddleware'
         arguments:
+            - '@user_permissions.remove.twig'
             - '@doctrine.em'
-            - '@admin.permissions.remove.twig'
-            - '@uri'
             - '@service.authorization'
             - '@service.authorization_hydrator'
-    admin.permissions.remove.twig:
+            - '@uri'
+    user_permissions.remove.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['permissions/remove_permission.twig']]]
-
-    admin.permissions.refresh.handler:
-        class: 'Hal\UI\Controllers\Permissions\RefreshUserPermissionsController'
-        arguments: ['@service.authorization', '@uri']

@@ -1,5 +1,6 @@
 {% macro permission_type_label(type) %}
     {% import 'macros.twig' as macros %}
+
     {%- if type == 'member' -%}
         {{ macros.status('Member', 'info') }}
 

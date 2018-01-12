@@ -93,7 +93,7 @@
                                 {{ macros.status('Pending user set up of their password', 'notice') }}
                             {% endif %}
                         {% else %}
-                        {{ macros.status('Valid', 'success') }}
+                            {{ macros.status('Valid', 'success') }}
                         {% endif %}
                     </li>
                 </ul>
@@ -110,15 +110,7 @@
 {% block user_actions %}
     <div class="meta-box">
         {% if is_super %}
-            <a class="btn" href="{{ uriFor('admin.permissions.add', {'user': user.id}) }}">Add Permissions</a>
-        {% else %}
-            {{ macros.disabled_button('Add Permissions') }}
-        {% endif %}
-
-        {% if is_super %}
-            <form method="post" action="{{ uriFor('admin.permissions.refresh', {'user': user.id}) }}" class="form--inline">
-                <input class="btn btn--action" type="submit" value="Refresh User Cache">
-            </form>
+            <a class="btn" href="{{ uriFor('user_permissions.add', {'user': user.id}) }}">Add System Permissions</a>
         {% else %}
             {{ macros.disabled_button('Add Permissions') }}
         {% endif %}

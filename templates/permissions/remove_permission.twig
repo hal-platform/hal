@@ -1,61 +1,75 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
+{% import 'macros.form.twig' as form_macros %}
+{% import 'permissions/macros.permissions.twig' as perm_macros %}
 
-{% set page_title = 'Remove Permissions' %}
+{% set page_title = 'Remove System Permissions' %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+    <li><a href="{{ uriFor('users') }}">Users</a></li>
+    <li><a href="{{ uriFor('admin.permissions') }}">Manage Permissions</a></li>
+    <li><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.name }}</a></li>
+{% endblock %}
 
 {% block content %}
 
-    <h1>{{ page_title }}</h1>
-
-    <h2>Current Permissions - <b>{{ user.username }}</b></h2>
-
+    <h2>Current Access and Authorizations</h2>
     {% include 'partial.user_permissions.twig' with {
         user: user,
-        authorizations: userAuthorizations,
-        permissions: userPermissions
+        authorizations: user_authorizations,
+        permissions: user_permissions
     } only %}
 
-    <h2>Remove the following permissions</h2>
+    <h2>Revoke the following permissions</h2>
     <ul class="meta-box">
-
         <li>
-            <h6>User Type</h6>
-            {% if permission.type == 'member' %}
-                {{ macros.status('Member', 'info') }}
-            {% endif %}
-            {% if permission.type == 'owner' %}
-                {{ macros.status('Owner', 'notice') }}
-            {% endif %}
-            {% if permission.type == 'admin' %}
-                {{ macros.status('Admin', 'warning') }}
-            {% endif %}
-            {% if permission.type == 'super' %}
-                {{ macros.status('Super', 'error') }}
-            {% endif %}
+            <h6>Permission Type</h6>
+            {{ perm_macros.permission_type_label(permission.type) }}
         </li>
 
-        <li>
-            {% if permission.application %}
+        {% if permission.application %}
+            <li>
                 <h6>Application</h6>
                 <a href="{{ uriFor('application', {'application': permission.application.id}) }}">{{ permission.application.name }}</a>
-            {% elseif permssion.organization %}
+            </li>
+        {% elseif permssion.organization %}
+            <li>
                 <h6>Organization</h6>
                 <a href="{{ uriFor('organization', {'organization': permission.organization.id}) }}">{{ permission.organization.name }}</a>
-            {% elseif permssion.environment %}
+            </li>
+        {% elseif permssion.environment %}
+            <li>
                 <h6>Environment</h6>
                 <a href="{{ uriFor('environment', {'environment': permission.environment.id}) }}">{{ permission.environment.name }}</a>
-            {% endif %}
-        </li>
+            </li>
+        {% else %}
+            <li>
+                <h6>Application</h6>
+                All applications
+            </li>
+            <li>
+                <h6>Organization</h6>
+                All organizations
+            </li>
+            <li>
+                <h6>Environment</h6>
+                All environments
+            </li>
+        {% endif %}
     </ul>
 
     <h3>Are you sure?</h3>
-    <p>You're about to remove some of this user's permissions. Do you want to continue?</p>
+    <p>You're about to remove some of this user's current access. Do you want to continue?</p>
 
-    <form class="form-wrapper" method="post">
-        <ul class="list--bare">
-            <li><input class="btn btn--destructive" type="submit" value="Remove"></li>
-            <li><a class="btn" href="{{ uriFor('admin.permissions') }}">Cancel</a></li>
-        </ul>
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
+
+    <form method="post">
+        {{ form_macros.csrf_input('user_permissions.remove') }}
+        <p>
+            <button type="submit" class="btn btn--destructive">Remove Permissions</button>
+            <a href="{{ uriFor('admin.permissions') }}">Cancel</a>
+        </p>
     </form>
 
 {% endblock %}

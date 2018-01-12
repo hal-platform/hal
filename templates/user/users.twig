@@ -20,8 +20,10 @@
     <p>
         {% if is_super %}
             <a class="btn" href="{{ uriFor('user.add') }}">Add User</a>
+            <a class="btn" href="{{ uriFor('admin.permissions') }}">Manage Permissions</a>
         {% else %}
-            {{ macros.disabled_button('Add Permissions') }}
+            {{ macros.disabled_button('Add User') }}
+            {{ macros.disabled_button('Manage Permissions') }}
         {% endif %}
     </p>
 
@@ -51,6 +53,10 @@
                         </td>
                         <td>
                             {{ user.name }}
+
+                            {% if is_super %}
+                                <a style="float: right" href="{{ uriFor('user_permissions.add', {'user': user.id}) }}">Add Permissions</a>
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}

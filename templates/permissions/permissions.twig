@@ -10,6 +10,7 @@
 
 {% block breadcrumb_links %}
     <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+    <li><a href="{{ uriFor('users') }}">Users</a></li>
 {% endblock %}
 
 {% block content %}
@@ -76,12 +77,10 @@
                                         {% if can_remove %}
                                             {% if perm.type in ['admin', 'super'] %}
                                                 {% if can_remove_admin %}
-                                                    <a class="btn btn--tiny btn--destructive" href="{{ uriFor('admin.permissions.remove', {'user': p.user.id, 'user_permission': perm.id}) }}">Remove</a>
-                                                {% else %}
-
+                                                    <a class="btn btn--tiny btn--destructive" href="{{ uriFor('user_permissions.remove', {'user': p.user.id, 'user_permission': perm.id}) }}">Remove</a>
                                                 {% endif %}
                                             {% else %}
-                                                <a class="btn btn--tiny btn--destructive" href="{{ uriFor('admin.permissions.remove', {'user': p.user.id, 'user_permission': perm.id}) }}">Remove</a>
+                                                <a class="btn btn--tiny btn--destructive" href="{{ uriFor('user_permissions.remove', {'user': p.user.id, 'user_permission': perm.id}) }}">Remove</a>
                                             {% endif %}
                                         {% endif %}
                                     </li>

@@ -8,17 +8,15 @@
 namespace Hal\UI\Controllers\Permissions;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\Core\Entity\UserPermission;
+use Hal\Core\Entity\User;
+use Hal\Core\Entity\User\UserPermission;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Flash;
-use Hal\UI\Middleware\UserSessionGlobalMiddleware;
 use Hal\UI\Security\AuthorizationHydrator;
 use Hal\UI\Security\AuthorizationService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\User;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\URI;
@@ -92,13 +90,13 @@ class RemovePermissionsMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $currentUserAuthorizations = $request->getAttribute(UserSessionGlobalMiddleware::AUTHORIZATIONS_ATTRIBUTE);
+        $currentUserAuthorizations = $this->getAuthorizations($request);
 
         $user = $request->getAttribute(User::class);
         $permission = $request->getAttribute(UserPermission::class);
 
         if (!$this->isRemovalAllowed($currentUserAuthorizations, $permission)) {
-            $this->withFlash($request, Flash::ERROR, self::ERR_DENIED, $this->getRemovalDeniedReason());
+            $this->withFlashError($request, self::ERR_DENIED, $this->getRemovalDeniedReason());
             return $this->withRedirectRoute($response, $this->uri, 'admin.permissions');
         }
 

@@ -2,83 +2,68 @@
 {% import 'macros.twig' as macros %}
 {% import 'macros.form.twig' as form_macros %}
 
-{% set page_title = 'Add Permissions' %}
+{% set page_title = 'Add System Permissions' %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+    <li><a href="{{ uriFor('users') }}">Users</a></li>
+    <li><a href="{{ uriFor('admin.permissions') }}">Manage Permissions</a></li>
+    <li><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.name }}</a></li>
+{% endblock %}
 
 {% block content %}
 
-    <h1>{{ page_title }}</h1>
-
-    <h2>Current Permissions - <b>{{ user.username }}</b></h2>
+    <h2>Current Access and Authorizations</h2>
     {% include 'partial.user_permissions.twig' with {
         user: user,
-        authorizations: userAuthorizations,
-        permissions: permissions
+        authorizations: user_authorizations,
+        permissions: user_permissions
     } only %}
 
-    <h2>Add Permissions</h2>
+    <h2>Add Additional Permissions</h2>
 
-    <div class="form-wrapper">
-        {{ form_macros.formErrors(errors) }}
+    <p>
+        Grant system-wide permissions to a user.
+    </p>
+    <p>
+        You can also add <b>member</b> or <b>owner</b> permissions to limit access to an application or organization.
+        Find the application and grant permissions to this user from the application or organization pages.
+    </p>
 
-        <form method="post">
-            <ul class="form-fields">
-                <li>
-                    <label>Permission Type</label>
-                    <ul class="list--bare">
-                        {% for user_type in availableTypes %}
-                            {% set is_selected = form.type == user_type ? ' checked' : '' %}
-                            <li>
-                                <label for="perm-{{ user_type }}">
-                                    <input type="radio" id="perm-{{ user_type }}" name="type" value="{{ user_type }}"{{ is_selected }}>
-                                    {{ user_type|capitalize }}
-                                </label>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </li>
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
 
-                </li>
-                <li>
-                    <label for="perm-app">Application</label>
-                    <small class="additional">
-                        Optional. Only used for <b>member</b> or <b>owner</b> permissions.
-                    </small>
+    <form method="post">
+        {{ form_macros.csrf_input('user_permissions.add') }}
 
-                    <select name="application" id="perm-app">
-                        <option value=""></option>
+        <ul class="form-fields form-wrapper">
+            <li>
+                <label>Permission Type</label>
+                <ul>
+                    {% set is_selected = form.permission_type == '' ? ' checked' : '' %}
+                    <li>
+                        <label for="perm-noop">
+                            <input type="radio" id="perm-noop" name="permission_type" value="" {{ is_selected }}>
+                            None
+                        </label>
+                    </li>
 
-                        {% for org_name, applications in availableApplications %}
-                            <optgroup label="{{ org_name == 'X' ? 'No Organization' : org_name }}">
-                                {% for application_id, application_name in applications %}
-                                    {% set isSelected = (application_id == form.application) %}
-                                    <option value="{{ application_id }}"{{ isSelected ? ' selected' : '' }}>{{ application_name }}</option>
-                                {% endfor %}
-                            </optgroup>
-                        {% endfor %}
+                    {% for user_type in available_types %}
+                        {% set is_selected = form.permission_type == user_type ? ' checked' : '' %}
+                        <li>
+                            <label for="perm-{{ user_type }}">
+                                <input type="radio" id="perm-{{ user_type }}" name="permission_type" value="{{ user_type }}"{{ is_selected }}>
+                                {{ user_type }}
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
 
-                    </select>
-                </li>
+        <p>
+            <button type="submit" class="btn btn--action">Add Permissions</button>
+            <a href="{{ uriFor('users') }}">Cancel</a>
+        </p>
 
-                <li>
-                    <label for="perm-org">Organizations</label>
-                    <small class="additional">
-                        Optional. Only used for <b>member</b> or <b>owner</b> permissions.
-                    </small>
-                    <select name="organization" id="perm-org">
-                        <option value=""></option>
-                        {% for organization_id, organization_name in availableOrganizations %}
-                            {% set isSelected = (organization_id == form.organization) %}
-                            <option value="{{ organization_id }}"{{ isSelected ? ' selected' : '' }}>{{ organization_name }}</option>
-                        {% endfor %}
-                    </select>
-                </li>
-            </ul>
-
-            <ul class="list--bare">
-                <li><input class="btn btn--action" type="submit" value="Add Permissions"></li>
-                <li><a class="btn" href="{{ uriFor('users') }}">Cancel</a></li>
-            </ul>
-
-        </form>
-    </div>
+    </form>
 {% endblock %}

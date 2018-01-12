@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Organization;
 use Hal\Core\Entity\User;
-use Hal\Core\Entity\UserPermission;
+use Hal\Core\Entity\User\UserPermission;
 use Hal\Core\Type\UserPermissionEnum;
 use Hal\UI\Security\UserAuthorizations;
 

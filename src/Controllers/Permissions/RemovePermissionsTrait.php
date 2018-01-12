@@ -7,17 +7,15 @@
 
 namespace Hal\UI\Controllers\Permissions;
 
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\Core\Entity\UserPermission;
+use Hal\Core\Entity\User\UserPermission;
 use Hal\Core\Type\UserPermissionEnum;
 use Hal\UI\Security\UserAuthorizations;
 
-trait RemovalPermissionsTrait
+trait RemovePermissionsTrait
 {
     private $ERR_NOPE_THE_LAST_SUPER = 'There must be at least one Hal administrator in the system.';
-    private $ERR_NOPE_BTN = 'Deployment Administrators cannot remove Hal Administrators.';
-    private $ERR_NOPE_LAST_BTN = 'There must be at least one Deployment Administrators in the system.';
+    private $ERR_NOPE_SUPER = 'Deployment Administrators cannot remove Hal Administrators.';
 
     private $reason = '';
 
@@ -45,6 +43,7 @@ trait RemovalPermissionsTrait
 
         // Super can do this
         if ($currentUserPerms->isSuper()) {
+
             $supers = $this->removalEM
                 ->getRepository(UserPermission::class)
                 ->findBy(['type' => UserPermissionEnum::TYPE_SUPER]);
@@ -61,13 +60,10 @@ trait RemovalPermissionsTrait
 
         // Admin can do this
         if ($currentUserPerms->isAdmin()) {
-            $pushers = $this->removalEM
-                ->getRepository(UserPermission::class)
-                ->findBy(['type' => UserPermissionEnum::TYPE_ADMIN]);
 
             // Cannot remove supers
             if ($type === UserPermissionEnum::TYPE_SUPER) {
-                $this->reason = $this->ERR_NOPE_BTN;
+                $this->reason = $this->ERR_NOPE_SUPER;
 
                 return false;
             }

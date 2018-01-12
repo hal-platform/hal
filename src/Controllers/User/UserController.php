@@ -69,7 +69,8 @@ class UserController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $user = $request->getAttribute(User::class);
-        $loggedInUserAuth = $this->getAuthorizations($request);
+        $currentUser = $this->getAuthorizations($request);
+
         $authorizations = $this->authorizationService->getUserAuthorizations($user);
         $permissions = $this->authorizationHydrator->hydrateAuthorizations($user, $authorizations);
 
@@ -78,7 +79,7 @@ class UserController implements ControllerInterface
             'user_authorizations' => $authorizations,
             'user_permissions' => $permissions,
 
-            'can_disable' => $this->canDisableUser($authorizations, $loggedInUserAuth),
+            'can_disable' => $this->canDisableUser($authorizations, $currentUser),
             'is_setup_token_expired' => $this->isSetupTokenExpired($user),
 
             'tokens' => $user->tokens()->toArray()
