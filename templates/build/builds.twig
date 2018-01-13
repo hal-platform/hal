@@ -29,7 +29,7 @@
             value="{{ search_filter }}"
             placeholder="Examples: Branch name, commit SHA, pull/#, tag/# or env:$ENV_NAME">
 
-        <input class="btn" type="submit" value="Filter">
+        <button type="submit" class="btn">Filter</button>
 
         {% if search_filter %}
             <a class="btn btn--action" href="{{ uriFor('build.history', {'application': application.id}) }}">Reset</a>

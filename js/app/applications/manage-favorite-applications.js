@@ -16,7 +16,8 @@ var initFavoriteApplications = () => {
 
 function attach(form) {
     var $form = $(form),
-        appID = $form.data('app-id');
+        appID = $form.data('app-id'),
+        url = $form.attr('action');
 
     var submitHandler = function(event) {
         event.preventDefault();
@@ -24,8 +25,10 @@ function attach(form) {
         var added = $form.children('.fav-added'),
             isAdded = added.length === 1;
 
+// '/api/internal/settings/favorite-applications/' + appID
+
         $.ajax({
-            url: '/api/internal/settings/favorite-applications/' + appID,
+            url: url,
             context: {
                 appID: appID,
                 isAdded: isAdded
@@ -52,12 +55,16 @@ function handleSuccess() {
     if (this.isAdded) {
         $form.children('label')
             .removeClass('fav-added')
-            .addClass('fav-normal');
+            .addClass('fav-normal')
+            .children('[aria-label]')
+            .attr('aria-label', 'Add to favorites');
 
     } else {
         $form.children('label')
             .removeClass('fav-normal')
-            .addClass('fav-added');
+            .addClass('fav-added')
+            .children('[aria-label]')
+            .attr('aria-label', 'Remove from favorites');
     }
 }
 

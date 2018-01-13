@@ -5,6 +5,11 @@
     margin-top: 1em;
 }
 
+.meta-box--scrollable {
+    max-height: 50em;
+    overflow-y: scroll;
+}
+
 ul.meta-box {
     list-style-type: disc;
     > li {

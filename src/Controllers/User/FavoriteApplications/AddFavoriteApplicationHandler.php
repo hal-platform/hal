@@ -11,7 +11,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
-use Hal\UI\Flash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Hal\Core\Entity\Application;
@@ -21,9 +20,7 @@ use QL\Panthor\Utility\JSON;
 use QL\Panthor\Utility\URI;
 
 /**
- * PUT  /api/internal/settings/favorite-applications/$id (ajax)
- *
- * POST /settings/favorite-applications/$id (nojs)
+ * PUT  /api/internal/settings/favorite-applications/$id
  */
 class AddFavoriteApplicationHandler implements ControllerInterface
 {
@@ -65,22 +62,19 @@ class AddFavoriteApplicationHandler implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
+        if (!$this->isXHR($request)) {
+            return $this->withRedirectRoute($response, $this->uri, 'applications');
+        }
+
         $application = $request->getAttribute(Application::class);
         $user = $this->getUser($request);
 
         $this->addFavorite($user, $application);
 
-        // persist to database
         $this->em->persist($user);
         $this->em->flush();
 
         $success = sprintf(self::MSG_SUCCESS, $application->name());
-
-        // not ajax? Save a flash and bounce
-        if (!$this->isXHR($request)) {
-            $this->withFlash($request, Flash::SUCCESS, $success);
-            return $this->withRedirectRoute($response, $this->uri, 'applications');
-        }
 
         return $this
             ->withNewBody($response, $this->json->encode(['message' => $success]))

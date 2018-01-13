@@ -11,7 +11,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
-use Hal\UI\Flash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Hal\Core\Entity\Application;
@@ -22,8 +21,6 @@ use QL\Panthor\Utility\URI;
 
 /**
  * DELETE /api/internal/settings/favorite-applications/$id (ajax)
- *
- * POST   /settings/favorite-applications/$id/remove (nojs)
  */
 class RemoveFavoriteApplicationHandler implements ControllerInterface
 {
@@ -65,29 +62,19 @@ class RemoveFavoriteApplicationHandler implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
+        if (!$this->isXHR($request)) {
+            return $this->withRedirectRoute($response, $this->uri, 'applications');
+        }
+
         $application = $request->getAttribute(Application::class);
         $user = $this->getUser($request);
 
-        $favorites = $user->setting('favorite_applications') ?? [];
-
         $this->removeFavorite($user, $application);
 
-        $isFavorite = in_array($application->id(), $favorites, true);
-        if ($isFavorite) {
-            $favorites[] = $application->id();
-        }
-
-        // persist to database
         $this->em->persist($user);
         $this->em->flush();
 
         $success = sprintf(self::MSG_SUCCESS, $application->name());
-
-        // not ajax? Save a flash and bounce
-        if (!$this->isXHR($request)) {
-            $this->withFlash($request, Flash::SUCCESS, $success);
-            return $this->withRedirectRoute($response, $this->uri, 'applications');
-        }
 
         return $this
             ->withNewBody($response, $this->json->encode(['message' => $success]))
@@ -110,7 +97,7 @@ class RemoveFavoriteApplicationHandler implements ControllerInterface
             return;
         }
 
-        array_filter($favorites, function ($appID) use ($application) {
+        $favorites = array_filter($favorites, function ($appID) use ($application) {
             return ($appID === $application->id());
         });
 

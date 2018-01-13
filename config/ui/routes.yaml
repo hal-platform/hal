@@ -131,19 +131,6 @@ parameters:
             route: '/settings'
             stack: ['middleware.signed_in', 'middleware.require_csrf', 'user.settings.middleware', 'user.settings.page']
 
-        settings.management:
-            route: '/settings/favorite-applications/{application:%r.digit%}'
-            stack: ['middleware.signed_in', 'middleware.require_entity']
-            routes:
-                settings.favorite_applications.add:
-                    method: 'POST'
-                    route: ''
-                    stack: ['api_internal.settings.favorite_applications.add']
-                settings.favorite_applications.remove:
-                    method: 'POST'
-                    route: '/remove'
-                    stack: ['api_internal.settings.favorite_applications.remove']
-
         ################################################################################################################
         # organizations
         ################################################################################################################
@@ -461,7 +448,7 @@ parameters:
                 admin.cache_management:
                     method: ['GET', 'POST']
                     route: '/caches'
-                    stack: ['admin.cache_management.handler', 'admin.cache_management.page']
+                    stack: ['middleware.require_csrf', 'admin.cache_management.handler', 'admin.cache_management.page']
 
                 admin.global_banner:
                     method: ['GET', 'POST']

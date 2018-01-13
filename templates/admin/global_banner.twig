@@ -41,11 +41,11 @@
                     Never expires
                 {% endif %}
 
-                <form method="post" style="display:inline">
+                <form method="post" class="form--inline">
                     {{ form_macros.csrf_input('admin.global_banner') }}
                     <input type="hidden" name="remove" value="1">
 
-                    <input class="btn btn--tiny btn--destructive" type="submit" name="submit" value="Remove Banner">
+                    <button type="submit" class="btn btn--tiny btn--destructive">Remove Banner</button>
                 </form>
 
             {% else %}
@@ -97,7 +97,9 @@
             </li>
         </ul>
 
-        <input type="submit" class="btn btn--action" name="submit" value="Save Changes">
+        <p>
+            <button type="submit" class="btn btn--action">Save Changes</button>
+        </p>
 
     </form>
 {% endblock %}
