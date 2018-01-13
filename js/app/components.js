@@ -6,6 +6,7 @@ import { initApplicationForm } from './form/application-form';
 import { initCredentialForm } from './form/credential-form';
 import { initTargetForm } from './form/target-form';
 import { initUserForm } from './form/user-form';
+import { initMetadataForm } from './form/metadata-form';
 
 import { initSelectAllCheckboxes } from './form/select-all-checkbox';
 import { initApplicationPermissions } from './form/manage-application-permissions';
@@ -38,9 +39,11 @@ let appComponents = {
         initTabSelector();
         initGitHubSearch();
         initSelectAllCheckboxes();
+        initMetadataForm();
     },
     start_deployment: () => {
         initSelectAllCheckboxes();
+        initMetadataForm();
     },
 
     // jobs - info/updating

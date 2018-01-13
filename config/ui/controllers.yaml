@@ -510,6 +510,7 @@ services:
             - '@doctrine.em'
             - '@build.start.validator'
             - '@release.start.validator'
+            - '@meta.validator'
             - '@sticky.environment'
             - '@uri'
 

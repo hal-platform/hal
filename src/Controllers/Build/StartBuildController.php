@@ -105,17 +105,22 @@ class StartBuildController implements ControllerInterface
      */
     private function getFormData(ServerRequestInterface $request, Application $application)
     {
+        $data = $request->getParsedBody();
+
         // Automatically select an environment from sticky pref if this is fresh form
-        $env = $request->getParsedBody()['environment'] ?? null;
+        $env = $data['environment'] ?? null;
         if ($env === null) {
             $env = $this->stickyService->get($request, $application);
         }
 
         return [
             'environment' => $env,
-            'search' => $request->getParsedBody()['search'] ?? '',
-            'reference' => $request->getParsedBody()['reference'] ?? '',
-            'gitref' => $request->getParsedBody()['gitref'] ?? ''
+            'search' => $data['search'] ?? '',
+            'reference' => $data['reference'] ?? '',
+            'gitref' => $data['gitref'] ?? '',
+
+            'metadata_names' => $data['metadata_names'] ?? [],
+            'metadata_values' => $data['metadata_values'] ?? []
         ];
     }
 

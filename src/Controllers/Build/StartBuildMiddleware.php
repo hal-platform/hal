@@ -14,6 +14,7 @@ use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Service\StickyEnvironmentService;
 use Hal\UI\Validator\BuildValidator;
+use Hal\UI\Validator\MetaValidator;
 use Hal\UI\Validator\ReleaseValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -51,6 +52,11 @@ class StartBuildMiddleware implements MiddlewareInterface
     private $releaseValidator;
 
     /**
+     * @var MetaValidator
+     */
+    private $metaValidator;
+
+    /**
      * @var StickyEnvironmentService
      */
     private $stickyService;
@@ -64,6 +70,7 @@ class StartBuildMiddleware implements MiddlewareInterface
      * @param EntityManagerInterface $em
      * @param BuildValidator $validator
      * @param ReleaseValidator $releaseValidator
+     * @param MetaValidator $metaValidator
      * @param StickyEnvironmentService $stickyService
      * @param URI $uri
      */
@@ -71,12 +78,14 @@ class StartBuildMiddleware implements MiddlewareInterface
         EntityManagerInterface $em,
         BuildValidator $validator,
         ReleaseValidator $releaseValidator,
+        MetaValidator $metaValidator,
         StickyEnvironmentService $stickyService,
         URI $uri
     ) {
         $this->em = $em;
         $this->validator = $validator;
         $this->releaseValidator = $releaseValidator;
+        $this->metaValidator = $metaValidator;
         $this->stickyService = $stickyService;
         $this->uri = $uri;
     }
@@ -86,6 +95,9 @@ class StartBuildMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
+        $application = $request->getAttribute(Application::class);
+        $user = $this->getUser($request);
+
         if ($request->getMethod() !== 'POST') {
             return $next($request, $response);
         }
@@ -94,12 +106,11 @@ class StartBuildMiddleware implements MiddlewareInterface
             return $next($request, $response);
         }
 
-        $application = $request->getAttribute(Application::class);
-        $user = $this->getUser($request);
+        $data = $request->getParsedBody();
 
-        $env = $request->getParsedBody()['environment'] ?? '';
-        $ref = $request->getParsedBody()['reference'] ?? '';
-        $search = $request->getParsedBody()['search'] ?? '';
+        $env = $data['environment'] ?? '';
+        $ref = $data['reference'] ?? '';
+        $search = $data['search'] ?? '';
 
         if ($env === '!any') {
             $env = null;
@@ -112,21 +123,13 @@ class StartBuildMiddleware implements MiddlewareInterface
             return $next($this->withContext($request, ['errors' => $this->validator->errors()]), $response);
         }
 
-        if ($build->environment()) {
-            $targets = $request->getParsedBody()['deployments'] ?? [];
-            $children = $this->maybeMakeChildren($build, $user, $targets);
+        if (!$this->saveMetadata($build, $request)) {
+            return $next($this->withContext($request, ['errors' => $this->metaValidator->errors()]), $response);
+        }
 
-            if ($targets && !$children) {
-                // child push validation failed, bomb out.
-                return $next($this->withContext($request, ['errors' => $this->releaseValidator->errors()]), $response);
-            }
-
-            // persist to database
-            if ($children) {
-                foreach ($children as $process) {
-                    $this->em->persist($process);
-                }
-            }
+        $targets = $data['targets'] ?? [];
+        if (!$this->saveScheduledTargets($build, $user, $targets)) {
+            return $next($this->withContext($request, ['errors' => $this->releaseValidator->errors()]), $response);
         }
 
         $this->em->persist($build);
@@ -144,12 +147,77 @@ class StartBuildMiddleware implements MiddlewareInterface
 
     /**
      * @param Build $build
+     * @param ServerRequestInterface $request
+     *
+     * @return bool
+     */
+    private function saveMetadata(Build $build, ServerRequestInterface $request)
+    {
+        $names = $request->getParsedBody()['metadata_names'] ?? [];
+        $values = $request->getParsedBody()['metadata_values'] ?? [];
+
+        $names = is_array($names) ? $names : [];
+        $values = is_array($values) ? $values : [];
+
+        if (!$names && !$values) {
+            return true;
+        }
+
+        $metadatas = [];
+        foreach ($names as $index => $name) {
+            if ($name && isset($values[$index]) && strlen($values[$index]) > 0) {
+                $metadatas[$name] = $values[$index];
+            }
+        }
+
+        $metas = $this->metaValidator->isBulkValid($build, $metadatas);
+        if (!$metas) {
+            return false;
+        }
+
+        foreach ($metas as $meta) {
+            $this->em->persist($meta);
+        }
+
+        return true;
+    }
+
+    /**
+     * @param Build $build
+     * @param User $user
+     * @param array $targets
+     *
+     * @return bool
+     */
+    private function saveScheduledTargets(Build $build, User $user, array $targets)
+    {
+        if (!$build->environment()) {
+            return true;
+        }
+
+        $scheduled = $this->maybeScheduleActions($build, $user, $targets);
+
+        if ($targets && !$scheduled) {
+            return false;
+        }
+
+        if ($scheduled) {
+            foreach ($scheduled as $action) {
+                $this->em->persist($action);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param Build $build
      * @param User $user
      * @param array $targets
      *
      * @return array|null
      */
-    private function maybeMakeChildren(Build $build, User $user, array $targets)
+    private function maybeScheduleActions(Build $build, User $user, array $targets)
     {
         if (!$targets) {
             return null;

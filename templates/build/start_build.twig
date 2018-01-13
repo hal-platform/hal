@@ -38,9 +38,15 @@
         {% if environments %}
             {{ block('start_build_button') }}
 
-            <h2>Select Deployment Targets <small>(optional)</small></h2>
+            <h2>Select Deployment Targets <sup style="color: black; font-size:.5em;">(optional)</sup></h2>
             {{ block('select_deploy_targets') }}
         {% endif %}
+
+        {{ block('start_build_button') }}
+
+        <h2>Add Metadata to Build <sup style="color: black; font-size:.5em;">(optional)</sup></h2>
+        <small><a href="{{ uriFor('help') }}#what-is-metadata">What is this?</a></small>
+        {{ block('add_metadata') }}
 
         {{ block('start_build_button') }}
     </form>
@@ -150,7 +156,6 @@
                 <th class="t30">Last Code Deployed</th>
                 <th class="t30">Last Deployed On</th>
                 <th class="t15"></th>
-
             </tr>
         </thead>
 
@@ -164,6 +169,35 @@
                     <td colspan="4">No targets available.</td>
                 </tr>
             {% endif %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block add_metadata %}
+    <table class="table--spacing-medium js-metadata">
+        <thead>
+            <tr>
+                <th class="t40">
+                    Name
+                    <span class="hint--top" aria-label="Alphanumeric, underscores, and periods only">{{ macros.icon('info', 'icon--info') }}</span>
+                </th>
+                <th>Data</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set num_metadata = form.metadata_names|length %}
+            {% set num_metadata = (num_metadata > 3) ? num_metadata : 3 %}
+
+            {% for index in range(0, num_metadata - 1) %}
+                <tr>
+                    <td>
+                        <input type="text" name="metadata_names[]" class="text-input" value="{{form.metadata_names[index] }}" maxlength="200">
+                    </td>
+                    <td>
+                        <input type="text" name="metadata_values[]" class="text-input" value="{{form.metadata_values[index] }}">
+                    </td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 {% endblock %}

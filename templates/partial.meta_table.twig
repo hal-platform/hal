@@ -1,14 +1,4 @@
-<style>
-    .meta-name { vertical-align: top; }
-    .meta-nowrap {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        max-width: 30em;
-        display: inline-block;
-    }
-    .meta-min { min-height:3em; }
-</style>
+{% import _self as macros %}
 
 <table class="table--spacing-medium">
     <thead>
@@ -26,30 +16,7 @@
                     </td>
 
                     <td>
-                        {% set meta_length = meta.data|length %}
-                        {% set meta_lines = meta.data|occurences("\n") %}
-
-                        {% if meta_lines == 0 %}
-                            {% if meta.data starts with "http://" or meta.data starts with "https://" %}
-                                <a href="{{ meta.data }}" class="meta-nowrap">{{ meta.data }}</a>
-
-                            {% elseif meta_length > 80 %}
-                                <div class="pre-wrapper">
-                                    <pre>{{ meta.data }}</pre>
-                                </div>
-                            {% else %}
-                                <div class="pre-wrapper"><pre>{{ meta.data }}</pre></div>
-                            {% endif %}
-
-                        {% elseif meta_lines > 5 %}
-                            <div class="pre-wrapper">
-                                <pre style="max-height: 10em;" id="meta-{{ meta.id }}">{{ meta.data }}</pre>
-                                <small><a href="#" data-meta-expand="meta-{{ meta.id }}">Show all...</a></small>
-                            </div>
-
-                        {% else %}
-                            <div class="pre-wrapper"><pre>{{ meta.data }}</pre></div>
-                        {% endif %}
+                        {{ macros.meta_display(meta.value) }}
                     </td>
                 </tr>
             {% endfor %}
@@ -60,3 +27,34 @@
         {% endif %}
     </tbody>
 </table>
+
+{% macro meta_display(value) %}
+    {% import _self as macros %}
+
+    {% set meta_length = value|length %}
+    {% set meta_lines = value|occurences("\n") %}
+
+    {% if meta_lines == 0 %}
+        {% if value starts with "http://" or value starts with "https://" %}
+            <a href="{{ value }}" class="meta-nowrap">{{ value }}</a>
+        {% else %}
+            {{ macros.standard_meta_display(value) }}
+        {% endif %}
+
+    {% elseif meta_lines > 5 %}
+        <div class="pre-wrapper">
+            <pre style="max-height: 10em;" id="meta-{{ meta.id }}">{{ value }}</pre>
+            <small><a href="#" data-meta-expand="meta-{{ meta.id }}">Show all...</a></small>
+        </div>
+
+    {% else %}
+        {{ macros.standard_meta_display(value) }}
+
+    {% endif %}
+{% endmacro %}
+
+{% macro standard_meta_display(value) %}
+    <div class="pre-wrapper">
+        <pre>{{ value }}</pre>
+    </div>
+{% endmacro %}

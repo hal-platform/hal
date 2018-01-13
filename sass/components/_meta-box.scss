@@ -17,3 +17,19 @@ ul.meta-box {
         margin-left: 1.5em;
     }
 }
+
+.meta-name {
+    vertical-align: top;
+}
+
+.meta-nowrap {
+    display: inline-block;
+    overflow: hidden;
+    max-width: 30em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.meta-min {
+    min-height:3em;
+}
