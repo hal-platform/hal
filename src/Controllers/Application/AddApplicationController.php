@@ -172,17 +172,19 @@ class AddApplicationController implements ControllerInterface
      *
      * @return array
      */
-    private function getFormData(ServerRequestInterface $request): array
+    private function getFormData(ServerRequestInterface $request)
     {
+        $data = $requesrt->getParsedBody();
+
         $form = [
-            'name' => $request->getParsedBody()['name'] ?? '',
+            'name' => $data['name'] ?? '',
 
-            'organization' => $request->getParsedBody()['organization'] ?? '',
-            'vcs_provider' => $request->getParsedBody()['vcs_provider'] ?? '',
+            'organization' => $data['organization'] ?? '',
+            'vcs_provider' => $data['vcs_provider'] ?? '',
 
-            'gh_owner' => $request->getParsedBody()['gh_owner'] ?? '',
-            'gh_repo' => $request->getParsedBody()['gh_repo'] ?? '',
-            'git_link' => $request->getParsedBody()['git_link'] ?? '',
+            'gh_owner' => $data['gh_owner'] ?? '',
+            'gh_repo' => $data['gh_repo'] ?? '',
+            'git_link' => $data['git_link'] ?? '',
         ];
 
         return $form;

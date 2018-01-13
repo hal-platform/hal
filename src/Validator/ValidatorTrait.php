@@ -72,6 +72,21 @@ trait ValidatorTrait
 
     /**
      * @param string $value
+     * @param string $regex
+     *
+     * @return bool
+     */
+    private function validateRegex($value, $regex): bool
+    {
+        if (1 !== preg_match($regex, $value)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $value
      * @param string $regexCharacterClass
      *
      * @return bool

@@ -12,9 +12,11 @@ use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Entity\JobType\Release;
 use Hal\Core\Entity\Credential;
 use Hal\Core\Entity\Organization;
+use Hal\Core\Entity\Target;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Entity\System\VersionControlProvider;
 use Hal\Core\Type\CredentialEnum;
+use Hal\Core\Type\TargetEnum;
 use Hal\Core\Type\IdentityProviderEnum;
 use Hal\Core\Type\VCSProviderEnum;
 use Twig\TwigFilter;
@@ -85,6 +87,7 @@ class HalExtension extends AbstractExtension
             new TwigFilter('idp_type', [$this, 'formatIDP']),
             new TwigFilter('vcs_type', [$this, 'formatVCS']),
             new TwigFilter('credential_type', [$this, 'formatCredential']),
+            new TwigFilter('target_type', [$this, 'formatTarget']),
         ];
     }
 
@@ -183,22 +186,7 @@ class HalExtension extends AbstractExtension
             return $provider->formatType();
         }
 
-        switch ($provider) {
-            case IdentityProviderEnum::TYPE_INTERNAL:
-                return 'Internal';
-
-            case IdentityProviderEnum::TYPE_LDAP:
-                return 'LDAP';
-
-            case IdentityProviderEnum::TYPE_GITHUB:
-                return 'GitHub.com';
-
-            case IdentityProviderEnum::TYPE_GITHUB_ENTERPRISE:
-                return 'GitHub Ent.';
-
-            default:
-                return 'Unknown';
-        }
+        return IdentityProviderEnum::format($provider);
     }
 
     /**
@@ -212,19 +200,7 @@ class HalExtension extends AbstractExtension
             return $provider->formatType();
         }
 
-        switch ($provider) {
-            case VCSProviderEnum::TYPE_GIT:
-                return 'Git';
-
-            case VCSProviderEnum::TYPE_GITHUB:
-                return 'GitHub.com';
-
-            case VCSProviderEnum::TYPE_GITHUB_ENTERPRISE:
-                return 'GitHub Ent.';
-
-            default:
-                return 'Unknown';
-        }
+        return VCSProviderEnum::format($provider);
     }
 
     /**
@@ -238,19 +214,21 @@ class HalExtension extends AbstractExtension
             return $credential->formatType();
         }
 
-        switch ($credential) {
-            case CredentialEnum::TYPE_AWS_ROLE:
-                return 'AWS STS Role';
+        return CredentialEnum::format($credential);
+    }
 
-            case CredentialEnum::TYPE_AWS_STATIC:
-                return 'AWS Static Token';
-
-            case CredentialEnum::TYPE_PRIVATEKEY:
-                return 'Private Key';
-
-            default:
-                return 'Unknown';
+    /**
+     * @param mixed $target
+     *
+     * @return string
+     */
+    public function formatTarget($target)
+    {
+        if ($target instanceof Target) {
+            return $target->formatType();
         }
+
+        return TargetEnum::format($target);
     }
 
     /**

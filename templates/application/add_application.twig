@@ -16,9 +16,9 @@
 
         <ul class="form-fields form-wrapper">
             <li>
-                {% set has_error = form_macros.has_error(errors, 'name') %}
+                {% set has_error = form_macros.has_error(errors, 'name') ? ' is-error' : '' %}
                 <label for="name">Name</label>
-                <input type="text" class="text-input{{ has_error ? ' is-error' : '' }}" name="name" id="name" maxlength="100" value="{{ form.name }}" required>
+                <input type="text" class="text-input{{ has_error }}" name="name" id="name" maxlength="100" value="{{ form.name }}" required>
                 <small>
                     Display description for this organization such as
                     <span>"Hal"</span> or <span>"My Secret Project"</span>.

@@ -220,7 +220,7 @@ class CredentialValidator
             return false;
         }
 
-        if ($this->validateCharacterWhitelist($name, self::REGEX_CREDENTIAL_NAME)) {
+        if (!$this->validateRegex($name, self::REGEX_CREDENTIAL_NAME)) {
             $this->addError(self::ERR_INVALID_NAME, 'name');
         }
 
@@ -306,7 +306,7 @@ class CredentialValidator
             $this->addLengthError('AWS Account ID', 3, 25, 'aws_account');
         }
 
-        if (!$this->validateCharacterWhitelist($roleName, self::REGEX_ROLE)) {
+        if (!$this->validateRegex($roleName, self::REGEX_ROLE)) {
             $this->addError(self::ERR_INVALID_ROLE, 'aws_role');
         }
 

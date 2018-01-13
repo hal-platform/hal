@@ -13,10 +13,23 @@
 {% endblock %}
 
 {% block content %}
+    {{ block('meta') }}
+
+    <h2>Applications</h2>
+    {{ block('app_table') }}
+
+    {{ block('actions') }}
+
+    <h2>Authorization and Permissions</h2>
+    {% include 'permissions/partial.permissions.twig' with { 'organization': organization, 'permissions': permissions, 'can_edit': can_edit } %}
+
+{% endblock %}
+
+{% block meta %}
     <ul class="meta-box">
         <li>
             <h6>ID</h6>
-            {{ organization.id|short_guid }}
+            {{ organization|short_guid }}
         </li>
         <li>
             <h6>Name</h6>
@@ -27,22 +40,13 @@
             {{ organization.created|html5date }}
         </li>
     </ul>
+{% endblock %}
 
-    <h2>Applications</h2>
-    {{ block('app_table') }}
-
+{% block actions %}
     {% if not is_removable %}
         <p><b>Note:</b> All associated applications must be removed or transferred to remove this organization.</p>
     {% endif %}
 
-    {{ block('actions') }}
-
-    <h2>Authorization and Permissions</h2>
-    {% include 'permissions/partial.permissions.twig' with { 'organization': organization, 'permissions': permissions, 'can_edit': can_edit } %}
-
-{% endblock %}
-
-{% block actions %}
     <p>
         <a class="btn" href="{{ uriFor('application.add') }}">Add Application</a>
         {% if is_admin %}

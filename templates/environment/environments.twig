@@ -23,16 +23,16 @@
 {% endblock %}
 
 {% block env_table %}
+    <table class="table--spacing-medium">
+        <thead>
+            <tr>
+                <th class="t15">ID</th>
+                <th>Environment</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if envs %}
 
-    {% if envs %}
-        <table class="table--spacing-medium">
-            <thead>
-                <tr>
-                    <th class="t15">ID</th>
-                    <th>Environment</th>
-                </tr>
-            </thead>
-            <tbody>
                 {% for environment in envs %}
                     <tr>
                         <td><a href="{{ uriFor('environment', {'environment': environment.id}) }}">{{ environment|short_guid }}</a></td>
@@ -45,10 +45,13 @@
                         </td>
                     </tr>
                 {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>There are no environments.</p>
-    {% endif %}
 
+            {% else %}
+                <tr>
+                    <td colspan="2">There are no environments.</td>
+                <tr>
+            {% endif %}
+
+        </tbody>
+    </table>
 {% endblock %}

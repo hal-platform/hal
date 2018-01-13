@@ -28,28 +28,28 @@
         </p>
         <ul class="form-fields form-wrapper">
             <li>
-                {% set has_error = form_macros.hasError(errors, 'admin_username') %}
+                {% set has_error = form_macros.has_error(errors, 'admin_username') ? ' is-error' : '' %}
                 <label for="admin-username">Administrator Username</label>
-                <input class="text-input{{ has_error ? ' is-error' : '' }}" type="text" id="admin-username" name="admin_username">
+                <input class="text-input{{ has_error }}" type="text" id="admin-username" name="admin_username">
             </li>
             <li>
-                {% set has_error = form_macros.hasError(errors, 'admin_password') %}
+                {% set has_error = form_macros.has_error(errors, 'admin_password') ? ' is-error' : '' %}
                 <label for="admin-password">Password</label>
-                <input class="text-input{{ has_error ? ' is-error' : '' }}" type="password" id="admin-password" name="admin_password">
+                <input class="text-input{{ has_error }}" type="password" id="admin-password" name="admin_password">
             </li>
         </ul>
 
         <h2>Configure Version Control</h2>
         <ul class="form-fields form-wrapper">
             <li>
-                {% set has_error = form_macros.hasError(errors, 'ghe_url') %}
+                {% set has_error = form_macros.has_error(errors, 'ghe_url') ? ' is-error' : '' %}
                 <label for="ghe-token">GitHub Enterprise URL</label>
-                <input class="text-input{{ has_error ? ' is-error' : '' }}" type="text" id="ghe-url" name="ghe_url" placeholder="https://github.example.com">
+                <input class="text-input{{ has_error }}" type="text" id="ghe-url" name="ghe_url" placeholder="https://github.example.com">
             </li>
             <li>
-                {% set has_error = form_macros.hasError(errors, 'ghe_token') %}
+                {% set has_error = form_macros.has_error(errors, 'ghe_token') ? ' is-error' : '' %}
                 <label for="ghe-token">GitHub Enterprise API Token</label>
-                <input class="text-input{{ has_error ? ' is-error' : '' }}" type="text" id="ghe-token" name="ghe_token">
+                <input class="text-input{{ has_error }}" type="text" id="ghe-token" name="ghe_token">
             </li>
         </ul>
 

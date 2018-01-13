@@ -24,12 +24,12 @@
                 <input class="text-input" type="text" id="username" value="{{ user.providerUniqueID }}" readonly>
             </li>
             <li>
-                {% set has_error = form_macros.hasError(errors, 'new_password') ? ' is-error' : '' %}
+                {% set has_error = form_macros.has_error(errors, 'new_password') ? ' is-error' : '' %}
                 <label for="new-password">Password</label>
                 <input type="password" id="new-password" name="new_password" class="text-input{{ has_error }}">
             </li>
             <li>
-                {% set has_error = form_macros.hasError(errors, 'new_password_repeat') ? ' is-error' : '' %}
+                {% set has_error = form_macros.has_error(errors, 'new_password_repeat') ? ' is-error' : '' %}
                 <label for="new-password-repeat">Enter password again</label>
                 <input type="password" id="new-password-repeat" name="new_password_repeat" class="text-input{{ has_error }}">
             </li>

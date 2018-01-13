@@ -82,8 +82,6 @@
                 </tr>
             </thead>
 
-            {% set hasApplications = false %}
-
             {% for org_id, organization_apps in applications %}
                 <tbody class="js-search-group">
                     {% set organization = organizations[org_id] %}
@@ -104,7 +102,6 @@
                     {% endif %}
 
                     {% if organization_apps %}
-                        {% set hasApplications = true %}
                         {% for application in organization_apps %}
                             {{ apps_macros.app_row(current_user, application, true) }}
                         {% endfor %}
