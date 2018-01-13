@@ -276,7 +276,7 @@ parameters:
                     method: 'GET'
                     route: ''
                     stack: ['templates.page']
-# todo - csrf x 3
+
                 template.add:
                     method: ['GET', 'POST']
                     route: '/add'
@@ -297,7 +297,7 @@ parameters:
                         template.remove:
                             method: ['GET', 'POST']
                             route: '/remove'
-                            stack: ['middleware.is_admin', 'middleware.require_csrf', 'middleware.removal_confirmation.group', 'group.remove.handler']
+                            stack: ['middleware.is_admin', 'middleware.require_csrf', 'middleware.removal_confirmation.template', 'template.remove.handler']
 
         ################################################################################################################
         # queue

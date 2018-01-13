@@ -8,15 +8,13 @@
 namespace Hal\UI\Controllers\TargetTemplate;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\TargetTemplate;
+use Hal\Core\Repository\TargetRepository;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
-use Hal\UI\Flash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\Target;
-use Hal\Core\Entity\Group;
-use Hal\Core\Repository\TargetRepository;
-use Hal\Core\Type\EnumType\GroupEnum;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
@@ -25,8 +23,8 @@ class RemoveTemplateController implements ControllerInterface
     use RedirectableControllerTrait;
     use SessionTrait;
 
-    private const MSG_SUCCESS = '%s group removed.';
-    private const ERR_DEPLOYMENTS = 'Cannot remove group. All associated targets must first be removed.';
+    private const MSG_SUCCESS = '"%s" template removed.';
+    private const ERR_IN_USE = 'Cannot remove template. Applications are currently using this template.';
 
     /**
      * @var EntityManagerInterface
@@ -60,17 +58,17 @@ class RemoveTemplateController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $group = $request->getAttribute(Group::class);
+        $template = $request->getAttribute(TargetTemplate::class);
 
-        if ($this->targetRepo->findBy(['group' => $group])) {
-            $this->withFlash($request, Flash::ERROR, self::ERR_DEPLOYMENTS);
-            return $this->withRedirectRoute($response, $this->uri, 'group', ['group' => $group->id()]);
+        if ($this->targetRepo->findBy(['template' => $template])) {
+            $this->withFlashError($request, self::ERR_IN_USE);
+            return $this->withRedirectRoute($response, $this->uri, 'template', ['template' => $group->id()]);
         }
 
-        $this->em->remove($group);
+        $this->em->remove($template);
         $this->em->flush();
 
-        $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $group->format(false)));
-        return $this->withRedirectRoute($response, $this->uri, 'groups');
+        $this->withFlashSuccess($request, sprintf(self::MSG_SUCCESS, $template->name()));
+        return $this->withRedirectRoute($response, $this->uri, 'templates');
     }
 }

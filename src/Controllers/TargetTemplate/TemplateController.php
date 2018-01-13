@@ -9,11 +9,11 @@ namespace Hal\UI\Controllers\TargetTemplate;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\TargetTemplate;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\Target;
-use Hal\Core\Entity\TargetTemplate;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 

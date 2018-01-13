@@ -12,8 +12,8 @@
     {% set entity_type = 'Deployment Target' %}
 {% elseif remove.param == 'encrypted' %}
     {% set entity_type = 'Encrypted Property' %}
-{% elseif remove.param == 'group' %}
-    {% set entity_type = 'Group' %}
+{% elseif remove.param == 'template' %}
+    {% set entity_type = 'Target Template' %}
 {% elseif remove.param == 'environment' %}
     {% set entity_type = 'Environment' %}
 {% elseif remove.param == 'credential' %}
@@ -43,6 +43,10 @@
         <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
         <li><a href="{{ uriFor('credentials') }}">Credentials</a></li>
         <li><a href="{{ uriFor('credential', {'credential': remove.entity.id}) }}">{{ remove.entity.name }}</a></li>
+    {% elseif remove.param == 'template' %}
+        <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+        <li><a href="{{ uriFor('templates') }}">Target Templates</a></li>
+        <li><a href="{{ uriFor('template', {'template': remove.entity.id}) }}">{{ remove.entity.name }}</a></li>
     {% endif %}
 
 {% endblock %}
@@ -57,8 +61,8 @@
         {{ block('target_meta') }}
     {% elseif remove.param == 'encrypted' %}
         {{ block('encrypted_meta') }}
-    {% elseif remove.param == 'group' %}
-        {{ block('group_meta') }}
+    {% elseif remove.param == 'template' %}
+        {{ block('template_meta') }}
     {% elseif remove.param == 'environment' %}
         {{ block('environment_meta') }}
     {% elseif remove.param == 'credential' %}
@@ -91,8 +95,8 @@
     {% elseif remove.param == 'encrypted' %}
         <a href="{{ uriFor('encrypted', {'encrypted': remove.entity.id, 'application': entities.application.id}) }}">Cancel</a>
 
-    {% elseif remove.param == 'group' %}
-        <a href="{{ uriFor('group', {'group': remove.entity.id}) }}">Cancel</a>
+    {% elseif remove.param == 'template' %}
+        <a href="{{ uriFor('template', {'template': remove.entity.id}) }}">Cancel</a>
     {% elseif remove.param == 'environment' %}
         <a href="{{ uriFor('environment', {'environment': remove.entity.id}) }}">Cancel</a>
     {% elseif remove.param == 'credential' %}
@@ -103,28 +107,6 @@
     {% else %}
         <a href="javascript:history.go(-1)">Cancel</a>
     {% endif %}
-{% endblock %}
-
-{% block group_meta %}
-    {% set name_label =  remove.entity.type == 'rsync' ? 'Hostname' : 'Region' %}
-
-    <ul class="meta-box">
-        <li>
-            <h6>Group Type</h6>
-            {{ remove.entity.format(true) }}
-        </li>
-
-        <li>
-            <h6>{{ name_label }}</h6>
-            {{ remove.entity.type == 'script' ? 'N/A' : remove.entity.name }}
-        </li>
-
-        <li>
-            <h6>Environment</h6>
-            {{ remove.entity.environment.name}}
-        </li>
-    </ul>
-
 {% endblock %}
 
 {% block environment_meta %}
@@ -204,6 +186,27 @@
         <li>
             <h6>Application</h6>
             {{ remove.entity.application.name }}
+        </li>
+        <li>
+            <h6>Environment</h6>
+            {{ remove.entity.environment.name }}
+        </li>
+        <li>
+            <h6>Name</h6>
+            {{ remove.entity.name }}
+        </li>
+        <li>
+            <h6>Type</h6>
+            {{ remove.entity.formatType() }}
+        </li>
+    </ul>
+{% endblock %}
+
+{% block template_meta %}
+    <ul class="meta-box">
+        <li>
+            <h6>ID</h6>
+            {{ remove.entity.id }}
         </li>
         <li>
             <h6>Environment</h6>

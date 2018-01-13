@@ -77,9 +77,9 @@ services:
         class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
         arguments: ['@middleware.removal_confirmation.twig', 'encrypted']
 
-    middleware.removal_confirmation.group:
+    middleware.removal_confirmation.template:
         class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
-        arguments: ['@middleware.removal_confirmation.twig', 'group']
+        arguments: ['@middleware.removal_confirmation.twig', 'template']
     middleware.removal_confirmation.environment:
         class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
         arguments: ['@middleware.removal_confirmation.twig', 'environment']
