@@ -7,15 +7,18 @@
 
 namespace Hal\UI\Controllers\Admin;
 
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Predis\Collection\Iterator\Keyspace;
 use Predis\Client as Predis;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\MiddlewareInterface;
+use function opcache_reset;
 
 class CacheManagementHandler implements MiddlewareInterface
 {
+    use CSRFTrait;
     use TemplatedControllerTrait;
 
     private const DOCTRINE_CLEARED = 'Doctrine cache cleared.';
@@ -50,6 +53,10 @@ class CacheManagementHandler implements MiddlewareInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         if ($request->getMethod() !== 'POST') {
+            return $next($request, $response);
+        }
+
+        if (!$this->isCSRFValid($request)) {
             return $next($request, $response);
         }
 
@@ -89,7 +96,7 @@ class CacheManagementHandler implements MiddlewareInterface
         }
 
         if ($cacheType === 'opcache' && function_exists('\opcache_reset')) {
-            \opcache_reset();
+            opcache_reset();
             return self::OPCACHE_CLEARED;
         }
 
