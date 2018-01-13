@@ -1,18 +1,13 @@
 {% extends 'base.twig' %}
 {% import "macros.twig" as macros %}
 
-{% set page_title = 'Help : Deployment Scripting' %}
+{% set page_title = 'Help - Build and Deployment Scripting Guide' %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('help') }}">Help and FAQ</a></li>
+{% endblock %}
 
 {% block content %}
-
-    <div class="nav--page">
-        <h1>Help - <b>Deployment Scripting Guide</b></h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('help') }}">Back to Help</a>
-        </p>
-    </div>
-
     <ul class="list--bullet">
         <li><a href="#stages">Build and Release Stages</a></li>
         <li><a href="#configuration-file">.hal9000.yml configuration file</a></li>
