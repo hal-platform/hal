@@ -19,6 +19,8 @@ class CodeDeployValidator implements TargetValidatorInterface
     use ValidatorErrorTrait;
     use ValidatorTrait;
 
+    public const ALLOW_OPTIONAL = 1;
+
     private const REGEX_CHARACTER_RELAXED_WHITESPACE = '\f\n\r\t\v';
 
     private const ERR_INVALID_REGION = 'Please select an AWS region.';
@@ -30,11 +32,18 @@ class CodeDeployValidator implements TargetValidatorInterface
     private $s3Validator;
 
     /**
-     * @param S3Validator $s3validator
+     * @var int
      */
-    public function __construct(S3Validator $s3validator)
+    private $options;
+
+    /**
+     * @param S3Validator $s3validator
+     * @param int $options
+     */
+    public function __construct(S3Validator $s3validator, int $options = 0)
     {
         $this->s3Validator = $s3validator;
+        $this->options = $options;
     }
 
     /**
@@ -58,8 +67,8 @@ class CodeDeployValidator implements TargetValidatorInterface
             's3_remote_path' => $parameters['s3_remote_path'] ?? '',
         ];
 
-        if (!$this->validateIn($region, AWSAuthenticator::$awsRegions)) {
-            $this->addError(self::ERR_INVALID_REGION, 'aws_region');
+        if (!$this->allowOptional($region)) {
+            $this->validateRegion($region);
         }
 
         if ($this->hasErrors()) {
@@ -72,10 +81,27 @@ class CodeDeployValidator implements TargetValidatorInterface
             return null;
         }
 
-        $this->validateCD($name, $group, $config);
+        if (!$this->allowOptional($name)) {
+            $this->validateName($name);
+        }
+
+        if (!$this->allowOptional($group)) {
+            $this->validateGroup($group);
+        }
+
+        if (!$this->allowOptional($config)) {
+            $this->validateConfiguration($config);
+        }
+
         if ($this->hasErrors()) {
             return null;
         }
+
+        // Set null on empty fields so they are removed from the parameters
+        $name = (strlen($name) > 0) ? $name : null;
+        $group = (strlen($group) > 0) ? $group : null;
+        $config = (strlen($config) > 0) ? $config : null;
+        $region = (strlen($region) > 0) ? $region : null;
 
         $target
             ->withParameter(Target::PARAM_APP, $name)
@@ -107,8 +133,8 @@ class CodeDeployValidator implements TargetValidatorInterface
             's3_remote_path' => $parameters['s3_remote_path'] ?? '',
         ];
 
-        if (!$this->validateIn($region, AWSAuthenticator::$awsRegions)) {
-            $this->addError(self::ERR_INVALID_REGION, 'aws_region');
+        if (!$this->allowOptional($region)) {
+            $this->validateRegion($region);
         }
 
         if ($this->hasErrors()) {
@@ -121,10 +147,27 @@ class CodeDeployValidator implements TargetValidatorInterface
             return null;
         }
 
-        $this->validateCD($name, $group, $config);
+        if (!$this->allowOptional($name)) {
+            $this->validateName($name);
+        }
+
+        if (!$this->allowOptional($group)) {
+            $this->validateGroup($group);
+        }
+
+        if (!$this->allowOptional($config)) {
+            $this->validateConfiguration($config);
+        }
+
         if ($this->hasErrors()) {
             return null;
         }
+
+        // Set null on empty fields so they are removed from the parameters
+        $name = (strlen($name) > 0) ? $name : null;
+        $group = (strlen($group) > 0) ? $group : null;
+        $config = (strlen($config) > 0) ? $config : null;
+        $region = (strlen($region) > 0) ? $region : null;
 
         $target
             ->withParameter(Target::PARAM_APP, $name)
@@ -169,24 +212,40 @@ class CodeDeployValidator implements TargetValidatorInterface
     }
 
     /**
-     * @param string $name
-     * @param string $group
-     * @param string $configuration
+     * @param string $value
+     *
+     * @param bool
+     */
+    private function allowOptional($value)
+    {
+        if (strlen($value) > 0) {
+            return false;
+        }
+
+        return self::ALLOW_OPTIONAL == ($this->options & self::ALLOW_OPTIONAL);
+    }
+
+    /**
+     * @param string $region
      *
      * @return void
      */
-    private function validateCD($name, $group, $configuration)
+    private function validateRegion($region)
+    {
+        if (!$this->validateIn($region, AWSAuthenticator::$awsRegions)) {
+            $this->addError(self::ERR_INVALID_REGION, 'aws_region');
+        }
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return void
+     */
+    private function validateName($name)
     {
         if (!$this->validateIsRequired($name) || !$this->validateSanityCheck($name)) {
             $this->addRequiredError('CD Application', 'cd_application');
-        }
-
-        if (!$this->validateIsRequired($group) || !$this->validateSanityCheck($group)) {
-            $this->addRequiredError('CD Group', 'cd_group');
-        }
-
-        if (!$this->validateIsRequired($configuration) || !$this->validateSanityCheck($configuration)) {
-            $this->addRequiredError('CD Configuration', 'cd_config');
         }
 
         if ($this->hasErrors()) {
@@ -198,22 +257,54 @@ class CodeDeployValidator implements TargetValidatorInterface
             $this->addError($error, 'cd_application');
         }
 
+        if (!$this->validateLength($name, 1, 100)) {
+            $this->addLengthError('CD Application', 1, 100, 'cd_application');
+        }
+    }
+
+    /**
+     * @param string $group
+     *
+     * @return void
+     */
+    private function validateGroup($group)
+    {
+        if (!$this->validateIsRequired($group) || !$this->validateSanityCheck($group)) {
+            $this->addRequiredError('CD Group', 'cd_group');
+        }
+
+        if ($this->hasErrors()) {
+            return;
+        }
+
         if (!$this->validateCharacterBlacklist($group, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
             $error = sprintf(self::ERT_CHARACTERS_RELAXED_WHITESPACE, 'CD Group');
             $this->addError($error, 'cd_group');
         }
 
+        if (!$this->validateLength($group, 1, 100)) {
+            $this->addLengthError('CD Group', 1, 100, 'cd_group');
+        }
+    }
+
+    /**
+     * @param string $configuration
+     *
+     * @return void
+     */
+    private function validateConfiguration($configuration)
+    {
+        if (!$this->validateIsRequired($configuration) || !$this->validateSanityCheck($configuration)) {
+            $this->addRequiredError('CD Configuration', 'cd_config');
+        }
+
+        if ($this->hasErrors()) {
+            return;
+        }
+
         if (!$this->validateCharacterBlacklist($configuration, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
             $error = sprintf(self::ERT_CHARACTERS_RELAXED_WHITESPACE, 'CD Configuration');
             $this->addError($error, 'cd_config');
-        }
-
-        if (!$this->validateLength($name, 1, 100)) {
-            $this->addLengthError('CD Application', 1, 100, 'cd_application');
-        }
-
-        if (!$this->validateLength($group, 1, 100)) {
-            $this->addLengthError('CD Group', 1, 100, 'cd_group');
         }
 
         if (!$this->validateLength($configuration, 1, 100)) {

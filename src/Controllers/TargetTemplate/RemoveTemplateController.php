@@ -1,11 +1,11 @@
 <?php
 /**
- * @copyright (c) 2016 Quicken Loans Inc.
+ * @copyright (c) 2018 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Group;
+namespace Hal\UI\Controllers\TargetTemplate;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\UI\Controllers\RedirectableControllerTrait;
@@ -20,7 +20,7 @@ use Hal\Core\Type\EnumType\GroupEnum;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
-class RemoveGroupController implements ControllerInterface
+class RemoveTemplateController implements ControllerInterface
 {
     use RedirectableControllerTrait;
     use SessionTrait;

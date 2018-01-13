@@ -57,7 +57,7 @@ class EditTargetController implements ControllerInterface
         $target = $request->getAttribute(Target::class);
 
         $credentials = $this->credentialRepo->findBy([], ['name' => 'ASC']);
-        $templates = $this->templateRepo->findBy([], ['name' => 'ASC']);
+        $templates = $this->templateRepo->findBy(['environment' => $target->environment()], ['name' => 'ASC']);
 
         return $this->withTemplate($request, $response, $this->template, [
             'application' => $application,

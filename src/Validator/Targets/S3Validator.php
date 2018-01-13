@@ -19,6 +19,8 @@ class S3Validator implements TargetValidatorInterface
     use ValidatorErrorTrait;
     use ValidatorTrait;
 
+    public const ALLOW_OPTIONAL = 1;
+
     private const REGEX_CHARACTER_STRICT_WHITESPACE = '\f\n\r\t\v ';
     private const REGEX_CHARACTER_RELAXED_WHITESPACE = '\f\n\r\t\v';
 
@@ -27,6 +29,19 @@ class S3Validator implements TargetValidatorInterface
 
     private const ERT_CHARACTERS_STRICT_WHITESPACE = '%s must not contain any whitespace';
     private const ERT_CHARACTERS_RELAXED_WHITESPACE = '%s must not contain tabs or newlines';
+
+    /**
+     * @var int
+     */
+    private $options;
+
+    /**
+     * @param int $options
+     */
+    public function __construct(int $options = 0)
+    {
+        $this->options = $options;
+    }
 
     /**
      * @inheritDoc
@@ -43,15 +58,40 @@ class S3Validator implements TargetValidatorInterface
         $s3Bucket = trim($parameters['s3_bucket'] ?? '');
         $s3Path = trim($parameters['s3_remote_path'] ?? '');
 
-        if (!$this->validateIn($region, AWSAuthenticator::$awsRegions)) {
-            $this->addError(self::ERR_INVALID_REGION, 'aws_region');
+        if (!$this->allowOptional($region)) {
+            $this->validateRegion($region);
         }
-
-        $this->validateS3($method, $localPath, $s3Bucket, $s3Path);
 
         if ($this->hasErrors()) {
             return null;
         }
+
+        if (!$this->allowOptional($method)) {
+            $this->validateMethod($method);
+        }
+
+        if (!$this->allowOptional($localPath)) {
+            $this->validateLocalPath($localPath);
+        }
+
+        if (!$this->allowOptional($s3Bucket)) {
+            $this->validateBucket($s3Bucket);
+        }
+
+        if (!$this->allowOptional($s3Path)) {
+            $this->validateS3Path($s3Path);
+        }
+
+        if ($this->hasErrors()) {
+            return null;
+        }
+
+        // Set null on empty fields so they are removed from the parameters
+        $method = (strlen($method) > 0) ? $method : null;
+        $localPath = (strlen($localPath) > 0) ? $localPath : null;
+        $s3Bucket = (strlen($s3Bucket) > 0) ? $s3Bucket : null;
+        $s3Path = (strlen($s3Path) > 0) ? $s3Path : null;
+        $region = (strlen($region) > 0) ? $region : null;
 
         $target = (new Target)
             ->withParameter(Target::PARAM_S3_METHOD, $method)
@@ -78,15 +118,40 @@ class S3Validator implements TargetValidatorInterface
         $s3Bucket = trim($parameters['s3_bucket'] ?? '');
         $s3Path = trim($parameters['s3_remote_path'] ?? '');
 
-        if (!$this->validateIn($region, AWSAuthenticator::$awsRegions)) {
-            $this->addError(self::ERR_INVALID_REGION, 'aws_region');
+        if (!$this->allowOptional($region)) {
+            $this->validateRegion($region);
         }
-
-        $this->validateS3($method, $localPath, $s3Bucket, $s3Path);
 
         if ($this->hasErrors()) {
             return null;
         }
+
+        if (!$this->allowOptional($method)) {
+            $this->validateMethod($method);
+        }
+
+        if (!$this->allowOptional($localPath)) {
+            $this->validateLocalPath($localPath);
+        }
+
+        if (!$this->allowOptional($s3Bucket)) {
+            $this->validateBucket($s3Bucket);
+        }
+
+        if (!$this->allowOptional($s3Path)) {
+            $this->validateS3Path($s3Path);
+        }
+
+        if ($this->hasErrors()) {
+            return null;
+        }
+
+        // Set null on empty fields so they are removed from the parameters
+        $method = (strlen($method) > 0) ? $method : null;
+        $localPath = (strlen($localPath) > 0) ? $localPath : null;
+        $s3Bucket = (strlen($s3Bucket) > 0) ? $s3Bucket : null;
+        $s3Path = (strlen($s3Path) > 0) ? $s3Path : null;
+        $region = (strlen($region) > 0) ? $region : null;
 
         $target
             ->withParameter(Target::PARAM_S3_METHOD, $method)
@@ -129,16 +194,38 @@ class S3Validator implements TargetValidatorInterface
     }
 
     /**
-     * @param string $method
-     * @param string $localPath
-     * @param string $bucket
-     * @param string $s3Path
+     * @param string $value
+     *
+     * @param bool
+     */
+    private function allowOptional($value)
+    {
+        if (strlen($value) > 0) {
+            return false;
+        }
+
+        return self::ALLOW_OPTIONAL == ($this->options & self::ALLOW_OPTIONAL);
+    }
+
+    /**
+     * @param string $region
      *
      * @return void
      */
-    private function validateS3($method, $localPath, $bucket, $s3Path)
+    private function validateRegion($region)
     {
-        // method
+        if (!$this->validateIn($region, AWSAuthenticator::$awsRegions)) {
+            $this->addError(self::ERR_INVALID_REGION, 'aws_region');
+        }
+    }
+
+    /**
+     * @param string $method
+     *
+     * @return void
+     */
+    private function validateMethod($method)
+    {
         if (!$this->validateIsRequired($method) || !$this->validateSanityCheck($method)) {
             $this->addRequiredError('S3 Method', 's3_method');
             return;
@@ -147,8 +234,37 @@ class S3Validator implements TargetValidatorInterface
         if (!$this->validateIn($method, Target::S3_METHODS)) {
             $this->addError(self::ERR_INVALID_S3_METHOD, 's3_method');
         }
+    }
 
-        // bucket
+    /**
+     * @param string $localPath
+     *
+     * @return void
+     */
+    private function validateLocalPath($localPath)
+    {
+        // always optional
+        if (strlen($localPath) === 0) {
+            return;
+        }
+
+        if (!$this->validateCharacterBlacklist($localPath, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
+            $error = sprintf(self::ERT_CHARACTERS_RELAXED_WHITESPACE, 'S3 Source');
+            $this->addError($error, 's3_local_path');
+        }
+
+        if (!$this->validateLength($localPath, 0, 100)) {
+            $this->addLengthError('S3 Source', 0, 100, 's3_local_path');
+        }
+    }
+
+    /**
+     * @param string $bucket
+     *
+     * @return void
+     */
+    private function validateBucket($bucket)
+    {
         if (!$this->validateIsRequired($bucket) || !$this->validateSanityCheck($bucket)) {
             $this->addRequiredError('S3 Bucket', 's3_bucket');
             return;
@@ -162,29 +278,27 @@ class S3Validator implements TargetValidatorInterface
         if (!$this->validateLength($bucket, 1, 100)) {
             $this->addLengthError('S3 Bucket', 1, 100, 's3_bucket');
         }
+    }
 
-        // local path
-        if (strlen($localPath) > 0) {
-            if (!$this->validateCharacterBlacklist($localPath, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
-                $error = sprintf(self::ERT_CHARACTERS_RELAXED_WHITESPACE, 'S3 Source');
-                $this->addError($error, 's3_local_path');
-            }
-
-            if (!$this->validateLength($localPath, 0, 100)) {
-                $this->addLengthError('S3 Source', 0, 100, 's3_local_path');
-            }
+    /**
+     * @param string $s3Path
+     *
+     * @return void
+     */
+    private function validateS3Path($s3Path)
+    {
+        // always optional
+        if (strlen($s3Path) === 0) {
+            return;
         }
 
-        // s3 destination object
-        if (strlen($s3Path) > 0) {
-            if (!$this->validateCharacterBlacklist($s3Path, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
-                $error = sprintf(self::ERT_CHARACTERS_RELAXED_WHITESPACE, 'S3 Destination');
-                $this->addError($error, 's3_remote_path');
-            }
+        if (!$this->validateCharacterBlacklist($s3Path, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
+            $error = sprintf(self::ERT_CHARACTERS_RELAXED_WHITESPACE, 'S3 Destination');
+            $this->addError($error, 's3_remote_path');
+        }
 
-            if (!$this->validateLength($s3Path, 0, 100)) {
-                $this->addLengthError('S3 Destination', 0, 100, 's3_remote_path');
-            }
+        if (!$this->validateLength($s3Path, 0, 100)) {
+            $this->addLengthError('S3 Destination', 0, 100, 's3_remote_path');
         }
     }
 }

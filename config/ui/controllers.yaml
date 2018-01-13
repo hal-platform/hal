@@ -397,44 +397,44 @@ services:
     # target templates
     ####################################################################################################################
 
-    groups.page:
-        class: 'Hal\UI\Controllers\Group\GroupsController'
-        arguments: ['@groups.twig', '@doctrine.em']
-    groups.twig:
+    templates.page:
+        class: 'Hal\UI\Controllers\TargetTemplate\TemplatesController'
+        arguments: ['@templates.twig', '@doctrine.em']
+    templates.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['target-template/templates.twig']]]
 
-    group.page:
-        class: 'Hal\UI\Controllers\Group\GroupController'
-        arguments: ['@group.twig', '@doctrine.em']
-    group.twig:
+    template.page:
+        class: 'Hal\UI\Controllers\TargetTemplate\TemplateController'
+        arguments: ['@template.twig', '@doctrine.em']
+    template.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['target-template/template.twig']]]
 
-    group.add.page:
-        class: 'Hal\UI\Controllers\Group\AddGroupController'
+    template.add.page:
+        class: 'Hal\UI\Controllers\TargetTemplate\AddTemplateController'
         arguments:
-            - '@group.add.twig'
+            - '@template.add.twig'
             - '@doctrine.em'
-            - '@group.validator'
+            - '@template.validator'
             - '@uri'
-    group.add.twig:
+    template.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['target-template/add_template.twig']]]
 
-    group.edit.page:
-        class: 'Hal\UI\Controllers\Group\EditGroupController'
+    template.edit.page:
+        class: 'Hal\UI\Controllers\TargetTemplate\EditTemplateController'
         arguments:
-            - '@group.edit.twig'
+            - '@template.edit.twig'
             - '@doctrine.em'
-            - '@group.validator'
+            - '@template.validator'
             - '@uri'
-    group.edit.twig:
+    template.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['target-template/edit_template.twig']]]
 
-    group.remove.handler:
-        class: 'Hal\UI\Controllers\Group\RemoveGroupController'
+    template.remove.handler:
+        class: 'Hal\UI\Controllers\TargetTemplate\RemoveTemplateController'
         arguments: ['@doctrine.em', '@uri']
 
     ################################################################################################################

@@ -1,8 +1,8 @@
 services:
 
-    ######################################################################################################################
+    ####################################################################################################################
     # VALIDATORS
-    ######################################################################################################################
+    ####################################################################################################################
 
     validator.organization:
         class: 'Hal\UI\Validator\OrganizationValidator'
@@ -40,10 +40,6 @@ services:
             - '@doctrine.em'
             - '@service.authorization'
 
-    group.validator:
-        class: 'Hal\UI\Validator\GroupValidator'
-        arguments: ['@doctrine.em']
-
     target.validator:
         class: 'Hal\UI\Validator\TargetValidator'
         arguments:
@@ -72,13 +68,48 @@ services:
     target.script.validator:
         class: 'Hal\UI\Validator\Targets\ScriptValidator'
 
+    ####################################################################################################################
+
+    template.validator:
+        class: 'Hal\UI\Validator\TargetTemplateValidator'
+        arguments:
+            - '@doctrine.em'
+            -
+                cd: '@template.cd.validator'
+                eb: '@template.eb.validator'
+                rsync: '@template.rsync.validator'
+                s3: '@template.s3.validator'
+                script: '@template.script.validator'
+
+    template.cd.validator:
+        class: 'Hal\UI\Validator\Targets\CodeDeployValidator'
+        arguments: ['@template.s3.validator', 1]
+
+    template.eb.validator:
+        class: 'Hal\UI\Validator\Targets\ElasticBeanstalkValidator'
+        arguments: ['@template.s3.validator', 1]
+
+    template.rsync.validator:
+        class: 'Hal\UI\Validator\Targets\RSyncValidator'
+        arguments: [1]
+
+    template.s3.validator:
+        class: 'Hal\UI\Validator\Targets\S3Validator'
+        arguments: [1]
+
+    template.script.validator:
+        class: 'Hal\UI\Validator\Targets\ScriptValidator'
+        arguments: [1]
+
+    ####################################################################################################################
+
     user.validator:
         class: 'Hal\UI\Validator\UserValidator'
         arguments: ['@doctrine.em', '@clock']
 
-    ######################################################################################################################
+    ####################################################################################################################
     # TWIG TEMPLATING
-    ######################################################################################################################
+    ####################################################################################################################
 
     twig.extension.hal:
         class: 'Hal\UI\Twig\HalExtension'

@@ -1,91 +1,91 @@
 {% extends 'base.twig' %}
 {% import 'macros.form.twig' as form_macros %}
 
+{% use 'target/partial.target_form.twig' %}
+
 {% set page_title = 'Edit Template' %}
 
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+    <li><a href="{{ uriFor('templates') }}">Templates</a></li>
+    <li><a href="{{ uriFor('template', {'template': template.id}) }}">{{ template.name }}</a></li>
+{% endblock %}
+
 {% block content %}
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
+    {{ block('meta') }}
 
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('groups') }}">Back to Templates</a>
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
+
+    <h4>Type</h4>
+    <p>{{ template.formatType() }}</p>
+
+    <form method="post">
+        {{ form_macros.csrf_input('template.edit') }}
+
+        <ul class="form-fields form-wrapper">
+            <li>
+                {% set has_error = form_macros.has_error(errors, 'name') ? ' is-error' : '' %}
+                <label for="name">Name</label>
+                <input class="text-input{{ has_error }}" type="text" name="name" id="name" maxlength="80" value="{{ form.name }}" required>
+            </li>
+
+            <li>
+                {% set has_error = form_macros.has_error(errors, 'script_context') ? ' is-error' : '' %}
+                <label for="script_context">Script Context</label>
+                <input class="text-input{{ has_error }}" type="text" name="script_context" id="script_context" maxlength="100" value="{{ form.script_context }}">
+                <small>
+                    <b>Optional.</b> Pass extra context text or data to your scripts and commands in your <code>.hal9000.yml</code> configuration.
+                    <b style="color:indianred">Do not use this for secrets!</b>
+                </small>
+            </li>
+        </ul>
+
+        <hr>
+
+        <ul class="form-fields form-wrapper">
+            {% if template.type in ['rsync'] %}
+                {{ block('rsync_fields') }}
+            {% endif %}
+
+            {% if template.type in ['script'] %}
+                {{ block('script_fields') }}
+            {% endif %}
+
+            {% if template.type in ['s3', 'cd', 'eb'] %}
+                {{ block('aws_fields') }}
+            {% endif %}
+
+            {% if template.type in ['cd'] %}
+                {{ block('codedeploy_fields') }}
+            {% endif %}
+
+            {% if template.type in ['eb'] %}
+                {{ block('beanstalk_fields') }}
+            {% endif %}
+
+            {% if template.type in ['s3'] %}
+                {{ block('s3_only_fields') }}
+            {% endif %}
+
+            {% if template.type in ['s3', 'cd', 'eb'] %}
+                {{ block('s3_fields') }}
+            {% endif %}
+        </ul>
+
+        <p>
+            <button class="btn btn--action" type="submit">Save Changes</button>
+            <a href="{{ uriFor('template', {'template': template.id}) }}">Cancel</a>
         </p>
-    </div>
-
-    {{ form_macros.formErrors(errors) }}
-
-    <form method="post" class="form-wrapper">
-        <ul class="form-fields">
-            <li>
-                <label>Environment</label>
-                <ul class="list--bare">
-                    {% for environment in environments %}
-                        {% set is_selected = form.environment == environment.id ? ' checked' : '' %}
-                        <li>
-                            <label for="env-{{ environment.id }}">
-                                <input type="radio" id="env-{{ environment.id }}" name="environment" value="{{ environment.id }}"{{ is_selected }}>
-                                {{ environment.name }}
-                            </label>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </li>
-
-            <li>
-                <label>Type</label>
-                <ul class="list--bare">
-                    {% for type in group_types %}
-                        {% set is_selected = form.group_type == type ? ' checked' : '' %}
-
-                        <li>
-                            <label for="type-{{ type }}">
-                                <input type="radio" id="type-{{ type }}" name="group_type" value="{{ type }}"{{ is_selected }}>
-                                {% if type == 'rsync' -%}
-                                    RSync (On-premises Linux)
-                                {%- elseif type == 'eb' -%}
-                                    Elastic Beanstalk (AWS)
-                                {%- elseif type == 'cd' -%}
-                                    CodeDeploy (AWS)
-                                {%- elseif type == 's3' -%}
-                                    S3 (AWS)
-                                {%- elseif type == 'script' -%}
-                                    Script (Any)
-                                {%- endif %}
-                            </label>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </li>
-
-            <li>
-                {% set hostname = form.group_type == 'rsync' ? form.hostname : '' %}
-                <label for="hostname">Hostname</label>
-                <input type="text" name="hostname" id="hostname" maxlength="60" value="{{ hostname }}" class="text-input">
-                <small>RSync Only</small>
-            </li>
-
-            <li>
-                <label>Region</label>
-                <ul class="list--bare">
-                    {% for region in aws_regions %}
-                        {% set is_selected = form.region == region ? ' checked' : '' %}
-                        <li>
-                            <label for="region-{{ region }}">
-                                <input type="radio" id="region-{{ region }}" name="region" value="{{ region }}"{{ is_selected }}>
-                                {{ region }}
-                            </label>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <small>AWS Only</small>
-            </li>
-        </ul>
-
-        <ul class="list--bare">
-            <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
-            <li><a class="btn" href="{{ uriFor('group', {'group': group.id}) }}">Cancel</a></li>
-        </ul>
 
     </form>
 
+{% endblock %}
+
+{% block meta %}
+    <ul class="meta-box">
+        <li>
+            <h6>Environment</h6>
+            {{ template.environment.name }}
+        </li>
+    </ul>
 {% endblock %}

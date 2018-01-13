@@ -18,6 +18,8 @@ class RSyncValidator implements TargetValidatorInterface
     use ValidatorErrorTrait;
     use ValidatorTrait;
 
+    public const ALLOW_OPTIONAL = 1;
+
     private const REGEX_CHARACTER_STARTING_SLASH = '#^/#';
     private const REGEX_CHARACTER_STRICT_WHITESPACE = '\f\n\r\t\v ';
     private const REGEX_CHARACTER_CLASS_HOST = '[a-zA-Z0-9]{1}[a-zA-Z0-9\.\-]{3,150}(\:[0-9]{1,5})?';
@@ -25,6 +27,19 @@ class RSyncValidator implements TargetValidatorInterface
     private const ERR_PATH_CHARACTERS_STARTING_SLASH = 'File path must begin with a forward slash (/)';
     private const ERT_CHARACTERS_STRICT_WHITESPACE = '%s must not contain any whitespace.';
     private const ERR_INVALID_SERVERS = 'Please enter at least one valid server hostname.';
+
+    /**
+     * @var int
+     */
+    private $options;
+
+    /**
+     * @param int $options
+     */
+    public function __construct(int $options = 0)
+    {
+        $this->options = $options;
+    }
 
     /**
      * @inheritDoc
@@ -36,12 +51,21 @@ class RSyncValidator implements TargetValidatorInterface
         $path = trim($parameters['rsync_path'] ?? '');
         $servers = $parameters['rsync_servers'] ?? '';
 
-        $this->validatePath($path);
-        $this->validateServers($servers);
+        if (!$this->allowOptional($path)) {
+            $this->validatePath($path);
+        }
+
+        if (!$this->allowOptional($servers)) {
+            $this->validateServers($servers);
+        }
 
         if ($this->hasErrors()) {
             return null;
         }
+
+        // Set null on empty fields so they are removed from the parameters
+        $path = (strlen($path) > 0) ? $path : null;
+        $servers = (strlen($servers) > 0) ? $servers : null;
 
         $target = (new Target)
             ->withParameter(Target::PARAM_REMOTE_PATH, $path)
@@ -60,12 +84,21 @@ class RSyncValidator implements TargetValidatorInterface
         $path = trim($parameters['rsync_path'] ?? '');
         $servers = $parameters['rsync_servers'] ?? '';
 
-        $this->validatePath($path);
-        $this->validateServers($servers);
+        if (!$this->allowOptional($path)) {
+            $this->validatePath($path);
+        }
+
+        if (!$this->allowOptional($servers)) {
+            $this->validateServers($servers);
+        }
 
         if ($this->hasErrors()) {
             return null;
         }
+
+        // Set null on empty fields so they are removed from the parameters
+        $path = (strlen($path) > 0) ? $path : null;
+        $servers = (strlen($servers) > 0) ? $servers : null;
 
         $target
             ->withParameter(Target::PARAM_REMOTE_PATH, $path)
@@ -92,6 +125,20 @@ class RSyncValidator implements TargetValidatorInterface
             "${type}_path" => $data["${type}_path"] ?? '',
             "${type}_servers" => $data["${type}_servers"] ?? '',
         ];
+    }
+
+    /**
+     * @param string $value
+     *
+     * @param bool
+     */
+    private function allowOptional($value)
+    {
+        if (strlen($value) > 0) {
+            return false;
+        }
+
+        return self::ALLOW_OPTIONAL == ($this->options & self::ALLOW_OPTIONAL);
     }
 
     /**

@@ -69,7 +69,7 @@ class AddTargetController implements ControllerInterface
 
         if ($selectedEnvironment) {
             $credentials = $this->credentialRepo->findBy([], ['name' => 'ASC']);
-            $templates = $this->templateRepo->findBy([], ['name' => 'ASC']);
+            $templates = $this->templateRepo->findBy(['environment' => $selectedEnvironment], ['name' => 'ASC']);
 
         } else {
             $environments = $this->environmentRepo->getAllEnvironmentsSorted();

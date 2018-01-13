@@ -1,26 +1,24 @@
 <?php
 /**
- * @copyright (c) 2017 Quicken Loans Inc.
+ * @copyright (c) 2016 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Target;
+namespace Hal\UI\Controllers\TargetTemplate;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\TargetTemplate;
+use Hal\Core\Repository\TargetTemplateRepository;
+use Hal\Core\Utility\SortingTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\Application;
-use Hal\Core\Entity\Target;
-use Hal\Core\Entity\Environment;
-use Hal\Core\Repository\EnvironmentRepository;
-use Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
-class TargetsController implements ControllerInterface
+class TemplatesController implements ControllerInterface
 {
     use SortingTrait;
     use TemplatedControllerTrait;
@@ -31,14 +29,9 @@ class TargetsController implements ControllerInterface
     private $template;
 
     /**
-     * @var EntityRepository
+     * @var TargetTemplateRepository
      */
-    private $targetRepo;
-
-    /**
-     * @var EnvironmentRepository
-     */
-    private $environmentRepo;
+    private $templateRepo;
 
     /**
      * @param TemplateInterface $template
@@ -47,8 +40,8 @@ class TargetsController implements ControllerInterface
     public function __construct(TemplateInterface $template, EntityManagerInterface $em)
     {
         $this->template = $template;
-        $this->environmentRepo = $em->getRepository(Environment::class);
-        $this->targetRepo = $em->getRepository(Target::class);
+
+        $this->templateRepo = $em->getRepository(TargetTemplate::class);
     }
 
     /**
@@ -56,12 +49,10 @@ class TargetsController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $application = $request->getAttribute(Application::class);
+        $templates = $this->templateRepo->getGroupedTemplates();
 
         return $this->withTemplate($request, $response, $this->template, [
-            'application' => $application,
-
-            'sorted_targets' => $this->targetRepo->getGroupedTargets($application)
+            'sorted_templates' => $templates
         ]);
     }
 }

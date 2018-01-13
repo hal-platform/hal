@@ -27,7 +27,7 @@ class EditTargetMiddleware implements MiddlewareInterface
     use SessionTrait;
     use TemplatedControllerTrait;
 
-    const MSG_SUCCESS = 'Deployment target updated.';
+    private const MSG_SUCCESS = 'Deployment target updated.';
 
     /**
      * @var EntityManagerInterface

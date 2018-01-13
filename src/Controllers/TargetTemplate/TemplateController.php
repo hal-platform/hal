@@ -5,19 +5,19 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Group;
+namespace Hal\UI\Controllers\TargetTemplate;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Hal\Core\Entity\Target;
-use Hal\Core\Entity\Group;
-use Hal\Core\Repository\TargetRepository;
+use Hal\Core\Entity\TargetTemplate;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
-class GroupController implements ControllerInterface
+class TemplateController implements ControllerInterface
 {
     use TemplatedControllerTrait;
 
@@ -25,8 +25,9 @@ class GroupController implements ControllerInterface
      * @var TemplateInterface
      */
     private $template;
+
     /**
-     * @var TargetRepository
+     * @var EntityRepository
      */
     private $targetRepo;
 
@@ -34,39 +35,44 @@ class GroupController implements ControllerInterface
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      */
-    public function __construct(
-        TemplateInterface $template,
-        EntityManagerInterface $em
-    ) {
+    public function __construct(TemplateInterface $template, EntityManagerInterface $em)
+    {
         $this->template = $template;
         $this->targetRepo = $em->getRepository(Target::class);
     }
 
     /**
-     * The primary action of this controller.
-     *
-     * Must return ResponseInterface.
-     *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     *
-     * @return ResponseInterface
+     * @inheritDoc
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $group = $request->getAttribute(Group::class);
-        $targets = $this->targetRepo->findBy(['group' => $group]);
+        $template = $request->getAttribute(TargetTemplate::class);
 
-        usort($targets, function ($a, $b) {
-            $appA = $a->application()->name();
-            $appB = $b->application()->name();
+        $targets = $this->targetRepo->findBy(['template' => $template]);
 
-            return strcasecmp($appA, $appB);
-        });
+        usort($targets, $this->sorterTargetsByApplication());
 
         return $this->withTemplate($request, $response, $this->template, [
-            'group' => $group,
+            'template' => $template,
             'targets' => $targets
         ]);
+    }
+
+    /**
+     * @return callable
+     */
+    private function sorterTargetsByApplication()
+    {
+        return function ($a, $b) {
+            $nameA = $a->application()->name();
+            $nameB = $b->application()->name();
+
+            if ($a->application() === $b->application()) {
+                $nameA = $a->name();
+                $nameB = $b->name();
+            }
+
+            return strcasecmp($nameA, $nameB);
+        };
     }
 }

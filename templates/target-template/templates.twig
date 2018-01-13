@@ -5,21 +5,47 @@
 
 {% set is_admin = current_authorizations.isSuper() %}
 
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+{% endblock %}
+
 {% block content %}
-    <h1>{{ page_title }}</h1>
+    {{ block('template_table') }}
 
-    <table class="table--spacing-medium">
-        <thead>
-            <tr>
-                <th class="t40">Template</th>
-                <th>Type</th>
-                <th class="t15"></th>
-            </tr>
-        </thead>
+    <p>
+        {% if is_admin %}
+            <a class="btn" href="{{ uriFor('template.add') }}">Add Template</a>
+        {% else %}
+            {{ macros.disabled_button('Add Template') }}
+        {% endif %}
+    </p>
+{% endblock %}
 
-        {% if templates_by_environment %}
-            {% for environment in environments %}
-                {% set templates = templates_by_environment[environment.id] %}
+{% block template_table %}
+    <p>
+        Add a template which can be used by other applications and organizations. Use templates to share deployment
+        configuration across many applications.
+        <br><br>
+
+        All configuration is optional when defining templates. Any missing fields can then be provided by the
+        applications that use these templates.
+    </p>
+
+    {% if sorted_templates %}
+
+        <table class="table--spacing-medium">
+            <thead>
+                <tr>
+                    <th class="t15">ID</th>
+                    <th class="t15">Type</th>
+                    <th>Template</th>
+                </tr>
+            </thead>
+
+            {% for sorted in sorted_templates %}
+                {% set environment = sorted.environment %}
+                {% set templates = sorted.templates %}
+
                 <tbody>
 
                     <tr>
@@ -28,48 +54,26 @@
                         </th>
                     </tr>
 
-                    {% if templates %}
-                        {% for template in templates %}
-                            <tr>
-                                <td>
-                                    {{ template.name ?: 'N/A' }}
-                                </td>
-                                <td>
-                                    {{ template.format(true) }}
-                                </td>
-                                <td>
-                                    <a href="{{ uriFor('group', {'group': template.id}) }}">Manage</a>
-                                </td>
-                            <tr>
-                        {% endfor %}
-                    {% else %}
+                    {% for template in templates %}
                         <tr>
-                            <td colspan="3">No templates found.</td>
-                        </tr>
-                    {% endif %}
+                            <td>
+                                <a href="{{ uriFor('template', {'template': template.id}) }}">{{ template|short_guid }}</a>
+                            </td>
+                            <td>
+                                {{ template.formatType() }}
+                            </td>
+                            <td>
+                                {{ template.name }}
+                            </td>
+                        <tr>
+                    {% endfor %}
 
                 </tbody>
             {% endfor %}
+        </table>
 
-        {% else %}
-            <tbody>
-                <tr>
-                    <td colspan="3">There are no target templates.</td>
-                </tr>
-            </tbody>
-        {% endif %}
-    </table>
-
-    {% if is_admin %}
-        <ul class="list--bare">
-            <li>
-                {% if is_admin %}
-                    <a class="btn" href="{{ uriFor('group.add') }}">Add Template</a>
-                {% else %}
-                    {{ macros.disabled_button('Add Template') }}
-                {% endif %}
-            </li>
-        </ul>
+    {% else %}
+        <p>There are no target templates.</p>
     {% endif %}
 
 {% endblock %}

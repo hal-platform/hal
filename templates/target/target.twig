@@ -1,6 +1,8 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
 
+{% use 'target/partial.target.twig' %}
+
 {% set page_title = 'Deployment Target' %}
 
 {% set can_edit = current_authorizations.isSuper() or current_authorizations.isOwnerOf(application) %}
@@ -15,29 +17,13 @@
     {{ block('meta') }}
 
     <h4>ID</h4>
-    <p>{{ target.id|short_guid }}</p>
+    <p>{{ target|short_guid }}</p>
 
     <h4>Name</h4>
     <p>{{ target.name }}</p>
 
     <h4>Type</h4>
     <p>{{ target.formatType() }}</p>
-
-    <h4>Credentials</h4>
-    <p>
-        {% if target.credential %}
-            {{ target.credential.name }} ({{ target.credential.formatType() }})
-        {% elseif target.isAWS() %}
-            {{ macros.status('None', 'error', 'spam-2') }}
-        {% else %}
-            None
-        {% endif %}
-    </p>
-
-    <h4>Script Context</h4>
-    <p>
-        <code>{{ target.parameter('context') ?: 'None' }}</code>
-    </p>
 
     <h4>URL</h4>
     <p>
@@ -48,39 +34,10 @@
         {% endif %}
     </p>
 
-    <hr>
+    <h2>Configuration</h2>
+    {{ block('target_details') }}
 
-    {% if target.type == 'rsync' %}
-        {{ block('rsync_meta') }}
-
-    {% elseif target.type == 'script' %}
-        {{ block('script_meta') }}
-
-    {% elseif target.type == 'eb' %}
-        {{ block('eb_meta') }}
-
-    {% elseif target.type == 's3' %}
-        {{ block('s3_meta') }}
-
-    {% elseif target.type == 'cd' %}
-        {{ block('cd_meta') }}
-
-    {% endif %}
-
-    <p>
-        {% if can_edit %}
-            <a class="btn btn--action" href="{{ uriFor('target.edit', {'application': application.id, 'target': target.id}) }}">Edit Target</a></li>
-        {% else %}
-            {{ macros.disabled_button('Edit Target') }}
-        {% endif %}
-
-        {% if can_edit %}
-            <a class="btn btn--destructive" href="{{ uriFor('target.remove', {'application': application.id, 'target': target.id}) }}">Remove Target</a></li>
-        {% else %}
-            {{ macros.disabled_button('Remove Target') }}
-        {% endif %}
-    </p>
-
+    {{ block('actions') }}
 {% endblock %}
 
 {% block meta %}
@@ -121,104 +78,55 @@
     </ul>
 {% endblock %}
 
-{% block rsync_meta %}
-    <h4>Servers</h4>
+{% block actions %}
     <p>
-        <code>{{ target.parameter('servers') }}</code>
-    </p>
+        {% if can_edit %}
+            <a class="btn btn--action" href="{{ uriFor('target.edit', {'application': application.id, 'target': target.id}) }}">Edit Target</a></li>
+        {% else %}
+            {{ macros.disabled_button('Edit Target') }}
+        {% endif %}
 
-    <h4>File path</h4>
-    <p>
-        <code>{{ target.parameter('path') }}</code>
-    </p>
-{% endblock %}
-
-{% block script_meta %}
-
-{% endblock %}
-
-{% block cd_meta %}
-    <h4>AWS Region</h4>
-    <p>
-        <code>{{ target.parameter('region') }}</code>
-    </p>
-
-    <h4>CodeDeploy Application Name</h4>
-    <p>
-        <code>{{ target.parameter('application') }}</code>
-    </p>
-
-    <h4>CodeDeploy Deployment Group</h4>
-    <p>
-        <code>{{ target.parameter('group') }}</code>
-    </p>
-
-    <h4>CodeDeploy Configuration</h4>
-    <p>
-        <code>{{ target.parameter('configuration') }}</code>
-    </p>
-
-    <h4>S3 Bucket</h4>
-    <p>
-        <code>{{ target.parameter('bucket') }}</code>
-    </p>
-
-    <h4>S3 File</h4>
-    <p>
-        <code>{{ target.parameter('path') ?: '$APPID/$PUSHID.zip' }}</code>
+        {% if can_edit %}
+            <a class="btn btn--destructive" href="{{ uriFor('target.remove', {'application': application.id, 'target': target.id}) }}">Remove Target</a></li>
+        {% else %}
+            {{ macros.disabled_button('Remove Target') }}
+        {% endif %}
     </p>
 {% endblock %}
 
-{% block eb_meta %}
-    <h4>AWS Region</h4>
+{% block target_details %}
+    <h4>Credentials</h4>
     <p>
-        <code>{{ target.parameter('region') }}</code>
+        {% if target.credential %}
+            {{ target.credential.name }} ({{ target.credential.formatType() }})
+        {% elseif target.isAWS() %}
+            {{ macros.status('None', 'error', 'spam-2') }}
+        {% else %}
+            None
+        {% endif %}
     </p>
 
-    <h4>Elastic Beanstalk Application Name</h4>
+    <h4>Script Context</h4>
     <p>
-        <code>{{ target.parameter('application') }}</code>
+        <code>{{ target.parameter('context') ?: 'None' }}</code>
     </p>
 
-    <h4>Elastic Beanstalk Environment</h4>
-    <p>
-        <code>{{ target.parameter('environment') }}</code>
-    </p>
+    <hr>
 
-    <h4>S3 Bucket</h4>
-    <p>
-        <code>{{ target.parameter('bucket') }}</code>
-    </p>
+    {% if target.type == 'rsync' %}
+        {{ block('rsync_meta') }}
 
-    <h4>S3 File</h4>
-    <p>
-        <code>{{ target.parameter('path') ?: '$APPID/$PUSHID.zip' }}</code>
-    </p>
-{% endblock %}
+    {% elseif target.type == 'script' %}
+        {{ block('script_meta') }}
 
-{% block s3_meta %}
-    <h4>AWS Region</h4>
-    <p>
-        <code>{{ target.parameter('region') }}</code>
-    </p>
+    {% elseif target.type == 'eb' %}
+        {{ block('eb_meta') }}
 
-    <h4>S3 Method</h4>
-    <p>
-        <code>{{ target.parameter('s3_method') }}</code>
-    </p>
+    {% elseif target.type == 's3' %}
+        {{ block('s3_meta') }}
 
-    <h4>S3 Bucket</h4>
-    <p>
-        <code>{{ target.parameter('bucket') }}</code>
-    </p>
+    {% elseif target.type == 'cd' %}
+        {{ block('cd_meta') }}
 
-    <h4>S3 Source</h4>
-    <p>
-        <code>{{ target.parameter('source') ?: '.' }}</code>
-    </p>
-
-    <h4>S3 Destination</h4>
-    <p>
-        <code>{{ target.parameter('path') }}</code>
-    </p>
+    {% endif %}
 {% endblock %}

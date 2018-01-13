@@ -1,0 +1,12 @@
+{% macro output_parameter(entity, parameter_name, default) -%}
+    {% set default_value = default|default('Not defined') %}
+    {% set value = entity.parameter(parameter_name) %}
+
+    {%- if value|length > 0 -%}
+        <p>
+            <code>{{ value }}</code>
+        </p>
+    {%- else -%}
+        <p>{{ default_value }}</p>
+    {%- endif -%}
+{%- endmacro %}

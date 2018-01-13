@@ -19,6 +19,8 @@ class ElasticBeanstalkValidator implements TargetValidatorInterface
     use ValidatorErrorTrait;
     use ValidatorTrait;
 
+    public const ALLOW_OPTIONAL = 1;
+
     private const REGEX_CHARACTER_RELAXED_WHITESPACE = '\f\n\r\t\v';
 
     private const ERR_INVALID_REGION = 'Please select an AWS region.';
@@ -30,11 +32,18 @@ class ElasticBeanstalkValidator implements TargetValidatorInterface
     private $s3Validator;
 
     /**
-     * @param S3Validator $s3validator
+     * @var int
      */
-    public function __construct(S3Validator $s3validator)
+    private $options;
+
+    /**
+     * @param S3Validator $s3validator
+     * @param int $options
+     */
+    public function __construct(S3Validator $s3validator, int $options = 0)
     {
         $this->s3Validator = $s3validator;
+        $this->options = $options;
     }
 
     /**
@@ -57,8 +66,8 @@ class ElasticBeanstalkValidator implements TargetValidatorInterface
             's3_remote_path' => $parameters['s3_remote_path'] ?? '',
         ];
 
-        if (!$this->validateIn($region, AWSAuthenticator::$awsRegions)) {
-            $this->addError(self::ERR_INVALID_REGION, 'aws_region');
+        if (!$this->allowOptional($region)) {
+            $this->validateRegion($region);
         }
 
         if ($this->hasErrors()) {
@@ -71,10 +80,22 @@ class ElasticBeanstalkValidator implements TargetValidatorInterface
             return null;
         }
 
-        $this->validateEB($name, $environment);
+        if (!$this->allowOptional($name)) {
+            $this->validateName($name);
+        }
+
+        if (!$this->allowOptional($environment)) {
+            $this->validateEnvironment($environment);
+        }
+
         if ($this->hasErrors()) {
             return null;
         }
+
+        // Set null on empty fields so they are removed from the parameters
+        $name = (strlen($name) > 0) ? $name : null;
+        $environment = (strlen($environment) > 0) ? $environment : null;
+        $region = (strlen($region) > 0) ? $region : null;
 
         $target
             ->withParameter(Target::PARAM_APP, $name)
@@ -104,8 +125,8 @@ class ElasticBeanstalkValidator implements TargetValidatorInterface
             's3_remote_path' => $parameters['s3_remote_path'] ?? '',
         ];
 
-        if (!$this->validateIn($region, AWSAuthenticator::$awsRegions)) {
-            $this->addError(self::ERR_INVALID_REGION, 'aws_region');
+        if (!$this->allowOptional($region)) {
+            $this->validateRegion($region);
         }
 
         if ($this->hasErrors()) {
@@ -118,10 +139,22 @@ class ElasticBeanstalkValidator implements TargetValidatorInterface
             return null;
         }
 
-        $this->validateEB($name, $environment);
+        if (!$this->allowOptional($name)) {
+            $this->validateName($name);
+        }
+
+        if (!$this->allowOptional($environment)) {
+            $this->validateEnvironment($environment);
+        }
+
         if ($this->hasErrors()) {
             return null;
         }
+
+        // Set null on empty fields so they are removed from the parameters
+        $name = (strlen($name) > 0) ? $name : null;
+        $environment = (strlen($environment) > 0) ? $environment : null;
+        $region = (strlen($region) > 0) ? $region : null;
 
         $target
             ->withParameter(Target::PARAM_APP, $name)
@@ -163,18 +196,64 @@ class ElasticBeanstalkValidator implements TargetValidatorInterface
     }
 
     /**
-     * @param string $applicationName
-     * @param string $environmentName
+     * @param string $value
+     *
+     * @param bool
+     */
+    private function allowOptional($value)
+    {
+        if (strlen($value) > 0) {
+            return false;
+        }
+
+        return self::ALLOW_OPTIONAL == ($this->options & self::ALLOW_OPTIONAL);
+    }
+
+    /**
+     * @param string $region
      *
      * @return void
      */
-    private function validateEB($applicationName, $environmentName)
+    private function validateRegion($region)
     {
-        if (!$this->validateIsRequired($applicationName) || !$this->validateSanityCheck($applicationName)) {
+        if (!$this->validateIn($region, AWSAuthenticator::$awsRegions)) {
+            $this->addError(self::ERR_INVALID_REGION, 'aws_region');
+        }
+    }
+
+    /**
+     * @param string $application
+     *
+     * @return void
+     */
+    private function validateName($application)
+    {
+        if (!$this->validateIsRequired($application) || !$this->validateSanityCheck($application)) {
             $this->addRequiredError('EB Application', 'eb_application');
         }
 
-        if (!$this->validateIsRequired($environmentName) || !$this->validateSanityCheck($environmentName)) {
+        if ($this->hasErrors()) {
+            return;
+        }
+
+        if (!$this->validateCharacterBlacklist($application, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
+            $error = sprintf(self::ERT_CHARACTERS_RELAXED_WHITESPACE, 'EB Application');
+            $this->addError($error, 'eb_application');
+        }
+
+        if (!$this->validateLength($application, 1, 100)) {
+            $this->addLengthError('EB Application', 1, 100, 'eb_application');
+        }
+    }
+
+    /**
+     * @param string $environment
+     *
+     * @return void
+     */
+    private function validateEnvironment($environment)
+    {
+        if (!$this->validateIsRequired($environment) || !$this->validateSanityCheck($environment)) {
             $this->addRequiredError('EB Environment', 'eb_environment');
         }
 
@@ -182,21 +261,12 @@ class ElasticBeanstalkValidator implements TargetValidatorInterface
             return;
         }
 
-        if (!$this->validateCharacterBlacklist($applicationName, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
-            $error = sprintf(self::ERT_CHARACTERS_RELAXED_WHITESPACE, 'EB Application');
-            $this->addError($error, 'eb_application');
-        }
-
-        if (!$this->validateCharacterBlacklist($environmentName, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
+        if (!$this->validateCharacterBlacklist($environment, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
             $error = sprintf(self::ERT_CHARACTERS_RELAXED_WHITESPACE, 'EB Environment');
             $this->addError($error, 'eb_environment');
         }
 
-        if (!$this->validateLength($applicationName, 1, 100)) {
-            $this->addLengthError('EB Application', 1, 100, 'eb_application');
-        }
-
-        if (!$this->validateLength($environmentName, 1, 100)) {
+        if (!$this->validateLength($environment, 1, 100)) {
             $this->addLengthError('EB Environment', 1, 100, 'eb_environment');
         }
     }

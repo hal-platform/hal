@@ -281,32 +281,36 @@ parameters:
         # target templates
         ####################################################################################################################
 
-        groups:
-            method: 'GET'
-            route: '/groups'
-            stack: ['middleware.signed_in', 'groups.page']
-# todo - csrf x 3
-        group.add:
-            method: ['GET', 'POST']
-            route: '/groups/add'
-            stack: ['middleware.is_admin', 'middleware.require_csrf', 'group.add.page']
-
-        group.management:
-            route: '/groups/{group:%r.guid%}'
-            stack: ['middleware.signed_in', 'middleware.require_entity']
+        templates.management:
+            route: '/target-templates'
+            stack: ['middleware.signed_in']
             routes:
-                group:
+                templates:
                     method: 'GET'
                     route: ''
-                    stack: ['group.page']
-                group.edit:
+                    stack: ['templates.page']
+# todo - csrf x 3
+                template.add:
                     method: ['GET', 'POST']
-                    route: '/edit'
-                    stack: ['middleware.is_admin', 'middleware.require_csrf', 'group.edit.page']
-                group.remove:
-                    method: ['GET', 'POST']
-                    route: '/remove'
-                    stack: ['middleware.is_admin', 'middleware.require_csrf', 'middleware.removal_confirmation.group', 'group.remove.handler']
+                    route: '/add'
+                    stack: ['middleware.is_admin', 'middleware.require_csrf', 'template.add.page']
+
+                template.management:
+                    route: '/{template:%r.guid%}'
+                    stack: ['middleware.require_entity']
+                    routes:
+                        template:
+                            method: 'GET'
+                            route: ''
+                            stack: ['template.page']
+                        template.edit:
+                            method: ['GET', 'POST']
+                            route: '/edit'
+                            stack: ['middleware.is_admin', 'middleware.require_csrf', 'template.edit.page']
+                        template.remove:
+                            method: ['GET', 'POST']
+                            route: '/remove'
+                            stack: ['middleware.is_admin', 'middleware.require_csrf', 'middleware.removal_confirmation.group', 'group.remove.handler']
 
         ################################################################################################################
         # queue

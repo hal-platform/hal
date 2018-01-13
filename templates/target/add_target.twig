@@ -2,8 +2,9 @@
 {% import 'macros.form.twig' as form_macros %}
 {% import 'macros.twig' as macros %}
 
-{% set js_components = ['add_target_form'] %}
+{% use 'target/partial.target_form.twig' %}
 
+{% set js_components = ['add_target_form'] %}
 {% set page_title = 'Add Deployment Target' %}
 
 {% block breadcrumb_links %}
@@ -76,7 +77,7 @@
                         {% endfor %}
                     </select>
                 {% else %}
-                    No templates available.
+                   <p> No templates available for this environment.<p>
                 {% endif %}
             </li>
 
@@ -96,17 +97,7 @@
                         <li>
                             <label for="type-{{ type }}">
                                 <input type="radio" id="type-{{ type }}" name="deployment_type" value="{{ type }}" data-target-select data-target-type="{{ type }}"{{ is_selected }}>
-                                {% if type == 'rsync' -%}
-                                    RSync (On-premises Linux)
-                                {%- elseif type == 'eb' -%}
-                                    Elastic Beanstalk (AWS)
-                                {%- elseif type == 'cd' -%}
-                                    CodeDeploy (AWS)
-                                {%- elseif type == 's3' -%}
-                                    S3 (AWS)
-                                {%- elseif type == 'script' -%}
-                                    Script (Any)
-                                {%- endif %}
+                                {{ type|target_type }}
                             </label>
                         </li>
                     {% endfor %}
@@ -114,19 +105,22 @@
             </li>
 
             <li>
+                {% set has_error = form_macros.has_error(errors, 'name') ? ' is-error' : '' %}
                 <label for="name">Name</label>
-                <input class="text-input" type="text" name="name" id="name" maxlength="80" value="{{ form.name }}" required>
+                <input class="text-input{{ has_error }}" type="text" name="name" id="name" maxlength="80" value="{{ form.name }}" required>
             </li>
 
             <li>
+                {% set has_error = form_macros.has_error(errors, 'url') ? ' is-error' : '' %}
                 <label for="url">URL</label>
-                <input class="text-input" type="url" name="url" id="url" maxlength="200" value="{{ form.url }}" placeholder="https://{{ selected_environment.name }}.example.com">
+                <input class="text-input{{ has_error }}" type="url" name="url" id="url" maxlength="200" value="{{ form.url }}" placeholder="https://{{ selected_environment.name }}.example.com">
                 <small><b>Optional.</b> Add a URL to help users find where the project is deployed.</small>
             </li>
 
             <li>
+                {% set has_error = form_macros.has_error(errors, 'script_context') ? ' is-error' : '' %}
                 <label for="script_context">Script Context</label>
-                <input class="text-input" type="text" name="script_context" id="script_context" maxlength="100" value="{{ form.script_context }}">
+                <input class="text-input{{ has_error }}" type="text" name="script_context" id="script_context" maxlength="100" value="{{ form.script_context }}">
                 <small>
                     <b>Optional.</b> Pass extra context text or data to your scripts and commands in your <code>.hal9000.yml</code> configuration.
                     <b style="color:indianred">Do not use this for secrets!</b>
@@ -139,117 +133,18 @@
 
         <ul class="form-fields form-wrapper">
 
-            {#
-                RSYNC
-            #}
-            <li data-type-specific data-rsync>
-                <label for="rsync_servers">Server hostnames</label>
-                <input class="text-input" type="text" name="rsync_servers" id="rsync_servers" maxlength="200" value="{{ form.rsync_servers }}">
-                <small>
-                    The absolute path to the file directory on the server.
-                    Paths must begin with a forward slash (/).
-                </small>
-            </li>
-
-            <li data-type-specific data-rsync>
-                <label for="rsync_path">File path</label>
-                <input class="text-input" type="text" name="rsync_path" id="rsync_path" maxlength="200" value="{{ form.rsync_path }}" pattern="^\/[^\n\t]+">
-                <small>
-                    The absolute path to the file directory on the server.
-                    Paths must begin with a forward slash (/).
-                </small>
-            </li>
+            {{ block('rsync_fields') }}
+            {{ block('script_fields') }}
+            {{ block('aws_fields') }}
+            {{ block('codedeploy_fields') }}
+            {{ block('beanstalk_fields') }}
+            {{ block('s3_only_fields') }}
+            {{ block('s3_fields') }}
 
             <li data-type-specific data-s3 data-eb data-cd>
-                <label for="aws_region">AWS Region</label>
-                <select class="select-input" name="aws_region" id="aws_region">
-                    <option></option>
-                    {% for region in aws_regions %}
-                        {% set is_selected = form.aws_region == region ? ' selected' : '' %}
-                        <option value="{{ region }}"{{ is_selected }}>{{ region }}</option>
-                    {% endfor %}
-                </select>
-            </li>
-
-            {#
-                CodeDeploy
-            #}
-            <li data-type-specific data-cd>
-                <label for="cd_name">CodeDeploy Application Name</label>
-                <input class="text-input" type="text" name="cd_name" id="cd_name" maxlength="100" value="{{ form.cd_name }}">
-            </li>
-
-            <li data-type-specific data-cd>
-                <label for="cd_group">CodeDeploy Deployment Group</label>
-                <input class="text-input" type="text" name="cd_group" id="cd_group" maxlength="100" value="{{ form.cd_group }}">
-            </li>
-
-            <li data-type-specific data-cd>
-                <label for="cd_config">CodeDeploy Configuration</label>
-                <input class="text-input" type="text" name="cd_config" id="cd_config" maxlength="100" value="{{ form.cd_config }}">
-            </li>
-
-
-            {#
-                Elastic Beanstalk
-            #}
-            <li data-type-specific data-eb>
-                <label for="eb_name">Elastic Beanstalk Application Name</label>
-                <input class="text-input" type="text" name="eb_name" id="eb_name" maxlength="100" value="{{ form.eb_name }}">
-            </li>
-
-            <li data-type-specific data-eb>
-                <label for="eb_environment">Elastic Beanstalk Environment Name or ID</label>
-                <input class="text-input" type="text" name="eb_environment" id="eb_environment" maxlength="100" value="{{ form.eb_environment }}">
-            </li>
-
-            {#
-                S3
-            #}
-            <li data-type-specific data-s3 data-eb data-cd>
-                <label for="s3_bucket">S3 Bucket</label>
-                <input class="text-input" type="text" name="s3_bucket" id="s3_bucket" maxlength="100" value="{{ form.s3_bucket }}">
-            </li>
-
-            <li data-type-specific data-s3>
-                <label for="s3_method">S3 Method</label>
-                <select class="select-input" name="s3_method" id="s3_method">
-                    <option></option>
-                    {% for method in s3_methods %}
-                        {% set is_selected = form.s3_method == method ? ' selected' : '' %}
-                        <option value="{{ method }}"{{ is_selected }}>{{ method }}</option>
-                    {% endfor %}
-                </select>
-            </li>
-
-            <li data-type-specific data-s3>
-                <label for="s3_local_path">S3 Local Path</label>
-                <input class="text-input" type="text" name="s3_local_path" id="s3_local_path" maxlength="100" value="{{ form.s3_local_path }}">
-                <small>
-                    Leave blank to use <code>.</code>.
-                </small>
-            </li>
-
-            <li data-type-specific data-s3 data-eb data-cd>
-                <label for="s3_remote_path">S3 Remote Path</label>
-                <input class="text-input" type="text" name="s3_remote_path" id="s3_remote_path" maxlength="100" value="{{ form.s3_remote_path }}">
-                <small>
-                    Available placeholders:
-                    <ul class="inline-list--comma">
-                        <li><code>$APPID</code></li>
-                        <li><code>$APPNAME</code></li>
-                        <li><code>$BUILDID</code></li>
-                        <li><code>$PUSHID</code></li>
-                        <li><code>$DATE</code> (YYYYMMDD)</li>
-                        <li><code>$TIME</code> (HHMMSS)</li>
-                    </ul>
-                    <br>Leave blank to use <code>$PUSHID.tar.gz</code> (S3) or <code>$APPID/$PUSHID.(zip|tar.gz)</code> (EB, CD).
-                </small>
-            </li>
-
-            <li data-type-specific data-s3 data-eb data-cd>
+                {% set has_error = form_macros.has_error(errors, 'credential') ? ' is-error' : '' %}
                 <label for="credential">Credentials</label>
-                <select class="select-input" name="credential" id="credential">
+                <select class="select-input{{ has_error }}" name="credential" id="credential">
                     <option></option>
                     {% for credential in credentials %}
                         {% set is_selected = form.credential == credential.id ? ' selected' : '' %}
