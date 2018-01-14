@@ -1,0 +1,31 @@
+{% block git_fields %}
+    {% import 'macros.twig' as macros %}
+
+    <li data-type-specific data-git>
+        {{ macros.alert('error', 'Git not enabled.') }}
+    </li>
+{% endblock %}
+
+{% block gh_fields %}
+    {% import 'macros.twig' as macros %}
+
+    <li data-type-specific data-gh>
+        {{ macros.alert('error', 'GitHub.com not enabled.') }}
+    </li>
+{% endblock %}
+
+{% block ghe_fields %}
+    {% import 'macros.form.twig' as form_macros %}
+
+    <li data-type-specific data-ghe>
+        {% set has_error = form_macros.has_error(errors, 'ghe_url') ? ' is-error' : '' %}
+        <label for="ghe_url">Base URL</label>
+        <input class="text-input{{ has_error }}" type="text" name="ghe_url" id="ghe_url" maxlength="100" value="{{ form.ghe_url }}">
+    </li>
+
+    <li data-type-specific data-ghe>
+        {% set has_error = form_macros.has_error(errors, 'ghe_token') ? ' is-error' : '' %}
+        <label for="ghe_token">API Token</label>
+        <input class="text-input{{ has_error }}" type="text" name="ghe_token" id="ghe_token" maxlength="100" value="{{ form.ghe_token }}">
+    </li>
+{% endblock %}

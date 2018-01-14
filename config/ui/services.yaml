@@ -118,6 +118,39 @@ services:
         arguments: ['@doctrine.em', '@clock']
 
     ####################################################################################################################
+
+
+    vcs.validator:
+        class: 'Hal\UI\Validator\VersionControlProviderValidator'
+        arguments:
+            - '@doctrine.em'
+            -
+                ghe: '@vcs.ghe.validator'
+
+    vcs.ghe.validator:
+        class: 'Hal\UI\Validator\VersionControl\GitHubEnterpriseValidator'
+
+    ####################################################################################################################
+
+    idp.validator:
+        class: 'Hal\UI\Validator\UserIdentityProviderValidator'
+        arguments:
+            - '@doctrine.em'
+            -
+                ghe: '@idp.ghe.validator'
+                ldap: '@idp.ldap.validator'
+                internal: '@idp.internal.validator'
+
+    idp.ghe.validator:
+        class: 'Hal\UI\Validator\IdentityProviders\GitHubEnterpriseValidator'
+
+    idp.ldap.validator:
+        class: 'Hal\UI\Validator\IdentityProviders\LDAPValidator'
+
+    idp.internal.validator:
+        class: 'Hal\UI\Validator\IdentityProviders\InternalValidator'
+
+    ####################################################################################################################
     # TWIG TEMPLATING
     ####################################################################################################################
 

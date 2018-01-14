@@ -1,0 +1,24 @@
+{% block internal_fields %}
+
+{% endblock %}
+
+{% block ldap_fields %}
+    {% import 'macros.form.twig' as form_macros %}
+
+{% endblock %}
+
+{% block ghe_fields %}
+    {% import 'macros.twig' as macros %}
+
+    <li data-type-specific data-ghe>
+        {{ macros.alert('error', 'GitHub Enterprise not enabled.') }}
+    </li>
+{% endblock %}
+
+{% block gh_fields %}
+    {% import 'macros.twig' as macros %}
+
+    <li data-type-specific data-gh>
+        {{ macros.alert('error', 'GitHub.com not enabled.') }}
+    </li>
+{% endblock %}

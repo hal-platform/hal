@@ -696,6 +696,7 @@ services:
         arguments:
             - '@id_providers.add.twig'
             - '@doctrine.em'
+            - '@idp.validator'
             - '@uri'
     id_providers.add.twig:
         parent: 'twig.template'
@@ -719,6 +720,7 @@ services:
         arguments:
             - '@vcs_providers.add.twig'
             - '@doctrine.em'
+            - '@vcs.validator'
             - '@uri'
     vcs_providers.add.twig:
         parent: 'twig.template'

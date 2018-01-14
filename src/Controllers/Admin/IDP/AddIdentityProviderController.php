@@ -9,10 +9,12 @@ namespace Hal\UI\Controllers\Admin\IDP;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\System\UserIdentityProvider;
+use Hal\Core\Type\IdentityProviderEnum;
 use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\Validator\UserIdentityProviderValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -39,6 +41,11 @@ class AddIdentityProviderController implements ControllerInterface
     private $em;
 
     /**
+     * @var UserIdentityProviderValidator
+     */
+    private $validator;
+
+    /**
      * @var URI
      */
     private $uri;
@@ -46,15 +53,18 @@ class AddIdentityProviderController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
+     * @param UserIdentityProviderValidator $validator
      * @param URI $uri
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
+        UserIdentityProviderValidator $validator,
         URI $uri
     ) {
         $this->template = $template;
         $this->em = $em;
+        $this->validator = $validator;
 
         $this->uri = $uri;
     }
@@ -64,7 +74,7 @@ class AddIdentityProviderController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $form = $this->getFormData($request);
+        $form = $this->validator->getFormData($request, null);
 
         if ($environment = $this->handleForm($form, $request)) {
             $this->withFlashSuccess($request, sprintf(self::MSG_SUCCESS, $environment->name()));
@@ -73,7 +83,9 @@ class AddIdentityProviderController implements ControllerInterface
 
         return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
-            'errors' => [],
+            'errors' => $this->validator->errors(),
+
+            'idp_types' => IdentityProviderEnum::options(),
         ]);
     }
 
@@ -93,7 +105,7 @@ class AddIdentityProviderController implements ControllerInterface
             return null;
         }
 
-        $idp = null;
+        $idp = $this->validator->isValid($data['idp_type'], $data);
 
         if ($idp) {
             $this->em->persist($idp);
@@ -101,19 +113,5 @@ class AddIdentityProviderController implements ControllerInterface
         }
 
         return $idp;
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     *
-     * @return array
-     */
-    private function getFormData(ServerRequestInterface $request)
-    {
-        $form = [
-            'name' => $request->getParsedBody()['name'] ?? '',
-        ];
-
-        return $form;
     }
 }

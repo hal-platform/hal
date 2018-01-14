@@ -1,6 +1,9 @@
 {% extends 'base.twig' %}
 {% import 'macros.form.twig' as form_macros %}
 
+{% use 'idp/partial.idp_form.twig' %}
+
+{% set js_components = ['add_idp_form'] %}
 {% set page_title = 'Add Identity Provider' %}
 
 {% block breadcrumb_links %}
@@ -11,8 +14,48 @@
 {% block content %}
     {{ form_macros.form_errors(errors, is_csrf_error) }}
 
-    <form method="post">
+    <form method="post" class="js-idp-form">
         {{ form_macros.csrf_input('id_providers.add') }}
+
+        <ul class="form-fields form-wrapper">
+            <li>
+                <label>Identity Provider Type</label>
+                <ul>
+                    {% set is_selected = form.idp_type == '' ? ' checked' : '' %}
+                    <li>
+                        <label for="idp-noop">
+                            <input type="radio" id="idp-noop" name="idp_type" value="" data-idp-select data-idp-type=""{{ is_selected }}>
+                            None
+                        </label>
+                    </li>
+
+                    {% for type in idp_types %}
+                        {% set is_selected = form.idp_type == type ? ' checked' : '' %}
+                        <li>
+                            <label for="idp-{{ type }}">
+                                <input type="radio" id="idp-{{ type }}" name="idp_type" value="{{ type }}" data-idp-select data-idp-type="{{ type }}"{{ is_selected }}>
+                                {{ type|idp_type }}
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+
+            <li>
+                {% set has_error = form_macros.has_error(errors, 'name') ? ' is-error' : '' %}
+                <label for="name">Name</label>
+                <input class="text-input{{ has_error }}" type="text" name="name" id="name" maxlength="100" value="{{ form.name }}" required>
+            </li>
+        </ul>
+
+        <hr>
+
+        <ul class="form-fields form-wrapper">
+            {{ block('internal_fields') }}
+            {{ block('ldap_fields') }}
+            {{ block('ghe_fields') }}
+            {{ block('gh_fields') }}
+        </ul>
 
         <p>
             <button type="submit" class="btn btn--action">Add IDP</button>
@@ -20,5 +63,5 @@
         </p>
 
     </form>
-
 {% endblock %}
+

@@ -9,10 +9,12 @@ namespace Hal\UI\Controllers\Admin\VCS;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\System\VersionControlProvider;
+use Hal\Core\Type\VCSProviderEnum;
 use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\Validator\VersionControlProviderValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -26,7 +28,7 @@ class AddVersionControlController implements ControllerInterface
     use SessionTrait;
     use TemplatedControllerTrait;
 
-    private const MSG_SUCCESS = 'Environment "%s" added.';
+    private const MSG_SUCCESS = 'Version Control Provider "%s" added.';
 
     /**
      * @var TemplateInterface
@@ -39,6 +41,11 @@ class AddVersionControlController implements ControllerInterface
     private $em;
 
     /**
+     * @var VersionControlProviderValidator
+     */
+    private $validator;
+
+    /**
      * @var URI
      */
     private $uri;
@@ -46,15 +53,18 @@ class AddVersionControlController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
+     * @param VersionControlProviderValidator $validator
      * @param URI $uri
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
+        VersionControlProviderValidator $validator,
         URI $uri
     ) {
         $this->template = $template;
         $this->em = $em;
+        $this->validator = $validator;
 
         $this->uri = $uri;
     }
@@ -64,7 +74,7 @@ class AddVersionControlController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $form = $this->getFormData($request);
+        $form = $this->validator->getFormData($request, null);
 
         if ($environment = $this->handleForm($form, $request)) {
             $this->withFlashSuccess($request, sprintf(self::MSG_SUCCESS, $environment->name()));
@@ -73,7 +83,9 @@ class AddVersionControlController implements ControllerInterface
 
         return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
-            'errors' => [],
+            'errors' => $this->validator->errors(),
+
+            'vcs_types' => VCSProviderEnum::options(),
         ]);
     }
 
@@ -93,7 +105,7 @@ class AddVersionControlController implements ControllerInterface
             return null;
         }
 
-        $vcs = null;
+        $vcs = $this->validator->isValid($data['vcs_type'], $data);
 
         if ($vcs) {
             $this->em->persist($vcs);
@@ -101,19 +113,5 @@ class AddVersionControlController implements ControllerInterface
         }
 
         return $vcs;
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     *
-     * @return array
-     */
-    private function getFormData(ServerRequestInterface $request)
-    {
-        $form = [
-            'name' => $request->getParsedBody()['name'] ?? '',
-        ];
-
-        return $form;
     }
 }
