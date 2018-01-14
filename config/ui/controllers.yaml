@@ -164,7 +164,7 @@ services:
         arguments:
             - '@user.add.twig'
             - '@doctrine.em'
-            - '@user.validator'
+            - '@validator.user'
             - '@uri'
     user.add.twig:
         parent: 'twig.template'
@@ -177,7 +177,7 @@ services:
         class: 'Hal\UI\Controllers\User\RegenerateSetupTokenController'
         arguments:
             - '@doctrine.em'
-            - '@user.validator'
+            - '@validator.user'
             - '@uri'
 
     user.settings.page:
@@ -373,7 +373,7 @@ services:
         class: 'Hal\UI\Controllers\Target\AddTargetMiddleware'
         arguments:
             - '@doctrine.em'
-            - '@target.validator'
+            - '@validator.target'
             - '@uri'
 
     target.edit.page:
@@ -386,7 +386,7 @@ services:
         class: 'Hal\UI\Controllers\Target\EditTargetMiddleware'
         arguments:
             - '@doctrine.em'
-            - '@target.validator'
+            - '@validator.target'
             - '@uri'
 
     target.remove.handler:
@@ -416,7 +416,7 @@ services:
         arguments:
             - '@template.add.twig'
             - '@doctrine.em'
-            - '@template.validator'
+            - '@validator.template'
             - '@uri'
     template.add.twig:
         parent: 'twig.template'
@@ -427,7 +427,7 @@ services:
         arguments:
             - '@template.edit.twig'
             - '@doctrine.em'
-            - '@template.validator'
+            - '@validator.template'
             - '@uri'
     template.edit.twig:
         parent: 'twig.template'
@@ -508,9 +508,9 @@ services:
         class: 'Hal\UI\Controllers\Build\StartBuildMiddleware'
         arguments:
             - '@doctrine.em'
-            - '@build.start.validator'
-            - '@release.start.validator'
-            - '@meta.validator'
+            - '@validator.build'
+            - '@validator.release'
+            - '@validator.meta'
             - '@sticky.environment'
             - '@uri'
 
@@ -549,8 +549,8 @@ services:
         class: 'Hal\UI\Controllers\Release\DeployMiddleware'
         arguments:
             - '@doctrine.em'
-            - '@release.start.validator'
-            - '@meta.validator'
+            - '@validator.release'
+            - '@validator.meta'
             - '@sticky.environment'
             - '@uri'
 

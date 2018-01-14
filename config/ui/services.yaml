@@ -28,126 +28,125 @@ services:
         class: 'Hal\UI\Validator\PermissionsValidator'
         arguments: ['@doctrine.em']
 
-    build.start.validator:
+    validator.build:
         class: 'Hal\UI\Validator\BuildValidator'
         arguments:
             - '@doctrine.em'
             - '@vcs'
             - '@service.authorization'
-    release.start.validator:
+    validator.release:
         class: 'Hal\UI\Validator\ReleaseValidator'
         arguments:
             - '@doctrine.em'
             - '@service.authorization'
 
-    target.validator:
+    validator.target:
         class: 'Hal\UI\Validator\TargetValidator'
         arguments:
             - '@doctrine.em'
             -
-                cd: '@target.cd.validator'
-                eb: '@target.eb.validator'
-                rsync: '@target.rsync.validator'
-                s3: '@target.s3.validator'
-                script: '@target.script.validator'
+                cd: '@validator.target.cd'
+                eb: '@validator.target.eb'
+                rsync: '@validator.target.rsync'
+                s3: '@validator.target.s3'
+                script: '@validator.target.script'
 
-    target.cd.validator:
+    validator.target.cd:
         class: 'Hal\UI\Validator\Targets\CodeDeployValidator'
-        arguments: ['@target.s3.validator']
+        arguments: ['@validator.target.s3']
 
-    target.eb.validator:
+    validator.target.eb:
         class: 'Hal\UI\Validator\Targets\ElasticBeanstalkValidator'
-        arguments: ['@target.s3.validator']
+        arguments: ['@validator.target.s3']
 
-    target.rsync.validator:
+    validator.target.rsync:
         class: 'Hal\UI\Validator\Targets\RSyncValidator'
 
-    target.s3.validator:
+    validator.target.s3:
         class: 'Hal\UI\Validator\Targets\S3Validator'
 
-    target.script.validator:
+    validator.target.script:
         class: 'Hal\UI\Validator\Targets\ScriptValidator'
 
-    meta.validator:
+    validator.meta:
         class: 'Hal\UI\Validator\MetaValidator'
 
     ####################################################################################################################
 
-    template.validator:
+    validator.template:
         class: 'Hal\UI\Validator\TargetTemplateValidator'
         arguments:
             - '@doctrine.em'
             -
-                cd: '@template.cd.validator'
-                eb: '@template.eb.validator'
-                rsync: '@template.rsync.validator'
-                s3: '@template.s3.validator'
-                script: '@template.script.validator'
+                cd: '@validator.template.cd'
+                eb: '@validator.template.eb'
+                rsync: '@validator.template.rsync'
+                s3: '@validator.template.s3'
+                script: '@validator.template.script'
 
-    template.cd.validator:
+    validator.template.cd:
         class: 'Hal\UI\Validator\Targets\CodeDeployValidator'
-        arguments: ['@template.s3.validator']
+        arguments: ['@validator.template.s3']
         calls:
             - ['withFlag', ['ALLOW_OPTIONAL']]
 
-    template.eb.validator:
+    validator.template.eb:
         class: 'Hal\UI\Validator\Targets\ElasticBeanstalkValidator'
-        arguments: ['@template.s3.validator']
+        arguments: ['@validator.template.s3']
         calls:
             - ['withFlag', ['ALLOW_OPTIONAL']]
 
-    template.rsync.validator:
+    validator.template.rsync:
         class: 'Hal\UI\Validator\Targets\RSyncValidator'
         calls:
             - ['withFlag', ['ALLOW_OPTIONAL']]
 
-    template.s3.validator:
+    validator.template.s3:
         class: 'Hal\UI\Validator\Targets\S3Validator'
         calls:
             - ['withFlag', ['ALLOW_OPTIONAL']]
 
-    template.script.validator:
+    validator.template.script:
         class: 'Hal\UI\Validator\Targets\ScriptValidator'
         calls:
             - ['withFlag', ['ALLOW_OPTIONAL']]
 
     ####################################################################################################################
 
-    user.validator:
+    validator.user:
         class: 'Hal\UI\Validator\UserValidator'
         arguments: ['@doctrine.em', '@clock']
 
     ####################################################################################################################
 
-
-    vcs.validator:
+    validator.vcs:
         class: 'Hal\UI\Validator\VersionControlProviderValidator'
         arguments:
             - '@doctrine.em'
             -
-                ghe: '@vcs.ghe.validator'
+                ghe: '@validator.vcs.ghe'
 
-    vcs.ghe.validator:
+    validator.vcs.ghe:
         class: 'Hal\UI\Validator\VersionControl\GitHubEnterpriseValidator'
 
     ####################################################################################################################
 
-    idp.validator:
+    validator.idp:
         class: 'Hal\UI\Validator\UserIdentityProviderValidator'
         arguments:
             - '@doctrine.em'
             -
-                ghe: '@idp.ghe.validator'
-                ldap: '@idp.ldap.validator'
-                internal: '@idp.internal.validator'
+                ghe: '@validator.idp.ghe'
+                ldap: '@validator.idp.ldap'
+                internal: '@validator.idp.internal'
 
-    idp.ghe.validator:
+    validator.idp.ghe:
         class: 'Hal\UI\Validator\IdentityProviders\GitHubEnterpriseValidator'
 
-    idp.ldap.validator:
+    validator.idp.ldap:
         class: 'Hal\UI\Validator\IdentityProviders\LDAPValidator'
 
-    idp.internal.validator:
+    validator.idp.internal:
         class: 'Hal\UI\Validator\IdentityProviders\InternalValidator'
 
     ####################################################################################################################

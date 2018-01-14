@@ -42,7 +42,7 @@ class EditEnvironmentController implements ControllerInterface
     /**
      * @var EnvironmentValidator
      */
-    private $envValidator;
+    private $validator;
 
     /**
      * @var URI
@@ -52,18 +52,18 @@ class EditEnvironmentController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param EnvironmentValidator $envValidator
+     * @param EnvironmentValidator $validator
      * @param URI $uri
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        EnvironmentValidator $envValidator,
+        EnvironmentValidator $validator,
         URI $uri
     ) {
         $this->template = $template;
         $this->em = $em;
-        $this->envValidator = $envValidator;
+        $this->validator = $validator;
 
         $this->uri = $uri;
     }
@@ -84,7 +84,7 @@ class EditEnvironmentController implements ControllerInterface
 
         return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
-            'errors' => $this->envValidator->errors(),
+            'errors' => $this->validator->errors(),
 
             'environment' => $environment
         ]);
@@ -107,7 +107,7 @@ class EditEnvironmentController implements ControllerInterface
             return null;
         }
 
-        $environment = $this->envValidator->isEditValid($environment, $data['name'], $data['is_production']);
+        $environment = $this->validator->isEditValid($environment, $data['name'], $data['is_production']);
 
         if ($environment) {
             $this->em->merge($environment);

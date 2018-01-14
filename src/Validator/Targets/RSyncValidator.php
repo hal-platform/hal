@@ -172,8 +172,8 @@ class RSyncValidator implements TargetValidatorInterface
             $this->addError(self::ERR_INVALID_SERVERS, 'rsync_servers');
         }
 
-        if (!$this->validateLength($servers, 4, 200)) {
-            $this->addLengthError('Servers', 4, 150, 'rsync_servers');
+        if (!$this->validateLength($servers, 3, 200)) {
+            $this->addLengthError('Servers', 3, 200, 'rsync_servers');
         }
     }
 }
