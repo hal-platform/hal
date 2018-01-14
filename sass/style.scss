@@ -24,13 +24,14 @@
 
 @import 'hint.css/src/hint';
 
+@import 'elements';
+
 // Utilities
 @import 'utilities/functions';
 @import 'utilities/mixins';
 @import 'utilities/misc';
 
 // Base
-@import 'base/global';
 @import 'base/code';
 @import 'base/error';
 @import 'base/forms';

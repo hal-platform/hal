@@ -19,6 +19,7 @@
 
     {% if selected_environment %}
         {{ block('deploy_form') }}
+
     {% else %}
         <h2>Select An Environment</h2>
         {{ block('env_picker') }}
@@ -89,6 +90,18 @@
     </p>
 {% endblock %}
 
+{% block start_deploy_button %}
+    <p>
+        {% if deployable_targets > 0 %}
+            <button type="submit" class="btn btn--action">Deploy this Build</button>
+        {% else %}
+            {{ macros.disabled_button('Deploy this Build') }}
+        {% endif %}
+
+        <a href="{{ uriFor('application.dashboard', {'application': build.application.id}) }}">Cancel</a>
+    </p>
+{% endblock %}
+
 {% block deploy_form %}
 
     {% if targets %}
@@ -101,19 +114,22 @@
 
         {{ form_macros.form_errors(errors, is_csrf_error) }}
 
-        {% set pushables = 0 %}
         {% set can_user_deploy = current_authorizations.canDeploy(build.application, selected_environment) %}
 
-        {% for target in targets %}
-            {% set needs_credentials = target.isAWS and not target.credential %}
+        <form method="post">
+            {{ form_macros.csrf_input('release.start') }}
 
-            {% if can_user_deploy and not target.lastJob.inProgress() and not needs_credentials %}
-                {% set pushables = pushables + 1 %}
-            {% endif %}
-        {% endfor %}
+            <h2>Select Targets to be Deployed</h2>
+            {{ deploy_macros.deploy_targets_table(targets, selected, can_user_deploy, true) }}
 
-        <h2>Select Targets to be Deployed</h2>
-        {{ block('select_deploy_targets') }}
+            {{ block('start_deploy_button') }}
+
+            <h2>Add Metadata to Release <sup style="color: black; font-size:.5em;">(optional)</sup></h2>
+            <small><a href="{{ uriFor('help') }}#what-is-metadata">What is this?</a></small>
+            {{ block('add_metadata') }}
+
+            {{ block('start_deploy_button') }}
+        </form>
 
     {% else %}
         {{ macros.alert('error', 'This build cannot be deployed!', 'There are no deployments assigned to this environment.') }}
@@ -121,41 +137,34 @@
         <p>
             <a href="{{ uriFor('application.dashboard', {'application': build.application.id}) }}">Return to application dashboard</a>
         </p>
-
     {% endif %}
 
 {% endblock %}
 
-{% block select_deploy_targets %}
-    <form method="post">
-        {{ form_macros.csrf_input('release.start') }}
+{% block add_metadata %}
+    <table class="table--spacing-medium js-metadata">
+        <thead>
+            <tr>
+                <th class="t40">
+                    Name
+                    <span class="hint--top" aria-label="Alphanumeric, underscores, and periods only">{{ macros.icon('info', 'icon--info') }}</span>
+                </th>
+                <th>Data</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set num_metadata = form.metadata_names|length > 3  ? form.metadata_names|length : 3 %}
 
-        <table class="table--spacing-medium">
-            <thead>
+            {% for index in range(0, num_metadata - 1) %}
                 <tr>
-                    <th>Target</th>
-                    <th class="t30">Last Code Deployed</th>
-                    <th class="t30">Last Deployed On</th>
-                    <th class="t15"></th>
+                    <td>
+                        <input type="text" name="metadata_names[]" class="text-input" value="{{form.metadata_names[index] }}" maxlength="100">
+                    </td>
+                    <td>
+                        <input type="text" name="metadata_values[]" class="text-input" value="{{form.metadata_values[index] }}">
+                    </td>
                 </tr>
-            </thead>
-
-            <tbody>
-                {% for target in targets %}
-                    {{ deploy_macros.render_deployment_row(target, target.lastJob, selected, can_user_deploy, true) }}
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <p>
-            {% if pushables %}
-                <button type="submit" class="btn btn--action">Deploy this Build</button>
-            {% else %}
-                {{ macros.disabled_button('Deploy this Build') }}
-            {% endif %}
-
-            <a href="{{ uriFor('application.dashboard', {'application': build.application.id}) }}">Cancel</a>
-        </p>
-
-    </form>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

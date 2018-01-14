@@ -550,6 +550,7 @@ services:
         arguments:
             - '@doctrine.em'
             - '@release.start.validator'
+            - '@meta.validator'
             - '@sticky.environment'
             - '@uri'
 

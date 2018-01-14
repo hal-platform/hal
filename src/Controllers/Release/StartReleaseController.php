@@ -9,13 +9,15 @@ namespace Hal\UI\Controllers\Release;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Environment;
 use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Entity\Target;
-use Hal\Core\Entity\Environment;
 use Hal\Core\Repository\EnvironmentRepository;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\Security\UserAuthorizations;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -73,6 +75,7 @@ class StartReleaseController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $build = $request->getAttribute(Build::class);
+        $authorizations = $this->getAuthorizations($request);
 
         $selectedEnvironment = $request->getAttribute(DeployMiddleware::SELECTED_ENVIRONMENT_ATTRIBUTE);
 
@@ -82,9 +85,11 @@ class StartReleaseController implements ControllerInterface
         }
 
         $environments = $targets = [];
+        $deployableTargets = 0;
 
         if ($selectedEnvironment) {
             $targets = $this->targetRepo->findBy(['application' => $build->application(), 'environment' => $selectedEnvironment]);
+            $deployableTargets = $this->deployableTargets($authorizations, $build->application(), $selectedEnvironment, $targets);
 
         } else {
             $environments = $this->environmentRepo->getBuildableEnvironmentsByApplication($build->application());
@@ -95,7 +100,39 @@ class StartReleaseController implements ControllerInterface
             'build' => $build,
 
             'environments' => $environments,
-            'targets' => $targets
+            'targets' => $targets,
+            'deployable_targets' => $deployableTargets
         ]);
+    }
+
+    /**
+     * @param UserAuthorizations $authorizations
+     * @param Application $application
+     * @param Environment $environment
+     * @param array $targets
+     *
+     * @return int
+     */
+    private function deployableTargets(UserAuthorizations $authorizations, Application $application, Environment $environment, array $targets)
+    {
+        $deployables = 0;
+
+        if (!$authorizations->canDeploy($application, $environment)) {
+            return $deployables;
+        }
+
+        foreach ($targets as $target) {
+            if ($target->isAWS() && !$target->credential()) {
+                continue;
+            }
+
+            if ($target->lastJob() && $target->lastJob()->inProgress()) {
+                continue;
+            }
+
+            $deployables++;
+        }
+
+        return $deployables;
     }
 }

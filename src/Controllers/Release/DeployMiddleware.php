@@ -17,6 +17,7 @@ use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Service\StickyEnvironmentService;
+use Hal\UI\Validator\MetaValidator;
 use Hal\UI\Validator\ReleaseValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -45,6 +46,11 @@ class DeployMiddleware implements MiddlewareInterface
     private $validator;
 
     /**
+     * @var MetaValidator
+     */
+    private $metaValidator;
+
+    /**
      * @var EntityRepository
      */
     private $environmentRepo;
@@ -63,12 +69,14 @@ class DeployMiddleware implements MiddlewareInterface
     /**
      * @param EntityManagerInterface $em
      * @param ReleaseValidator $validator
+     * @param MetaValidator $metaValidator
      * @param StickyEnvironmentService $stickyService
      * @param URI $uri
      */
     public function __construct(
         EntityManagerInterface $em,
         ReleaseValidator $validator,
+        MetaValidator $metaValidator,
         StickyEnvironmentService $stickyService,
         URI $uri
     ) {
@@ -77,6 +85,7 @@ class DeployMiddleware implements MiddlewareInterface
         $this->em = $em;
 
         $this->validator = $validator;
+        $this->metaValidator = $metaValidator;
         $this->stickyService = $stickyService;
         $this->uri = $uri;
     }
@@ -119,6 +128,11 @@ class DeployMiddleware implements MiddlewareInterface
             return $next($request, $response);
         }
 
+        if (!$this->saveMetadata($releases, $request)) {
+            $request = $this->withContext($request, $context + ['errors' => $this->metaValidator->errors()]);
+            return $next($request, $response);
+        }
+
         $this->saveChanges($releases);
 
         // override sticky environment
@@ -136,7 +150,7 @@ class DeployMiddleware implements MiddlewareInterface
     private function saveChanges(array $releases)
     {
         foreach ($releases as $release) {
-            // record pushes as active push on each deployment
+            // record releases as active job on each target
             $target = $release->target();
             $target->withLastJob($release);
 
@@ -145,6 +159,48 @@ class DeployMiddleware implements MiddlewareInterface
         }
 
         $this->em->flush();
+    }
+
+    /**
+     * @param array $releases
+     * @param ServerRequestInterface $request
+     *
+     * @return bool
+     */
+    private function saveMetadata(array $releases, ServerRequestInterface $request)
+    {
+        $names = $request->getParsedBody()['metadata_names'] ?? [];
+        $values = $request->getParsedBody()['metadata_values'] ?? [];
+
+        $names = is_array($names) ? $names : [];
+        $values = is_array($values) ? $values : [];
+
+        if (!$names && !$values) {
+            return true;
+        }
+
+        $metadatas = [];
+        foreach ($names as $index => $name) {
+            if ($name && isset($values[$index]) && strlen($values[$index]) > 0) {
+                $metadatas[$name] = $values[$index];
+            }
+        }
+
+        $metas = [];
+
+        foreach ($releases as $release) {
+            if ($m = $this->metaValidator->isBulkValid($release, $metadatas)) {
+                $metas = array_merge($metas, $m);
+            } else {
+                return false;
+            }
+        }
+
+        foreach ($metas as $meta) {
+            $this->em->persist($meta);
+        }
+
+        return true;
     }
 
     /**
@@ -164,6 +220,9 @@ class DeployMiddleware implements MiddlewareInterface
 
         $form = [
             'targets' => $data['targets'] ?? [],
+
+            'metadata_names' => $data['metadata_names'] ?? [],
+            'metadata_values' => $data['metadata_values'] ?? []
         ];
 
         return $form;
