@@ -86,23 +86,30 @@ services:
 
     template.cd.validator:
         class: 'Hal\UI\Validator\Targets\CodeDeployValidator'
-        arguments: ['@template.s3.validator', 1]
+        arguments: ['@template.s3.validator']
+        calls:
+            - ['withFlag', ['ALLOW_OPTIONAL']]
 
     template.eb.validator:
         class: 'Hal\UI\Validator\Targets\ElasticBeanstalkValidator'
-        arguments: ['@template.s3.validator', 1]
+        arguments: ['@template.s3.validator']
+        calls:
+            - ['withFlag', ['ALLOW_OPTIONAL']]
 
     template.rsync.validator:
         class: 'Hal\UI\Validator\Targets\RSyncValidator'
-        arguments: [1]
+        calls:
+            - ['withFlag', ['ALLOW_OPTIONAL']]
 
     template.s3.validator:
         class: 'Hal\UI\Validator\Targets\S3Validator'
-        arguments: [1]
+        calls:
+            - ['withFlag', ['ALLOW_OPTIONAL']]
 
     template.script.validator:
         class: 'Hal\UI\Validator\Targets\ScriptValidator'
-        arguments: [1]
+        calls:
+            - ['withFlag', ['ALLOW_OPTIONAL']]
 
     ####################################################################################################################
 

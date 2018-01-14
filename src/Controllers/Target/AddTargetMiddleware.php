@@ -76,7 +76,7 @@ HTML;
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         $application = $request->getAttribute(Application::class);
-        $form = $this->getFormData($request);
+        $form = $this->validator->getFormData($request);
 
         $context = ['form' => $form];
 
@@ -114,30 +114,6 @@ HTML;
 
         $this->withFlashSuccess($request, self::MSG_SUCCESS, sprintf(self::MSG_MORE_LIKE_THIS, $formPage));
         return $this->withRedirectRoute($response, $this->uri, 'targets', ['application' => $application->id()]);
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     *
-     * @return array
-     */
-    private function getFormData(ServerRequestInterface $request)
-    {
-        $data = $request->getParsedBody();
-        $type = $data['deployment_type'] ?? '';
-
-        $form = [
-            'deployment_type' => $type,
-            'template' => $data['template'] ?? '',
-
-            'name' => $data['name'] ?? '',
-            'url' => $data['url'] ?? '',
-
-            'script_context' => $data['script_context'] ?? '',
-            'credential' => $data['credential'] ?? ''
-        ];
-
-        return $form + $this->validator->getTargetFormData($request, $type, null);
     }
 
     /**

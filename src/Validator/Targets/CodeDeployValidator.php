@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2017 Quicken Loans Inc.
+ * @copyright (c) 2018 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -10,12 +10,14 @@ namespace Hal\UI\Validator\Targets;
 use Hal\Core\AWS\AWSAuthenticator;
 use Hal\Core\Entity\Target;
 use Hal\Core\Type\TargetEnum;
+use Hal\UI\Utility\OptionTrait;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;
 use Psr\Http\Message\ServerRequestInterface;
 
 class CodeDeployValidator implements TargetValidatorInterface
 {
+    use OptionTrait;
     use ValidatorErrorTrait;
     use ValidatorTrait;
 
@@ -32,18 +34,11 @@ class CodeDeployValidator implements TargetValidatorInterface
     private $s3Validator;
 
     /**
-     * @var int
-     */
-    private $options;
-
-    /**
      * @param S3Validator $s3validator
-     * @param int $options
      */
-    public function __construct(S3Validator $s3validator, int $options = 0)
+    public function __construct(S3Validator $s3validator)
     {
         $this->s3Validator = $s3validator;
-        $this->options = $options;
     }
 
     /**
@@ -222,7 +217,7 @@ class CodeDeployValidator implements TargetValidatorInterface
             return false;
         }
 
-        return self::ALLOW_OPTIONAL == ($this->options & self::ALLOW_OPTIONAL);
+        return $this->isFlagEnabled(self::ALLOW_OPTIONAL);
     }
 
     /**

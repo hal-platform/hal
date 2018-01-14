@@ -118,11 +118,13 @@ class HalBootstrapController implements ControllerInterface
             return null;
         }
 
+        $form = $request->getParsedBody();
+
         $data = [
-            'admin_username' => $request->getParsedBody()['admin_username'] ?? '',
-            'admin_password' => $request->getParsedBody()['admin_password'] ?? '',
-            'ghe_url' => $request->getParsedBody()['ghe_url'] ?? '',
-            'ghe_token' => $request->getParsedBody()['ghe_token'] ?? '',
+            'admin_username' => $form['admin_username'] ?? '',
+            'admin_password' => $form['admin_password'] ?? '',
+            'ghe_url' => $form['ghe_url'] ?? '',
+            'ghe_token' => $form['ghe_token'] ?? '',
         ];
 
         if (!$this->validateForm($data)) {

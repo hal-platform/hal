@@ -174,7 +174,7 @@ class AddApplicationController implements ControllerInterface
      */
     private function getFormData(ServerRequestInterface $request)
     {
-        $data = $requesrt->getParsedBody();
+        $data = $request->getParsedBody();
 
         $form = [
             'name' => $data['name'] ?? '',

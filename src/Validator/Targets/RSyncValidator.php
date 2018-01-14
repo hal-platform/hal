@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2017 Quicken Loans Inc.
+ * @copyright (c) 2018 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -9,12 +9,14 @@ namespace Hal\UI\Validator\Targets;
 
 use Hal\Core\Entity\Target;
 use Hal\Core\Type\TargetEnum;
+use Hal\UI\Utility\OptionTrait;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;
 use Psr\Http\Message\ServerRequestInterface;
 
 class RSyncValidator implements TargetValidatorInterface
 {
+    use OptionTrait;
     use ValidatorErrorTrait;
     use ValidatorTrait;
 
@@ -27,19 +29,6 @@ class RSyncValidator implements TargetValidatorInterface
     private const ERR_PATH_CHARACTERS_STARTING_SLASH = 'File path must begin with a forward slash (/)';
     private const ERT_CHARACTERS_STRICT_WHITESPACE = '%s must not contain any whitespace.';
     private const ERR_INVALID_SERVERS = 'Please enter at least one valid server hostname.';
-
-    /**
-     * @var int
-     */
-    private $options;
-
-    /**
-     * @param int $options
-     */
-    public function __construct(int $options = 0)
-    {
-        $this->options = $options;
-    }
 
     /**
      * @inheritDoc
@@ -138,7 +127,7 @@ class RSyncValidator implements TargetValidatorInterface
             return false;
         }
 
-        return self::ALLOW_OPTIONAL == ($this->options & self::ALLOW_OPTIONAL);
+        return $this->isFlagEnabled(self::ALLOW_OPTIONAL);
     }
 
     /**
@@ -153,7 +142,7 @@ class RSyncValidator implements TargetValidatorInterface
             return;
         }
 
-        if (!preg_match(self::REGEX_CHARACTER_STARTING_SLASH, $path)) {
+        if (!$this->validateRegex($path, self::REGEX_CHARACTER_STARTING_SLASH)) {
             $this->addError(self::ERR_PATH_CHARACTERS_STARTING_SLASH, 'rsync_path');
         }
 

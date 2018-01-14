@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
+use Hal\UI\Utility\OptionTrait;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Symfony\Component\Ldap\Adapter\AdapterInterface;
 use Symfony\Component\Ldap\Ldap;
@@ -21,6 +22,7 @@ use Symfony\Component\Ldap\Exception\LdapException;
 
 class LDAPAuth
 {
+    use OptionTrait;
     use ValidatorErrorTrait;
 
     // todo move to UserIdentityProvider?
@@ -50,20 +52,14 @@ class LDAPAuth
     private $userRepo;
 
     /**
-     * @var int
-     */
-    private $flags;
-
-    /**
      * @param EntityManagerInterface $em
-     * @param int $flags
      */
-    public function __construct(EntityManagerInterface $em, int $flags = self::DEFAULT_FLAGS)
+    public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
         $this->userRepo = $em->getRepository(User::class);
 
-        $this->flags = $flags;
+        $this->withFlag(self::DEFAULT_FLAGS);
     }
 
     /**
@@ -101,7 +97,7 @@ class LDAPAuth
             return $user;
         }
 
-        if (self::AUTO_CREATE_USER & $this->flags) {
+        if ($this->isFlagEnabled(self::AUTO_CREATE_USER)) {
             return $this->autoCreateUser($idp, $data);
         }
 

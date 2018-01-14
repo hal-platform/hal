@@ -67,8 +67,8 @@ class EditTargetMiddleware implements MiddlewareInterface
     {
         $application = $request->getAttribute(Application::class);
         $target = $request->getAttribute(Target::class);
-        $form = $this->getFormData($request, $target);
-
+        $form = $this->validator->getFormData($request, $target);
+dump($form);
         $context = ['form' => $form];
 
         if ($request->getMethod() !== 'POST') {
@@ -93,40 +93,5 @@ class EditTargetMiddleware implements MiddlewareInterface
 
         $this->withFlashSuccess($request, self::MSG_SUCCESS);
         return $this->withRedirectRoute($response, $this->uri, 'target', ['application' => $application->id(), 'target' => $target->id()]);
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     * @param Target $target
-     *
-     * @return array
-     */
-    private function getFormData(ServerRequestInterface $request, Target $target)
-    {
-        $data = $request->getParsedBody();
-
-        if ($request->getMethod() !== 'POST') {
-            $data['template'] = $target->template() ? $target->template()->id() : '';
-            $data['credential'] = $target->credential() ? $target->credential()->id() : '';
-
-            $data['name'] = $target->name();
-            $data['url'] = $target->url();
-            $data['script_context'] = $target->parameter(Target::PARAM_CONTEXT);
-        }
-
-        $type = $target->type();
-
-        $form = [
-            'deployment_type' => $type,
-            'template' => $data['template'] ?? '',
-
-            'name' => $data['name'] ?? '',
-            'url' => $data['url'] ?? '',
-
-            'script_context' => $data['script_context'] ?? '',
-            'credential' => $data['credential'] ?? ''
-        ];
-
-        return $form + $this->validator->getTargetFormData($request, $type, $target);
     }
 }

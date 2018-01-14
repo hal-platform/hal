@@ -130,7 +130,6 @@ class TargetValidator
         }
 
         $validator = $this->typeValidators[$type];
-
         if (!$target = $validator->isValid($parameters)) {
             $this->importErrors($validator->errors());
             return null;
@@ -219,7 +218,6 @@ class TargetValidator
         }
 
         $validator = $this->typeValidators[$type];
-
         if (!$target = $validator->isEditValid($target, $parameters)) {
             $this->importErrors($validator->errors());
             return null;
@@ -248,20 +246,47 @@ class TargetValidator
 
     /**
      * @param ServerRequestInterface $request
-     * @param string $type
      * @param Target|null $target
      *
      * @return array
      */
-    public function getTargetFormData(ServerRequestInterface $request, $type, ?Target $target): array
+    public function getFormData(ServerRequestInterface $request, ?Target $target): array
     {
+        $data = $request->getParsedBody();
+
+        $type = $data['deployment_type'] ?? '';
+
+        if ($target) {
+            $type = $target->type();
+        }
+
+        if ($target && $request->getMethod() !== 'POST') {
+            $data['template'] = $target->template() ? $target->template()->id() : '';
+            $data['credential'] = $target->credential() ? $target->credential()->id() : '';
+
+            $data['name'] = $target->name();
+            $data['url'] = $target->url();
+            $data['script_context'] = $target->parameter(Target::PARAM_CONTEXT);
+        }
+
+        $form = [
+            'deployment_type' => $type,
+            'template' => $data['template'] ?? '',
+
+            'name' => $data['name'] ?? '',
+            'url' => $data['url'] ?? '',
+
+            'script_context' => $data['script_context'] ?? '',
+            'credential' => $data['credential'] ?? ''
+        ];
+
         if (!isset($this->typeValidators[$type])) {
-            return [];
+            return $form;
         }
 
         $validator = $this->typeValidators[$type];
 
-        return $validator->getFormData($request, $target);
+        return $form + $validator->getFormData($request, $target);
     }
 
     /**

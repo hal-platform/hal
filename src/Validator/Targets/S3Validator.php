@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2017 Quicken Loans Inc.
+ * @copyright (c) 2018 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -10,12 +10,14 @@ namespace Hal\UI\Validator\Targets;
 use Hal\Core\AWS\AWSAuthenticator;
 use Hal\Core\Entity\Target;
 use Hal\Core\Type\TargetEnum;
+use Hal\UI\Utility\OptionTrait;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;
 use Psr\Http\Message\ServerRequestInterface;
 
 class S3Validator implements TargetValidatorInterface
 {
+    use OptionTrait;
     use ValidatorErrorTrait;
     use ValidatorTrait;
 
@@ -29,19 +31,6 @@ class S3Validator implements TargetValidatorInterface
 
     private const ERT_CHARACTERS_STRICT_WHITESPACE = '%s must not contain any whitespace';
     private const ERT_CHARACTERS_RELAXED_WHITESPACE = '%s must not contain tabs or newlines';
-
-    /**
-     * @var int
-     */
-    private $options;
-
-    /**
-     * @param int $options
-     */
-    public function __construct(int $options = 0)
-    {
-        $this->options = $options;
-    }
 
     /**
      * @inheritDoc
@@ -204,7 +193,7 @@ class S3Validator implements TargetValidatorInterface
             return false;
         }
 
-        return self::ALLOW_OPTIONAL == ($this->options & self::ALLOW_OPTIONAL);
+        return $this->isFlagEnabled(self::ALLOW_OPTIONAL);
     }
 
     /**

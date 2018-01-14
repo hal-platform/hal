@@ -1,14 +1,14 @@
 import 'jquery';
 
-const FIELD = 'vcs'
-const VALID_TYPES = ['gh', 'ghe', 'git'];
+const FIELD = 'idp'
+const VALID_TYPES = ['gh', 'ghe', 'internal', 'ldap'];
 
 const FORM_SELECTOR = `.js-${FIELD}-form`;
 const SELECTOR = `[data-${FIELD}-select]`;
 const OPTION_DATA_ATTRIBUTE = `${FIELD}-type`;
 const HIDEABLE_FIELDS = '[data-type-specific]';
 
-function initApplicationForm() {
+function initIDPForm() {
     let $container = $(FORM_SELECTOR);
     if ($container.length > 0) {
         attach($container);
@@ -52,4 +52,4 @@ function toggle($container, $options) {
     }
 }
 
-export { initApplicationForm };
+export { initIDPForm };

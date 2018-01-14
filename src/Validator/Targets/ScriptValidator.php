@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2017 Quicken Loans Inc.
+ * @copyright (c) 2018 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -9,12 +9,14 @@ namespace Hal\UI\Validator\Targets;
 
 use Hal\Core\Entity\Target;
 use Hal\Core\Type\TargetEnum;
+use Hal\UI\Utility\OptionTrait;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ScriptValidator implements TargetValidatorInterface
 {
+    use OptionTrait;
     use ValidatorErrorTrait;
     use ValidatorTrait;
 
@@ -35,7 +37,7 @@ class ScriptValidator implements TargetValidatorInterface
     {
         $this->resetErrors();
 
-        return new Target;
+        return $target;
     }
 
     /**
