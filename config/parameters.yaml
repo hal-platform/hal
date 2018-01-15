@@ -134,3 +134,12 @@ parameters:
     encrypter.secret.path: '%env(HAL_CRYPTO_SECRETPATH)%'
     encrypter.publickey: '%env(HAL_CRYPTO_PUBLICKEY)%'
     encrypter.encryptedkey: '%env(HAL_CRYPTO_PRIVATEKEY)%'
+
+    ############################################################################
+    # authentication
+    ############################################################################
+    ldap.query_restriction:
+        objectCategory: 'person'
+        # objectClass: 'user'
+    ldap.unique_attribute: 'sAMAccountName'
+    # ldap.unique_attribute: 'uid'

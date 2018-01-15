@@ -29,6 +29,8 @@ class GitHubEnterpriseValidator implements IdentityProviderValidatorInterface
     {
         $this->resetErrors();
 
+        $this->addError('GitHub Enterprise not yet supported.');
+
         return null;
     }
 
@@ -41,6 +43,8 @@ class GitHubEnterpriseValidator implements IdentityProviderValidatorInterface
     public function isEditValid(UserIdentityProvider $provider, array $parameters): ?UserIdentityProvider
     {
         $this->resetErrors();
+
+        $this->addError('GitHub Enterprise not yet supported.');
 
         return null;
     }

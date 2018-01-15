@@ -500,6 +500,25 @@ parameters:
                     route: '/idp/add'
                     stack: ['middleware.require_csrf', 'id_providers.add.page']
 
+                id_provider.management:
+                    route: '/idp/{system_idp:%r.guid%}'
+                    stack: ['middleware.require_entity']
+                    routes:
+                        id_provider:
+                            method: 'GET'
+                            route: ''
+                            stack: ['id_provider.page']
+
+                        id_provider.edit:
+                            method: ['GET', 'POST']
+                            route: '/edit'
+                            stack: ['middleware.require_csrf', 'id_provider.edit.page']
+
+                        id_provider.remove:
+                            method: ['GET', 'POST']
+                            route: '/remove'
+                            stack: ['middleware.require_csrf', 'middleware.removal_confirmation.id_provider', 'id_provider.remove.handler']
+
                 ################################################################################################################
                 # admin - vcs
                 ################################################################################################################
@@ -513,6 +532,25 @@ parameters:
                     method: ['GET', 'POST']
                     route: '/vcs/add'
                     stack: ['middleware.require_csrf', 'vcs_providers.add.page']
+
+                vcs_provider.management:
+                    route: '/vcs/{system_vcs:%r.guid%}'
+                    stack: ['middleware.require_entity']
+                    routes:
+                        vcs_provider:
+                            method: 'GET'
+                            route: ''
+                            stack: ['vcs_provider.page']
+
+                        vcs_provider.edit:
+                            method: ['GET', 'POST']
+                            route: '/edit'
+                            stack: ['middleware.require_csrf', 'vcs_provider.edit.page']
+
+                        vcs_provider.remove:
+                            method: ['GET', 'POST']
+                            route: '/remove'
+                            stack: ['middleware.require_csrf', 'middleware.removal_confirmation.vcs_provider', 'vcs_provider.remove.handler']
 
                 ################################################################################################################
                 # admin - credentials

@@ -1,0 +1,63 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+{% import 'macros.form.twig' as form_macros %}
+
+{% use 'idp/partial.idp_form.twig' %}
+
+{% set page_title = 'Edit Identity Provider' %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+    <li><a href="{{ uriFor('id_providers') }}">Identity Providers</a></li>
+    <li><a href="{{ uriFor('id_provider', {'system_idp': idp.id}) }}">{{ idp.name }}</a></li>
+{% endblock %}
+
+{% block content %}
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
+
+    <h4>Type</h4>
+    <p>{{ idp.formatType() }}</p>
+
+    <form method="post" class="js-idp-form">
+        {{ form_macros.csrf_input('id_provider.edit') }}
+
+        <ul class="form-fields form-wrapper">
+            <li>
+                {% set has_error = form_macros.has_error(errors, 'name') ? ' is-error' : '' %}
+                <label for="name">Name</label>
+                <input class="text-input{{ has_error }}" type="text" name="name" id="name" maxlength="100" value="{{ form.name }}" required>
+            </li>
+        </ul>
+
+        <hr>
+
+        <ul class="form-fields form-wrapper">
+
+            {% if idp.type in ['internal'] %}
+                {{ block('internal_fields') }}
+            {% endif %}
+
+            {% if idp.type in ['ldap'] %}
+                {{ block('ldap_fields') }}
+            {% endif %}
+
+            {% if idp.type in ['ghe'] %}
+                {{ block('ghe_fields') }}
+            {% endif %}
+
+            {% if idp.type in ['gh'] %}
+                {{ block('gh_fields') }}
+            {% endif %}
+        </ul>
+
+        <div class="mvm">
+            {{ macros.alert('warning', 'Be careful! Modifying the configuration for this IDP may prevent Hal from being able to authenticate users!') }}
+        </div>
+
+        <p>
+            <button type="submit" class="btn btn--action">Save Changes</button>
+            <a href="{{ uriFor('id_provider', {'system_idp': idp.id}) }}">Cancel</a>
+        </p>
+
+    </form>
+{% endblock %}

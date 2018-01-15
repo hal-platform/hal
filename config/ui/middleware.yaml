@@ -87,3 +87,9 @@ services:
         class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
         arguments: ['@middleware.removal_confirmation.twig', 'credential']
 
+    middleware.removal_confirmation.vcs_provider:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'system_vcs']
+    middleware.removal_confirmation.id_provider:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'system_idp']

@@ -1,5 +1,5 @@
 {% block rsync_meta %}
-    {% import 'target/macros.target.twig' as target_macros %}
+    {% import 'macros.twig' as target_macros %}
 
     <h4>Servers</h4>
     {{ target_macros.output_parameter(target, 'servers') }}
@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block cd_meta %}
-    {% import 'target/macros.target.twig' as target_macros %}
+    {% import 'macros.twig' as target_macros %}
 
     <h4>AWS Region</h4>
     {{ target_macros.output_parameter(target, 'region') }}
@@ -37,7 +37,7 @@
 {% endblock %}
 
 {% block eb_meta %}
-    {% import 'target/macros.target.twig' as target_macros %}
+    {% import 'macros.twig' as target_macros %}
 
     <h4>AWS Region</h4>
     {{ target_macros.output_parameter(target, 'region') }}
@@ -57,7 +57,7 @@
 {% endblock %}
 
 {% block s3_meta %}
-    {% import 'target/macros.target.twig' as target_macros %}
+    {% import 'macros.twig' as target_macros %}
 
     <h4>AWS Region</h4>
     {{ target_macros.output_parameter(target, 'region') }}

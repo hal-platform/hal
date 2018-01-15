@@ -1,5 +1,6 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
+{% import _self as page_macros %}
 
 {% set page_title = 'Identity Providers' %}
 
@@ -10,6 +11,11 @@
 {% endblock %}
 
 {% block content %}
+    <p>
+        Identity Providers allow users to authenticate and sign in. Hal provides an <b>internal</b> user store, but
+        can also work with external systems such as <b>Active Directory</b> through LDAP or <b>OAuth</b> providers such as GitHub.
+    </p>
+
     {{ block('idp_table') }}
 
     <p>
@@ -38,27 +44,17 @@
                 {% for idp in id_providers %}
                     <tr>
                         <td>
-                            <a href="{{ uriFor('id_providers', {'id_provider': idp.id}) }}">{{ idp|short_guid }}</a>
+                            <a href="{{ uriFor('id_provider', {'system_idp': idp.id}) }}">{{ idp|short_guid }}</a>
                         </td>
                         <td>
                             {{ idp.formatType() }}
                         </td>
                         <td>
+                            {{ page_macros.user_count(user_counts, idp) }}
                             {{ idp.name }}
                         </td>
                         <td>
-                            {% if idp.type == 'internal' %}
-                                N/A
-
-                            {% elseif idp.type == 'ldap' %}
-                                URL: <code>{{ idp.parameter('gh.url') }}</code>
-
-                            {% elseif idp.type == 'gh' %}
-                                TBD
-
-                            {% elseif idp.type == 'ghe' %}
-                                TBD
-                            {% endif %}
+                            {{ page_macros.idp_details(idp) }}
                         </td>
                     </tr>
                 {% endfor %}
@@ -69,3 +65,31 @@
     {% endif %}
 
 {% endblock %}
+
+{% macro user_count(user_counts, idp) %}
+    {% import 'macros.twig' as macros %}
+
+    {% set users = user_counts[idp.id] ?: 0 %}
+    {%- if users > 0 -%}
+        <span class="hint--top" aria-label="{{ users }} users are using this IDP">
+            {{- macros.status(users, 'success') -}}
+        </span>
+    {%- else -%}
+        {{ macros.status(users, 'info') }}
+    {%- endif %}
+{% endmacro %}
+
+{% macro idp_details(idp) %}
+    {% if idp.type == 'internal' %}
+        N/A
+
+    {% elseif idp.type == 'ldap' %}
+        Server: <code>{{ idp.parameter('ldap.host') }}</code>
+
+    {% elseif idp.type == 'gh' %}
+        TBD
+
+    {% elseif idp.type == 'ghe' %}
+        TBD
+    {% endif %}
+{% endmacro %}

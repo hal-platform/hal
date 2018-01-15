@@ -1,0 +1,74 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+
+{% use 'vcs/partial.vcs.twig' %}
+
+{% set page_title = 'Version Control' %}
+
+{% set is_admin = current_authorizations.isSuper() %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+    <li><a href="{{ uriFor('vcs_providers') }}">Version Control Providers</a></li>
+{% endblock %}
+
+{% block content %}
+    {{ block('meta') }}
+
+    <h4>Type</h4>
+    {{ vcs.formatType() }}
+
+    <h4>Name</h4>
+    {{ vcs.name }}
+
+    <h2>Configuration</h2>
+    {{ block('vcs_details') }}
+
+    {{ block('actions') }}
+
+{% endblock %}
+
+{% block meta %}
+    <ul class="meta-box">
+        <li>
+            <h6>ID</h6>
+            {{ vcs|short_guid }}
+        </li>
+
+        <li>
+            <h6>Date Added</h6>
+            {{ vcs.created|html5date }}
+        </li>
+    </ul>
+{% endblock %}
+
+{% block actions %}
+    <p>
+        {% if is_admin %}
+            <a class="btn btn--action" href="{{ uriFor('vcs_provider.edit', {'system_vcs': vcs.id}) }}">Edit VCS</a>
+        {% else %}
+            {{ macros.disabled_button('Edit VCS') }}
+        {% endif %}
+
+        {% if is_admin and can_remove %}
+            <a class="btn btn--destructive" href="{{ uriFor('vcs_provider.remove', {'system_vcs': vcs.id}) }}">Remove VCS</a>
+        {% else %}
+            {{ macros.disabled_button('Remove VCS') }}
+        {% endif %}
+    </p>
+{% endblock %}
+
+{% block vcs_details %}
+
+    {% if vcs.type == 'git' %}
+        {{ block('git_meta') }}
+
+    {% elseif vcs.type == 'gh' %}
+        {{ block('gh_meta') }}
+
+    {% elseif vcs.type == 'ghe' %}
+        {{ block('ghe_meta') }}
+
+    {% endif %}
+
+{% endblock %}

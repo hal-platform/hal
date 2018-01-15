@@ -5,6 +5,42 @@
 {% block ldap_fields %}
     {% import 'macros.form.twig' as form_macros %}
 
+    {% import 'macros.form.twig' as form_macros %}
+
+    <li data-type-specific data-ldap>
+        {% set has_error = form_macros.has_error(errors, 'ldap_host') ? ' is-error' : '' %}
+        <label for="ldap_host">LDAP host or server</label>
+        <input class="text-input{{ has_error }}" type="text" name="ldap_host" id="ldap_host" maxlength="100" value="{{ form.ldap_host }}">
+        <small>Default port is 389. Expected syntax: <code>server.example.com[:PORT_NUMBER]</code></small>
+    </li>
+
+    <li data-type-specific data-ldap>
+        {% set has_error = form_macros.has_error(errors, 'ldap_domain') ? ' is-error' : '' %}
+        <label for="ldap_domain">Domain</label>
+        <input class="text-input{{ has_error }}" type="text" name="ldap_domain" id="ldap_domain" maxlength="100" value="{{ form.ldap_domain }}">
+        <small>
+            <b>Optional.</b> Specifying a domain such as <code>Company\Division</code> will result in user names such as <code>Company\Division\$username</code>.
+        </small>
+    </li>
+
+    <li data-type-specific data-ldap>
+        {% set has_error = form_macros.has_error(errors, 'ldap_base_dn') ? ' is-error' : '' %}
+        <label for="ldap_base_dn">Base DN</label>
+        <input class="text-input{{ has_error }}" type="text" name="ldap_base_dn" id="ldap_base_dn" maxlength="200" value="{{ form.ldap_base_dn }}">
+        <small>
+            <b>Optional.</b> Specify a root or base DN to limit the users allowed to authenticate with Hal.
+        </small>
+    </li>
+
+    <li data-type-specific data-ldap>
+        {% set has_error = form_macros.has_error(errors, 'ldap_unique_id') ? ' is-error' : '' %}
+        <label for="ldap_unique_id">Primary ID attribute</label>
+        <input class="text-input{{ has_error }}" type="text" name="ldap_unique_id" id="ldap_unique_id" maxlength="200" value="{{ form.ldap_unique_id }}">
+        <small>
+            <b>Optional.</b> The unique attribute users will sign in with. By default <code>SAMAccountName</code> is used. If you would like to use another attribute such as email address provide the LDAP attribute name here.
+        </small>
+    </li>
+
 {% endblock %}
 
 {% block ghe_fields %}

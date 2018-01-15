@@ -118,6 +118,8 @@ class UserIdentityProviderValidator
     {
         $this->resetErrors();
 
+        $type = $provider->type();
+
         $name = trim($parameters['name'] ?? '');
 
         $this->validateName($name);

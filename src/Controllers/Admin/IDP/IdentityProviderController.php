@@ -10,13 +10,14 @@ namespace Hal\UI\Controllers\Admin\IDP;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\System\UserIdentityProvider;
+use Hal\Core\Entity\User;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
-class IdentityProvidersController implements ControllerInterface
+class IdentityProviderController implements ControllerInterface
 {
     use TemplatedControllerTrait;
 
@@ -28,7 +29,7 @@ class IdentityProvidersController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $idpRepo;
+    private $userRepo;
 
     /**
      * @param TemplateInterface $template
@@ -37,7 +38,7 @@ class IdentityProvidersController implements ControllerInterface
     public function __construct(TemplateInterface $template, EntityManagerInterface $em)
     {
         $this->template = $template;
-        $this->idpRepo = $em->getRepository(UserIdentityProvider::class);
+        $this->userRepo = $em->getRepository(User::class);
     }
 
     /**
@@ -45,9 +46,23 @@ class IdentityProvidersController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
+        $idp = $request->getAttribute(UserIdentityProvider::class);
+
         return $this->withTemplate($request, $response, $this->template, [
-            'id_providers' => $this->idpRepo->findAll(),
-            'user_counts' => $this->idpRepo->getUserCounts()
+            'idp' => $idp,
+            'can_remove' => $this->canIDPBeRemoved($idp)
         ]);
+    }
+
+    /**
+     * @param UserIdentityProvider $idp
+     *
+     * @return bool
+     */
+    private function canIDPBeRemoved(UserIdentityProvider $idp)
+    {
+        $hasUsers = $this->userRepo->findOneBy(['provider' => $idp]);
+
+        return ($hasUsers === null);
     }
 }

@@ -1,0 +1,77 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+
+{% use 'idp/partial.idp.twig' %}
+
+{% set page_title = 'Identity Provider' %}
+
+{% set is_admin = current_authorizations.isSuper() %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+    <li><a href="{{ uriFor('id_providers') }}">Identity Providers</a></li>
+{% endblock %}
+
+{% block content %}
+    {{ block('meta') }}
+
+    <h4>Type</h4>
+    {{ idp.formatType() }}
+
+    <h4>Name</h4>
+    {{ idp.name }}
+
+    <h2>Configuration</h2>
+    {{ block('idp_details') }}
+
+    {{ block('actions') }}
+
+{% endblock %}
+
+{% block meta %}
+    <ul class="meta-box">
+        <li>
+            <h6>ID</h6>
+            {{ idp|short_guid }}
+        </li>
+
+        <li>
+            <h6>Date Added</h6>
+            {{ idp.created|html5date }}
+        </li>
+    </ul>
+{% endblock %}
+
+{% block actions %}
+    <p>
+        {% if is_admin %}
+            <a class="btn btn--action" href="{{ uriFor('id_provider.edit', {'system_idp': idp.id}) }}">Edit IDP</a>
+        {% else %}
+            {{ macros.disabled_button('Edit IDP') }}
+        {% endif %}
+
+        {% if is_admin and can_remove %}
+            <a class="btn btn--destructive" href="{{ uriFor('id_provider.remove', {'system_idp': idp.id}) }}">Remove IDP</a>
+        {% else %}
+            {{ macros.disabled_button('Remove IDP') }}
+        {% endif %}
+    </p>
+{% endblock %}
+
+{% block idp_details %}
+
+    {% if idp.type == 'internal' %}
+        {{ block('internal_meta') }}
+
+    {% elseif idp.type == 'ldap' %}
+        {{ block('ldap_meta') }}
+
+    {% elseif idp.type == 'gh' %}
+        {{ block('gh_meta') }}
+
+    {% elseif idp.type == 'ghe' %}
+        {{ block('ghe_meta') }}
+
+    {% endif %}
+
+{% endblock %}

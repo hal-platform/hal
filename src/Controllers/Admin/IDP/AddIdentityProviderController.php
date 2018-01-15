@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2016 Quicken Loans Inc.
+ * @copyright (c) 2018 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -28,7 +28,7 @@ class AddIdentityProviderController implements ControllerInterface
     use SessionTrait;
     use TemplatedControllerTrait;
 
-    private const MSG_SUCCESS = 'Environment "%s" added.';
+    private const MSG_SUCCESS = 'Identity Provider "%s" added.';
 
     /**
      * @var TemplateInterface

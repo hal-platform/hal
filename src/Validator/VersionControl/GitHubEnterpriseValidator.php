@@ -51,11 +51,11 @@ class GitHubEnterpriseValidator implements VersionControlValidatorInterface
         $baseURL = (strlen($baseURL) > 0) ? $baseURL : null;
         $token = (strlen($token) > 0) ? $token : null;
 
-        $vcs = (new VersionControlProvider)
+        $provider = (new VersionControlProvider)
             ->withParameter(self::ATTR_URL, $baseURL)
             ->withParameter(self::ATTR_TOKEN, $token);
 
-        return $vcs;
+        return $provider;
     }
 
     /**
@@ -79,11 +79,11 @@ class GitHubEnterpriseValidator implements VersionControlValidatorInterface
         $baseURL = (strlen($baseURL) > 0) ? $baseURL : null;
         $token = (strlen($token) > 0) ? $token : null;
 
-        $vcs
+        $provider
             ->withParameter(self::ATTR_URL, $baseURL)
             ->withParameter(self::ATTR_TOKEN, $token);
 
-        return $vcs;
+        return $provider;
     }
 
     /**

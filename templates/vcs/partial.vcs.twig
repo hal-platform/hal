@@ -1,0 +1,21 @@
+{% block git_meta %}
+    {% import 'macros.twig' as macros %}
+
+    {{ macros.alert('error', 'Git not enabled.') }}
+{% endblock %}
+
+{% block gh_meta %}
+    {% import 'macros.twig' as macros %}
+
+    {{ macros.alert('error', 'GitHub.com not enabled.') }}
+{% endblock %}
+
+{% block ghe_meta %}
+    {% import 'macros.twig' as macros %}
+
+    <h4>Base URL</h4>
+    {{ macros.output_parameter(vcs, 'ghe.url') }}
+
+    <h4>API Token</h4>
+    {{ macros.output_parameter(vcs, 'ghe.token') }}
+{% endblock %}

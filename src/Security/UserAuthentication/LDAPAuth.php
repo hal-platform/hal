@@ -14,6 +14,7 @@ use Hal\Core\Entity\User;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
 use Hal\UI\Utility\OptionTrait;
+use Hal\UI\Validator\IdentityProviders\LDAPValidator;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Symfony\Component\Ldap\Adapter\AdapterInterface;
 use Symfony\Component\Ldap\Ldap;
@@ -25,21 +26,19 @@ class LDAPAuth
     use OptionTrait;
     use ValidatorErrorTrait;
 
-    // todo move to UserIdentityProvider?
-    const PARAM_HOST = 'ldap.host';
-    const PARAM_PORT = 'ldap.port';
-    const PARAM_DOMAIN = 'ldap.domain';
-    const PARAM_BASE_DN = 'ldap.base_dn';
-    const PARAM_ATTR_OBJECT = 'ldap.attr.object';
-    const PARAM_ATTR_USERNAME = 'ldap.attr.username';
+// uid={0}
+    const USER_ID = 'objectGUID';
 
-    const LDAP_ADAPTER = 'ext_ldap';
+    public const AUTO_CREATE_USER = 1;
+    public const DEFAULT_FLAGS = self::AUTO_CREATE_USER;
 
-    const ERR_USER_NOT_FOUND = 'Invalid sign-in information. Please try again.';
-    const ERR_IDP_MISCONFIGURED = 'LDAP Identity Provider is misconfigured.';
+    public const DEFAULT_LDAP_PORT = 389;
 
-    const AUTO_CREATE_USER = 1;
-    const DEFAULT_FLAGS = self::AUTO_CREATE_USER;
+    private const LDAP_ADAPTER = 'ext_ldap';
+
+    private const ERR_USER_NOT_FOUND = 'Invalid sign-in information. Please try again.';
+    private const ERR_IDP_MISCONFIGURED = 'LDAP Identity Provider is misconfigured.';
+
 
     /**
      * @var EntityManagerInterface
@@ -52,12 +51,27 @@ class LDAPAuth
     private $userRepo;
 
     /**
-     * @param EntityManagerInterface $em
+     * @var array
      */
-    public function __construct(EntityManagerInterface $em)
+    private $queryRestriction;
+
+    /**
+     * @var string
+     */
+    private $defaultUsernameAttribute;
+
+    /**
+     * @param EntityManagerInterface $em
+     * @param string $queryRestriction
+     * @param string $defaultUsernameAttribute
+     */
+    public function __construct(EntityManagerInterface $em, array $queryRestriction, string $defaultUsernameAttribute)
     {
         $this->em = $em;
         $this->userRepo = $em->getRepository(User::class);
+
+        $this->queryRestriction = $queryRestriction;
+        $this->defaultUsernameAttribute = $defaultUsernameAttribute;
 
         $this->withFlag(self::DEFAULT_FLAGS);
     }
@@ -116,7 +130,7 @@ class LDAPAuth
     private function retrieveUser(UserIdentityProvider $idp, LdapInterface $ldap, $username, $password)
     {
         $fqUsername = $username;
-        if ($domain = $idp->parameter(self::PARAM_DOMAIN)) {
+        if ($domain = $idp->parameter(LDAPValidator::ATTR_DOMAIN)) {
             $fqUsername = $domain . '\\' . $fqUsername;
         }
 
@@ -129,23 +143,25 @@ class LDAPAuth
             return null;
         }
 
-        $dn = $idp->parameter(self::PARAM_BASE_DN);
-        $object = $idp->parameter(self::PARAM_ATTR_OBJECT);
-        $attribute = $idp->parameter(self::PARAM_ATTR_USERNAME);
+        $dn = $idp->parameter(LDAPValidator::ATTR_BASE_DN);
+        $attribute = $idp->parameter(LDAPValidator::ATTR_UNIQUE_ID) ?? $this->defaultUsernameAttribute;
 
-        if (strlen($dn) === 0 || strlen($object) === 0 || strlen($attribute) === 0) {
+        // @todo - not sure if DN is required
+        // @todo - not sure if DN is required
+        // @todo - not sure if DN is required
+        // @todo - not sure if DN is required
+        // @todo - not sure if DN is required
+        // @todo - not sure if DN is required
+        if (strlen($dn) === 0 || strlen($attribute) === 0) {
             $this->addError(self::ERR_IDP_MISCONFIGURED);
             return null;
         }
 
         $baseDN = $ldap->escape($dn);
-        $userObject = $ldap->escape($object);
-        $usernameAttribute = $ldap->escape($attribute);
-
-        $query = sprintf('(&(objectclass=%s)(%s=%s))', $userObject, $usernameAttribute, $username);
+        $query = $this->buildLDAPQuery($ldap, $attribute, $username);
         $attributes = [
-            'id' => 'objectGUID',
-            'username' => $usernameAttribute
+            'id' => self::USER_ID,
+            'username' => $attribute
         ];
 
         $data = $this->getUserData($ldap, $baseDN, $query, $attributes);
@@ -182,7 +198,7 @@ class LDAPAuth
                 return null;
             }
 
-            if ($adAttr === 'objectGUID') {
+            if ($adAttr === self::USER_ID) {
                 $value = unpack("H*hex", $value)['hex'];
             }
 
@@ -225,8 +241,13 @@ class LDAPAuth
             return null;
         }
 
-        $host = $idp->parameter(self::PARAM_HOST);
-        $port = $idp->parameter(self::PARAM_PORT);
+        $host = $idp->parameter(LDAPValidator::ATTR_HOST);
+
+        $hostname = strstr($host, ':', true);
+        $port = strstr($host, ':', false);
+
+        $hostname = ($hostname !== false) ? $hostname : $host;
+        $port = ($port !== false) ? $port : self::DEFAULT_LDAP_PORT;
 
         if (strlen($host) === 0 || strlen($port) === 0) {
             $this->addError(self::ERR_IDP_MISCONFIGURED);
@@ -240,6 +261,25 @@ class LDAPAuth
         }
 
         return $ldap;
+    }
+
+    /**
+     * @param LdapInterface $ldap
+     * @param string $attribute
+     * @param string $username
+     *
+     * @return string
+     */
+    private function buildLDAPQuery(LdapInterface $ldap, $attribute, $username)
+    {
+        $query = [];
+        foreach ($this->queryRestriction as $attr => $value) {
+            $query[] = sprintf('(%s=%s)', $attr, $ldap->escape($value));
+        }
+
+        $query[] = sprintf('(%s=%s)', $ldap->escape($attribute), $ldap->escape($username));
+
+        return sprintf('(&%s)', implode('', $query));
     }
 
     /**

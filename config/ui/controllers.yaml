@@ -696,11 +696,33 @@ services:
         arguments:
             - '@id_providers.add.twig'
             - '@doctrine.em'
-            - '@idp.validator'
+            - '@validator.idp'
             - '@uri'
     id_providers.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['idp/add_idp.twig']]]
+
+    id_provider.page:
+        class: 'Hal\UI\Controllers\Admin\IDP\IdentityProviderController'
+        arguments: ['@id_provider.twig', '@doctrine.em']
+    id_provider.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['idp/id_provider.twig']]]
+
+    id_provider.edit.page:
+        class: 'Hal\UI\Controllers\Admin\IDP\EditIdentityProviderController'
+        arguments:
+            - '@id_provider.edit.twig'
+            - '@doctrine.em'
+            - '@validator.idp'
+            - '@uri'
+    id_provider.edit.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['idp/edit_idp.twig']]]
+
+    id_provider.remove.handler:
+        class: 'Hal\UI\Controllers\Admin\IDP\RemoveIdentityProviderController'
+        arguments: ['@doctrine.em', '@uri']
 
     ################################################################################################################
     # admin - vcs
@@ -720,11 +742,33 @@ services:
         arguments:
             - '@vcs_providers.add.twig'
             - '@doctrine.em'
-            - '@vcs.validator'
+            - '@validator.vcs'
             - '@uri'
     vcs_providers.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['vcs/add_vcs.twig']]]
+
+    vcs_provider.page:
+        class: 'Hal\UI\Controllers\Admin\VCS\VersionControlController'
+        arguments: ['@vcs_provider.twig', '@doctrine.em']
+    vcs_provider.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['vcs/vcs_provider.twig']]]
+
+    vcs_provider.edit.page:
+        class: 'Hal\UI\Controllers\Admin\VCS\EditVersionControlController'
+        arguments:
+            - '@vcs_provider.edit.twig'
+            - '@doctrine.em'
+            - '@validator.vcs'
+            - '@uri'
+    vcs_provider.edit.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['vcs/edit_vcs.twig']]]
+
+    vcs_provider.remove.handler:
+        class: 'Hal\UI\Controllers\Admin\VCS\RemoveVersionControlController'
+        arguments: ['@doctrine.em', '@uri']
 
     ####################################################################################################################
     # admin - credentials

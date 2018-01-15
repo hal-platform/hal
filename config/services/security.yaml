@@ -16,7 +16,10 @@ services:
 
     auth.ldap:
         class: 'Hal\UI\Security\UserAuthentication\LdapAuth'
-        arguments: ['@doctrine.em']
+        arguments:
+            - '@doctrine.em'
+            - '%ldap.query_restriction%'
+            - '%ldap.unique_attribute%'
 
     ####################################################################################################################
     # authorizations

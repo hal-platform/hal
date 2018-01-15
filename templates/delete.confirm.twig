@@ -20,6 +20,10 @@
     {% set entity_type = 'Credential' %}
 {% elseif remove.param == 'user_token' %}
     {% set entity_type = 'User Token' %}
+{% elseif remove.param == 'system_vcs' %}
+    {% set entity_type = 'Version Control Provider' %}
+{% elseif remove.param == 'system_idp' %}
+    {% set entity_type = 'User Identity Provider' %}
 {% endif %}
 
 {% if remove.param %}
@@ -47,20 +51,30 @@
         <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
         <li><a href="{{ uriFor('templates') }}">Target Templates</a></li>
         <li><a href="{{ uriFor('template', {'template': remove.entity.id}) }}">{{ remove.entity.name }}</a></li>
+    {% elseif remove.param == 'system_vcs' %}
+        <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+        <li><a href="{{ uriFor('vcs_providers') }}">Version Control Providers</a></li>
+        <li><a href="{{ uriFor('vcs_provider', {'system_vcs': remove.entity.id}) }}">{{ remove.entity.name }}</a></li>
+    {% elseif remove.param == 'system_idp' %}
+        <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+        <li><a href="{{ uriFor('id_providers') }}">Identity Providers</a></li>
+        <li><a href="{{ uriFor('id_provider', {'system_idp': remove.entity.id}) }}">{{ remove.entity.name }}</a></li>
     {% endif %}
-
 {% endblock %}
 
 {% block content %}
+    {% set csrf_param = remove.param ~ '.remove' %}
 
     {% if remove.param == 'organization' %}
         {{ block('organization_meta') }}
     {% elseif remove.param == 'application' %}
         {{ block('application_meta') }}
+
     {% elseif remove.param == 'target' %}
         {{ block('target_meta') }}
     {% elseif remove.param == 'encrypted' %}
         {{ block('encrypted_meta') }}
+
     {% elseif remove.param == 'template' %}
         {{ block('template_meta') }}
     {% elseif remove.param == 'environment' %}
@@ -70,30 +84,36 @@
 
     {% elseif remove.param == 'user_token' %}
         {{ block('token_meta') }}
+
+    {% elseif remove.param == 'system_vcs' %}
+        {% set csrf_param = 'vcs_provider.remove' %}
+        {{ block('vcs_meta') }}
+    {% elseif remove.param == 'system_idp' %}
+        {% set csrf_param = 'id_provider.remove' %}
+        {{ block('idp_meta') }}
     {% endif %}
 
     <h3>Are you sure?</h3>
     <p>You're about to permanently remove this <b>{{ entity_type }}</b>. Do you want to continue?</p>
 
     <form method="post">
-        {{ form_macros.csrf_input(remove.param ~ '.remove') }}
+        {{ form_macros.csrf_input(csrf_param) }}
 
         <button type="submit" class="btn btn--destructive">{{ page_title }}</button>
         {{ block('cancel_button') }}
     </form>
-
 {% endblock %}
 
 {% block cancel_button %}
     {% if remove.param == 'organization' %}
         <a href="{{ uriFor('organization', {'organization': remove.entity.id}) }}">Cancel</a>
-
     {% elseif remove.param == 'application' %}
         <a href="{{ uriFor('application', {'application': remove.entity.id}) }}">Cancel</a>
+
     {% elseif remove.param == 'target' %}
-        <a href="{{ uriFor('target', {'target': remove.entity.id, 'application': entities.application.id}) }}">Cancel</a>
+        <a href="{{ uriFor('target', {'target': remove.entity.id, 'application': remove.entity.application.id}) }}">Cancel</a>
     {% elseif remove.param == 'encrypted' %}
-        <a href="{{ uriFor('encrypted', {'encrypted': remove.entity.id, 'application': entities.application.id}) }}">Cancel</a>
+        <a href="{{ uriFor('encrypted', {'encrypted': remove.entity.id, 'application': remove.entity.application.id}) }}">Cancel</a>
 
     {% elseif remove.param == 'template' %}
         <a href="{{ uriFor('template', {'template': remove.entity.id}) }}">Cancel</a>
@@ -102,8 +122,14 @@
     {% elseif remove.param == 'credential' %}
         <a href="{{ uriFor('credential', {'credential': remove.entity.id}) }}">Cancel</a>
 
-    {% elseif remove.param == 'token' %}
-        <a href="{{ uriFor('user', {'user': entities.user.id}) }}">Cancel</a>
+    {% elseif remove.param == 'user_token' %}
+        <a href="{{ uriFor('user', {'user': remove.entity.user.id}) }}">Cancel</a>
+
+    {% elseif remove.param == 'system_vcs' %}
+        <a href="{{ uriFor('vcs_provider', {'system_vcs': remove.entity.id}) }}">Cancel</a>
+    {% elseif remove.param == 'system_idp' %}
+        <a href="{{ uriFor('id_provider', {'system_idp': remove.entity.id}) }}">Cancel</a>
+
     {% else %}
         <a href="javascript:history.go(-1)">Cancel</a>
     {% endif %}
@@ -262,6 +288,40 @@
         <li>
             <h6>User</h6>
             {{ remove.entity.user.name }}
+        </li>
+    </ul>
+{% endblock %}
+
+{% block vcs_meta %}
+    <ul class="meta-box">
+        <li>
+            <h6>ID</h6>
+            {{ remove.entity|short_guid }}
+        </li>
+        <li>
+            <h6>Name</h6>
+            {{ remove.entity.name }}
+        </li>
+        <li>
+            <h6>Type</h6>
+            {{ remove.entity.formatType() }}
+        </li>
+    </ul>
+{% endblock %}
+
+{% block idp_meta %}
+    <ul class="meta-box">
+        <li>
+            <h6>ID</h6>
+            {{ remove.entity|short_guid }}
+        </li>
+        <li>
+            <h6>Name</h6>
+            {{ remove.entity.name }}
+        </li>
+        <li>
+            <h6>Type</h6>
+            {{ remove.entity.formatType() }}
         </li>
     </ul>
 {% endblock %}

@@ -5,30 +5,30 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Admin\VCS;
+namespace Hal\UI\Controllers\Admin\IDP;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\Core\Entity\System\VersionControlProvider;
-use Hal\Core\Type\VCSProviderEnum;
+use Hal\Core\Entity\System\UserIdentityProvider;
+use Hal\Core\Type\IdentityProviderEnum;
 use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Validator\VersionControlProviderValidator;
+use Hal\UI\Validator\UserIdentityProviderValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\URI;
 
-class AddVersionControlController implements ControllerInterface
+class EditIdentityProviderController implements ControllerInterface
 {
     use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
 
-    private const MSG_SUCCESS = 'Version Control Provider "%s" added.';
+    private const MSG_SUCCESS = 'Identity Provider "%s" was updated.';
 
     /**
      * @var TemplateInterface
@@ -41,7 +41,7 @@ class AddVersionControlController implements ControllerInterface
     private $em;
 
     /**
-     * @var VersionControlProviderValidator
+     * @var UserIdentityProviderValidator
      */
     private $validator;
 
@@ -53,13 +53,13 @@ class AddVersionControlController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param VersionControlProviderValidator $validator
+     * @param UserIdentityProviderValidator $validator
      * @param URI $uri
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        VersionControlProviderValidator $validator,
+        UserIdentityProviderValidator $validator,
         URI $uri
     ) {
         $this->template = $template;
@@ -74,28 +74,32 @@ class AddVersionControlController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $form = $this->validator->getFormData($request, null);
+        $idp = $request->getAttribute(UserIdentityProvider::class);
 
-        if ($environment = $this->handleForm($form, $request)) {
-            $this->withFlashSuccess($request, sprintf(self::MSG_SUCCESS, $environment->name()));
-            return $this->withRedirectRoute($response, $this->uri, 'vcs_providers');
+        $form = $this->validator->getFormData($request, $idp);
+
+        if ($modified = $this->handleForm($form, $request, $idp)) {
+            $this->withFlashSuccess($request, sprintf(self::MSG_SUCCESS, $idp->name()));
+            return $this->withRedirectRoute($response, $this->uri, 'id_provider', ['system_idp' => $idp->id()]);
         }
 
         return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
             'errors' => $this->validator->errors(),
 
-            'vcs_types' => VCSProviderEnum::options(),
+            'idp' => $idp,
+            'idp_types' => IdentityProviderEnum::options(),
         ]);
     }
 
     /**
      * @param array $data
      * @param ServerRequestInterface $request
+     * @param UserIdentityProvider $idp
      *
-     * @return VersionControlProvider|null
+     * @return UserIdentityProvider|null
      */
-    private function handleForm(array $data, ServerRequestInterface $request): ?VersionControlProvider
+    private function handleForm(array $data, ServerRequestInterface $request, UserIdentityProvider $idp): ?UserIdentityProvider
     {
         if ($request->getMethod() !== 'POST') {
             return null;
@@ -105,13 +109,13 @@ class AddVersionControlController implements ControllerInterface
             return null;
         }
 
-        $vcs = $this->validator->isValid($data['vcs_type'], $data);
+        $idp = $this->validator->isEditValid($idp, $data);
 
-        if ($vcs) {
-            $this->em->persist($vcs);
+        if ($idp) {
+            $this->em->merge($idp);
             $this->em->flush();
         }
 
-        return $vcs;
+        return $idp;
     }
 }

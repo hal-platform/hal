@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2017 Quicken Loans Inc.
+ * @copyright (c) 2018 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -46,7 +46,8 @@ class VersionControlProvidersController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         return $this->withTemplate($request, $response, $this->template, [
-            'vcs_providers' => $this->vcsRepo->findAll()
+            'vcs_providers' => $this->vcsRepo->findAll(),
+            'application_counts' => $this->vcsRepo->getApplicationCounts()
         ]);
     }
 }

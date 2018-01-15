@@ -118,6 +118,8 @@ class VersionControlProviderValidator
     {
         $this->resetErrors();
 
+        $type = $provider->type();
+
         $name = trim($parameters['name'] ?? '');
 
         $this->validateName($name);
@@ -144,7 +146,7 @@ class VersionControlProviderValidator
         }
 
         $validator = $this->typeValidators[$type];
-        if (!$provider = $validator->isEditValid($parameters)) {
+        if (!$provider = $validator->isEditValid($provider, $parameters)) {
             $this->importErrors($validator->errors());
             return null;
         }

@@ -1,5 +1,6 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
+{% import _self as page_macros %}
 
 {% set page_title = 'Version Control Providers' %}
 
@@ -10,6 +11,11 @@
 {% endblock %}
 
 {% block content %}
+    <p>
+        Version Control Systems allow applications to specify a system where their project code is located. Hal
+        supports external version control systems based on <b>git</b> such as <b>GitHub</b>.
+    </p>
+
     {{ block('vcs_table') }}
 
     <p>
@@ -38,24 +44,17 @@
                 {% for vcs in vcs_providers %}
                     <tr>
                         <td>
-                            <a href="{{ uriFor('vcs_providers', {'vcs_provider': vcs.id}) }}">{{ vcs|short_guid }}</a>
+                            <a href="{{ uriFor('vcs_provider', {'system_vcs': vcs.id}) }}">{{ vcs|short_guid }}</a>
                         </td>
                         <td>
                             {{ vcs.formatType() }}
                         </td>
                         <td>
+                            {{ page_macros.application_count(application_counts, vcs) }}
                             {{ vcs.name }}
                         </td>
                         <td>
-                            {% if vcs.type == 'git' %}
-                                URL: <code>{{ vcs.parameter('git.link') }}</code>
-
-                            {% elseif vcs.type == 'gh' %}
-                                URL: <code>{{ vcs.parameter('gh.url') }}</code>
-
-                            {% elseif vcs.type == 'ghe' %}
-                                URL: <code>{{ vcs.parameter('ghe.url') }}</code>
-                            {% endif %}
+                            {{ page_macros.vcs_details(vcs) }}
                         </td>
                     </tr>
                 {% endfor %}
@@ -66,3 +65,28 @@
     {% endif %}
 
 {% endblock %}
+
+{% macro application_count(application_counts, vcs) %}
+    {% import 'macros.twig' as macros %}
+
+    {% set apps = application_counts[vcs.id] ?: 0 %}
+    {%- if apps > 0 -%}
+        <span class="hint--top" aria-label="{{ apps }} applications are using this VCS">
+            {{- macros.status(apps, 'success') -}}
+        </span>
+    {%- else -%}
+        {{ macros.status(apps, 'info') }}
+    {%- endif %}
+{% endmacro %}
+
+{% macro vcs_details(vcs) %}
+    {% if vcs.type == 'git' %}
+        URL: <code>{{ vcs.parameter('git.link') }}</code>
+
+    {% elseif vcs.type == 'gh' %}
+        URL: <code>{{ vcs.parameter('gh.url') }}</code>
+
+    {% elseif vcs.type == 'ghe' %}
+        URL: <code>{{ vcs.parameter('ghe.url') }}</code>
+    {% endif %}
+{% endmacro %}
