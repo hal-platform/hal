@@ -145,14 +145,20 @@ li {
 }
 
 table {
+    width: 100%;
     min-width: 17em;
     margin-top: 1em;
+
+    th,
+    td {
+        padding: .5em;
+    }
 }
 
 thead {
     border-bottom: 5px solid $dark-blue;
     th {
-        text-align:left;
+        text-align: left;
     }
 }
 
