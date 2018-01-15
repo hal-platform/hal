@@ -41,11 +41,9 @@
             {% set build = release.build %}
 
             <td>
-                {# todo #}
-                {% set is_gitref_current = githubCommitIsCurrent(build.application, build.reference, build.commit) %}
-                {# todo #}
+                {% set is_current = is_vcs_ref_current(build.application, build) %}
 
-                {{ git_macros.vcs_ref(build.application, build) }}
+                {{ git_macros.vcs_ref(build.application, build, is_current) }}
                 {{ git_macros.vcs_commit(build.application, build) }}
             </td>
             <td>

@@ -60,9 +60,10 @@
             {{ build.environment ? build.environment.name : 'Any' }}
         </li>
 
+        {% set is_current = is_vcs_ref_current(build.application, build) %}
         <li>
             <h6>Version Control</h6>
-            {{ git_macros.vcs_ref(build.application, build) }}
+            {{ git_macros.vcs_ref(build.application, build, is_current) }}
             {{ git_macros.vcs_commit(build.application, build) }}
         </li>
 

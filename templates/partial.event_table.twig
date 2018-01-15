@@ -21,13 +21,13 @@
             <tr class="{{ event.status == 'failure' ? 'event-log--error' : '' }}">
                 <td>
                     {% if event.status == 'success' %}
-                        {{ macros.status(event.stage|formatEvent, 'success', 'tick') }}
+                        {{ macros.status(event.stage|format_event_to_stage, 'success', 'tick') }}
 
                     {% elseif event.status == 'failure' %}
-                        {{ macros.status(event.stage|formatEvent, 'error', 'spam') }}
+                        {{ macros.status(event.stage|format_event_to_stage, 'error', 'spam') }}
 
                     {% else %}
-                        {{ macros.status(event.stage|formatEvent, 'info', 'paragraph-justify-2') }}
+                        {{ macros.status(event.stage|format_event_to_stage, 'info', 'paragraph-justify-2') }}
                     {% endif %}
                 </td>
                 <td>{{ event.created|html5date }}</td>

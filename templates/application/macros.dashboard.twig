@@ -53,11 +53,8 @@
                 <li>
                     <b>Version Control:</b>
                     {% if last_job -%}
-                        {# todo #}
-                        {% set is_gitref_current = githubCommitIsCurrent(last_job.build.application, last_job.build.reference, last_job.build.commit) %}
-                        {# todo #}
-
-                        {{ git_macros.vcs_ref(last_job.build.application, last_job.build) }}
+                        {% set is_current = is_vcs_ref_current(last_job.build.application, last_job.build) %}
+                        {{ git_macros.vcs_ref(last_job.build.application, last_job.build, is_current) }}
                         {{ git_macros.vcs_commit(last_job.build.application, last_job.build) }}
                     {%- else -%}
                         None

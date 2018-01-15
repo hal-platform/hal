@@ -7,7 +7,6 @@
 
 namespace Hal\UI\Twig;
 
-use Hal\UI\Utility\TimeFormatter;
 use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Entity\JobType\Release;
 use Hal\Core\Entity\Credential;
@@ -19,10 +18,11 @@ use Hal\Core\Type\CredentialEnum;
 use Hal\Core\Type\TargetEnum;
 use Hal\Core\Type\IdentityProviderEnum;
 use Hal\Core\Type\VCSProviderEnum;
+use Hal\UI\Utility\TimeFormatter;
+use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 use Twig\TwigTest;
-use Twig\Extension\AbstractExtension;
 
 class HalExtension extends AbstractExtension
 {
@@ -40,10 +40,8 @@ class HalExtension extends AbstractExtension
      * @param TimeFormatter $time
      * @param string $gravatarFallbackImageURL
      */
-    public function __construct(
-        TimeFormatter $time,
-        $gravatarFallbackImageURL
-    ) {
+    public function __construct(TimeFormatter $time, string $gravatarFallbackImageURL)
+    {
         $this->time = $time;
         $this->gravatarFallbackImageURL = $gravatarFallbackImageURL;
     }
@@ -78,7 +76,7 @@ class HalExtension extends AbstractExtension
 
             new TwigFilter('json_pretty', [$this, 'formatPrettyJSON'], ['is_safe' => ['html']]),
 
-            new TwigFilter('formatEvent', [$this, 'formatEvent']),
+            new TwigFilter('format_event_to_stage', [$this, 'formatEventToStage']),
 
             new TwigFilter('short_guid', [$this, 'formatShortGUID']),
             new TwigFilter('occurences', [$this, 'findOccurences']),
@@ -151,9 +149,9 @@ class HalExtension extends AbstractExtension
      *
      * @return string
      */
-    public function formatEvent($event)
+    public function formatEventToStage($event)
     {
-        if (preg_match('#^(build|push).([a-z]*)$#', $event, $matches)) {
+        if (preg_match('#^(build|release).([a-z]*)$#', $event, $matches)) {
             $subevent = array_pop($matches);
             return ucfirst($subevent);
         }
