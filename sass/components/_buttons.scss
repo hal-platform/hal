@@ -1,9 +1,8 @@
-
 $btn-color-transparent: rgba(255, 255, 255, .1);
 
 @mixin btn-color($color, $hover: true) {
     background-color: $color;
-    border-color: shade($color, 20%);
+    border: 1px solid shade($color, 20%);
 
     box-shadow:
         0 -1px 0 0 $btn-color-transparent inset,
@@ -39,62 +38,64 @@ $btn-color-transparent: rgba(255, 255, 255, .1);
 }
 
 .btn {
-    @include btn-color($blue);
+    -webkit-appearance: none;
 
-    svg {
-        pointer-events: none;
+    border-radius: 0;
+    cursor: pointer;
+    color: $btn-text-color;
+    display: inline-block;
+    line-height: normal;
+    margin: 0;
+    overflow: visible;
+    padding: .5em .75em;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    white-space: normal;
+
+    &:hover,
+    &:active,
+    &:focus {
+        text-decoration: none;
     }
 
     &:hover {
         margin-top: 2px;
         margin-bottom: -2px;
     }
+
+    @include btn-color($blue);
+
+    svg {
+        pointer-events: none;
+    }
 }
 
 // Basic button modifiers
-.btn--tiny {
-    font-size: 90%;
-
-    margin: 0;
-    margin-top: -5px;
-    padding: ms(-10) ms(-6);
+.btn[disabled] {
+    @include btn-color($light-grey, false);
+    color: shade($grey, 30%);
+    cursor: not-allowed;
 
     &:hover {
-        margin-top:-3px;
-        margin-bottom: -1px;
+        color: shade($grey, 30%);
     }
+}
+
+// Size
+.btn--tiny {
+    font-size: 90%;
+    padding: .25em .5em;
 }
 
 .btn--small { font-size: .75em; }
 .btn--large { font-size: 1.5em; }
 
 // Button types
-.btn--secondary {
-    @include btn-color(tint($hal-cyan, 50%));
-}
-
 .btn--action {
     @include btn-color($warning-color);
 }
 
 .btn--destructive {
     @include btn-color($error-color);
-}
-
-.btn--disabled {
-    @include btn-color($light-grey, false);
-    color: shade($light-grey, 30%);
-    cursor: not-allowed;
-
-    &:hover {
-        color: shade($light-grey, 30%);
-    }
-}
-
-.btn--selected {
-    @include btn-color($success-color);
-}
-
-.btn--not-selected {
-    @include btn-color($grey);
 }

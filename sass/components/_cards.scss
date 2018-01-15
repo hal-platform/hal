@@ -32,10 +32,10 @@
     > h4 {
         // because css is stupid garbage bullshit
         margin: .01em;
-        padding: ms(-10);
+        padding: .25em;
     }
 
-    padding: ms(-5) 0;
+    padding: .5em 0;
     padding-top: 0;
 
     background-color: $light-grey;
@@ -43,16 +43,7 @@
 
 .card__details {
     background: $white;
-    padding: ms(-8) ms(-5);
-
-    .error-list {
-        font-size: .75em;
-    }
-
-    .alert-bar--success {
-        font-size: .75em;
-        margin-bottom: .5em;
-    }
+    padding: .25em .5em;
 
     ul {
         margin-top: 0;
@@ -63,23 +54,12 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        line-height: ms(3);
-    }
-}
-
-.card__details--divided > ul > li {
-    border-top: 4px solid $light-grey;
-    &:first-child {
-        border-top: 0;
+        line-height: 1.5em;
     }
 }
 
 .card__details code {
     padding: 0;
-}
-
-.card__details .split {
-    margin-bottom: 0;
 }
 
 .card__header .icon--link {

@@ -42,7 +42,6 @@
 
         "node-sass": "4.5.3",
         "breakpoint-sass": "~2.6",
-        "modularscale-sass": "~2.1",
-        "scalescss": "2.2.2"
+        "normalize.css": "~7.0"
     }
 }

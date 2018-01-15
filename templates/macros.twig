@@ -233,7 +233,7 @@ Build <a href="/build/123456">123456</a>
         {% set btn_size = ' btn--' ~ size %}
     {% endif %}
 
-    <button class="btn btn--disabled{{ btn_size }}">{{ text }}</button>
+    <button class="btn {{ btn_size }}" disabled>{{ text }}</button>
 {% endmacro %}
 
 {% macro user_display_link(user) %}

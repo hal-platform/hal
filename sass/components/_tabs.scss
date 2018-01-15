@@ -40,8 +40,8 @@
             &:hover { background-color: $blue; }
         }
         &:hover {
-            background-color: $bright-blue;
-            a { color: $white; }
+            background-color: tint($blue, 50%);
+            color: $white;
         }
     }
 }
