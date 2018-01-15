@@ -1,10 +1,10 @@
 parameters:
     routes:
 
-        dashboard:
+        home:
             method: 'GET'
             route: '/'
-            stack: ['middleware.signed_in', 'dashboard.page']
+            stack: ['middleware.signed_in', 'home.page']
 
         # github.authorization:
         #     method: 'GET'
@@ -37,7 +37,7 @@ parameters:
         signout:
             method: 'POST'
             route: '/signout'
-            stack: ['signout.page']
+            stack: ['signout.handler']
 
         signin.setup:
             method: ['GET', 'POST']

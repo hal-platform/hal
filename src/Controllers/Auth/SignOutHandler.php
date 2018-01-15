@@ -1,18 +1,20 @@
 <?php
 /**
- * @copyright (c) 2016 Quicken Loans Inc.
+ * @copyright (c) 2018 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers;
+namespace Hal\UI\Controllers\Auth;
 
+use Hal\UI\Controllers\RedirectableControllerTrait;
+use Hal\UI\Controllers\SessionTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
-class SignOutController implements ControllerInterface
+class SignOutHandler implements ControllerInterface
 {
     use RedirectableControllerTrait;
     use SessionTrait;

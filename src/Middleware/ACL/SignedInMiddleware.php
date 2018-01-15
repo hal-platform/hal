@@ -49,8 +49,6 @@ class SignedInMiddleware implements MiddlewareInterface
             return $next($request, $response);
         }
 
-        $path = $request->getUri()->getPath();
-        $query = (!$path || $path === '/') ? [] : ['redirect' => $path];
-        return $this->withRedirectRoute($response, $this->uri, self::ROUTE_SIGNIN, [], $query);
+        return $this->withRedirectRoute($response, $this->uri, self::ROUTE_SIGNIN);
     }
 }

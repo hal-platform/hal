@@ -113,7 +113,7 @@ class AddEntityPermissionsController implements ControllerInterface
         if (!($application xor $organization)) {
             // redirecting instead of 404 because of laziness
             $this->withFlashError($request, self::ERR_WUT);
-            return $this->withRedirectRoute($response, $this->uri, 'dashboard');
+            return $this->withRedirectRoute($response, $this->uri, 'home');
         }
 
         $entity = $application ?? $organization;

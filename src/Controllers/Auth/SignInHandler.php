@@ -5,13 +5,17 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers;
+namespace Hal\UI\Controllers\Auth;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
+use Hal\UI\Controllers\CSRFTrait;
+use Hal\UI\Controllers\RedirectableControllerTrait;
+use Hal\UI\Controllers\SessionTrait;
+use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Security\Auth;
 use Hal\UI\Security\UserSessionHandler;
 use Hal\UI\Validator\ValidatorErrorTrait;
@@ -28,8 +32,6 @@ class SignInHandler implements MiddlewareInterface
     use TemplatedControllerTrait;
     use ValidatorErrorTrait;
 
-    // private const ERR_INVALID = 'A username and password must be entered.';
-    // private const ERR_AUTH_FAILURE = 'Authentication failed.';
     private const ERR_DISABLED = 'Account disabled.';
 
     /**
@@ -90,12 +92,7 @@ class SignInHandler implements MiddlewareInterface
             return $next($request, $response);
         }
 
-        $queryString = $request->getQueryParams();
-
-
-        $providerID = $queryString['idp'] ?? '';
-        $redirectURL = $queryString['redirect'] ?? null;
-
+        $providerID = $request->getParsedBody()['idp'] ?? '';
         if (!$providerID) {
             return $next($request, $response);
         }
@@ -109,11 +106,13 @@ class SignInHandler implements MiddlewareInterface
         $user = $this->auth->authenticate($idp, $data);
 
         if (!$user instanceof User) {
-            return $next($this->withErrors($request, $this->auth->errors()), $response);
+            $this->importErrors($this->auth->errors());
+            return $next($this->withContext($request, ['errors' => $this->errors()]), $response);
         }
 
         if ($user->isDisabled()) {
-            return $next($this->withError($request, self::ERR_DISABLED), $response);
+            $this->addError(self::ERR_DISABLED);
+            return $next($this->withContext($request, ['errors' => $this->errors()]), $response);
         }
 
         // :( dont know this
@@ -123,52 +122,10 @@ class SignInHandler implements MiddlewareInterface
         //     $isFirstLogin = true;
         // }
 
-
         $session = $this->userHandler->startNewSession($request, $user->id());
         // $session->set('is_first_login', $isFirstLogin);
 
-        if ($redirectURL && strpos($redirectURL, '/') === 0) {
-            return $this->withRedirectURL($response, $request->getUri(), $redirectURL);
-        } else {
-            return $this->withRedirectRoute($response, $this->uri, 'dashboard');
-        }
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     * @param string $error
-     * @param string $field
-     *
-     * @return ServerRequestInterface
-     */
-    private function withError(ServerRequestInterface $request, string $error, string $field = '')
-    {
-        if ($field) {
-            $this->addError($error, $field);
-        } else {
-            $this->addError($error);
-        }
-
-        $context = [
-            'errors' => $this->errors()
-        ];
-
-        return $this->withContext($request, $context);
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     * @param array $errors
-     *
-     * @return ServerRequestInterface
-     */
-    private function withErrors(ServerRequestInterface $request, $errors)
-    {
-        $context = [
-            'errors' => $errors
-        ];
-
-        return $this->withContext($request, $context);
+        return $this->withRedirectRoute($response, $this->uri, 'home');
     }
 
     /**

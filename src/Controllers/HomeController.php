@@ -20,7 +20,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
-class DashboardController implements ControllerInterface
+class HomeController implements ControllerInterface
 {
     use SessionTrait;
     use TemplatedControllerTrait;

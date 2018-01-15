@@ -9,6 +9,7 @@ namespace Hal\UI\Controllers\User;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\User;
+use Hal\Core\Type\IdentityProviderEnum;
 use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
@@ -32,6 +33,7 @@ This link will expire in 8 hours.
 HTML;
 
     private const ERR_CSRF_OR_STATE = 'An error occurred. Please try again.';
+    private const ERR_INTERNAL_ONLY = 'Only users using internal authentication can be manually reset.';
 
     /**
      * @var EntityManagerInterface
@@ -66,6 +68,11 @@ HTML;
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $user = $request->getAttribute(User::class);
+
+        if (!$user->provider()->type() !== IdentityProviderEnum::TYPE_INTERNAL) {
+            $this->withFlashError($request, self::ERR_INTERNAL_ONLY);
+            return $this->withRedirectRoute($response, $this->uri, 'user', ['user' => $user->id()]);
+        }
 
         if (!$this->isCSRFValid($request)) {
             $this->withFlashError($request, self::ERR_CSRF_OR_STATE);

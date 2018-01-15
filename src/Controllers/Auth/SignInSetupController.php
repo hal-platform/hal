@@ -5,11 +5,15 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers;
+namespace Hal\UI\Controllers\Auth;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\User;
 use Hal\Core\Type\IdentityProviderEnum;
+use Hal\UI\Controllers\CSRFTrait;
+use Hal\UI\Controllers\RedirectableControllerTrait;
+use Hal\UI\Controllers\SessionTrait;
+use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -23,8 +27,8 @@ use function password_hash;
 class SignInSetupController implements ControllerInterface
 {
     use CSRFTrait;
-    use SessionTrait;
     use RedirectableControllerTrait;
+    use SessionTrait;
     use TemplatedControllerTrait;
     use ValidatorErrorTrait;
     use ValidatorTrait;

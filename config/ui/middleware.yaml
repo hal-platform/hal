@@ -31,7 +31,7 @@ services:
             - '@middleware.permissions.twig'
     middleware.permissions.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['denied.twig']]]
+        calls: [['setTemplate', ['error.denied.twig']]]
 
     ####################################################################################################################
     # forms loading

@@ -137,7 +137,7 @@
             {{ macros.disabled_button('Disable User') }}
         {% endif %}
 
-        {% if is_super %}
+        {% if is_super and user.provider.type == 'internal' %}
             <form method="post" action="{{ uriFor('user.regenerate_setup', {'user': user.id}) }}" class="form--inline">
                 {{ form_macros.csrf_input('user.regenerate_setup') }}
                 <button type="submit" class="btn btn--action">Regenerate user setup token</button>

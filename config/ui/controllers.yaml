@@ -21,8 +21,8 @@ services:
 
     ############################################################################
 
-    dashboard.page:
-        class: 'Hal\UI\Controllers\DashboardController'
+    home.page:
+        class: 'Hal\UI\Controllers\HomeController'
         arguments:
             - '@home.twig'
             - '@doctrine.em'
@@ -35,7 +35,7 @@ services:
     ####################################################################################################################
 
     signin.page:
-        class: 'Hal\UI\Controllers\SignInController'
+        class: 'Hal\UI\Controllers\Auth\SignInController'
         arguments:
             - '@signin.twig'
             - '@doctrine.em'
@@ -43,20 +43,20 @@ services:
             - '@uri'
     signin.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['signin.twig']]]
+        calls: [['setTemplate', ['auth/signin.twig']]]
     signin.middleware:
-        class: 'Hal\UI\Controllers\SignInHandler'
+        class: 'Hal\UI\Controllers\Auth\SignInHandler'
         arguments:
             - '@doctrine.em'
             - '@auth'
             - '@user_session.handler'
             - '@uri'
-    signout.page:
-        class: 'Hal\UI\Controllers\SignOutController'
+    signout.handler:
+        class: 'Hal\UI\Controllers\Auth\SignOutHandler'
         arguments: ['@uri']
 
     signin.setup.page:
-        class: 'Hal\UI\Controllers\SignInSetupController'
+        class: 'Hal\UI\Controllers\Auth\SignInSetupController'
         arguments:
             - '@signin.setup.twig'
             - '@doctrine.em'
@@ -64,7 +64,7 @@ services:
             - '@uri'
     signin.setup.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['signin_setup.twig']]]
+        calls: [['setTemplate', ['auth/signin_setup.twig']]]
 
     ####################################################################################################################
     # GITHUB OAUTH CONTROLLERS

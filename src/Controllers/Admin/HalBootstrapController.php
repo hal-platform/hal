@@ -85,12 +85,12 @@ class HalBootstrapController implements ControllerInterface
     {
         $providers = $this->idpRepo->findAll();
         if ($providers) {
-            return $this->withRedirectRoute($response, $this->uri, 'dashboard');
+            return $this->withRedirectRoute($response, $this->uri, 'home');
         }
 
         $setting = $this->idpRepo->findOneBy(['name' => self::SETTING_IS_BOOTSTRAPPED]);
         if ($setting instanceof SystemSetting && $setting->value()) {
-            return $this->withRedirectRoute($response, $this->uri, 'dashboard');
+            return $this->withRedirectRoute($response, $this->uri, 'home');
         }
 
         if ($msg = $this->handleForm($request)) {

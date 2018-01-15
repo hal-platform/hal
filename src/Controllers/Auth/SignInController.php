@@ -5,11 +5,13 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers;
+namespace Hal\UI\Controllers\Auth;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\System\UserIdentityProvider;
+use Hal\UI\Controllers\RedirectableControllerTrait;
+use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;

@@ -75,9 +75,8 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
 
         $sessionID = $session->get(UserSessionHandler::SESSION_ID_ATTRIBUTE);
 
-        if ($csrfs = $session->get(self::CSRF_ATTRIBUTE)) {
-            $this->csrf->loadCSRFs($csrfs, $sessionID);
-        }
+        $csrfs = $session->get(self::CSRF_ATTRIBUTE) ?: [];
+        $this->csrf->loadCSRFs($csrfs, $sessionID);
 
         $request = $this->userHandler->attachSessionUserToRequest($request, $session);
 

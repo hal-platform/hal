@@ -57,8 +57,9 @@
 {% endblock %}
 
 {% block internal_signin_form %}
-    <form method="post" action="?idp={{ selected_idp.id }}">
+    <form method="post">
         {{ form_macros.csrf_input('signin') }}
+        <input type="hidden" name="idp" value="{{ selected_idp.id }}">
 
         <ul class="form-fields form-wrapper">
             <li>
@@ -79,8 +80,9 @@
 {% endblock %}
 
 {% block ldap_signin_form %}
-    <form method="post" action="?idp={{ selected_idp.id }}">
+    <form method="post">
         {{ form_macros.csrf_input('signin') }}
+        <input type="hidden" name="idp" value="{{ selected_idp.id }}">
 
         <ul class="form-fields form-wrapper">
             <li>
