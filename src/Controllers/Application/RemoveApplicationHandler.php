@@ -21,7 +21,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
-class RemoveApplicationController implements ControllerInterface
+class RemoveApplicationHandler implements ControllerInterface
 {
     use CSRFTrait;
     use RedirectableControllerTrait;

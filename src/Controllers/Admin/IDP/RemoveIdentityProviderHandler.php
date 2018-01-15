@@ -19,7 +19,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
-class RemoveIdentityProviderController implements ControllerInterface
+class RemoveIdentityProviderHandler implements ControllerInterface
 {
     use CSRFTrait;
     use RedirectableControllerTrait;

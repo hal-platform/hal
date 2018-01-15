@@ -9,7 +9,6 @@ namespace Hal\UI\Controllers\User;
 
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
-use Hal\UI\Flash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\MiddlewareInterface;
@@ -87,7 +86,7 @@ HELLO;
             $details = $new ? self::GOODBYE_HAL : self::PARTY_ON;
         }
 
-        $this->withFlash($request, Flash::SUCCESS, self::MSG_SUCCESS, $details);
+        $this->withFlashSuccess($request, self::MSG_SUCCESS, $details);
         return $this->withRedirectRoute($response, $this->uri, 'settings');
     }
 

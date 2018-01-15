@@ -19,7 +19,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
-class RemoveVersionControlController implements ControllerInterface
+class RemoveVersionControlHandler implements ControllerInterface
 {
     use CSRFTrait;
     use RedirectableControllerTrait;

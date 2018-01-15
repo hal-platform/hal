@@ -21,7 +21,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
-class RemoveOrganizationController implements ControllerInterface
+class RemoveOrganizationHandler implements ControllerInterface
 {
     use CSRFTrait;
     use RedirectableControllerTrait;

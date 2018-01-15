@@ -19,9 +19,6 @@ use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\JSON;
 use QL\Panthor\Utility\URI;
 
-/**
- * PUT  /api/internal/settings/favorite-applications/$id
- */
 class AddFavoriteApplicationHandler implements ControllerInterface
 {
     use APITrait;

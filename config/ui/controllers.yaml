@@ -171,10 +171,10 @@ services:
         calls: [['setTemplate', ['user/add_user.twig']]]
 
     user.disable.handler:
-        class: 'Hal\UI\Controllers\User\DisableUserController'
+        class: 'Hal\UI\Controllers\User\DisableUserHandler'
         arguments: ['@doctrine.em', '@uri']
     user.regenerate_setup.handler:
-        class: 'Hal\UI\Controllers\User\RegenerateSetupTokenController'
+        class: 'Hal\UI\Controllers\User\RegenerateSetupTokenHandler'
         arguments:
             - '@doctrine.em'
             - '@validator.user'
@@ -194,12 +194,10 @@ services:
             - '%cookie.preferences.ttl%'
 
     user.token.add.handler:
-        class: 'Hal\UI\Controllers\User\Token\AddTokenController'
-        arguments:
-            - '@doctrine.em'
-            - '@uri'
+        class: 'Hal\UI\Controllers\User\Token\AddTokenHandler'
+        arguments: ['@doctrine.em', '@uri']
     user.token.remove.handler:
-        class: 'Hal\UI\Controllers\User\Token\RemoveTokenController'
+        class: 'Hal\UI\Controllers\User\Token\RemoveTokenHandler'
         arguments: ['@doctrine.em', '@uri']
 
     ####################################################################################################################
@@ -239,7 +237,7 @@ services:
         calls: [['setTemplate', ['organization/edit_organization.twig']]]
 
     organization.remove.handler:
-        class: 'Hal\UI\Controllers\Organization\RemoveOrganizationController'
+        class: 'Hal\UI\Controllers\Organization\RemoveOrganizationHandler'
         arguments:
             - '@doctrine.em'
             - '@service.authorization'
@@ -303,7 +301,7 @@ services:
         calls: [['setTemplate', ['application/edit_application.twig']]]
 
     application.remove.handler:
-        class: 'Hal\UI\Controllers\Application\RemoveApplicationController'
+        class: 'Hal\UI\Controllers\Application\RemoveApplicationHandler'
         arguments:
             - '@doctrine.em'
             - '@service.authorization'
@@ -342,7 +340,7 @@ services:
             - '@uri'
 
     encrypted.remove.handler:
-        class: 'Hal\UI\Controllers\EncryptedConfiguration\RemoveEncryptedPropertyController'
+        class: 'Hal\UI\Controllers\EncryptedConfiguration\RemoveEncryptedPropertyHandler'
         arguments: ['@doctrine.em', '@uri']
 
     ####################################################################################################################
@@ -390,7 +388,7 @@ services:
             - '@uri'
 
     target.remove.handler:
-        class: 'Hal\UI\Controllers\Target\RemoveTargetController'
+        class: 'Hal\UI\Controllers\Target\RemoveTargetHandler'
         arguments: ['@doctrine.em', '@uri']
 
     ####################################################################################################################
@@ -434,7 +432,7 @@ services:
         calls: [['setTemplate', ['target-template/edit_template.twig']]]
 
     template.remove.handler:
-        class: 'Hal\UI\Controllers\TargetTemplate\RemoveTemplateController'
+        class: 'Hal\UI\Controllers\TargetTemplate\RemoveTemplateHandler'
         arguments: ['@doctrine.em', '@uri']
 
     ################################################################################################################
@@ -675,7 +673,7 @@ services:
         calls: [['setTemplate', ['environment/edit_environment.twig']]]
 
     environment.remove.handler:
-        class: 'Hal\UI\Controllers\Admin\Environment\RemoveEnvironmentController'
+        class: 'Hal\UI\Controllers\Admin\Environment\RemoveEnvironmentHandler'
         arguments: ['@doctrine.em', '@uri']
 
     ################################################################################################################
@@ -721,7 +719,7 @@ services:
         calls: [['setTemplate', ['idp/edit_idp.twig']]]
 
     id_provider.remove.handler:
-        class: 'Hal\UI\Controllers\Admin\IDP\RemoveIdentityProviderController'
+        class: 'Hal\UI\Controllers\Admin\IDP\RemoveIdentityProviderHandler'
         arguments: ['@doctrine.em', '@uri']
 
     ################################################################################################################
@@ -767,7 +765,7 @@ services:
         calls: [['setTemplate', ['vcs/edit_vcs.twig']]]
 
     vcs_provider.remove.handler:
-        class: 'Hal\UI\Controllers\Admin\VCS\RemoveVersionControlController'
+        class: 'Hal\UI\Controllers\Admin\VCS\RemoveVersionControlHandler'
         arguments: ['@doctrine.em', '@uri']
 
     ####################################################################################################################
@@ -815,7 +813,7 @@ services:
         calls: [['setTemplate', ['credentials/edit_credential.twig']]]
 
     credential.remove.handler:
-        class: 'Hal\UI\Controllers\Credentials\RemoveCredentialController'
+        class: 'Hal\UI\Controllers\Credentials\RemoveCredentialHandler'
         arguments: ['@doctrine.em', '@uri']
 
     ####################################################################################################################

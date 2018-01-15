@@ -18,7 +18,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
-class RemoveTemplateController implements ControllerInterface
+class RemoveTemplateHandler implements ControllerInterface
 {
     use RedirectableControllerTrait;
     use SessionTrait;

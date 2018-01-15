@@ -5,13 +5,11 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Target;
+namespace Hal\UI\Controllers\Admin\Environment;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\Core\Entity\Application;
-use Hal\Core\Entity\Target;
+use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Environment;
-use Hal\Core\Repository\EnvironmentRepository;
 use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
@@ -20,13 +18,13 @@ use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
-class RemoveTargetController implements ControllerInterface
+class RemoveEnvironmentHandler implements ControllerInterface
 {
     use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
 
-    private const MSG_SUCCESS = 'Target target removed.';
+    private const MSG_SUCCESS = '"%s" environment removed.';
 
     /**
      * @var EntityManagerInterface
@@ -39,42 +37,37 @@ class RemoveTargetController implements ControllerInterface
     private $uri;
 
     /**
-     * @var EnvironmentRepository
-     */
-    private $environmentRepository;
-
-    /**
      * @param EntityManagerInterface $em
      * @param URI $uri
      */
     public function __construct(EntityManagerInterface $em, URI $uri)
     {
         $this->em = $em;
-        $this->environmentRepository = $this->em->getRepository(Environment::class);
-
         $this->uri = $uri;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $application = $request->getAttribute(Application::class);
-        $target = $request->getAttribute(Target::class);
+        $environment = $request->getAttribute(Environment::class);
 
         if (!$this->isCSRFValid($request)) {
             $this->withFlashError($request, $this->CSRFError());
-            return $this->withRedirectRoute($response, $this->uri, 'target', ['application' => $application->id(), 'target' => $target->id()]);
+            return $this->withRedirectRoute($response, $this->uri, 'environment', ['environment' => $environment->id()]);
         }
 
-        $this->em->remove($target);
+        // @todo handle all entities that may depend on env:
+        // - build, release
+        // - target
+        // - encrypted config
+        // - scoped: (template target, credentials, permissions)
+
+        $this->em->remove($environment);
         $this->em->flush();
 
-        // Clear cached query for buildable environments
-        $this->environmentRepository->clearBuildableEnvironmentsByApplication($application);
-
-        $this->withFlashSuccess($request, self::MSG_SUCCESS);
-        return $this->withRedirectRoute($response, $this->uri, 'targets', ['application' => $application->id()]);
+        $this->withFlashSuccess($request, sprintf(self::MSG_SUCCESS, $environment->name()));
+        return $this->withRedirectRoute($response, $this->uri, 'environments');
     }
 }

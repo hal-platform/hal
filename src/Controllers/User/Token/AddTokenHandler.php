@@ -20,7 +20,7 @@ use QL\MCP\Common\GUID;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
-class AddTokenController implements ControllerInterface
+class AddTokenHandler implements ControllerInterface
 {
     use CSRFTrait;
     use RedirectableControllerTrait;

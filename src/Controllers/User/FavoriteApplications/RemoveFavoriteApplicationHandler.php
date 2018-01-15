@@ -19,9 +19,6 @@ use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\JSON;
 use QL\Panthor\Utility\URI;
 
-/**
- * DELETE /api/internal/settings/favorite-applications/$id (ajax)
- */
 class RemoveFavoriteApplicationHandler implements ControllerInterface
 {
     use APITrait;

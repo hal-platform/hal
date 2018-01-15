@@ -140,7 +140,6 @@ class HalBootstrapController implements ControllerInterface
             ->withValue('1');
 
         $this->em->persist($isConfigured);
-
         $this->em->flush();
 
         return 'Administrator and GitHub have been configured. Please sign-in with your administrator credentials.';

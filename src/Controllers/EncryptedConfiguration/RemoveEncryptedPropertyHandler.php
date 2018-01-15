@@ -5,28 +5,26 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\User\Token;
+namespace Hal\UI\Controllers\EncryptedConfiguration;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\Core\Entity\User;
-use Hal\Core\Entity\User\UserToken;
 use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\EncryptedProperty;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
-class RemoveTokenController implements ControllerInterface
+class RemoveEncryptedPropertyHandler implements ControllerInterface
 {
     use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
 
-    private const MSG_SUCCESS = 'Token "%s" has been revoked.';
-
-    private const ERR_CSRF_OR_STATE = 'An error occurred. Please try again.';
+    const MSG_SUCCESS = 'Encrypted Property "%s" removed.';
 
     /**
      * @var EntityManagerInterface
@@ -53,23 +51,20 @@ class RemoveTokenController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $user = $request->getAttribute(User::class);
-        $token = $request->getAttribute(UserToken::class);
+        $application = $request->getAttribute(Application::class);
+        $encrypted = $request->getAttribute(EncryptedProperty::class);
 
-        $currentUser = $this->getUser($request);
-
-        $routeParams = ($user === $currentUser) ? ['settings'] : ['user', ['user' => $user->id()]];
+        $routeParams = ['encrypted.configuration', ['application' => $application->id()]];
 
         if (!$this->isCSRFValid($request)) {
-            $this->withFlashError($request, self::ERR_CSRF_OR_STATE);
+            $this->withFlashError($request, $this->CSRFError());
             return $this->withRedirectRoute($response, $this->uri, ...$routeParams);
         }
 
-        $this->em->remove($token);
+        $this->em->remove($encrypted);
         $this->em->flush();
 
-        $this->withFlashSuccess($request, sprintf(self::MSG_SUCCESS, $token->name()));
-
+        $this->withFlashSuccess($request, sprintf(self::MSG_SUCCESS, $encrypted->name()));
         return $this->withRedirectRoute($response, $this->uri, ...$routeParams);
     }
 }
