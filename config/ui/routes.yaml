@@ -99,6 +99,10 @@ parameters:
                     route: ''
                     stack: ['user.page']
 
+                user.edit:
+                    method: ['GET', 'POST']
+                    route: '/edit'
+                    stack: ['middleware.is_admin_or_self', 'middleware.require_csrf', 'user.edit.page']
 
                 user.disable:
                     method: 'POST'

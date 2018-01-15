@@ -13,6 +13,7 @@ use Hal\Core\Entity\User;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use QL\MCP\Common\GUID;
 use QL\MCP\Common\Time\Clock;
+use Psr\Http\Message\ServerRequestInterface;
 
 class UserValidator
 {
@@ -98,7 +99,6 @@ class UserValidator
             return null;
         }
 
-
         $setupToken = GUID::create()->format(GUID::STANDARD | GUID::HYPHENATED);
         $tokenExpiry = $this->clock
             ->read()
@@ -121,7 +121,20 @@ class UserValidator
      */
     public function isEditValid(User $user, array $data): ?User
     {
-        // @todo
+        $name = $data['name'] ?? '';
+
+        $this->resetErrors();
+
+        $this->validateName($name);
+
+        if ($this->hasErrors()) {
+            return null;
+        }
+
+        $user
+            ->withName($name);
+
+        return $user;
     }
 
     /**
@@ -149,6 +162,27 @@ class UserValidator
             ->withParameter('internal.setup_token_expiry', $tokenExpiry);
 
         return $user;
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param User|null $user
+     *
+     * @return array
+     */
+    public function getFormData(ServerRequestInterface $request, ?User $user): array
+    {
+        $data = $request->getParsedBody();
+
+        if ($user && $request->getMethod() !== 'POST') {
+            $data['name'] = $user->name();
+        }
+
+        $form = [
+            'name' => $data['name'] ?? '',
+        ];
+
+        return $form;
     }
 
     /**

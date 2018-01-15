@@ -123,6 +123,10 @@ class EditApplicationController implements ControllerInterface
             return null;
         }
 
+        if (!$this->isCSRFValid($request)) {
+            return null;
+        }
+
         $application = $this->applicationValidator->isEditValid(
             $application,
             $data['name'],

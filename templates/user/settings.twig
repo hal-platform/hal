@@ -9,7 +9,11 @@
 {% endblock %}
 
 {% block content %}
-    <h2>Hal Preferences</h2>
+    <p>
+        <a href="{{ uriFor('user.edit', {'user': user.id}) }}" class="btn">Update your user information</a>
+    </p>
+
+    <h2>Preferences</h2>
     {{ block('navigation_pref') }}
 
     <h2>Personal Access Tokens</h2>
@@ -22,7 +26,6 @@
 
 {% block navigation_pref %}
     <form method="post">
-
         {% set is_selected = is_serious_business_mode ? ' checked' : '' %}
         <label class="checkbox-toggle">
             <input type="checkbox" name="seriousbusiness" value="1" {{ is_selected }}>

@@ -171,6 +171,19 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['user/add_user.twig']]]
 
+
+    user.edit.page:
+        class: 'Hal\UI\Controllers\User\EditUserController'
+        arguments:
+            - '@user.edit.twig'
+            - '@doctrine.em'
+            - '@validator.user'
+            - '@uri'
+    user.edit.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['user/edit_user.twig']]]
+
+
     user.disable.handler:
         class: 'Hal\UI\Controllers\User\DisableUserHandler'
         arguments: ['@doctrine.em', '@uri']
