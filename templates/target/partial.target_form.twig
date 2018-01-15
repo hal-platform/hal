@@ -6,8 +6,7 @@
         <label for="rsync_servers">Server hostnames</label>
         <input class="text-input{{ has_error }}" type="text" name="rsync_servers" id="rsync_servers" maxlength="200" value="{{ form.rsync_servers }}">
         <small>
-            The absolute path to the file directory on the server.
-            Paths must begin with a forward slash (/).
+            The hostnames of the server(s) to deploy to.
         </small>
     </li>
 
@@ -100,7 +99,7 @@
         <label for="s3_local_path">S3 Local Path</label>
         <input class="text-input{{ has_error }}" type="text" name="s3_local_path" id="s3_local_path" maxlength="100" value="{{ form.s3_local_path }}">
         <small>
-            Leave blank to use <code>.</code>.
+            <b>Optional.</b> Defaults to <code>.</code> (working dir).
         </small>
     </li>
 {% endblock %}
@@ -119,16 +118,23 @@
         <label for="s3_remote_path">S3 Remote Path</label>
         <input class="text-input{{ has_error }}" type="text" name="s3_remote_path" id="s3_remote_path" maxlength="100" value="{{ form.s3_remote_path }}">
         <small>
-            Available placeholders:
-            <ul class="inline-list--comma">
-                <li><code>$APPID</code></li>
-                <li><code>$APPNAME</code></li>
-                <li><code>$BUILDID</code></li>
-                <li><code>$PUSHID</code></li>
-                <li><code>$DATE</code> (YYYYMMDD)</li>
-                <li><code>$TIME</code> (HHMMSS)</li>
+            <b>Available variables:</b><br>
+            <span>
+                <code>$APP_ID</code>,
+                <code>$APP_NAME</code>,
+                <code>$ENV_NAME</code>,
+                <code>$BUILD_ID</code>,
+                <code>$RELEASE_ID</code>,
+                <code>$DATE</code> (YYYYMMDD),
+                <code>$TIME</code> (HHMMSS),
+            </span>
+
+            <br><b>Default values:</b>
+            <ul>
+                <li>S3: <code>$RELEASE_ID.tar.gz</code></li>
+                <li>CodeDeploy: <code>$APP_ID/$RELEASE_ID.tar.gz</code></li>
+                <li>Beanstalk: <code>$APP_ID/$RELEASE_ID.zip</code></li>
             </ul>
-            <br>Leave blank to use <code>$PUSHID.tar.gz</code> (S3) or <code>$APPID/$PUSHID.(zip|tar.gz)</code> (EB, CD).
         </small>
     </li>
 {% endblock %}

@@ -27,7 +27,7 @@
 
             {% set is_selected = form.is_production ? ' checked' : '' %}
             <li>
-                <div class="label">Is this a <b>Production</b> environment?</div>
+                <h4>Is this a <b>Production</b> environment?</h4>
                 <label for="is_production" class="checkbox-check">
                     <input type="checkbox" name="is_production" id="is_production" value="1" {{ is_selected }}>
                     <b class="checkbox-check--tick"></b>Yes, this is production.

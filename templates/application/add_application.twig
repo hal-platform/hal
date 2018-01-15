@@ -26,12 +26,11 @@
             </li>
         </ul>
 
-        <ul class="form-fields">
-            <li>
-                <label>Organization</label>
-                {% if organizations %}
+        <h4>Organization</h4>
+        {% if organizations|length > 0 %}
+            <ul class="form-fields form-wrapper">
+                <li>
                     <ul>
-
                         {% set is_selected = form.organization == '' ? ' checked' : '' %}
                         <li>
                             <label for="org-noop">
@@ -49,13 +48,12 @@
                                 </label>
                             </li>
                         {% endfor %}
-
                     </ul>
-                {% else %}
-                    <p>There are no organizations.</p>
-                {% endif %}
-            </li>
-        </ul>
+                </li>
+            </ul>
+        {% else %}
+            <p>There are no organizations available. You can add this later.</p>
+        {% endif %}
 
         <h4>Source Control</h4>
         {% if vcs|length > 0 %}

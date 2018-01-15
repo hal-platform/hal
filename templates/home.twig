@@ -49,7 +49,6 @@
 {% endblock %}
 
 {% block favorite_apps %}
-
     <section>
         <ul class="cards">
             <li>
@@ -62,21 +61,20 @@
                         </header>
 
                         <section class="card__details">
-                            <ul>
-                                <li style="display:inline-block;width:49%;text-align:center;">
+                            <div style="display:flex;">
+                                <div class="tc" style="margin:auto">
                                     <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Dashboard</a>
-                                </li>
-                                <li style="display:inline-block;width:49%;text-align:center;">
+                                </div>
+                                <div class="tc" style="margin:auto">
                                     {% if current_authorizations.canBuild(application) %}
                                         <a href="{{ uriFor('build.start', {'application': application.id}) }}">Start Build</a>
                                     {% endif %}
-                                </li>
-                            </ul>
+                                </div>
+                            </div>
                         </section>
                     </article>
                 {% endfor %}
             </li>
         </ul>
     </section>
-
 {% endblock %}
