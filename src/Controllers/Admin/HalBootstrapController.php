@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2016 Quicken Loans Inc.
+ * @copyright (c) 2018 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -22,7 +22,11 @@ use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\Validator\EnvironmentValidator;
+use Hal\UI\Validator\UserIdentityProviderValidator;
+use Hal\UI\Validator\UserValidator;
 use Hal\UI\Validator\ValidatorErrorTrait;
+use Hal\UI\Validator\VersionControlProviderValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -32,13 +36,23 @@ use function password_hash;
 
 class HalBootstrapController implements ControllerInterface
 {
-    const SETTING_IS_BOOTSTRAPPED = 'hal.is_configured';
-
     use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
     use ValidatorErrorTrait;
+
+    const SETTING_IS_BOOTSTRAPPED = 'hal.is_configured';
+
+    private const ERR_ENVIRONMENTS = 'An error occurred when adding default environments.';
+    private const ERR_VCS = 'An error occurred when adding default version control system.';
+    private const ERR_IDP = 'An error occurred when adding default identity provider.';
+    private const ERR_ADMIN_USER = 'An error occurred when adding administrator user.';
+
+    /**
+     * @var TemplateInterface
+     */
+    private $template;
 
     /**
      * @var EntityManagerInterface
@@ -52,26 +66,57 @@ class HalBootstrapController implements ControllerInterface
     private $settingRepo;
 
     /**
+     * @var EnvironmentValidator
+     */
+    private $envValidator;
+
+    /**
+     * @var VersionControlProviderValidator
+     */
+    private $vcsValidator;
+
+    /**
+     * @var UserIdentityProviderValidator
+     */
+    private $idpValidator;
+
+    /**
+     * @var UserValidator
+     */
+    private $userValidator;
+
+    /**
      * @var URI
      */
     private $uri;
 
     /**
-     * @var TemplateInterface
-     */
-    private $template;
-
-    /**
-     * @param EntityManagerInterface $em
-     * @param URI $uri
      * @param TemplateInterface $template
+     * @param EntityManagerInterface $em
+     * @param EnvironmentValidator $envValidator
+     * @param VersionControlProviderValidator $vcsValidator
+     * @param UserIdentityProviderValidator $idpValidator
+     * @param UserValidator $userValidator
+     * @param URI $uri
      */
-    public function __construct(EntityManagerInterface $em, URI $uri, TemplateInterface $template)
-    {
+    public function __construct(
+        TemplateInterface $template,
+        EntityManagerInterface $em,
+        EnvironmentValidator $envValidator,
+        VersionControlProviderValidator $vcsValidator,
+        UserIdentityProviderValidator $idpValidator,
+        UserValidator $userValidator,
+        URI $uri
+    ) {
         $this->template = $template;
+        $this->em = $em;
+
+        $this->envValidator = $envValidator;
+        $this->vcsValidator = $vcsValidator;
+        $this->idpValidator = $idpValidator;
+        $this->userValidator = $userValidator;
         $this->uri = $uri;
 
-        $this->em = $em;
         $this->settingRepo = $em->getRepository(SystemSetting::class);
         $this->idpRepo = $em->getRepository(UserIdentityProvider::class);
 
@@ -134,6 +179,10 @@ class HalBootstrapController implements ControllerInterface
         $this->addIdentityProvider($data['admin_username'], $data['admin_password']);
         $this->addVersionControlProvider($data['ghe_url'], $data['ghe_token']);
         $this->addEnvironments();
+
+        if ($this->hasErrors()) {
+            return null;
+        }
 
         $isConfigured = (new SystemSetting)
             ->withName(self::SETTING_IS_BOOTSTRAPPED)
@@ -198,23 +247,41 @@ class HalBootstrapController implements ControllerInterface
             'cost' => 10,
         ]);
 
-        $idp = (new UserIdentityProvider)
-            ->withType(IdentityProviderEnum::TYPE_INTERNAL)
-            ->withName('Internal');
+        $idp = $this->vcsValidator->isValid(IdentityProviderEnum::TYPE_INTERNAL, [
+            'name' => 'Internal Auth'
+        ]);
 
-        $adminUser = (new User)
-            ->withName($username)
-            ->withParameter('internal.password', $hashed)
-            ->withProviderUniqueID($username)
-            ->withProvider($idp);
+        if (!$idp) {
+            $this->addError(self::ERR_IDP);
+            return;
+        }
+
+        $this->em->persist($idp);
+        $this->em->flush();
+
+        $admin = $this->userValidator->isValid([
+            'name' => $username,
+            'internal_username' => $username,
+            'id_provider' => $idp->id()
+        ]);
+
+        if (!$admin) {
+            $this->addError(self::ERR_ADMIN_USER);
+            return;
+        }
+
+        $admin
+            ->withParameter('internal.setup_token', null)
+            ->withParameter('internal.setup_token_expiry', null)
+            ->withParameter('internal.setup_token', null)
+            ->withParameter('internal.password', $hashed);
 
         // make user admin
         $permissions = (new UserPermission)
             ->withType(UserPermissionEnum::TYPE_SUPER)
-            ->withUser($adminUser);
+            ->withUser($admin);
 
-        $this->em->persist($idp);
-        $this->em->persist($adminUser);
+        $this->em->persist($admin);
         $this->em->persist($permissions);
     }
 
@@ -226,11 +293,16 @@ class HalBootstrapController implements ControllerInterface
      */
     private function addVersionControlProvider($gheURL, $gheToken)
     {
-        $vcs = (new VersionControlProvider)
-            ->withType(VCSProviderEnum::TYPE_GITHUB_ENTERPRISE)
-            ->withName('GitHub Enterprise')
-            ->withParameter('ghe.url', $gheURL)
-            ->withParameter('ghe.token', $gheToken);
+        $vcs = $this->vcsValidator->isValid(VCSProviderEnum::TYPE_GITHUB_ENTERPRISE, [
+            'name' => 'GitHub Enterprise',
+            'ghe_url' => $gheURL,
+            'ghe_token' => $gheToken
+        ]);
+
+        if (!$vcs) {
+            $this->addError(self::ERR_VCS);
+            return;
+        }
 
         $this->em->persist($vcs);
     }
@@ -240,12 +312,13 @@ class HalBootstrapController implements ControllerInterface
      */
     private function addEnvironments()
     {
-        $staging = (new Environment)
-            ->withName('staging');
+        $staging = $this->envValidator->isValid('staging', false);
+        $prod = $this->envValidator->isValid('prod', true);
 
-        $prod = (new Environment)
-            ->withName('prod')
-            ->withIsProduction(true);
+        if (!$staging || $prod) {
+            $this->addError(self::ERR_ENVIRONMENTS);
+            return;
+        }
 
         $this->em->persist($staging);
         $this->em->persist($prod);

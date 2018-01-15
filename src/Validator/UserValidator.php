@@ -99,12 +99,6 @@ class UserValidator
             return null;
         }
 
-        $setupToken = GUID::create()->format(GUID::STANDARD | GUID::HYPHENATED);
-        $tokenExpiry = $this->clock
-            ->read()
-            ->modify(self::SETUP_EXPIRY)
-            ->format('Y-m-d\TH:i:s\Z', 'UTC');
-
         $user = (new User)
             ->withName($name)
             ->withProviderUniqueID($internalUsername)

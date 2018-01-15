@@ -582,9 +582,12 @@ services:
     hal_bootstrap.page:
         class: 'Hal\UI\Controllers\Admin\HalBootstrapController'
         arguments:
-            - '@doctrine.em'
-            - '@uri'
             - '@hal_bootstrap.twig'
+            - '@doctrine.em'
+            - '@validator.environment'
+            - '@validator.idp'
+            - '@validator.vcs'
+            - '@uri'
     hal_bootstrap.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/hal_bootstrap.twig']]]
