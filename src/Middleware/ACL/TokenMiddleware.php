@@ -29,7 +29,7 @@ class TokenMiddleware implements MiddlewareInterface
     use APITrait;
 
     const HEADER_NAME = 'Authorization';
-    const REGEX_BEARER_AUTH = '#^(?:bearer|oauth|token) ([0-9a-zA-Z]{32,32})$#i';
+    const REGEX_BEARER_AUTH = '#^(?:bearer|oauth|token) ([0-9a-zA-Z\-]{32,36})$#i';
 
     private const ERR_AUTH_HEADER_INVALID = 'Authorization access token is missing or invalid';
     private const ERR_INVALID_TOKEN = 'Access token is invalid';
