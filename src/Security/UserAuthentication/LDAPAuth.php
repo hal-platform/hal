@@ -16,7 +16,6 @@ use Hal\Core\Type\IdentityProviderEnum;
 use Hal\UI\Utility\OptionTrait;
 use Hal\UI\Validator\IdentityProviders\LDAPValidator;
 use Hal\UI\Validator\ValidatorErrorTrait;
-use Symfony\Component\Ldap\Adapter\AdapterInterface;
 use Symfony\Component\Ldap\Ldap;
 use Symfony\Component\Ldap\LdapInterface;
 use Symfony\Component\Ldap\Exception\LdapException;
@@ -26,7 +25,6 @@ class LDAPAuth
     use OptionTrait;
     use ValidatorErrorTrait;
 
-// uid={0}
     const USER_ID = 'objectGUID';
 
     public const AUTO_CREATE_USER = 1;
@@ -38,7 +36,6 @@ class LDAPAuth
 
     private const ERR_USER_NOT_FOUND = 'Invalid sign-in information. Please try again.';
     private const ERR_IDP_MISCONFIGURED = 'LDAP Identity Provider is misconfigured.';
-
 
     /**
      * @var EntityManagerInterface
@@ -92,6 +89,7 @@ class LDAPAuth
 
         $ldap = $this->getProviderClient($idp);
         if (!$ldap instanceof LdapInterface) {
+            $this->addError(self::ERR_IDP_MISCONFIGURED);
             return null;
         }
 
@@ -139,32 +137,23 @@ class LDAPAuth
 
         } catch (Exception $ex) {
             // Symfony suppresses errors, but our error handler does not properly ignore suppressed errors.
-            $this->addError(self::ERR_USER_NOT_FOUND);
             return null;
         }
 
         $dn = $idp->parameter(LDAPValidator::ATTR_BASE_DN);
         $attribute = $idp->parameter(LDAPValidator::ATTR_UNIQUE_ID) ?? $this->defaultUsernameAttribute;
 
-        // @todo - not sure if DN is required
-        // @todo - not sure if DN is required
-        // @todo - not sure if DN is required
-        // @todo - not sure if DN is required
-        // @todo - not sure if DN is required
-        // @todo - not sure if DN is required
         if (strlen($dn) === 0 || strlen($attribute) === 0) {
-            $this->addError(self::ERR_IDP_MISCONFIGURED);
             return null;
         }
 
-        $baseDN = $ldap->escape($dn);
         $query = $this->buildLDAPQuery($ldap, $attribute, $username);
         $attributes = [
             'id' => self::USER_ID,
             'username' => $attribute
         ];
 
-        $data = $this->getUserData($ldap, $baseDN, $query, $attributes);
+        $data = $this->getUserData($ldap, $dn, $query, $attributes);
 
         return $data;
     }
@@ -179,9 +168,14 @@ class LDAPAuth
      */
     private function getUserData(LdapInterface $ldap, $baseDN, $query, array $attributes)
     {
-        $query = $ldap->query($baseDN, $query, [
-            'filter' => array_values($attributes)
-        ]);
+        try {
+            $query = $ldap->query($baseDN, $query, [
+                'filter' => array_values($attributes)
+            ]);
+        } catch (Exception $ex) {
+            // Symfony suppresses errors, but our error handler does not properly ignore suppressed errors.
+            return null;
+        }
 
         $results = $query->execute();
 
@@ -189,11 +183,12 @@ class LDAPAuth
             return null;
         }
 
-        $data = array_pop($results);
+        $entry = $results[0];
 
         $user = [];
-        foreach (array_keys($attributes) as $attr => $adAttr) {
-            $value = $data->getAttribute($adAttr)[0];
+        foreach ($attributes as $attr => $adAttr) {
+            $value = $entry->getAttribute($adAttr)[0];
+
             if (strlen($value) === 0) {
                 return null;
             }
@@ -217,7 +212,7 @@ class LDAPAuth
     private function autoCreateUser(UserIdentityProvider $idp, array $data): User
     {
         $user = (new User)
-            ->withName($data['username'])
+            ->withName(strtolower($data['username']))
             ->withParameter('ldap.id', $data['id'])
             ->withParameter('ldap.username', $data['username'])
             ->withProviderUniqueID($data['id'])
@@ -237,7 +232,6 @@ class LDAPAuth
     private function getProviderClient(UserIdentityProvider $idp): ?LdapInterface
     {
         if ($idp->type() !== IdentityProviderEnum::TYPE_LDAP) {
-            $this->addError(self::ERR_IDP_MISCONFIGURED);
             return null;
         }
 
@@ -247,16 +241,14 @@ class LDAPAuth
         $port = strstr($host, ':', false);
 
         $hostname = ($hostname !== false) ? $hostname : $host;
-        $port = ($port !== false) ? $port : self::DEFAULT_LDAP_PORT;
+        $port = ($port !== false) ? substr($port, 1) : self::DEFAULT_LDAP_PORT;
 
         if (strlen($host) === 0 || strlen($port) === 0) {
-            $this->addError(self::ERR_IDP_MISCONFIGURED);
             return null;
         }
 
-        $ldap = $this->LDAPClientFactory($host, $port);
-        if (!$ldap instanceof AdapterInterface) {
-            $this->addError(self::ERR_IDP_MISCONFIGURED);
+        $ldap = $this->LDAPClientFactory($hostname, $port);
+        if (!$ldap instanceof LdapInterface) {
             return null;
         }
 
@@ -277,7 +269,7 @@ class LDAPAuth
             $query[] = sprintf('(%s=%s)', $attr, $ldap->escape($value));
         }
 
-        $query[] = sprintf('(%s=%s)', $ldap->escape($attribute), $ldap->escape($username));
+        $query[] = sprintf('(%s=%s)', $attribute, $ldap->escape($username));
 
         return sprintf('(&%s)', implode('', $query));
     }

@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2016 Quicken Loans Inc.
+ * @copyright (c) 2018 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -13,6 +13,7 @@ use Hal\Core\Entity\System\UserIdentityProvider;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\HTTP\CookieHandler;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\URI;
 
@@ -20,6 +21,9 @@ class SignInController implements ControllerInterface
 {
     use RedirectableControllerTrait;
     use TemplatedControllerTrait;
+
+    private const IDP_COOKIE_NAME = 'idp';
+    private const IDP_COOKIE_EXPIRES = '3 months';
 
     /**
      * @var TemplateInterface
@@ -32,6 +36,11 @@ class SignInController implements ControllerInterface
     private $idpRepo;
 
     /**
+     * @var CookieHandler
+     */
+    private $cookies;
+
+    /**
      * @var URI
      */
     private $uri;
@@ -39,11 +48,17 @@ class SignInController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
+     * @param CookieHandler $cookies
      * @param URI $uri
      */
-    public function __construct(TemplateInterface $template, EntityManagerInterface $em, URI $uri)
-    {
+    public function __construct(
+        TemplateInterface $template,
+        EntityManagerInterface $em,
+        CookieHandler $cookies,
+        URI $uri
+    ) {
         $this->template = $template;
+        $this->cookies = $cookies;
         $this->uri = $uri;
 
         $this->idpRepo = $em->getRepository(UserIdentityProvider::class);
@@ -59,8 +74,57 @@ class SignInController implements ControllerInterface
             return $this->withRedirectRoute($response, $this->uri, 'hal_bootstrap');
         }
 
+        $selectedIDP = $this->getSelectedIDP($request, $providers);
+        $response = $this->saveSelectedIDP($response, $selectedIDP);
+
         return $this->withTemplate($request, $response, $this->template, [
-            'id_providers' => $providers
+            'id_providers' => $providers,
+
+            'selected_idp' => $selectedIDP
         ]);
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param array $providers
+     *
+     * @return UserIdentityProvider|null
+     */
+    private function getSelectedIDP(ServerRequestInterface $request, array $providers)
+    {
+        if (count($providers) === 1) {
+            return $providers[0];
+        }
+
+        // first check if idp in query
+        $selectedIDP = $request->getQueryParams()['idp'] ?? '';
+
+        // if not in query, check cookie
+        if (!$selectedIDP) {
+            $selectedIDP = $this->cookies->getCookie($request, self::IDP_COOKIE_NAME);
+        }
+
+        foreach ($providers as $idp) {
+            if ($selectedIDP === $idp->id()) {
+                return $idp;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @param UserIdentityProvider|null
+     *
+     * @return ResponseInterface
+     */
+    private function saveSelectedIDP(ResponseInterface $response, ?UserIdentityProvider $idp)
+    {
+        if (!$idp) {
+            return $this->cookies->expireCookie($response, self::IDP_COOKIE_NAME);
+        }
+
+        return $this->cookies->withCookie($response, self::IDP_COOKIE_NAME, $idp->id(), self::IDP_COOKIE_EXPIRES);
     }
 }

@@ -39,6 +39,7 @@ services:
         arguments:
             - '@signin.twig'
             - '@doctrine.em'
+            - '@cookie.handler'
             - '@uri'
     signin.twig:
         parent: 'twig.template'

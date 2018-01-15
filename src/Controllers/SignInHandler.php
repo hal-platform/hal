@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2016 Quicken Loans Inc.
+ * @copyright (c) 2018 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -28,11 +28,9 @@ class SignInHandler implements MiddlewareInterface
     use TemplatedControllerTrait;
     use ValidatorErrorTrait;
 
-    private const ERR_INVALID = 'A username and password must be entered.';
-    private const ERR_AUTH_FAILURE = 'Authentication failed.';
+    // private const ERR_INVALID = 'A username and password must be entered.';
+    // private const ERR_AUTH_FAILURE = 'Authentication failed.';
     private const ERR_DISABLED = 'Account disabled.';
-
-    const ERR_AUTH_MISCONFIGURED = 'No valid Identity Provider was found. Hal may be misconfigured.';
 
     /**
      * @var EntityManagerInterface
@@ -92,8 +90,11 @@ class SignInHandler implements MiddlewareInterface
             return $next($request, $response);
         }
 
-        $providerID = $request->getQueryParams()['idp'] ?? '';
-        $redirectURL = $request->getQueryParams()['redirect'] ?? null;
+        $queryString = $request->getQueryParams();
+
+
+        $providerID = $queryString['idp'] ?? '';
+        $redirectURL = $queryString['redirect'] ?? null;
 
         if (!$providerID) {
             return $next($request, $response);
@@ -104,21 +105,8 @@ class SignInHandler implements MiddlewareInterface
             return $next($request, $response);
         }
 
-        if ($idp->type() === IdentityProviderEnum::TYPE_INTERNAL) {
-            $user = $this->auth->authenticate($idp, [
-                'username' => $request->getParsedBody()['internal_username'] ?? '',
-                'password' => $request->getParsedBody()['internal_password'] ?? '',
-            ]);
-
-        } elseif ($idp->type() === IdentityProviderEnum::TYPE_LDAP) {
-            $user = $this->auth->authenticate($idp, [
-                'username' => $request->getParsedBody()['ldap_username'] ?? '',
-                'password' => $request->getParsedBody()['ldap_password'] ?? '',
-            ]);
-
-        } else {
-            return $next($this->withError($request, self::ERR_AUTH_MISCONFIGURED), $response);
-        }
+        $data = $this->getFormData($request, $idp);
+        $user = $this->auth->authenticate($idp, $data);
 
         if (!$user instanceof User) {
             return $next($this->withErrors($request, $this->auth->errors()), $response);
@@ -181,5 +169,32 @@ class SignInHandler implements MiddlewareInterface
         ];
 
         return $this->withContext($request, $context);
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param UserIdentityProvider $idp
+     *
+     * @return array
+     */
+    public function getFormData(ServerRequestInterface $request, UserIdentityProvider $idp): array
+    {
+        $form = $request->getParsedBody();
+
+        if ($idp->type() === IdentityProviderEnum::TYPE_INTERNAL) {
+            return [
+                'username' => $form['internal_username'] ?? '',
+                'password' => $form['internal_password'] ?? '',
+            ];
+        }
+
+        if ($idp->type() === IdentityProviderEnum::TYPE_LDAP) {
+            return [
+                'username' => $form['ldap_username'] ?? '',
+                'password' => $form['ldap_password'] ?? '',
+            ];
+        }
+
+        return [];
     }
 }

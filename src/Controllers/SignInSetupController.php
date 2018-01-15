@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2016 Quicken Loans Inc.
+ * @copyright (c) 2018 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -155,11 +155,10 @@ class SignInSetupController implements ControllerInterface
             'cost' => 10,
         ]);
 
-        $params = $user->parameters();
-        unset($params['internal.setup_token']);
-        unset($params['internal.setup_token_expiry']);
         $user
             ->withParameters($params)
+            ->withParameter('internal.setup_token', null)
+            ->withParameter('internal.setup_token_expiry', null)
             ->withParameter('internal.password', $hashed);
 
         $this->em->persist($user);

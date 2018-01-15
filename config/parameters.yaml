@@ -142,4 +142,3 @@ parameters:
         objectCategory: 'person'
         # objectClass: 'user'
     ldap.unique_attribute: 'sAMAccountName'
-    # ldap.unique_attribute: 'uid'

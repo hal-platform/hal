@@ -188,11 +188,6 @@ class LDAPValidator implements IdentityProviderValidatorInterface
      */
     private function validateBaseDN($baseDN)
     {
-        // always optional
-        if (strlen($baseDN) === 0) {
-            return;
-        }
-
         if (!$this->validateCharacterWhitelist($baseDN, self::REGEX_CHARACTER_CLASS_ASCII)) {
             $this->addError(self::ERR_INVALID_BASE_DN, 'ldap_base_dn');
         }

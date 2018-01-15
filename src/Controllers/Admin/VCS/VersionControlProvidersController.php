@@ -8,8 +8,8 @@
 namespace Hal\UI\Controllers\Admin\VCS;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\System\VersionControlProvider;
+use Hal\Core\Repository\System\VersionControlProviderRepository;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,7 +26,7 @@ class VersionControlProvidersController implements ControllerInterface
     private $template;
 
     /**
-     * @var EntityRepository
+     * @var VersionControlProviderRepository
      */
     private $vcsRepo;
 

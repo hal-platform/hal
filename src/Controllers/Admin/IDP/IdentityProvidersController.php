@@ -8,8 +8,8 @@
 namespace Hal\UI\Controllers\Admin\IDP;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\System\UserIdentityProvider;
+use Hal\Core\Repository\System\UserIdentityProviderRepository;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,7 +26,7 @@ class IdentityProvidersController implements ControllerInterface
     private $template;
 
     /**
-     * @var EntityRepository
+     * @var UserIdentityProviderRepository
      */
     private $idpRepo;
 

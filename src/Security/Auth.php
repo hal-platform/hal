@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2017 Quicken Loans Inc.
+ * @copyright (c) 2018 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -60,11 +60,14 @@ class Auth
             return null;
         }
 
+        $user = $data['username'] ?? '';
+        $pass = $data['password'] ?? '';
+
         if ($idp->type() === IdentityProviderEnum::TYPE_INTERNAL) {
-            $user = $adapter->authenticate($idp, $data['username'] ?? '', $data['password'] ?? '');
+            $user = $adapter->authenticate($idp, $user, $pass);
 
         } elseif ($idp->type() === IdentityProviderEnum::TYPE_LDAP) {
-            $user = $adapter->authenticate($idp, $data['username'] ?? '', $data['password'] ?? '');
+            $user = $adapter->authenticate($idp, $user, $pass);
 
         } else {
             $this->addError(self::ERR_AUTH_MISCONFIGURED);
@@ -74,6 +77,8 @@ class Auth
         if ($user instanceof User) {
             return $user;
         }
+
+        $this->importErrors($adapter->errors());
 
         return null;
     }
