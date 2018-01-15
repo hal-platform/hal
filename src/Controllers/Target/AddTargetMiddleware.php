@@ -76,7 +76,7 @@ HTML;
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         $application = $request->getAttribute(Application::class);
-        $form = $this->validator->getFormData($request);
+        $form = $this->validator->getFormData($request, null);
 
         $context = ['form' => $form];
 

@@ -68,7 +68,7 @@ class EditTargetMiddleware implements MiddlewareInterface
         $application = $request->getAttribute(Application::class);
         $target = $request->getAttribute(Target::class);
         $form = $this->validator->getFormData($request, $target);
-dump($form);
+
         $context = ['form' => $form];
 
         if ($request->getMethod() !== 'POST') {
