@@ -62,7 +62,7 @@ class RemoveTemplateHandler implements ControllerInterface
 
         if ($this->targetRepo->findBy(['template' => $template])) {
             $this->withFlashError($request, self::ERR_IN_USE);
-            return $this->withRedirectRoute($response, $this->uri, 'template', ['template' => $group->id()]);
+            return $this->withRedirectRoute($response, $this->uri, 'template', ['template' => $template->id()]);
         }
 
         $this->em->remove($template);

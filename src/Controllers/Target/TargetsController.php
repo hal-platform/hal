@@ -8,15 +8,15 @@
 namespace Hal\UI\Controllers\Target;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
-use Hal\UI\Controllers\TemplatedControllerTrait;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Target;
 use Hal\Core\Entity\Environment;
 use Hal\Core\Repository\EnvironmentRepository;
 use Hal\Core\Utility\SortingTrait;
+use Hal\Core\Repository\TargetRepository;
+use Hal\UI\Controllers\TemplatedControllerTrait;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -31,7 +31,7 @@ class TargetsController implements ControllerInterface
     private $template;
 
     /**
-     * @var EntityRepository
+     * @var TargetRepository
      */
     private $targetRepo;
 

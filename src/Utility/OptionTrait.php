@@ -57,8 +57,8 @@ trait OptionTrait
      */
     private function parseFlag($flag)
     {
-        if (!isset($this->flag)) {
-            $this->flag = 0;
+        if (!isset($this->flags)) {
+            $this->flags = 0;
         }
 
         if (is_string($flag) && defined("static:${flag}")) {

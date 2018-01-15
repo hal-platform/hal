@@ -209,7 +209,7 @@ class CodeDeployValidator implements TargetValidatorInterface
     /**
      * @param string $value
      *
-     * @param bool
+     * @return bool
      */
     private function allowOptional($value)
     {

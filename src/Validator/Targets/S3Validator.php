@@ -185,7 +185,7 @@ class S3Validator implements TargetValidatorInterface
     /**
      * @param string $value
      *
-     * @param bool
+     * @return bool
      */
     private function allowOptional($value)
     {

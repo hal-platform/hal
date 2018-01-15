@@ -160,7 +160,6 @@ class SignInSetupController implements ControllerInterface
         ]);
 
         $user
-            ->withParameters($params)
             ->withParameter('internal.setup_token', null)
             ->withParameter('internal.setup_token_expiry', null)
             ->withParameter('internal.password', $hashed);

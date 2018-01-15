@@ -1,7 +1,4 @@
 parameters:
-    ignoreErrors:
-        - '#Hal\\Core\\Type\\GroupEnum#'
-        - '#Hal\\Core\\Entity\\Group#'
     excludes_analyse:
-        - %rootDir%/../../../src/Controllers/Group/*
         - %rootDir%/../../../src/Controllers/API/*
+        - %rootDir%/../../../src/API/*

@@ -117,7 +117,7 @@ class SignInController implements ControllerInterface
 
     /**
      * @param ResponseInterface $response
-     * @param UserIdentityProvider|null
+     * @param UserIdentityProvider|null $idp
      *
      * @return ResponseInterface
      */

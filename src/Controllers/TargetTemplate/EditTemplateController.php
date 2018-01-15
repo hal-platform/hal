@@ -55,7 +55,7 @@ class EditTemplateController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param GroupValidator $validator
+     * @param TargetTemplateValidator $validator
      * @param URI $uri
      */
     public function __construct(

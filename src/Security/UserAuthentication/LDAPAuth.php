@@ -59,7 +59,7 @@ class LDAPAuth
 
     /**
      * @param EntityManagerInterface $em
-     * @param string $queryRestriction
+     * @param array $queryRestriction
      * @param string $defaultUsernameAttribute
      */
     public function __construct(EntityManagerInterface $em, array $queryRestriction, string $defaultUsernameAttribute)
