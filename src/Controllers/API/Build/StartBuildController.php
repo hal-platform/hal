@@ -96,15 +96,15 @@ class StartBuildController implements ControllerInterface
         $application = $request->getAttribute(Application::class);
         $user = $this->getUser($request);
 
-        $environmentID = $request->getParsedBody()['environment'] ?? '';
-        $reference = $request->getParsedBody()['reference'] ?? '';
-        $targets = $request->getParsedBody()['targets'] ?? [];
+        $data = $request->getParsedBody();
+        $environmentID = $data['environment'] ?? '';
+        $reference = $data['reference'] ?? '';
+        $targets = $data['targets'] ?? [];
 
         $build = $this->buildValidator->isValid($application, $user, $environmentID, $reference, '');
 
         if (!$build) {
             $problem = new HTTPProblem(400, self::ERR_CHECK_FORM, ['errors' => $this->buildValidator->errors()]);
-
             return $this->renderProblem($response, $this->problemRenderer, $problem);
         }
 
@@ -112,18 +112,16 @@ class StartBuildController implements ControllerInterface
         if ($targets && is_array($targets)) {
             if (!$build->environment()) {
                 $problem = new HTTPProblem(400, self::ERR_GLOBAL_DEPLOY);
-
                 return $this->renderProblem($response, $this->problemRenderer, $problem);
             }
+
             $children = $this->pushValidator->isProcessValid($application, $user, $build->environment(), $build, $targets);
             if (!$children) {
                 $problem = new HTTPProblem(400, self::ERR_INVALID_DEPLOY, ['errors' => $this->pushValidator->errors()]);
-
                 return $this->renderProblem($response, $this->problemRenderer, $problem);
             }
         }
 
-        // persist to database
         if ($children) {
             foreach ($children as $process) {
                 $this->em->persist($process);
@@ -133,7 +131,7 @@ class StartBuildController implements ControllerInterface
         $this->em->persist($build);
         $this->em->flush();
 
-        $resource = $this->normalizer->resource($build, ['application']);
+        $resource = $this->normalizer->resource($build, ['application', 'environment']);
         $body = $this->formatter->buildHypermediaResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $body, 201);

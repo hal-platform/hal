@@ -125,7 +125,7 @@ class BuildNormalizer implements ResourceNormalizerInterface
             )
         ];
 
-        if ($build->status() === 'success') {
+        if ($build->isSuccess()) {
             $pages += [
                 'start_release_page' => new Hyperlink(
                     ['release.start', ['build' => $build->id()]],

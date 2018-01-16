@@ -71,5 +71,4 @@ trait OptionTrait
 
         return $flag;
     }
-
 }

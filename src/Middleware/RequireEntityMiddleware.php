@@ -30,6 +30,7 @@ use Hal\Core\Entity\User\UserPermission;
 use Hal\Core\Entity\User\UserToken;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use QL\MCP\Common\GUID;
 use QL\Panthor\MiddlewareInterface;
 
 /**
@@ -117,6 +118,11 @@ class RequireEntityMiddleware implements MiddlewareInterface
     private function lookup($entityName, $id)
     {
         $fq = self::KNOWN_ENTITIES[$entityName];
+
+        $isGUID = GUID::createFromHex($id);
+        if (!$isGUID) {
+            return false;
+        }
 
         $repository = $this->em->getRepository($fq);
         if (!$entity = $repository->find($id)) {

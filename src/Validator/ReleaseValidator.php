@@ -86,7 +86,7 @@ class ReleaseValidator
         foreach ($targets as $target) {
             $release = $target->lastJob();
             if ($release && $release->inProgress()) {
-                $this->addError(sprintf(self::ERR_IS_PENDING, $target->format()));
+                $this->addError(sprintf(self::ERR_IS_PENDING, $target->name()));
             }
         }
 
@@ -138,6 +138,7 @@ class ReleaseValidator
                 ->withUser($user)
                 ->withTriggerJob($build)
                 ->withParameters([
+                    'entity' => 'Release',
                     'condition' => 'success',
                     'target_id' => $target->id()
                 ]);

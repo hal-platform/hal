@@ -97,7 +97,8 @@ class ApplicationNormalizer implements ResourceNormalizerInterface
         ];
 
         $resource = new HypermediaResource($data, $links, [
-            'organization' => $application->organization()
+            'organization' => $application->organization(),
+            'vcs_provider' => $application->provider(),
         ]);
 
         $resource->withEmbedded($embed);

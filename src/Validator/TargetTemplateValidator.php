@@ -147,7 +147,7 @@ class TargetTemplateValidator
     {
         $this->resetErrors();
 
-       $type = $template->type();
+        $type = $template->type();
 
         $environmentID = $parameters['environment'] ?? '';
         // $credentialID = $parameters['credential'] ?? '';

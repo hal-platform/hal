@@ -7,7 +7,7 @@
 
 namespace Hal\UI\Controllers\API\Build;
 
-use Hal\Core\Entity\Build;
+use Hal\Core\Entity\JobType\Build;
 use Hal\UI\API\Normalizer\BuildNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
@@ -46,7 +46,7 @@ class BuildController implements ControllerInterface
     {
         $build = $request->getAttribute(Build::class);
 
-        $resource = $this->normalizer->resource($build, ['application']);
+        $resource = $this->normalizer->resource($build, ['application', 'environment']);
         $body = $this->formatter->buildHypermediaResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $body, 200);

@@ -17,6 +17,7 @@ use Hal\Core\Type\JobStatusEnum;
 use Hal\UI\Security\AuthorizationService;
 use Hal\UI\VersionControl\GitHub\GitHubResolver;
 use Hal\UI\VersionControl\VCS;
+use QL\MCP\Common\GUID;
 
 class BuildValidator
 {
@@ -106,13 +107,7 @@ class BuildValidator
             return null;
         }
 
-        $env = null;
-        if ($environmentID && !$env = $this->environmentRepo->find($environmentID)) {
-            # attempt search by name
-            if (!$env = $this->environmentRepo->findOneBy(['name' => $environmentID])) {
-                $this->addError(self::ERR_UNKNOWN_ENV, 'environment');
-            }
-        }
+        $env = $this->findEnvironment($environmentID);
 
         if ($this->hasErrors()) {
             return null;
@@ -202,5 +197,29 @@ class BuildValidator
         }
 
         return $search;
+    }
+
+    /**
+     * @param string $environment
+     *
+     * @return Environment|null
+     */
+    private function findEnvironment($environment): ?Environment
+    {
+        if (!$environment) {
+            return null;
+        }
+
+        $isGUID = GUID::createFromHex($environment);
+
+        if ($isGUID && $env = $this->environmentRepo->find($environment)) {
+            return $env;
+        }
+
+        if ($env = $this->environmentRepo->findOneBy(['name' => $environment])) {
+            return $env;
+        }
+
+        $this->addError(self::ERR_UNKNOWN_ENV, 'environment');
     }
 }

@@ -103,6 +103,11 @@ class DeployController implements ControllerInterface
         }
 
         foreach ($releases as $release) {
+            // record releases as active job on each target
+            $target = $release->target();
+            $target->withLastJob($release);
+
+            $this->em->persist($target);
             $this->em->persist($release);
         }
 
@@ -117,7 +122,7 @@ class DeployController implements ControllerInterface
             'releases' => $releases
         ]);
 
-        $resource->withEmbedded(['releases']);
+        $resource->withEmbedded(['build', 'releases']);
 
         $body = $this->formatter->buildHypermediaResponse($request, $resource);
 
