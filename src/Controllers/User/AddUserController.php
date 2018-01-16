@@ -32,7 +32,7 @@ class AddUserController implements ControllerInterface
     private const MSG_SUCCESS = 'User "%s" added.';
     private const MSG_FIRST_TIME_SIGNIN = <<<'HTML'
 Please note this user cannot yet sign in. Send them to the following URL to create their password:<br>
-<input class="text-input" style="color:black;" value="%s" readonly>
+<input type="text" style="color:black;" value="%s" readonly>
 This link will expire in 8 hours.
 HTML;
 

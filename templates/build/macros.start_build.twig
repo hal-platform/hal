@@ -18,7 +18,7 @@
                         {{ macros.icon('branch') }}
                         {{ branch.name }} <br />
 
-                        <a href="{{ githubBranchUrl(application.githubOwner, application.githubRepo, branch.name) }}">{{ branch.object.sha|commit }}</a>
+                        <a href="{{ vcs_ref_url(application, branch.name) }}">{{ branch.object.sha|commit }}</a>
                         {{ macros.icon('github') }}
                     </label>
                 </li>
@@ -50,7 +50,7 @@
                         {{ macros.icon('tag') }}
                         {{ tag.name }} <br>
 
-                        <a href="{{ githubReleaseUrl(application.github.owner, application.github.repository, tag.name) }}">{{ tag.object.sha|commit }}</a>
+                        <a href="{{ vcs_ref_url(application, 'tag/' ~ tag.name) }}">{{ tag.object.sha|commit }}</a>
                         {{ macros.icon('github') }}
                     </label>
                 </li>
@@ -116,7 +116,7 @@
         <span class="js-title">{{ pr.title }}</span>
         <br />
 
-        <a href="{{ githubPullRequestUrl(application.githubOwner, application.githubRepo, pr.number) }}">PR #{{ pr.number }}</a>
+        <a href="{{ vcs_ref_url(application, 'pull/' ~ pr.number) }}">PR #{{ pr.number }}</a>
         {{ macros.icon('github') }}
         <br />
 

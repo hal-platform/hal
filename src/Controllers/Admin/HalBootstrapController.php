@@ -44,8 +44,8 @@ class HalBootstrapController implements ControllerInterface
 
     const SETTING_IS_BOOTSTRAPPED = 'hal.is_configured';
 
-    private const ERR_ENVIRONMENTS = 'An error occurred when adding default environments.';
-    private const ERR_VCS = 'An error occurred when adding default version control system.';
+    // private const ERR_ENVIRONMENTS = 'An error occurred when adding default environments.';
+    // private const ERR_VCS = 'An error occurred when adding default version control system.';
     private const ERR_IDP = 'An error occurred when adding default identity provider.';
     private const ERR_ADMIN_USER = 'An error occurred when adding administrator user.';
 
@@ -172,13 +172,17 @@ class HalBootstrapController implements ControllerInterface
             'ghe_token' => $form['ghe_token'] ?? '',
         ];
 
-        if (!$this->validateForm($data)) {
+        $idp = $this->addIdentityProvider();
+        $this->addVersionControlProvider($data['ghe_url'], $data['ghe_token']);
+        $this->addEnvironments();
+
+        if ($this->hasErrors()) {
             return null;
         }
 
-        $this->addIdentityProvider($data['admin_username'], $data['admin_password']);
-        $this->addVersionControlProvider($data['ghe_url'], $data['ghe_token']);
-        $this->addEnvironments();
+        $this->em->flush();
+
+        $this->addAdmin($idp, $data['admin_username'], $data['admin_password']);
 
         if ($this->hasErrors()) {
             return null;
@@ -195,69 +199,35 @@ class HalBootstrapController implements ControllerInterface
     }
 
     /**
-     * @param array $data
-     *
-     * @return bool
+     * @return UserIdentityProvider|null
      */
-    private function validateForm(array $data): bool
+    private function addIdentityProvider(): ?UserIdentityProvider
     {
-        if (!$data['admin_username']) {
-            $this->addError('admin_username', 'You must add an administrator user.');
-        }
-
-        if (!$data['admin_password']) {
-            $this->addError('admin_password', 'Please enter a secure password.');
-        }
-
-        if (!$data['ghe_url']) {
-            $this->addError('ghe_url', 'Please enter base URL for GitHub.');
-        }
-
-        if (!$data['ghe_token']) {
-            $this->addError('ghe_token', 'Please enter GitHub Enterprise API token.');
-        }
-
-        if ($this->hasErrors()) {
-            return false;
-        }
-
-        $regex = implode('', [
-            '@^',
-            'https?\:\/\/',
-            '[[:ascii:]]+',
-            '$@'
+        $idp = $this->idpValidator->isValid(IdentityProviderEnum::TYPE_INTERNAL, [
+            'name' => 'Internal Auth'
         ]);
 
-        if (!preg_match($regex, $data['ghe_url'], $patterns)) {
-            $this->addError('ghe_url', 'Please enter base URL for GitHub.');
+        if (!$idp) {
+            $this->importErrors($this->idpValidator->errors());
+            return null;
         }
 
-        return !$this->hasErrors();
+        $this->em->persist($idp);
+        return $idp;
     }
 
     /**
+     * @param UserIdentityProvider $idp
      * @param string $username
      * @param string $password
      *
      * @return void
      */
-    private function addIdentityProvider($username, $password)
+    private function addAdmin(UserIdentityProvider $idp, $username, $password)
     {
         $hashed = password_hash($password, \PASSWORD_BCRYPT, [
             'cost' => 10,
         ]);
-
-        $idp = $this->vcsValidator->isValid(IdentityProviderEnum::TYPE_INTERNAL, [
-            'name' => 'Internal Auth'
-        ]);
-
-        if (!$idp) {
-            $this->addError(self::ERR_IDP);
-            return;
-        }
-
-        $this->em->persist($idp);
-        $this->em->flush();
 
         $admin = $this->userValidator->isValid([
             'name' => $username,
@@ -300,7 +270,7 @@ class HalBootstrapController implements ControllerInterface
         ]);
 
         if (!$vcs) {
-            $this->addError(self::ERR_VCS);
+            $this->importErrors($this->vcsValidator->errors());
             return;
         }
 
@@ -313,10 +283,12 @@ class HalBootstrapController implements ControllerInterface
     private function addEnvironments()
     {
         $staging = $this->envValidator->isValid('staging', false);
-        $prod = $this->envValidator->isValid('prod', true);
+        $this->importErrors($this->envValidator->errors());
 
-        if (!$staging || $prod) {
-            $this->addError(self::ERR_ENVIRONMENTS);
+        $prod = $this->envValidator->isValid('prod', true);
+        $this->importErrors($this->envValidator->errors());
+
+        if (!$staging || !$prod) {
             return;
         }
 

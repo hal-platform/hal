@@ -585,8 +585,9 @@ services:
             - '@hal_bootstrap.twig'
             - '@doctrine.em'
             - '@validator.environment'
-            - '@validator.idp'
             - '@validator.vcs'
+            - '@validator.idp'
+            - '@validator.user'
             - '@uri'
     hal_bootstrap.twig:
         parent: 'twig.template'
