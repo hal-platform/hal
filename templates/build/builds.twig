@@ -2,28 +2,24 @@
 {% import 'macros.pagination.twig' as pagination %}
 {% set js_components = ['job_table_updater'] %}
 
-{% set page_title = 'Build History : ' ~ application.name %}
+{% set page_title = 'Build History' %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+    <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
+    <li><a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Dashboard</a></li>
+{% endblock %}
 
 {% block content %}
-
-    <div class="nav--page">
-        <h1>Build History - <b>{{ application.name }}</b></h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Back to Application Dashboard</a>
-        </p>
-    </div>
-
     {{ block('search') }}
 
     {% include 'partial.build_table.twig' with {builds: builds, is_pushable: true, current_user: current_user} only %}
 
-    {{ pagination.pagination(page, last, 'build.history', {application: application.id}, {search: search_filter}) }}
-
+    {{ pagination.pagination(page, last, 'builds', {application: application.id}, {search: search_filter}) }}
 {% endblock %}
 
 {% block search %}
-    <h3>Search by reference:</h3>
+    <h3>Search by source control</h3>
     <form method="get" class="search-filter">
         <input
             class="text-input"
@@ -33,10 +29,10 @@
             value="{{ search_filter }}"
             placeholder="Examples: Branch name, commit SHA, pull/#, tag/# or env:$ENV_NAME">
 
-        <input class="btn" type="submit" value="Filter">
+        <button type="submit" class="btn">Filter</button>
 
         {% if search_filter %}
-            <a class="btn btn--action" href="{{ uriFor('build.history.page1', {'application': application.id}) }}">Reset</a>
+            <a class="btn btn--action" href="{{ uriFor('build.history', {'application': application.id}) }}">Reset</a>
         {% endif %}
     </form>
 {% endblock %}

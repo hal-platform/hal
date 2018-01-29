@@ -9,18 +9,20 @@ namespace Hal\UI\Validator;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\Core\Type\JobStatusEnum;
-use Hal\UI\Security\AuthorizationService;
-use Hal\UI\Service\GitHubService;
 use Hal\Core\Entity\Application;
-use Hal\Core\Entity\Build;
 use Hal\Core\Entity\Environment;
 use Hal\Core\Entity\User;
+use Hal\Core\Entity\JobType\Build;
+use Hal\Core\Type\JobStatusEnum;
+use Hal\UI\Security\AuthorizationService;
+use Hal\UI\VersionControl\GitHub\GitHubResolver;
+use Hal\UI\VersionControl\VCS;
+use QL\MCP\Common\GUID;
 
 class BuildValidator
 {
     use ValidatorErrorTrait;
-    use NewValidatorTrait;
+    use ValidatorTrait;
 
     const ERR_NO_PERMISSION = 'You do not have permission to create a build for this application.';
     const ERR_UNKNOWN_REF = 'You must select a valid git reference.';
@@ -45,9 +47,9 @@ class BuildValidator
     private $buildRepo;
 
     /**
-     * @var GitHubService
+     * @var VCS
      */
-    private $github;
+    private $vcs;
 
     /**
      * @var AuthorizationService
@@ -56,18 +58,18 @@ class BuildValidator
 
     /**
      * @param EntityManagerInterface $em
-     * @param GitHubService $github
+     * @param VCS $vcs
      * @param AuthorizationService $authorizationService
      */
     public function __construct(
         EntityManagerInterface $em,
-        GitHubService $github,
+        VCS $vcs,
         AuthorizationService $authorizationService
     ) {
         $this->buildRepo = $em->getRepository(Build::class);
         $this->environmentRepo = $em->getRepository(Environment::class);
 
-        $this->github = $github;
+        $this->vcs = $vcs;
         $this->authorizationService = $authorizationService;
     }
 
@@ -105,19 +107,14 @@ class BuildValidator
             return null;
         }
 
-        $env = null;
-        if ($environmentID && !$env = $this->environmentRepo->find($environmentID)) {
-            # attempt search by name
-            if (!$env = $this->environmentRepo->findOneBy(['name' => $environmentID])) {
-                $this->addError(self::ERR_UNKNOWN_ENV, 'environment');
-            }
-        }
+        $env = $this->findEnvironment($environmentID);
 
         if ($this->hasErrors()) {
             return null;
         }
 
-        if (!$this->authorizationService->getUserAuthorizations($user)->canBuild($application)) {
+        $authorizations = $this->authorizationService->getUserAuthorizations($user);
+        if (!$authorizations->canBuild($application)) {
             $this->addError(self::ERR_NO_PERMISSION);
         }
 
@@ -125,7 +122,7 @@ class BuildValidator
             return null;
         }
 
-        if (!$ref = $this->github->resolve($application->gitHub()->owner(), $application->gitHub()->repository(), $reference)) {
+        if (!$ref = $this->validateVCS($application, $reference)) {
             $this->addError(self::ERR_UNKNOWN_REF, 'reference');
         }
 
@@ -138,7 +135,7 @@ class BuildValidator
             $reference = $commit;
         }
 
-        $build = (new Build())
+        $build = (new Build)
             ->withStatus(JobStatusEnum::TYPE_PENDING)
             ->withReference($reference)
             ->withCommit($commit)
@@ -148,6 +145,32 @@ class BuildValidator
             ->withEnvironment($env);
 
         return $build;
+    }
+
+    /**
+     * @param Application $application
+     * @param string $reference
+     *
+     * @return array|null
+     */
+    private function validateVCS(Application $application, $reference)
+    {
+        $provider = $application->provider();
+        if (!$provider) {
+            return null;
+        }
+
+        $github = $this->vcs->authenticate($provider);
+        if (!$github) {
+            return null;
+        }
+
+        $owner = $application->parameter('gh.owner');
+        $repo = $application->parameter('gh.repo');
+
+        $resolved = $github->resolver()->resolve($owner, $repo, $reference);
+
+        return $resolved;
     }
 
     /**
@@ -164,7 +187,7 @@ class BuildValidator
         }
 
         // search query is commit sha
-        if (preg_match(GitHubService::REGEX_COMMIT, $search) === 1) {
+        if (preg_match(GitHubResolver::REGEX_COMMIT, $search) === 1) {
             return $search;
         }
 
@@ -174,5 +197,29 @@ class BuildValidator
         }
 
         return $search;
+    }
+
+    /**
+     * @param string $environment
+     *
+     * @return Environment|null
+     */
+    private function findEnvironment($environment): ?Environment
+    {
+        if (!$environment) {
+            return null;
+        }
+
+        $isGUID = GUID::createFromHex($environment);
+
+        if ($isGUID && $env = $this->environmentRepo->find($environment)) {
+            return $env;
+        }
+
+        if ($env = $this->environmentRepo->findOneBy(['name' => $environment])) {
+            return $env;
+        }
+
+        $this->addError(self::ERR_UNKNOWN_ENV, 'environment');
     }
 }

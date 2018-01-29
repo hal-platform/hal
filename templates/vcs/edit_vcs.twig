@@ -1,0 +1,58 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+{% import 'macros.form.twig' as form_macros %}
+
+{% use 'vcs/partial.vcs_form.twig' %}
+
+{% set page_title = 'Edit Version Control' %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+    <li><a href="{{ uriFor('vcs_providers') }}">Version Control Providers</a></li>
+    <li><a href="{{ uriFor('vcs_provider', {'system_vcs': vcs.id}) }}">{{ vcs.name }}</a></li>
+{% endblock %}
+
+{% block content %}
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
+
+    <h4>Type</h4>
+    <p>{{ vcs.formatType() }}</p>
+
+    <form method="post" class="js-vcs-form">
+        {{ form_macros.csrf_input('vcs_provider.edit') }}
+
+        <ul class="form-fields form-wrapper">
+            <li>
+                {% set has_error = form_macros.has_error(errors, 'name') ? ' is-error' : '' %}
+                <label for="name">Name</label>
+                <input class="text-input{{ has_error }}" type="text" name="name" id="name" maxlength="100" value="{{ form.name }}" required>
+            </li>
+        </ul>
+
+        <hr>
+
+        <ul class="form-fields form-wrapper">
+            {% if vcs.type in ['git'] %}
+                {{ block('git_fields') }}
+            {% endif %}
+
+            {% if vcs.type in ['ghe'] %}
+                {{ block('ghe_fields') }}
+            {% endif %}
+
+            {% if vcs.type in ['gh'] %}
+                {{ block('gh_fields') }}
+            {% endif %}
+        </ul>
+
+        <div class="mvm">
+            {{ macros.alert('warning', 'Be careful! Modifying the configuration for this VCS may prevent Hal from being able to download source code!') }}
+        </div>
+
+        <p>
+            <button type="submit" class="btn btn--action">Save Changes</button>
+            <a href="{{ uriFor('vcs_provider', {'system_vcs': vcs.id}) }}">Cancel</a>
+        </p>
+
+    </form>
+{% endblock %}

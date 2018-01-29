@@ -1,0 +1,93 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+
+{% set page_title = 'Encrypted Configuration' %}
+
+{% set isAdmin = current_authorizations.isSuper() %}
+{% set canEdit = isAdmin or current_authorizations.isAdminOf(application) %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+    <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
+{% endblock %}
+
+{% block content %}
+    <p>
+        Encrypted Configuration is used to inject secrets and sensitive information into
+        your build and deployment process.
+        Hal encrypts secrets at rest. This is secure. Do not store secrets in your version control!
+    </p>
+
+    <ul class="meta-box">
+        <li>
+            <h6>Application</h6>
+            {{ application.name }}
+        </li>
+    </ul>
+
+    {% if encrypteds %}
+        {{ block('configuration_table') }}
+    {% else %}
+        <p>There is no encrypted configuration stored for this application.</p>
+    {% endif %}
+
+    <p>
+        {% if canEdit %}
+            <a class="btn btn--action" href="{{ uriFor('encrypted.add', {'application': application.id}) }}">Add Encrypted Configuration</a>
+        {% else %}
+            {{ macros.disabled_button('Add Encrypted Configuration') }}
+        {% endif %}
+    </p>
+
+{% endblock %}
+
+{% block configuration_table %}
+    <table>
+        <thead>
+            <tr>
+                <th class="t15">ID</th>
+                <th>Name</th>
+                <th>Environment</th>
+                <th class="t15"></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for property in encrypteds %}
+            <tr>
+                <td>
+                    <a href="{{ uriFor('encrypted', {'application': application.id, 'encrypted': property.id}) }}">{{ property.id|short_guid }}</a>
+                </td>
+                <td>
+                    <code class="code_clear">{{ property.name|upper }}</code>
+                </td>
+                <td>
+                    {% if property.environment %}
+                        {{ property.environment.name }}
+                    {% else %}
+                        Global (Available in all environments)
+                    {% endif %}
+                </td>
+
+                <td class="tr">
+                    {% if canEdit %}
+                        <a class="btn btn--destructive btn--tiny" href="{{ uriFor('encrypted.remove', {'application': application.id, 'encrypted': property.id}) }}">Remove</a>
+                    {% else %}
+                        {{ macros.disabled_button('Remove', 'tiny') }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <p>
+        Encrypted configuration is immutable. To change the value of a property: Remove it then add it again.
+        Only administrators can view encrypted values. If you need to know a previously set property, contact an administrator.<br><br>
+
+        If a property is set for both <b>Global</b> and a specific environment, the environment-specific
+        property will override the <b>Global</b> property.
+    </p>
+    <p>
+        When decrypted and set as environment variables -  properties will be uppercased and prefixed with <code>ENCRYPTED_</code> at runtime.
+    </p>
+{% endblock %}

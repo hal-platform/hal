@@ -53,7 +53,7 @@ class APIRateLimitingMiddleware implements MiddlewareInterface
         $routeName = $this->getRouteName($request);
 
         if ($this->rateLimiter->isLimited($user, $routeName)) {
-            $msg = sprintf(self::ERR_RATE_LIMIT, $user->username());
+            $msg = sprintf(self::ERR_RATE_LIMIT, $user->name());
             return $this->withProblem($this->problemRenderer, $response, 429, $msg);
         }
 

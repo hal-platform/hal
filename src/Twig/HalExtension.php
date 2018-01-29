@@ -1,24 +1,31 @@
 <?php
 /**
- * @copyright (c) 2016 Quicken Loans Inc.
+ * @copyright (c) 2017 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
 namespace Hal\UI\Twig;
 
+use Hal\Core\Entity\JobType\Build;
+use Hal\Core\Entity\JobType\Release;
+use Hal\Core\Entity\Credential;
+use Hal\Core\Entity\Organization;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\System\UserIdentityProvider;
+use Hal\Core\Entity\System\VersionControlProvider;
+use Hal\Core\Type\CredentialEnum;
+use Hal\Core\Type\TargetEnum;
+use Hal\Core\Type\IdentityProviderEnum;
+use Hal\Core\Type\VCSProviderEnum;
 use Hal\UI\Utility\TimeFormatter;
-use Hal\Core\Entity\Build;
-use Hal\Core\Entity\Release;
-use Twig_Extension;
-use Twig_SimpleFilter;
-use Twig_SimpleFunction;
-use Twig_SimpleTest;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
+use Twig\TwigTest;
 
-class HalExtension extends Twig_Extension
+class HalExtension extends AbstractExtension
 {
-    const NAME = 'hal';
-
     /**
      * @var TimeFormatter
      */
@@ -33,22 +40,10 @@ class HalExtension extends Twig_Extension
      * @param TimeFormatter $time
      * @param string $gravatarFallbackImageURL
      */
-    public function __construct(
-        TimeFormatter $time,
-        $gravatarFallbackImageURL
-    ) {
+    public function __construct(TimeFormatter $time, string $gravatarFallbackImageURL)
+    {
         $this->time = $time;
         $this->gravatarFallbackImageURL = $gravatarFallbackImageURL;
-    }
-
-    /**
-     * Get the extension name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 
     /**
@@ -60,11 +55,11 @@ class HalExtension extends Twig_Extension
     {
         return [
             // util
-            new Twig_SimpleFunction('html5duration', [$this->time, 'html5duration'], ['is_safe' => ['html']]),
-            new Twig_SimpleFunction('hash', [$this, 'hash']),
+            new TwigFunction('html5duration', [$this->time, 'html5duration'], ['is_safe' => ['html']]),
+            new TwigFunction('hash', [$this, 'hash']),
 
             // user
-            new Twig_SimpleFunction('getAvatarLink', [$this, 'getAvatarLink']),
+            new TwigFunction('get_gravatar_link', [$this, 'getGravatarLink']),
         ];
     }
 
@@ -76,15 +71,21 @@ class HalExtension extends Twig_Extension
     public function getFilters()
     {
         return [
-            new Twig_SimpleFilter('reldate', [$this->time, 'relative']),
-            new Twig_SimpleFilter('html5date', [$this->time, 'html5'], ['is_safe' => ['html']]),
+            new TwigFilter('reldate', [$this->time, 'relative']),
+            new TwigFilter('html5date', [$this->time, 'html5'], ['is_safe' => ['html']]),
 
-            new Twig_SimpleFilter('jsonPretty', [$this, 'jsonPretty'], ['is_safe' => ['html']]),
+            new TwigFilter('json_pretty', [$this, 'formatPrettyJSON'], ['is_safe' => ['html']]),
 
-            new Twig_SimpleFilter('formatBuildId', [$this, 'formatBuildId']),
-            new Twig_SimpleFilter('formatPushId', [$this, 'formatPushId']),
-            new Twig_SimpleFilter('formatEvent', [$this, 'formatEvent']),
-            new Twig_SimpleFilter('shortGUID', [$this, 'shortGUID']),
+            new TwigFilter('format_event_to_stage', [$this, 'formatEventToStage']),
+
+            new TwigFilter('short_guid', [$this, 'formatShortGUID']),
+            new TwigFilter('occurences', [$this, 'findOccurences']),
+
+            // @todo move these to entities?
+            new TwigFilter('idp_type', [$this, 'formatIDP']),
+            new TwigFilter('vcs_type', [$this, 'formatVCS']),
+            new TwigFilter('credential_type', [$this, 'formatCredential']),
+            new TwigFilter('target_type', [$this, 'formatTarget']),
         ];
     }
 
@@ -96,13 +97,32 @@ class HalExtension extends Twig_Extension
     public function getTests()
     {
         return [
-            new Twig_SimpleTest('build', function ($entity) {
+            new TwigTest('build', function ($entity) {
                 return $entity instanceof Build;
             }),
-            new Twig_SimpleTest('release', function ($entity) {
+            new TwigTest('release', function ($entity) {
                 return $entity instanceof Release;
+            }),
+            new TwigTest('organization', function ($entity) {
+                return $entity instanceof Organization;
             })
         ];
+    }
+
+
+    /**
+     * @param string $needle
+     * @param string $haystack
+     *
+     * @return int
+     */
+    public function findOccurences($needle, $haystack)
+    {
+        if (!is_string($haystack) || !is_string($needle)) {
+            return 0;
+        }
+
+        return substr_count($haystack, $needle);
     }
 
     /**
@@ -112,7 +132,7 @@ class HalExtension extends Twig_Extension
      *
      * @return string
      */
-    public function jsonPretty($json)
+    public function formatPrettyJSON($json)
     {
         $raw = json_decode($json, true);
 
@@ -125,41 +145,13 @@ class HalExtension extends Twig_Extension
     }
 
     /**
-     * @param string|int $id
-     *
-     * @return string
-     */
-    public function formatBuildId($id)
-    {
-        if (preg_match('#^b[a-zA-Z0-9]{1}.[a-zA-Z0-9]{7}$#', $id)) {
-            return strtolower(substr($id, 6));
-        }
-
-        return substr($id, 0, 10);
-    }
-
-    /**
-     * @param string|int $id
-     *
-     * @return string
-     */
-    public function formatPushId($id)
-    {
-        if (preg_match('#^p[a-zA-Z0-9]{1}.[a-zA-Z0-9]{7}$#', $id)) {
-            return strtolower(substr($id, 6));
-        }
-
-        return substr($id, 0, 10);
-    }
-
-    /**
      * @param string $event
      *
      * @return string
      */
-    public function formatEvent($event)
+    public function formatEventToStage($event)
     {
-        if (preg_match('#^(build|push).([a-z]*)$#', $event, $matches)) {
+        if (preg_match('#^(build|release).([a-z]*)$#', $event, $matches)) {
             $subevent = array_pop($matches);
             return ucfirst($subevent);
         }
@@ -172,13 +164,91 @@ class HalExtension extends Twig_Extension
      *
      * @return string
      */
-    public function shortGUID($entity)
+    public function formatShortGUID($entity)
     {
         if (is_object($entity) && is_callable([$entity, 'id'])) {
             $entity = $entity->id();
         }
 
         return substr($entity, 0, 8);
+    }
+
+    /**
+     * @param mixed $provider
+     *
+     * @return string
+     */
+    public function formatIDP($provider)
+    {
+        if ($provider instanceof UserIdentityProvider) {
+            return $provider->formatType();
+        }
+
+        return IdentityProviderEnum::format($provider);
+    }
+
+    /**
+     * @param mixed $provider
+     *
+     * @return string
+     */
+    public function formatVCS($provider)
+    {
+        if ($provider instanceof VersionControlProvider) {
+            return $provider->formatType();
+        }
+
+        return VCSProviderEnum::format($provider);
+    }
+
+    /**
+     * @param mixed $credential
+     *
+     * @return string
+     */
+    public function formatCredential($credential)
+    {
+        if ($credential instanceof Credential) {
+            return $credential->formatType();
+        }
+
+        return CredentialEnum::format($credential);
+    }
+
+    /**
+     * @param mixed $target
+     *
+     * @return string
+     */
+    public function formatTarget($target)
+    {
+        if ($target instanceof Target) {
+            return $target->formatType();
+        }
+
+        return TargetEnum::format($target);
+    }
+
+    /**
+     * @param string $email
+     * @param int $size
+     *
+     * @return string
+     */
+    public function getGravatarLink($email, $size = 100)
+    {
+        $email = strtolower(trim($email));
+        // $scheme = ($this->request->getScheme() === 'https') ? 'https' : 'http';
+        $scheme = 'http';
+        $default = sprintf('%s://%s', $scheme, $this->gravatarFallbackImageURL);
+
+        return sprintf(
+            '%s://secure.gravatar.com/avatar/%s?s=%d&d=%s',
+            $scheme,
+            md5($email),
+            $size,
+            urlencode($default)
+        );
     }
 
     /**
@@ -195,27 +265,5 @@ class HalExtension extends Twig_Extension
         }
 
         return md5($data);
-    }
-
-    /**
-     * @param string $email
-     * @param int $size
-     *
-     * @return string
-     */
-    public function getAvatarLink($email, $size = 100)
-    {
-        $email = strtolower(trim($email));
-        // $scheme = ($this->request->getScheme() === 'https') ? 'https' : 'http';
-        $scheme = 'http';
-        $default = sprintf('%s://%s', $scheme, $this->gravatarFallbackImageURL);
-
-        return sprintf(
-            '%s://secure.gravatar.com/avatar/%s?s=%d&d=%s',
-            $scheme,
-            md5($email),
-            $size,
-            urlencode($default)
-        );
     }
 }

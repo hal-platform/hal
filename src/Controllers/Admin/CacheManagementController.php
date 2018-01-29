@@ -126,7 +126,6 @@ class CacheManagementController implements ControllerInterface
 
         $context = [
             'version' => $configuration['version']['version'],
-            'configuration' => $this->formatConfig($configuration['directives']),
             'scripts' => $this->formatScripts(isset($status['scripts']) ? $status['scripts'] : []),
 
             'enabled' => $status['opcache_enabled'],
@@ -149,20 +148,6 @@ class CacheManagementController implements ControllerInterface
         ];
 
         return $context;
-        // $status['opcache_statistics']['start_time']
-        // $status['opcache_statistics']['last_restart_time']
-    }
-
-    /**
-     * @param array $directives
-     *
-     * @return array
-     */
-    private function formatConfig(array $directives)
-    {
-        return array_map(function ($v) {
-            return var_export($v, true);
-        }, $directives);
     }
 
     /**

@@ -1,0 +1,65 @@
+{% extends 'base.twig' %}
+{% import 'macros.form.twig' as form_macros %}
+
+{% use 'vcs/partial.vcs_form.twig' %}
+
+{% set js_components = ['add_vcs_form'] %}
+{% set page_title = 'Add Version Control' %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+    <li><a href="{{ uriFor('vcs_providers') }}">Version Control Providers</a></li>
+{% endblock %}
+
+{% block content %}
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
+
+    <form method="post" class="js-vcs-form">
+        {{ form_macros.csrf_input('vcs_providers.add') }}
+
+        <ul class="form-fields form-wrapper">
+            <li>
+                <label>Version Control Type</label>
+                <ul>
+                    {% set is_selected = form.vcs_type == '' ? ' checked' : '' %}
+                    <li>
+                        <label for="vcs-noop">
+                            <input type="radio" id="vcs-noop" name="vcs_type" value="" data-vcs-select data-vcs-type=""{{ is_selected }}>
+                            None
+                        </label>
+                    </li>
+
+                    {% for type in vcs_types %}
+                        {% set is_selected = form.vcs_type == type ? ' checked' : '' %}
+                        <li>
+                            <label for="vcs-{{ type }}">
+                                <input type="radio" id="vcs-{{ type }}" name="vcs_type" value="{{ type }}" data-vcs-select data-vcs-type="{{ type }}"{{ is_selected }}>
+                                {{ type|vcs_type }}
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+
+            <li>
+                {% set has_error = form_macros.has_error(errors, 'name') ? ' is-error' : '' %}
+                <label for="name">Name</label>
+                <input class="text-input{{ has_error }}" type="text" name="name" id="name" maxlength="100" value="{{ form.name }}" required>
+            </li>
+        </ul>
+
+        <hr>
+
+        <ul class="form-fields form-wrapper">
+            {{ block('git_fields') }}
+            {{ block('gh_fields') }}
+            {{ block('ghe_fields') }}
+        </ul>
+
+        <p>
+            <button type="submit" class="btn btn--action">Add VCS</button>
+            <a href="{{ uriFor('vcs_providers') }}">Cancel</a>
+        </p>
+
+    </form>
+{% endblock %}

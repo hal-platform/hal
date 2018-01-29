@@ -1,0 +1,63 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+{% import 'macros.form.twig' as form_macros %}
+
+{% set page_title = 'Edit User' %}
+
+{% set is_super = current_authorizations.isSuper() %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+    <li><a href="{{ uriFor('users') }}">Users</a></li>
+    <li><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.name }}</a></li>
+{% endblock %}
+
+{% block content %}
+
+    {{ block('meta') }}
+
+    {{ block('user_form') }}
+
+{% endblock %}
+
+{% block meta %}
+    <ul class="meta-box">
+        <li>
+            <h6>User ID</h6>
+            {{ user.id|short_guid }}
+        </li>
+
+        <li>
+            <h6>ID Provider</h6>
+            {{ user.provider.formatType() }}
+            <ul class="mts">
+                <li>
+                    <b>Provider User ID: </b> {{ user.providerUniqueID }}
+                </li>
+            </ul>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block user_form %}
+    <form method="post">
+        {{ form_macros.csrf_input('user.edit') }}
+
+        <ul class="form-fields form-wrapper">
+            <li>
+                {% set has_error = form_macros.has_error(errors, 'name') ? ' is-error' : '' %}
+                <label for="name">Display Name</label>
+                <input type="text" class="text-input{{ has_error }}" name="name" id="name" maxlength="100" value="{{ form.name }}" required>
+                <small>
+                    User's name (Can be a username or real name)
+                </small>
+            </li>
+        </ul>
+
+        <p>
+            <button type="submit" class="btn btn--action">Save Changes</button>
+            <a href="{{ uriFor('user', {'user': user.id}) }}">Cancel</a>
+        </p>
+
+    </form>
+{% endblock %}

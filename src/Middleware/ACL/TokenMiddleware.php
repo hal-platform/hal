@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2016 Quicken Loans Inc.
+ * @copyright (c) 2017 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -9,10 +9,10 @@ namespace Hal\UI\Middleware\ACL;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\Core\Entity\UserToken;
 use Hal\Core\Entity\User;
+use Hal\Core\Entity\User\UserToken;
 use Hal\UI\Controllers\APITrait;
-use Hal\UI\Middleware\UserSessionGlobalMiddleware;
+use Hal\UI\Security\UserSessionHandler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\MCP\Logger\MessageFactoryInterface;
@@ -29,16 +29,21 @@ class TokenMiddleware implements MiddlewareInterface
     use APITrait;
 
     const HEADER_NAME = 'Authorization';
-    const REGEX_BEARER_AUTH = '#^(?:bearer|oauth|token) ([0-9a-zA-Z]{32,32})$#i';
+    const REGEX_BEARER_AUTH = '#^(?:bearer|oauth|token) ([0-9a-zA-Z\-]{32,36})$#i';
 
     private const ERR_AUTH_HEADER_INVALID = 'Authorization access token is missing or invalid';
     private const ERR_INVALID_TOKEN = 'Access token is invalid';
-    private const ERR_DISABLED = 'User account "%s" is disabled.';
+    private const ERR_UNAVAILABLE = 'User account "%s" is unavailable.';
 
     /**
      * @var EntityRepository
      */
     private $tokenRepo;
+
+    /**
+     * @var UserSessionHandler
+     */
+    private $userHandler;
 
     /**
      * @var ProblemRendererInterface
@@ -52,13 +57,14 @@ class TokenMiddleware implements MiddlewareInterface
 
     /**
      * @param EntityManagerInterface $em
+     * @param UserSessionHandler $userHandler
      * @param ProblemRendererInterface $renderer
      */
-    public function __construct(
-        EntityManagerInterface $em,
-        ProblemRendererInterface $renderer
-    ) {
+    public function __construct(EntityManagerInterface $em, UserSessionHandler $userHandler, ProblemRendererInterface $renderer)
+    {
         $this->tokenRepo = $em->getRepository(UserToken::class);
+
+        $this->userHandler = $userHandler;
         $this->renderer = $renderer;
     }
 
@@ -67,7 +73,7 @@ class TokenMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!$token = $this->validateAuthorization($request)) {
+        if (!$token = $this->validateAuthorizationHeader($request)) {
             return $this->withProblem($this->renderer, $response, 403, self::ERR_AUTH_HEADER_INVALID);
         }
 
@@ -75,28 +81,16 @@ class TokenMiddleware implements MiddlewareInterface
             return $this->withProblem($this->renderer, $response, 403, self::ERR_INVALID_TOKEN);
         }
 
-        if ($user->isDisabled()) {
-            return $this->withProblem($this->renderer, $response, 403, sprintf(self::ERR_DISABLED, $user->username()));
+        $request = $this->userHandler->attachUserToRequest($request, $user->id());
+
+        // User is disabled or not found for some reason.
+        if (!$request) {
+            return $this->withProblem($this->renderer, $response, 403, sprintf(self::ERR_UNAVAILABLE, $user->name()));
         }
 
-        if ($this->factory) {
-            $this->factory->setDefaultProperty(MessageInterface::USER_NAME, sprintf('Token: %s', $user->username()));
-        }
-
-        // Add user to the server attrs for controllers/middleware
-        $request = $request->withAttribute(UserSessionGlobalMiddleware::USER_ATTRIBUTE, $user);
+        $this->attachUserToLogger($user);
 
         return $next($request, $response);
-    }
-
-    /**
-     * @param MessageFactoryInterface $factory
-     *
-     * @return void
-     */
-    public function setLoggerMessageFactory(MessageFactoryInterface $factory)
-    {
-        $this->factory = $factory;
     }
 
     /**
@@ -104,7 +98,7 @@ class TokenMiddleware implements MiddlewareInterface
      *
      * @return string|null
      */
-    private function validateAuthorization(ServerRequestInterface $request): ?string
+    private function validateAuthorizationHeader(ServerRequestInterface $request): ?string
     {
         $authorization = $request->getHeaderLine(self::HEADER_NAME);
 
@@ -134,5 +128,30 @@ class TokenMiddleware implements MiddlewareInterface
         }
 
         return $token->user();
+    }
+
+    /**
+     * @param MessageFactoryInterface $factory
+     *
+     * @return void
+     */
+    public function setLoggerMessageFactory(MessageFactoryInterface $factory)
+    {
+        $this->factory = $factory;
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return void
+     */
+    private function attachUserToLogger(User $user)
+    {
+        if (!$this->factory) {
+            return;
+        }
+
+        $name = sprintf('Token: %s', $user->name());
+        $this->factory->setDefaultProperty(MessageInterface::USER_NAME, $name);
     }
 }

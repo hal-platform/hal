@@ -1,0 +1,32 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+{% import 'macros.git.twig' as git_macros %}
+{% import 'macros.form.twig' as form_macros %}
+
+{% set js_components = ['application_permissions'] %}
+
+{% set page_title = 'Grant Permissions' %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+    <li><a href="{{ uriFor('organization', {'organization': organization.id}) }}">{{ organization.name }}</a></li>
+{% endblock %}
+
+{% block content %}
+    {{ block('meta') }}
+
+    <h2>Add Permissions</h2>
+    {% include 'permissions/partial.add_permissions.twig' with { 'organization': organization } %}
+
+    <h2>Permission Levels</h2>
+    {% include 'permissions/partial.permission_descriptions.twig' %}
+{% endblock %}
+
+{% block meta %}
+    <ul class="meta-box">
+        <li>
+            <h6>Organization</h6>
+            {{ organization.name }}
+        </li>
+    </ul>
+{% endblock %}

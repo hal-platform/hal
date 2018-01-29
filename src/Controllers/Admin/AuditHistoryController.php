@@ -34,21 +34,13 @@ class AuditHistoryController implements ControllerInterface
     private $eventRepo;
 
     /**
-     * @var callable
-     */
-    private $notFound;
-
-    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param callable $notFound
      */
-    public function __construct(TemplateInterface $template, EntityManagerInterface $em, callable $notFound)
+    public function __construct(TemplateInterface $template, EntityManagerInterface $em)
     {
         $this->template = $template;
         $this->eventRepo = $em->getRepository(AuditEvent::class);
-
-        $this->notFound = $notFound;
     }
 
     /**
@@ -57,14 +49,9 @@ class AuditHistoryController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $page = $this->getCurrentPage($request);
-        if ($page === null) {
-            return ($this->notFound)($request, $response);
-        }
 
         $events = $this->eventRepo->getPagedResults(SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1));
-
-        $total = count($events);
-        $last = ceil($total / SharedStaticConfiguration::LARGE_PAGE_SIZE);
+        $last = $this->getLastPage($events, SharedStaticConfiguration::LARGE_PAGE_SIZE);
 
         return $this->withTemplate($request, $response, $this->template, [
             'page' => $page,

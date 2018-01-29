@@ -6,10 +6,6 @@
 {% set page_title = 'Applications' %}
 
 {% block content %}
-    <div class="nav--page">
-        <h1>Applications</h1>
-    </div>
-
     {{ block('favs') }}
 
     <h2>Organizations</h2>
@@ -18,22 +14,22 @@
     <h2>Applications</h2>
     {{ block('apps_table') }}
 
-    <ul class="list--bare">
-        <li><a class="btn" href="{{ uriFor('application.add') }}">Add Application</a></li>
-        <li><a class="btn" href="{{ uriFor('organization.add') }}">Add Organization</a></li>
-    </ul>
+    <p>
+        <a class="btn" href="{{ uriFor('application.add') }}">Add Application</a>
+        <a class="btn" href="{{ uriFor('organization.add') }}">Add Organization</a>
+    </p>
 {% endblock %}
 
 {% block favs %}
 
     {% if favorites %}
         <h2>Favorites</h2>
-        <table class="table--spacing-medium">
+        <table>
             <thead>
                 <tr>
                     <th>Application</th>
-                    <th class="t40">Source Code</th>
-                    <th class="t15"></th>
+                    <th class="t40">Version Control</th>
+                    <th class="t20"></th>
                 </tr>
             </thead>
             <tbody>
@@ -77,16 +73,14 @@
             placeholder="Search for an application or repository..."
             maxlength="100">
 
-        <table class="table--spacing-medium js-collapsible js-search-table">
+        <table class="js-collapsible js-search-table">
             <thead>
                 <tr>
                     <th>Application</th>
-                    <th class="t40">Source Code</th>
-                    <th class="t15 js-collapsible-global tr"></th>
+                    <th class="t40">Version Control</th>
+                    <th class="t20 js-collapsible-global tr"></th>
                 </tr>
             </thead>
-
-            {% set hasApplications = false %}
 
             {% for org_id, organization_apps in applications %}
                 <tbody class="js-search-group">
@@ -101,14 +95,13 @@
                     {% else %}
                         <tr>
                             <th colspan="3" class="table-mid-header" id="org-none">
-                                None
+                                Not in organization
                             </th>
                         </tr>
 
                     {% endif %}
 
                     {% if organization_apps %}
-                        {% set hasApplications = true %}
                         {% for application in organization_apps %}
                             {{ apps_macros.app_row(current_user, application, true) }}
                         {% endfor %}

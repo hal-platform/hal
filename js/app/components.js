@@ -1,8 +1,14 @@
+import { initTabSelector } from './util/tab-selector';
 import { initGitHubSearch } from './job/github-search-for-build';
 import { initEventLogLoader } from './job/event-log-loader';
 
-import { initTargetForm } from './form/targets-form';
-import { initCredentialForm } from './form/credentials-form';
+import { initCredentialForm } from './form/credential-form';
+import { initTargetForm } from './form/target-form';
+import { initUserForm } from './form/user-form';
+import { initMetadataForm } from './form/metadata-form';
+import { initIDPForm } from './form/idp-form';
+import { initVCSForm } from './form/vcs-form';
+
 import { initSelectAllCheckboxes } from './form/select-all-checkbox';
 import { initApplicationPermissions } from './form/manage-application-permissions';
 
@@ -19,17 +25,32 @@ let appComponents = {
     add_target_form: () => {
         initTargetForm();
     },
+    add_application_form: () => {
+        initVCSForm();
+    },
     add_credential_form: () => {
         initCredentialForm();
+    },
+    add_user_form: () => {
+        initUserForm();
+    },
+    add_idp_form: () => {
+        initIDPForm();
+    },
+    add_vcs_form: () => {
+        initVCSForm();
     },
 
     // jobs - start
     start_build: () => {
+        initTabSelector();
         initGitHubSearch();
         initSelectAllCheckboxes();
+        initMetadataForm();
     },
     start_deployment: () => {
         initSelectAllCheckboxes();
+        initMetadataForm();
     },
 
     // jobs - info/updating

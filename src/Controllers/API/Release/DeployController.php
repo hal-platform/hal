@@ -9,9 +9,9 @@ namespace Hal\UI\Controllers\API\Release;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\Core\Entity\Build;
-use Hal\Core\Entity\Target;
 use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\JobType\Build;
+use Hal\Core\Entity\Target;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
@@ -103,6 +103,11 @@ class DeployController implements ControllerInterface
         }
 
         foreach ($releases as $release) {
+            // record releases as active job on each target
+            $target = $release->target();
+            $target->withLastJob($release);
+
+            $this->em->persist($target);
             $this->em->persist($release);
         }
 
@@ -117,7 +122,7 @@ class DeployController implements ControllerInterface
             'releases' => $releases
         ]);
 
-        $resource->withEmbedded(['releases']);
+        $resource->withEmbedded(['build', 'releases']);
 
         $body = $this->formatter->buildHypermediaResponse($request, $resource);
 
@@ -142,6 +147,6 @@ class DeployController implements ControllerInterface
             return null;
         }
 
-        return $target->group()->environment();
+        return $target->environment();
     }
 }

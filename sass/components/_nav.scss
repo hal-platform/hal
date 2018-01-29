@@ -25,15 +25,38 @@
 
         &:first-child { border-top: 0; }
 
-        a {
+        form {
+            margin: auto;
+            position: relative;
+        }
+        form button {
+            border: 0;
+            border-radius: 0;
+            outline: 0;
+            width: 100%;
+        }
+
+        a,
+        form button {
+            display: block;
             color: $white;
             background-color: $text-color;
-            display: block;
             font-size: .8em;
             text-decoration: none;
 
             padding: 0 .5em;
             margin: auto;
+
+            @include breakpoint($bp-small) {
+                font-size: .6em;
+                padding: 0;
+                padding-top: .5em;
+                text-align: center;
+            }
+
+            @include breakpoint($bp-medium) {
+                font-size: .8em;
+            }
 
             .icon {
                 margin-right: .25em;
@@ -56,19 +79,13 @@
                 background-color: $highlight-color;
                 color: $text-color;
             }
+        }
 
+        a,
+        form {
             @include breakpoint($bp-small) {
-                font-size: .6em;
-                padding: 0;
-                padding-top: .5em;
-                text-align: center;
-
                 min-width: 3em;
                 max-width: 6em;
-            }
-
-            @include breakpoint($bp-medium) {
-                font-size: .8em;
             }
         }
 

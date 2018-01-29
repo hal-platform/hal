@@ -1,34 +1,34 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
+{% import 'macros.form.twig' as form_macros %}
 
 {% set page_title = 'Settings' %}
 
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.name }}</a></li>
+{% endblock %}
+
 {% block content %}
+    <p>
+        <a href="{{ uriFor('user.edit', {'user': user.id}) }}" class="btn">Update your user information</a>
+    </p>
 
-    <div class="nav--page">
-        <h1>User Settings</h1>
+    <h2>Preferences</h2>
+    {{ block('navigation_pref') }}
 
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('user', {'user': user.id}) }}">User Profile</a>
-        </p>
-    </div>
+    <h2>Personal Access Tokens</h2>
+    <small>Personal Access Tokens can be used to access the <a href="{{ uriFor('api.index') }}">Hal API</a>.</small>
 
-    <section class="mtl">
-        <h2 class="mbs">Hal Preferences</h2>
-        {{ block('navigation_pref') }}
-    </section>
+    {% include 'user/partial.tokens.twig' with { 'user': user, 'is_owner': is_token_owner } only %}
+    {{ block('add_token_form') }}
 
-    <section class="mtl">
-        <h2 class="mbn">Personal Access Tokens</h2>
-        {{ block('access_tokens') }}
-    </section>
 {% endblock %}
 
 {% block navigation_pref %}
     <form method="post">
-
+        {% set is_selected = is_serious_business_mode ? ' checked' : '' %}
         <label class="checkbox-toggle">
-            <input type="checkbox" name="seriousbusiness" value="1" {{ is_serious_business_mode ? ' checked' : '' }}>
+            <input type="checkbox" name="seriousbusiness" value="1" {{ is_selected }}>
             <b class="checkbox-toggle--pill"></b>Use <b>Serious Business&trade;</b> mode
         </label>
 
@@ -39,55 +39,25 @@
         </p>
 
         <p>
-            <input class="btn btn--action btn--small" type="submit" value="Save Preferences">
+            <button type="submit" class="btn btn--action">Save Preferences</button>
         </p>
     </form>
 {% endblock %}
 
-{% block access_tokens %}
-    <small>Personal Access Tokens can be used to access the <a href="{{ uriFor('api.index') }}">Hal API</a>.</small>
+{% block add_token_form %}
+    <h3>Add new personal access token</h3>
 
-    {% if tokens %}
-        <table class="table--spacing-medium">
-            <thead>
-                <tr>
-                    <th class="t10">ID</th>
-                    <th>Name</th>
-                    <th>Token Secret</th>
-                    <th class="t10"></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for token in tokens %}
-                    <tr>
-                        <td>{{ token|shortGUID }}</td>
-                        <td>{{ token.name }}</td>
-                        <td><code>{{ token.value }}</code></td>
-                        <td>
-                            <a href="{{ uriFor('user.token.remove', {'user': user.id, 'token': token.id}) }}">
-                                Revoke
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>You have no personal access tokens saved.</p>
-    {% endif %}
+    <form action="{{ uriFor('user_token.add', {'user': user.id}) }}" method="post">
+        {{ form_macros.csrf_input('user_token.add') }}
+        <ul class="form-wrapper">
+            <li>
+                <label for="token-name">Token Name</label>
+                <input type="text" class="text-input" name="name" id="token-name" maxlength="50" required>
+            </li>
+        </ul>
 
-    <form action="{{ uriFor('user.token.add', {'user': user.id}) }}" method="post">
-        <h3>Add new personal access token</h3>
-
-        <div class="form-wrapper">
-            <label for="token-name">Token Name</label>
-            <input type="text" class="text-input" name="name" id="token-name" maxlength="50" required>
-
-            <p>
-                <input class="btn btn--action btn--small" type="submit" value="Generate Token">
-            </p>
-
-        </div>
+        <p>
+            <button type="submit" class="btn btn--action">Generate Token</button>
+        </p>
     </form>
-
 {% endblock %}

@@ -3,55 +3,39 @@
 {% import 'macros.git.twig' as git_macros %}
 {% set js_components = ['release_info'] %}
 
-{% set page_title = 'Release' %}
+{% set page_title = 'Release ' ~ release.id|short_guid %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+    <li><a href="{{ uriFor('application', {'application': release.application.id}) }}">{{ release.application.name }}</a></li>
+    <li><a href="{{ uriFor('application.dashboard', {'application': release.application.id}) }}">Dashboard</a></li>
+{% endblock %}
 
 {% block content %}
 
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': release.application.id}) }}">Back to Application Dashboard</a>
-        </p>
-    </div>
-
     <h2>Release Details</h2>
+    {{ block('meta') }}
+
+    <h2>Build Details</h2>
+    {{ block('meta_build') }}
+
+    <h2>Deployment Status</h2>
+    {{ block('deployment_status') }}
+
+    <h2>Release Metadata</h2>
+    <p><a href="{{ uriFor('help') }}#what-is-metadata">What is this?</a></p>
+    {{ block('metas') }}
+
+    <h2>Deployment Events</h2>
+    {{ block('events') }}
+
+{% endblock %}
+
+{% block meta %}
     <ul class="meta-box">
         <li>
             <h6>ID</h6>
-            {{ release.id }}
-        </li>
-
-        <li>
-            <h6>Target</h6>
-            {% if release.target %}
-                <a href="{{ uriFor('group', {'group': release.target.group.id}) }}">{{ release.target.format }}</a>
-            {% else %}
-                Unknown
-            {% endif %}
-        </li>
-
-        <li>
-            <h6>Parameters</h6>
-            {{ release.target.formatParameters }}
-        </li>
-
-        {% if release.target and release.target.url %}
-            <li>
-                <h6>URL</h6>
-                <a href="{{ release.target.url }}">{{ release.target.url }}</a>
-            </li>
-        {% endif %}
-    </ul>
-
-    <h2>Build Details</h2>
-    <ul class="meta-box">
-        <li>
-            <h6>Build ID</h6>
-            <a href="{{ uriFor('build', {'build': release.build.id}) }}">{{ release.build.id|formatBuildId }}</a>
-            {% if (release.build.status == 'removed') %}
-                (Removed)
-            {% endif %}
+            {{ release.id|short_guid }}
         </li>
 
         <li>
@@ -60,23 +44,59 @@
         </li>
 
         <li>
-            <h6>Environment</h6>
-            {{ release.build.environment ? release.build.environment.name : 'Any' }}
+            <h6>Target</h6>
+            {% if release.target %}
+                {{ release.environment.name }} →
+                <a href="{{ uriFor('target', {'application': release.application.id, 'target': release.target.id}) }}">{{ release.target.name }}</a>
+            {% else %}
+                Unknown
+            {% endif %}
         </li>
 
         <li>
-            <h6>Reference</h6>
-            {% set isCurrent = githubCommitIsCurrent(release.application.github.owner, release.application.github.repository, release.build.reference, release.build.commit) %}
-            {{ git_macros.gitref(release.build, false, isCurrent) }}
+            <h6>Parameters</h6>
+            <code>{{ release.target.formatParameters() }}</code>
         </li>
 
+        {% if release.target and release.target.url %}
+            <li>
+                <h6>URL</h6>
+                <a href="{{ release.target.url }}">{{ release.target.url }}</a>
+            </li>
+        {% endif %}
+
         <li>
-            <h6>Commit</h6>
-            {{ git_macros.gitcommit(release.build) }}
+            <h6>Started</h6>
+            {{ release.created|html5date }}
+            by
+            {{ macros.user_display_link(release.user) }}
         </li>
     </ul>
+{% endblock %}
 
-    <h2>Release Status</h2>
+{% block meta_build %}
+    <ul class="meta-box">
+        <li>
+            <h6>ID</h6>
+            {{ release.build.id|short_guid }}
+        </li>
+
+        <li>
+            <h6>Version Control</h6>
+            {{ git_macros.vcs_ref(release.build.application, release.build) }}
+            {{ git_macros.vcs_commit(release.build.application, release.build) }}
+        </li>
+
+        <li>
+            <h6>Started</h6>
+            {{ release.build.created|html5date }}
+            by
+            {{ macros.user_display_link(release.build.user) }}
+        </li>
+    </ul>
+{% endblock %}
+
+{% block deployment_status %}
     <ul class="meta-box">
         <li>
             <h6>Status</h6>
@@ -84,30 +104,22 @@
         </li>
 
         <li>
-            <h6>Time</h6>
-            <span class="js-release-start">{{ release.start|html5date }}</span>
-        </li>
-
-        <li>
             <h6>Duration</h6>
             <span class="js-release-duration">
                 {% if release.start and release.end %}
                     {{ html5duration(release.start, release.end) }}
+                {% else %}
+                    N/A
                 {% endif %}
             </span>
         </li>
-
-        <li>
-            <h6>User</h6>
-            {% if release.user %}
-                <a href="{{ uriFor('user', {'user': release.user.id}) }}">{{ release.user.name }}</a>
-            {% else %}
-                Unknown
-            {% endif %}
-        </li>
     </ul>
+{% endblock %}
 
-    <h2>Release Events</h2>
-    {% include 'partial.event_table.twig' with {logs: logs, canLoad: release.isFinished } only %}
+{% block metas %}
+    {% include 'partial.meta_table.twig' with { 'metadata': meta } only %}
+{% endblock %}
 
+{% block events %}
+    {% include 'partial.event_table.twig' with { 'events': logs, 'can_load': release.isFinished } only %}
 {% endblock %}

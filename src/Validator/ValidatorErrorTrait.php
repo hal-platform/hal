@@ -15,6 +15,28 @@ trait ValidatorErrorTrait
     private $errors;
 
     /**
+     * @return array
+     */
+    public function errors(): array
+    {
+        if ($this->errors === null) {
+            $this->resetErrors();
+        }
+
+        return $this->errors;
+    }
+
+    /**
+     * @param string $field
+     *
+     * @return array
+     */
+    public function errorsFor($field): array
+    {
+        return $this->errors[$field] ?? [];
+    }
+
+    /**
      * @return void
      */
     private function resetErrors(): void
@@ -50,25 +72,17 @@ trait ValidatorErrorTrait
     }
 
     /**
-     * @return array
-     */
-    public function errors(): array
-    {
-        if ($this->errors === null) {
-            $this->resetErrors();
-        }
-
-        return $this->errors;
-    }
-
-    /**
-     * @param string $field
+     * @param array $errors
      *
-     * @return array
+     * @return void
      */
-    public function errorsFor($field): array
+    private function importErrors(array $errors): void
     {
-        return $this->errors[$field] ?? [];
+        foreach ($errors as $field => $errors) {
+            foreach ($errors as $message) {
+                $this->addError($message, $field);
+            }
+        }
     }
 
     /**
@@ -103,7 +117,7 @@ trait ValidatorErrorTrait
             $msg = sprintf('%s must be %d characters or more', $name, $min);
 
         } else {
-            $msg = sprintf('%s must be contain %d - %d characters', $name, $min, $max);
+            $msg = sprintf('%s must contain %d - %d characters', $name, $min, $max);
         }
 
         $this->addError($msg, $field);

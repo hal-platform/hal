@@ -1,0 +1,55 @@
+{% import 'macros.twig' as macros %}
+
+{%- if organization is organization -%}
+    {% set perm_mode = 'organization' %}
+    {% set entity_params = { 'organization': organization.id } %}
+{%- else -%}
+    {% set perm_mode = 'application' %}
+    {% set entity_params = { 'application': application.id } %}
+{%- endif -%}
+
+{% block authorization_and_permissions %}
+    <div class="meta-box">
+        <small>
+            Owners can
+                manage {{ perm_mode == 'organization' ? 'applications' : 'this application' }},
+                deploy to non-production environments, and
+                grant others access.
+
+            Administrators can also manage and deploy applications.
+        </small>
+
+        {% if permissions %}
+            <ul class="list--bullet">
+                {% for permission in permissions %}
+                    {% set from_org = permission.organization and not organization ? ' - organization' : '' %}
+                    <li>
+                        {{ macros.user_display_link(permission.user) }}
+                        ({{ permission.type }}{{ from_org }})
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <hr>
+            <p>
+                No users currently have deployment or management permissions.
+                {{ perm_mode == 'organization' ? 'Applications' : 'This application' }} can be managed by administrators only.
+                Contact an administrator if you would like to self-service and manage your {{ perm_mode }}.
+            </p>
+        {% endif %}
+
+        <p>
+            {% if can_edit %}
+                <a class="btn" href="{{ uriFor(perm_mode ~ '_permissions.add', entity_params)}}">Grant access to other users</a>
+            {% else %}
+                {{ macros.disabled_button('Grant access to other users') }}
+            {% endif %}
+
+            {% if can_edit and permissions %}
+                <a href="{{ uriFor(perm_mode ~ '_permissions.remove', entity_params) }}">Manage or revoke permissions</a>
+            {% else %}
+                {{ macros.disabled_button('Manage or revoke permissions') }}
+            {% endif %}
+        </p>
+    </div>
+{% endblock %}

@@ -41,7 +41,7 @@ class OrganizationNormalizer implements ResourceNormalizerInterface
 
         return new Hyperlink(
             ['api.organization', ['organization' => $organization->id()]],
-            $organization->identifier()
+            $organization->name()
         );
     }
 
@@ -58,7 +58,6 @@ class OrganizationNormalizer implements ResourceNormalizerInterface
 
         $data = [
             'id' => $organization->id(),
-            'key' => $organization->identifier(),
             'name' => $organization->name()
         ];
 

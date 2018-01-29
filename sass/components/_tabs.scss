@@ -4,7 +4,12 @@
     display: flex;
     user-select: none;
 
-    > li {
+    a {
+        color: $grey;
+        cursor: pointer;
+        display: block;
+        text-decoration: none;
+
         background-color: $light-grey;
         border-right: 2px solid $white;
         flex: 1 1 auto;
@@ -17,11 +22,12 @@
         text-decoration: none;
         white-space: nowrap;
 
-        a {
-            color: $grey;
-            cursor: pointer;
-            display: block;
-            text-decoration: none;
+        span {
+            display: none;
+
+            @include breakpoint($bp-medium) {
+                display: inline-block;
+            }
         }
 
         &:last-child {
@@ -30,21 +36,13 @@
 
         &.active {
             background-color: $blue;
-            a { color: $white; }
+            color: $white;
             &:hover { background-color: $blue; }
         }
         &:hover {
-            background-color: $bright-blue;
-            a { color: $white; }
+            background-color: tint($blue, 50%);
+            color: $white;
         }
-    }
-}
-
-.tab-text {
-    display: none;
-
-    @include breakpoint($bp-medium) {
-        display: inline-block;
     }
 }
 
@@ -52,56 +50,54 @@
     border: 2px solid $blue;
     padding: 1em;
     margin-bottom: 1em;
-}
 
-.tab {
-    display: none;
-}
-
-.tab-grid {
-    display: flex;
-    flex-wrap: wrap;
-    list-style: none;
-
-    li
-
-    input[type="radio"] {
+    .tab {
         display: none;
-    }
 
-    label {
-        border: 1px solid $light-grey;
-        transition: background-color 1s ease;
-        padding: .5em;
-        width: 100%;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+        .tab-grid {
+            display: flex;
+            flex-wrap: wrap;
+            list-style: none;
 
-    label:hover {
-        background-color: $lightest-grey;
-    }
+            label {
+                border: 1px solid $light-grey;
+                transition: background-color 1s ease;
+                padding: .5em;
+                width: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
 
-    input[type="radio"]:checked + label {
-        background-color: $highlight-color;
-    }
-
-    > li {
-        width: 100%;
-        margin-bottom: 1em;
-
-        &.full {
-            width: 100%;
-        }
-
-        @include breakpoint($bp-large) {
-            &:nth-child(3n+2) {
-                @include margin-x(1em);
+                &:hover {
+                    background-color: $lightest-grey;
+                }
             }
 
-            flex: 1 0 30%;
-            max-width: 32%;
+            input[type="radio"] {
+                display: none;
+            }
+
+            input[type="radio"]:checked + label {
+                background-color: $highlight-color;
+            }
+
+            > li {
+                width: 100%;
+                margin-bottom: 1em;
+
+                &.full {
+                    width: 100%;
+                }
+
+                @include breakpoint($bp-large) {
+                    &:nth-child(3n+2) {
+                        @include margin-x(1em);
+                    }
+
+                    flex: 1 0 30%;
+                    max-width: 32%;
+                }
+            }
         }
     }
 }

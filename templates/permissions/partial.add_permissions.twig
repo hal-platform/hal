@@ -1,0 +1,76 @@
+{% import 'macros.form.twig' as form_macros %}
+
+{%- if organization is organization -%}
+    {% set perm_mode = 'organization' %}
+    {% set entity_params = { 'organization': organization.id } %}
+{%- else -%}
+    {% set perm_mode = 'application' %}
+    {% set entity_params = { 'application': application.id } %}
+{%- endif -%}
+
+{% block add_permission_form %}
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
+
+    <form method="post">
+        {{ form_macros.csrf_input(perm_mode ~ '_permissions.add') }}
+
+        <ul class="form-fields form-wrapper">
+            <li>
+                <label>Users</label>
+                <small>
+                    Grant access to multiple users at once.
+                </small>
+
+                <ul class="js-app-permissions">
+                    {% if form.users|length == 0 %}
+                        {% for i in 0..1 %}
+                            <li class="mvs">
+                                <input class="text-input" type="text" name="users[]" list="users-datalist" placeholder="Type or select a user..." value="{{ form.users[i] }}">
+                            </li>
+                        {% endfor %}
+                    {% else %}
+                        {% for user in form.users %}
+                            <li class="mvs">
+                                <input class="text-input" type="text" name="users[]" list="users-datalist" placeholder="Type or select a user..." value="{{ user }}">
+                            </li>
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+
+                <datalist id="users-datalist">
+                    {% for u in users %}
+                        <option value="{{ u.id }}">{{ u.name }} ({{ u.provider.type }})</option>
+                    {% endfor %}
+                </datalist>
+            </li>
+
+            <li>
+                <label>Permission Type</label>
+                <ul>
+                    {% set is_selected = form.type == '' ? ' checked' : '' %}
+                    <li>
+                        <label for="perm-noop">
+                            <input type="radio" id="perm-noop" name="type" value="" {{ is_selected }}>
+                            None
+                        </label>
+                    </li>
+
+                    {% for user_type in available_types %}
+                        {% set is_selected = form.type == user_type ? ' checked' : '' %}
+                        <li>
+                            <label for="perm-{{ user_type }}">
+                                <input type="radio" id="perm-{{ user_type }}" name="type" value="{{ user_type }}"{{ is_selected }}>
+                                {{ user_type }}
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
+
+        <p>
+            <button type="submit" class="btn btn--action">Add Permissions</button>
+            <a href="{{ uriFor(perm_mode, entity_params) }}">Cancel</a>
+        </p>
+    </form>
+{% endblock %}

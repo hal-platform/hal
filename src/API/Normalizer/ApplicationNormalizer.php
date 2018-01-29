@@ -11,21 +11,21 @@ use Hal\Core\Entity\Application;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResourceNormalizerInterface;
-use Hal\UI\Github\GitHubURLBuilder;
+use Hal\UI\VersionControl\VCS;
 
 class ApplicationNormalizer implements ResourceNormalizerInterface
 {
     /**
-     * @var GitHubURLBuilder
+     * @var VCS
      */
-    private $urlBuilder;
+    private $vcs;
 
     /**
-     * @param GitHubURLBuilder $urlBuilder
+     * @param VCS $vcs
      */
-    public function __construct(GitHubURLBuilder $urlBuilder)
+    public function __construct(VCS $vcs)
     {
-        $this->urlBuilder = $urlBuilder;
+        $this->vcs = $vcs;
     }
 
     /**
@@ -69,7 +69,6 @@ class ApplicationNormalizer implements ResourceNormalizerInterface
 
         $data = [
             'id' => $application->id(),
-            'key' => $application->identifier(),
             'name' => $application->name()
         ];
 
@@ -90,14 +89,16 @@ class ApplicationNormalizer implements ResourceNormalizerInterface
                 'text/html'
             ),
             'github_page' => new Hyperlink(
-                $this->urlBuilder->githubRepoURL($application->gitHub()->owner(), $application->gitHub()->repository()),
+                'https://github.example.com',
+                // $this->vcs->authenticate($provider)->url()->githubRepoURL($application->gitHub()->owner(), $application->gitHub()->repository()),
                 '',
                 'text/html'
             )
         ];
 
         $resource = new HypermediaResource($data, $links, [
-            'organization' => $application->organization()
+            'organization' => $application->organization(),
+            'vcs_provider' => $application->provider(),
         ]);
 
         $resource->withEmbedded($embed);

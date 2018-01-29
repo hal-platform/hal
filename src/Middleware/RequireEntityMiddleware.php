@@ -10,21 +10,27 @@ namespace Hal\UI\Middleware;
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\{
     Application,
-    Build,
     Credential,
     EncryptedProperty,
     Environment,
-    Group,
-    JobEvent,
+    Job,
     Organization,
-    Release,
     Target,
-    User,
-    UserPermission,
-    UserToken
+    TargetTemplate,
+    User
 };
+// use Hal\Core\Entity\Job\JobArtifact;
+use Hal\Core\Entity\Job\JobEvent;
+// use Hal\Core\Entity\Job\JobMeta;
+use Hal\Core\Entity\JobType\Build;
+use Hal\Core\Entity\JobType\Release;
+use Hal\Core\Entity\System\UserIdentityProvider;
+use Hal\Core\Entity\System\VersionControlProvider;
+use Hal\Core\Entity\User\UserPermission;
+use Hal\Core\Entity\User\UserToken;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use QL\MCP\Common\GUID;
 use QL\Panthor\MiddlewareInterface;
 
 /**
@@ -38,23 +44,25 @@ class RequireEntityMiddleware implements MiddlewareInterface
      * Map of known entities from their route parameter name to FQCN.
      */
     const KNOWN_ENTITIES = [
+        'application' => Application::class,
+        'credential' => Credential::class,
+        'encrypted' => EncryptedProperty::class,
+        'environment' => Environment::class,
+        'organization' => Organization::class,
+        'target' => Target::class,
+        'template' => TargetTemplate::class,
+
+        'job' => Job::class,
         'build' => Build::class,
         'release' => Release::class,
         'event' => JobEvent::class,
 
         'user' => User::class,
         'user_permission' => UserPermission::class,
-        'token' => UserToken::class,
+        'user_token' => UserToken::class,
 
-        'organization' => Organization::class,
-        'application' => Application::class,
-
-        'group' => Group::class,
-        'target' => Target::class,
-        'encrypted' => EncryptedProperty::class,
-
-        'environment' => Environment::class,
-        'credential' => Credential::class,
+        'system_idp' => UserIdentityProvider::class,
+        'system_vcs' => VersionControlProvider::class
     ];
 
     /**
@@ -110,6 +118,11 @@ class RequireEntityMiddleware implements MiddlewareInterface
     private function lookup($entityName, $id)
     {
         $fq = self::KNOWN_ENTITIES[$entityName];
+
+        $isGUID = GUID::createFromHex($id);
+        if (!$isGUID) {
+            return false;
+        }
 
         $repository = $this->em->getRepository($fq);
         if (!$entity = $repository->find($id)) {

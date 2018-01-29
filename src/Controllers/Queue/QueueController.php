@@ -7,8 +7,11 @@
 
 namespace Hal\UI\Controllers\Queue;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Job;
+use Hal\Core\Type\JobStatusEnum;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Service\JobQueueService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -24,18 +27,18 @@ class QueueController implements ControllerInterface
     private $template;
 
     /**
-     * @var JobQueueService
+     * @var EntityRepository
      */
-    private $queue;
+    private $jobRepo;
 
     /**
      * @param TemplateInterface $template
-     * @param JobQueueService $queue
+     * @param EntityManagerInterface $em
      */
-    public function __construct(TemplateInterface $template, JobQueueService $queue)
+    public function __construct(TemplateInterface $template, EntityManagerInterface $em)
     {
         $this->template = $template;
-        $this->queue = $queue;
+        $this->jobRepo = $em->getRepository(Job::class);
     }
 
     /**
@@ -44,7 +47,22 @@ class QueueController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         return $this->withTemplate($request, $response, $this->template, [
-            'pending' => $this->queue->getPendingJobs()
+            'pending' => $this->findPendingJobs()
         ]);
+    }
+
+    /**
+     * @return array
+     */
+    private function findPendingJobs()
+    {
+        return $this->jobRepo->findBy(
+            [
+                'status' => [JobStatusEnum::TYPE_PENDING, JobStatusEnum::TYPE_RUNNING]
+            ],
+            [
+                'created' => 'DESC'
+            ]
+        );
     }
 }

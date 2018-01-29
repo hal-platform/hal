@@ -10,8 +10,8 @@ namespace Hal\UI\Controllers;
 use Hal\Core\Entity\User;
 use Hal\UI\Flash;
 use Hal\UI\Middleware\FlashGlobalMiddleware;
-use Hal\UI\Middleware\UserSessionGlobalMiddleware;
 use Hal\UI\Security\UserAuthorizations;
+use Hal\UI\Security\UserSessionHandler;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\Middleware\SessionMiddleware;
 use QL\Panthor\Session\SessionInterface;
@@ -45,7 +45,7 @@ trait SessionTrait
      */
     private function getUser(ServerRequestInterface $request): ?User
     {
-        return $request->getAttribute(UserSessionGlobalMiddleware::USER_ATTRIBUTE);
+        return $request->getAttribute(UserSessionHandler::REQUEST_USER_ATTRIBUTE);
     }
 
     /**
@@ -55,7 +55,7 @@ trait SessionTrait
      */
     private function getAuthorizations(ServerRequestInterface $request): ?UserAuthorizations
     {
-        return $request->getAttribute(UserSessionGlobalMiddleware::AUTHORIZATIONS_ATTRIBUTE);
+        return $request->getAttribute(UserSessionHandler::REQUEST_AUTHORIZATIONS_ATTRIBUTE);
     }
 
     /**
@@ -77,5 +77,29 @@ trait SessionTrait
             ->withMessage($type, $message, $details);
 
         return $request;
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param string $message
+     * @param string $details
+     *
+     * @return ServerRequestInterface
+     */
+    private function withFlashSuccess(ServerRequestInterface $request, string $message, string $details = ''): ServerRequestInterface
+    {
+        return $this->withFlash($request, Flash::SUCCESS, $message, $details);
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param string $message
+     * @param string $details
+     *
+     * @return ServerRequestInterface
+     */
+    private function withFlashError(ServerRequestInterface $request, string $message, string $details = ''): ServerRequestInterface
+    {
+        return $this->withFlash($request, Flash::ERROR, $message, $details);
     }
 }

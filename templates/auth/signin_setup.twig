@@ -1,0 +1,43 @@
+{% extends 'base.twig' %}
+{% import 'macros.form.twig' as form_macros %}
+
+{% set page_title = 'Set up account' %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('signin') }}">Sign-In</a></li>
+{% endblock %}
+
+{% block content %}
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
+
+    <form method="post">
+        {{ form_macros.csrf_input('signin.setup') }}
+
+        <h2>Set up your new account.</h2>
+        <p>
+            Create a password so that you can sign in to your new account.
+        </p>
+
+        <ul class="form-fields form-wrapper">
+            <li>
+                <label for="username">Username</label>
+                <input class="text-input" type="text" id="username" value="{{ user.providerUniqueID }}" readonly>
+            </li>
+            <li>
+                {% set has_error = form_macros.has_error(errors, 'new_password') ? ' is-error' : '' %}
+                <label for="new-password">Password</label>
+                <input type="password" id="new-password" name="new_password" class="text-input{{ has_error }}">
+            </li>
+            <li>
+                {% set has_error = form_macros.has_error(errors, 'new_password_repeat') ? ' is-error' : '' %}
+                <label for="new-password-repeat">Enter password again</label>
+                <input type="password" id="new-password-repeat" name="new_password_repeat" class="text-input{{ has_error }}">
+            </li>
+        </ul>
+
+        <p>
+            <button type="submit" class="btn btn--action">Save Changes</button>
+        </p>
+
+    </form>
+{% endblock %}

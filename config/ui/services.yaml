@@ -1,16 +1,8 @@
-parameters:
-    twig.globals:
-        application_title: '%application.title%'
-        application_environment: '%application.environment%'
-        application_sha: '%application.sha%'
-        application_version: '%application.version%'
-        hal_administrators_email: '%administrator_email%'
-
 services:
 
-    ######################################################################################################################
+    ####################################################################################################################
     # VALIDATORS
-    ######################################################################################################################
+    ####################################################################################################################
 
     validator.organization:
         class: 'Hal\UI\Validator\OrganizationValidator'
@@ -22,7 +14,7 @@ services:
 
     validator.application:
         class: 'Hal\UI\Validator\ApplicationValidator'
-        arguments: ['@doctrine.em', '@github']
+        arguments: ['@doctrine.em', '@vcs']
 
     validator.credential:
         class: 'Hal\UI\Validator\CredentialValidator'
@@ -35,31 +27,131 @@ services:
     validator.permissions:
         class: 'Hal\UI\Validator\PermissionsValidator'
         arguments: ['@doctrine.em']
-    #
 
-    build.start.validator:
+    validator.build:
         class: 'Hal\UI\Validator\BuildValidator'
         arguments:
             - '@doctrine.em'
-            - '@github'
+            - '@vcs'
             - '@service.authorization'
-    release.start.validator:
+    validator.release:
         class: 'Hal\UI\Validator\ReleaseValidator'
         arguments:
             - '@doctrine.em'
             - '@service.authorization'
 
-    group.validator:
-        class: 'Hal\UI\Validator\GroupValidator'
-        arguments: ['@doctrine.em']
-
-    target.validator:
+    validator.target:
         class: 'Hal\UI\Validator\TargetValidator'
-        arguments: ['@doctrine.em']
+        arguments:
+            - '@doctrine.em'
+            -
+                cd: '@validator.target.cd'
+                eb: '@validator.target.eb'
+                rsync: '@validator.target.rsync'
+                s3: '@validator.target.s3'
+                script: '@validator.target.script'
 
-    ######################################################################################################################
+    validator.target.cd:
+        class: 'Hal\UI\Validator\Targets\CodeDeployValidator'
+        arguments: ['@validator.target.s3']
+
+    validator.target.eb:
+        class: 'Hal\UI\Validator\Targets\ElasticBeanstalkValidator'
+        arguments: ['@validator.target.s3']
+
+    validator.target.rsync:
+        class: 'Hal\UI\Validator\Targets\RSyncValidator'
+
+    validator.target.s3:
+        class: 'Hal\UI\Validator\Targets\S3Validator'
+
+    validator.target.script:
+        class: 'Hal\UI\Validator\Targets\ScriptValidator'
+
+    validator.meta:
+        class: 'Hal\UI\Validator\MetaValidator'
+
+    ####################################################################################################################
+
+    validator.template:
+        class: 'Hal\UI\Validator\TargetTemplateValidator'
+        arguments:
+            - '@doctrine.em'
+            -
+                cd: '@validator.template.cd'
+                eb: '@validator.template.eb'
+                rsync: '@validator.template.rsync'
+                s3: '@validator.template.s3'
+                script: '@validator.template.script'
+
+    validator.template.cd:
+        class: 'Hal\UI\Validator\Targets\CodeDeployValidator'
+        arguments: ['@validator.template.s3']
+        calls:
+            - ['withFlag', ['ALLOW_OPTIONAL']]
+
+    validator.template.eb:
+        class: 'Hal\UI\Validator\Targets\ElasticBeanstalkValidator'
+        arguments: ['@validator.template.s3']
+        calls:
+            - ['withFlag', ['ALLOW_OPTIONAL']]
+
+    validator.template.rsync:
+        class: 'Hal\UI\Validator\Targets\RSyncValidator'
+        calls:
+            - ['withFlag', ['ALLOW_OPTIONAL']]
+
+    validator.template.s3:
+        class: 'Hal\UI\Validator\Targets\S3Validator'
+        calls:
+            - ['withFlag', ['ALLOW_OPTIONAL']]
+
+    validator.template.script:
+        class: 'Hal\UI\Validator\Targets\ScriptValidator'
+        calls:
+            - ['withFlag', ['ALLOW_OPTIONAL']]
+
+    ####################################################################################################################
+
+    validator.user:
+        class: 'Hal\UI\Validator\UserValidator'
+        arguments: ['@doctrine.em', '@clock']
+
+    ####################################################################################################################
+
+    validator.vcs:
+        class: 'Hal\UI\Validator\VersionControlProviderValidator'
+        arguments:
+            - '@doctrine.em'
+            -
+                ghe: '@validator.vcs.ghe'
+
+    validator.vcs.ghe:
+        class: 'Hal\UI\Validator\VersionControl\GitHubEnterpriseValidator'
+
+    ####################################################################################################################
+
+    validator.idp:
+        class: 'Hal\UI\Validator\UserIdentityProviderValidator'
+        arguments:
+            - '@doctrine.em'
+            -
+                ghe: '@validator.idp.ghe'
+                ldap: '@validator.idp.ldap'
+                internal: '@validator.idp.internal'
+
+    validator.idp.ghe:
+        class: 'Hal\UI\Validator\IdentityProviders\GitHubEnterpriseValidator'
+
+    validator.idp.ldap:
+        class: 'Hal\UI\Validator\IdentityProviders\LDAPValidator'
+
+    validator.idp.internal:
+        class: 'Hal\UI\Validator\IdentityProviders\InternalValidator'
+
+    ####################################################################################################################
     # TWIG TEMPLATING
-    ######################################################################################################################
+    ####################################################################################################################
 
     twig.extension.hal:
         class: 'Hal\UI\Twig\HalExtension'
@@ -67,23 +159,28 @@ services:
             - '@utility.time.formatter'
             - '%gravatar.fallback%'
 
-    twig.extension.hal.global:
-        class: 'Hal\UI\Twig\GlobalExtension'
-        arguments: ['%twig.globals%']
-
     twig.extension.github:
         class: 'Hal\UI\Twig\GitHubExtension'
-        arguments: ['@github', '@github.url_builder']
+        arguments: ['@vcs']
         calls:
             - ['setCache', ['@twig.extension.github.cache']]
 
+    twig.extension.security:
+        class: 'Hal\UI\Twig\SecurityExtension'
+        arguments: ['@csrf']
+
     twig.extension.github.cache:
-        class: 'QL\MCP\Cache\MemoryCache'
+        parent: 'cache.memory'
 
     # Twig Environment
     twig.environment:
         parent: 'panthor.twig.environment'
         calls:
             - ['addExtension', ['@twig.extension.hal']]
-            - ['addExtension', ['@twig.extension.hal.global' ]]
             - ['addExtension', ['@twig.extension.github']]
+            - ['addExtension', ['@twig.extension.security']]
+            - ['addGlobal', ['application_title', '%application.title%']]
+            - ['addGlobal', ['application_environment', '%application.environment%']]
+            - ['addGlobal', ['application_sha', '%application.sha%']]
+            - ['addGlobal', ['application_version', '%application.version%']]
+            - ['addGlobal', ['hal_administrators_email', '%administrator_email%']]

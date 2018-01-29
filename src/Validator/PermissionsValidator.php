@@ -12,14 +12,14 @@ use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Organization;
 use Hal\Core\Entity\User;
-use Hal\Core\Entity\UserPermission;
+use Hal\Core\Entity\User\UserPermission;
 use Hal\Core\Type\UserPermissionEnum;
 use Hal\UI\Security\UserAuthorizations;
 
 class PermissionsValidator
 {
-    use NewValidatorTrait;
     use ValidatorErrorTrait;
+    use ValidatorTrait;
 
     private const ERR_INVALID_TYPE = 'Please select a valid permission type.';
     private const ERR_CANNOT_ADD_SUPER = 'You are not allowed to add super permissions.';

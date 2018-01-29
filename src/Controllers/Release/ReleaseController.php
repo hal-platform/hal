@@ -7,13 +7,16 @@
 
 namespace Hal\UI\Controllers\Release;
 
-use Hal\Core\Entity\Release;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Job\JobMeta;
+use Hal\Core\Entity\JobType\Release;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Service\EventLogService;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Hal\UI\Service\JobEventsService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class ReleaseController implements ControllerInterface
 {
@@ -25,23 +28,26 @@ class ReleaseController implements ControllerInterface
     private $template;
 
     /**
-     * @var Release
+     * @var JobEventsService
      */
-    private $release;
+    private $eventsService;
 
     /**
-     * @var EventLogService
+     * @var EntityRepository
      */
-    private $logService;
+    private $metaRepo;
 
     /**
      * @param TemplateInterface $template
-     * @param EventLogService $logService
+     * @param JobEventsService $eventsService
+     * @param EntityManagerInterface $em
      */
-    public function __construct(TemplateInterface $template, EventLogService $logService)
+    public function __construct(TemplateInterface $template, JobEventsService $eventsService, EntityManagerInterface $em)
     {
         $this->template = $template;
-        $this->logService = $logService;
+        $this->eventsService = $eventsService;
+
+        $this->metaRepo = $em->getRepository(JobMeta::class);
     }
 
     /**
@@ -52,11 +58,14 @@ class ReleaseController implements ControllerInterface
         $release = $request->getAttribute(Release::class);
 
         // Resolves logs from redis (for in progress jobs) or db (after completed)
-        $logs = $this->logService->getLogs($release);
+        $events = $this->eventsService->getEvents($release);
+        $metadata = $this->metaRepo->findBy(['job' => $release], ['name' => 'ASC']);
 
         return $this->withTemplate($request, $response, $this->template, [
             'release' => $release,
-            'logs' => $logs
+
+            'events' => $events,
+            'meta' => $metadata
         ]);
     }
 }

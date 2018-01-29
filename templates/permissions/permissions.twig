@@ -1,164 +1,99 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
+{% import 'permissions/macros.permissions.twig' as perm_macros %}
+{% import 'macros.pagination.twig' as pagination %}
 
 {% set page_title = 'Manage Permissions' %}
 
-{% set can_remove = current_authorizations.isAdmin or current_authorizations.isSuper %}
-{% if current_authorizations.isAdmin and user_types.admin|length < 2 %}
-    {% set can_remove = false %}
-{% endif %}
+{% set can_remove = current_authorizations.isAdmin() or current_authorizations.isSuper() %}
+{% set can_remove_admin = current_authorizations.isSuper() and admin_count > 1 %}
 
-{% set can_remove_super = current_authorizations.isSuper and user_types.super|length > 1 %}
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+    <li><a href="{{ uriFor('users') }}">Users</a></li>
+{% endblock %}
 
 {% block content %}
+    <p>
+        Permissions can be granted to a user on the <b>Organization</b>, or <b>Users</b>, or <b>Manage Application</b> pages.
+    </p>
 
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
+    <p>
+        Looking to grant access to many users at once? Add permissions from the <b>Application</b> or <b>Organization</b>
+        pages to access bulk permissions operations.
+    </p>
 
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('admin') }}">Back to Admin Dashboard</a>
-            <a class="btn btn--small btn--back" href="{{ uriFor('users.page1') }}">View all Users</a>
-        </p>
-    </div>
+    {{ pagination.pagination(page, last, 'admin.permissions', {}, {}, 'previous', 'next') }}
 
-    <p>Permissions can be granted to a user on the <b>Users</b> page, or to a user for an application on the <b>Manage Application</b> page.</p>
+    {{ block('user_table') }}
 
-    <ul>
-        <li><a href="#app-owners">Application Owners</a></li>
-        <li><a href="#app-members">Application Members</a></li>
-        <li><a href="#super">Hal Administrators</a></li>
-    </ul>
-
-    <h2 id="app-owners">Owners</h2>
-    {% if owners %}
-        <table class="table--spacing-medium">
-            <thead>
-                <tr>
-                    <th class="t20">Username</th>
-                    <th>Email</th>
-                    <th>Scope</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for type in owners %}
-                    {% set user = type.user %}
-
-                    <tr>
-                        <td><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.username }}</a></td>
-                        <td>{{ user.email }}</td>
-
-                        <td>
-                            <ul>
-                                {% for perm in type.permissions %}
-                                <li>
-                                    {% if perm.application %}
-                                        <a href="{{ uriFor('application', {'application': perm.application.id}) }}">{{ perm.application.name }}</a>
-                                    {% elseif perm.organization %}
-                                        <a href="{{ uriFor('organization', {'organization': perm.organization.id}) }}">{{ perm.organization.name }}</a>
-                                    {% endif %}
-
-                                    {% if can_remove %}
-                                        (<a style="color:red;" href="{{ uriFor('admin.permissions.remove', {'user': user.id, 'user_permission': perm.id}) }}">Remove</a>)
-                                    {% endif %}
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>There are no application owners.</p>
-    {% endif %}
-
-    <h2 id="app-members">Members</h2>
-    {% if members %}
-        <table class="table--spacing-medium">
-            <thead>
-                <tr>
-                    <th class="t20">Username</th>
-                    <th>Email</th>
-                    <th>Scope</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for permission in members %}
-                    {% set user = permission.user %}
-
-                    <tr>
-                        <td><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.username }}</a></td>
-                        <td>{{ user.email }}</td>
-
-                        <td>
-                            <ul>
-                                {% for perm in permission.permissions %}
-                                <li>
-                                    {% if perm.application %}
-                                        <a href="{{ uriFor('application', {'application': perm.application.id}) }}">{{ perm.application.name }}</a>
-                                    {% elseif perm.organization %}
-                                        <a href="{{ uriFor('organization', {'organization': perm.organization.id}) }}">{{ perm.organization.name }}</a>
-                                    {% endif %}
-
-                                    {% if can_remove %}
-                                        (<a style="color:red;" href="{{ uriFor('admin.permissions.remove', {'user': user.id, 'user_permission': perm.id}) }}">Remove</a>)
-                                    {% endif %}
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No users have member permissions.</p>
-    {% endif %}
-
-    <h2 id="super">Hal Administrators</h2>
-    {% if admins %}
-        <table class="table--spacing-medium">
-            <thead>
-            <tr>
-                <th class="t20">Username</th>
-                <th>Email</th>
-
-                {% if can_remove %}
-                    <th></th>
-                {% endif %}
-            </tr>
-            </thead>
-            <tbody>
-            {% for permission in admins %}
-                {% set user = permission.user %}
-
-                <tr>
-                    <td><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.username }}</a></td>
-                    <td>{{ user.email }}</td>
-                    <td>
-                        <ul>
-                            {% for perm in permission.permissions %}
-                            <li>
-                                {% if perm.type == 'admin' %}
-                                    Admin
-                                {% endif %}
-
-                                {% if can_remove %}
-                                    (<a style="color:red;" href="{{ uriFor('admin.permissions.remove', {'user': user.id, 'user_permission': perm.id}) }}">Remove</a>)
-                                {% endif %}
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        There are no Hal administrators.
-    {% endif %}
+    {{ pagination.pagination(page, last, 'admin.permissions', {}, {}, 'previous', 'next') }}
 
     <h2>Permission Levels</h2>
     {% include 'permissions/partial.permission_descriptions.twig' %}
 
+{% endblock %}
+
+{% block user_table %}
+    <table class="table--topped">
+        <thead>
+            <tr>
+                <th class="t15">User ID</th>
+                <th class="t15">Provider</th>
+                <th>Name</th>
+                <th>Scope</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if permissions %}
+                {% for p in permissions %}
+                    <tr>
+                        <td>
+                            <a href="{{ uriFor('user', {'user': p.user.id}) }}">{{ p.user|short_guid }}</a>
+                            {% if p.user.isDisabled %}
+                                {{ macros.status('Disabled', 'error') }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ p.user.provider.formatType() }}
+                        </td>
+                        <td>
+                            {{ p.user.name }}
+                        </td>
+                        <td>
+                            <ul>
+                                 {% for perm in p.permissions %}
+                                    <li class="mvs">
+                                        {{ perm_macros.permission_type_label(perm.type) }}
+
+                                        {% if perm.application %}
+                                            <a href="{{ uriFor('application', {'application': perm.application.id}) }}">{{ perm.application.name }}</a>
+                                        {% elseif perm.organization %}
+                                            {{ macros.status('Organization', 'info') }} <a href="{{ uriFor('organization', {'organization': perm.organization.id}) }}">{{ perm.organization.name }}</a>
+                                        {% else %}
+                                            All applications
+                                        {% endif %}
+
+                                        {% if can_remove %}
+                                            {% if perm.type in ['admin', 'super'] %}
+                                                {% if can_remove_admin %}
+                                                    <a class="btn btn--tiny btn--destructive" href="{{ uriFor('user_permissions.remove', {'user': p.user.id, 'user_permission': perm.id}) }}">Remove</a>
+                                                {% endif %}
+                                            {% else %}
+                                                <a class="btn btn--tiny btn--destructive" href="{{ uriFor('user_permissions.remove', {'user': p.user.id, 'user_permission': perm.id}) }}">Remove</a>
+                                            {% endif %}
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4">No users available.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
 {% endblock %}

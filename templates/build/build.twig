@@ -3,24 +3,51 @@
 {% import 'macros.git.twig' as git_macros %}
 {% set js_components = ['build_info'] %}
 
-{% set page_title = 'Build : ' ~ build.application.name %}
+{% set page_title = 'Build ' ~ build.id|short_guid %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+    <li><a href="{{ uriFor('application', {'application': build.application.id}) }}">{{ build.application.name }}</a></li>
+    <li><a href="{{ uriFor('application.dashboard', {'application': build.application.id}) }}">Dashboard</a></li>
+{% endblock %}
+
+{% set can_deploy = current_authorizations.canBuild(build.application) %}
 
 {% block content %}
-
-    <div class="nav--page">
-        <h1>Build - <b>{{ build.application.name }}</b></h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': build.application.id}) }}">Back to Application Dashboard</a>
-        </p>
-    </div>
-
     <h2>Build Details</h2>
+    {{ block('meta') }}
 
+    <h2>Build Status</h2>
+    {{ block('build_status') }}
+
+    {% if releases|length > 1 and releases|length < 10 %}
+        <h2>Deployment History</h2>
+        {{ block('deployment_history') }}
+    {% endif %}
+
+    {% if scheduled %}
+        <h2>Scheduled Actions</h2>
+        {{ block('scheduled_actions') }}
+    {% endif %}
+
+    {% if can_deploy %}
+        {{ block('deploy_build_button') }}
+    {% endif %}
+
+    <h2>Build Metadata</h2>
+    <p><a href="{{ uriFor('help') }}#what-is-metadata">What is this?</a></p>
+    {{ block('metas') }}
+
+    <h2>Build Events</h2>
+    {{ block('events') }}
+
+{% endblock %}
+
+{% block meta %}
     <ul class="meta-box">
         <li>
             <h6>ID</h6>
-            {{ build.id }}
+            {{ build.id|short_guid }}
         </li>
 
         <li>
@@ -33,30 +60,23 @@
             {{ build.environment ? build.environment.name : 'Any' }}
         </li>
 
+        {% set is_current = is_vcs_ref_current(build.application, build) %}
         <li>
-            <h6>Reference</h6>
-            {% set isCurrent = githubCommitIsCurrent(build.application.github.owner, build.application.github.repository, build.reference, build.commit) %}
-            {{ git_macros.gitref(build, false, isCurrent) }}
+            <h6>Version Control</h6>
+            {{ git_macros.vcs_ref(build.application, build, is_current) }}
+            {{ git_macros.vcs_commit(build.application, build) }}
         </li>
 
         <li>
-            <h6>Commit</h6>
-            <a href="{{ githubCommitUrl(build.application.github.owner, build.application.github.repository, build.commit) }}">{{ build.commit|commit }}</a>
-            {{ macros.icon('github') }}
-        </li>
-
-        <li>
-            <h6>User</h6>
-            {% if build.user %}
-                <a href="{{ uriFor('user', {'user': build.user.id}) }}">{{ build.user.name }}</a>
-            {% else %}
-                Unknown
-            {% endif %}
+            <h6>Started</h6>
+            {{ build.created|html5date }}
+            by
+            {{ macros.user_display_link(build.user) }}
         </li>
     </ul>
+{% endblock %}
 
-    <h2>Build Status</h2>
-
+{% block build_status %}
     <ul class="meta-box">
         <li>
             <h6>Status</h6>
@@ -64,83 +84,132 @@
         </li>
 
         <li>
-            <h6>Time</h6>
-            <span class="js-build-start">{{ build.start|html5date }}</span>
-        </li>
-
-
-        <li>
             <h6>Duration</h6>
             <span class="js-build-duration">
                 {% if build.start and build.end %}
                     {{ html5duration(build.start, build.end) }}
+                {% else %}
+                    N/A
                 {% endif %}
             </span>
         </li>
-    </ul>
 
-    {% if children %}
-        <h2>Child Processes</h2>
-
-        <table class="table--spacing-medium table--bodied">
-            <thead>
-                <tr>
-                    <th class="t20">Status</th>
-                    <th class="t30">Next Job</th>
-                    <th>Message</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for child in children %}
-                    <tr>
-                        <td>
-                            {% if child.status == 'Pending' %}
-                                {{ macros.status_icon(child.status, 'pending') }}
-                            {% elseif child.status == 'Aborted' %}
-                                {{ macros.status_icon(child.status, 'error') }}
-                            {% elseif child.status == 'Launched' %}
-                                {{ macros.status_icon(child.status, 'success') }}
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if child.target %}
-                                Release to <a href="{{ uriFor('target', {'application': build.application.id, 'target': child.target.id}) }}">{{ child.target.format }}</a>
-                            {% else %}
-                                Unknown
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if child.status == 'Launched' and child.release %}
-                                {{ macros.job_status_prefix(child.release, false, false) }} created successfully
-                            {% else %}
-                                {{ child.message }}
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
-
-    {% if current_authorizations.canBuild(build.application) %}
-        {% set pushableMessage = 'The build was successful, go ahead and deploy it!' %}
-        {% set unpushableMessage = 'The build cannot be deployed.' %}
-
-        {% if build.status == 'success' %}
-            <h3>{{ pushableMessage }}</h3>
-            <p><a class="btn btn--action" href="{{ uriFor('release.start', {'build': build.id}) }}">Deploy Build</a></p>
-        {% elseif build.status in ['pending', 'running'] %}
-            <h3 data-success="{{ pushableMessage }}" data-failure="{{ unpushableMessage }}">
-                The build is still pending. Please wait...
-            </h3>
-            <p class="js-build-push"><span class="btn btn--disabled js-build-push">Deploy Build</span></p>
-        {% else %}
-            <h3>{{ unpushableMessage }}</h3>
-            <p><span class="btn btn--disabled">Deploy Build</span></p>
+        {% if releases|length > 0 %}
+            <li>
+                <h6>Deployed to</h6>
+                {% if releases|length == 1 %}
+                    {% set last_job = releases|first %}
+                    {{ macros.job_status_prefix(last_job, false, false) }}
+                    on
+                    {{ last_job.created|html5date }}
+                    by
+                    {{ macros.user_display_link(last_job.user) }}
+                {% elseif releases|length > 10 %}
+                    This build was used in {{ releases|length }} separate deployments.
+                {% endif %}
+            </li>
         {% endif %}
+    </ul>
+{% endblock %}
+
+{% block deployment_history %}
+    <table>
+        <thead>
+            <tr>
+                <th class="t20">Release</th>
+                <th class="t20">Time</th>
+                <th>Deployment Target</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for release in releases %}
+                <tr>
+                    <td>{{ macros.job_status_prefix(release, false, false) }}</td>
+                    <td>{{ release.created|html5date }}</td>
+                    <td>
+                        {% if release.id == release.target.lastJob.id %}
+                            {{ macros.status('LIVE', 'success') }}
+                        {% endif %}
+                        {{ release.environment.name }} →
+                        <a href="{{ uriFor('target', {'application': release.application.id, 'target': release.target.id}) }}">{{ release.target.name }}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block deploy_build_button %}
+    {% set pushable_message = 'The build was successful, go ahead and deploy it!' %}
+    {% set unpushable_message = 'The build cannot be deployed.' %}
+
+    {% if build.status == 'success' %}
+        <h3>{{ pushable_message }}</h3>
+        <p>
+            <a class="btn btn--action" href="{{ uriFor('release.start', {'build': build.id}) }}">Deploy Build</a>
+        </p>
+
+    {% elseif build.status in ['pending', 'running'] %}
+        <h3 data-success="{{ pushable_message }}" data-failure="{{ unpushable_message }}">
+            The job is still running. Please wait...
+        </h3>
+        <p class="js-build-push">
+            <span class="btn js-build-push" disabled>Deploy Build</span>
+        </p>
+    {% else %}
+        <h3>{{ unpushable_message }}</h3>
+        <p>
+            {{ macros.disabled_button('Deploy Build') }}
+        </p>
     {% endif %}
 
-    <h2>Build Events</h2>
-    {% include 'partial.event_table.twig' with {logs: logs, canLoad: build.isFinished } only %}
+{% endblock %}
 
+{% block scheduled_actions %}
+    <table>
+        <thead>
+            <tr>
+                <th class="t20">Status</th>
+                <th class="t30">Next Job</th>
+                <th>Message</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for action in scheduled %}
+                <tr>
+                    <td>
+                        {% if action.status == 'pending' %}
+                            {{ macros.status_icon('Pending', 'pending') }}
+                        {% elseif action.status == 'aborted' %}
+                            {{ macros.status_icon('Aborted', 'error') }}
+                        {% elseif action.status == 'launched' %}
+                            {{ macros.status_icon('Launched', 'success') }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if action.scheduledJob %}
+                            {{ macros.job_status_prefix(action.scheduledJob, true) }}
+                        {% else %}
+                            Unknown
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if action.scheduledJob %}
+                            {{ macros.job_status_prefix(action.scheduledJob, false, false) }} created successfully
+                        {% else %}
+                            {{ action.message }}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block metas %}
+    {% include 'partial.meta_table.twig' with { 'metadata': meta } only %}
+{% endblock %}
+
+{% block events %}
+    {% include 'partial.event_table.twig' with { 'events': events, 'can_load': build.isFinished } only %}
 {% endblock %}

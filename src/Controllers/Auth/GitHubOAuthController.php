@@ -12,8 +12,7 @@ use Hal\Core\Entity\User;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Flash;
-use Hal\UI\Github\OAuthHandler;
+use Hal\UI\VersionControl\GitHub\OAuthHandler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\MCP\Common\GUID;
@@ -121,7 +120,7 @@ class GitHubOAuthController implements ControllerInterface
             }
 
             // Send back to settings
-            $this->withFlash($request, Flash::SUCCESS, self::MSG_SUCCESS);
+            $this->withFlashSuccess($request, self::MSG_SUCCESS);
             return $this->withRedirectRoute($response, $this->uri, 'settings');
         }
 

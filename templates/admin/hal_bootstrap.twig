@@ -1,0 +1,61 @@
+{% extends 'base.twig' %}
+{% import 'macros.form.twig' as form_macros %}
+
+{% set page_title = 'Configure Hal' %}
+
+{% block content %}
+
+    <h1>Hal Bootstrap Configurator</h1>
+    <p>
+        This is the Hal bootstrap.
+        Set up Hal so users can sign-in and build their projects.
+    </p>
+
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
+
+    {{ block('bootstrap_form') }}
+
+{% endblock %}
+
+{% block bootstrap_form %}
+    <form method="post">
+        {{ form_macros.csrf_input('hal_bootstrap') }}
+
+        <h2>Configure Identity Providers</h2>
+        <p>
+            Hal will be configured to allow internal users (No separate auth system required).
+            You can add more identity providers later.
+        </p>
+        <ul class="form-fields form-wrapper">
+            <li>
+                {% set has_error = form_macros.has_error(errors, 'admin_username') ? ' is-error' : '' %}
+                <label for="admin-username">Administrator Username</label>
+                <input class="text-input{{ has_error }}" type="text" id="admin-username" name="admin_username">
+            </li>
+            <li>
+                {% set has_error = form_macros.has_error(errors, 'admin_password') ? ' is-error' : '' %}
+                <label for="admin-password">Password</label>
+                <input class="text-input{{ has_error }}" type="password" id="admin-password" name="admin_password">
+            </li>
+        </ul>
+
+        <h2>Configure Version Control</h2>
+        <ul class="form-fields form-wrapper">
+            <li>
+                {% set has_error = form_macros.has_error(errors, 'ghe_url') ? ' is-error' : '' %}
+                <label for="ghe-token">GitHub Enterprise URL</label>
+                <input class="text-input{{ has_error }}" type="text" id="ghe-url" name="ghe_url" placeholder="https://github.example.com">
+            </li>
+            <li>
+                {% set has_error = form_macros.has_error(errors, 'ghe_token') ? ' is-error' : '' %}
+                <label for="ghe-token">GitHub Enterprise API Token</label>
+                <input class="text-input{{ has_error }}" type="text" id="ghe-token" name="ghe_token">
+            </li>
+        </ul>
+
+        <p>
+            <button type="submit" class="btn btn--action">Save Changes</button>
+        </p>
+
+    </form>
+{% endblock %}

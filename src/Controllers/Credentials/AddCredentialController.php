@@ -10,7 +10,7 @@ namespace Hal\UI\Controllers\Credentials;
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Credential;
 use Hal\Core\Type\CredentialEnum;
-use Hal\UI\Flash;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
@@ -23,15 +23,10 @@ use QL\Panthor\Utility\URI;
 
 class AddCredentialController implements ControllerInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
-
-    public const HUMAN_READABLE_TYPES = [
-        CredentialEnum::TYPE_AWS_STATIC => 'AWS Static Token',
-        CredentialEnum::TYPE_AWS_ROLE => 'AWS STS Role',
-        CredentialEnum::TYPE_PRIVATEKEY => 'Private Key'
-    ];
 
     private const MSG_SUCCESS = 'Credential "%s" added.';
 
@@ -81,7 +76,7 @@ class AddCredentialController implements ControllerInterface
         $form = $this->getFormData($request);
 
         if ($credential = $this->handleForm($form, $request)) {
-            $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $credential->name()));
+            $this->withFlashSuccess($request, sprintf(self::MSG_SUCCESS, $credential->name()));
             return $this->withRedirectRoute($response, $this->uri, 'credentials');
         }
 
@@ -89,7 +84,7 @@ class AddCredentialController implements ControllerInterface
             'form' => $form,
             'errors' => $this->credentialValidator->errors(),
 
-            'credential_types' => self::HUMAN_READABLE_TYPES
+            'credential_options' => CredentialEnum::options()
         ]);
     }
 
@@ -102,6 +97,10 @@ class AddCredentialController implements ControllerInterface
     private function handleForm(array $data, ServerRequestInterface $request): ?Credential
     {
         if ($request->getMethod() !== 'POST') {
+            return null;
+        }
+
+        if (!$this->isCSRFValid($request)) {
             return null;
         }
 

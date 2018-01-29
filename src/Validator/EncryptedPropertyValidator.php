@@ -20,7 +20,7 @@ use Hal\Core\Crypto\Encryption;
 class EncryptedPropertyValidator
 {
     use ValidatorErrorTrait;
-    use NewValidatorTrait;
+    use ValidatorTrait;
 
     private const REGEX_CHARACTER_CLASS_NAME = '0-9A-Z_';
     private const REGEX_CHARACTER_WHITESPACE = '\f\n\r\t\v';
@@ -82,9 +82,9 @@ class EncryptedPropertyValidator
         }
 
         $prop = $this->encryptedPropertyRepo->findOneBy([
-            "name" => $name,
-            "application" => $application,
-            "environment" => $environment
+            'name' => $name,
+            'application' => $application,
+            'environment' => $environment
         ]);
 
         if ($prop) {
@@ -99,7 +99,7 @@ class EncryptedPropertyValidator
         $encryptedProperty = (new EncryptedProperty)
             ->withApplication($application)
             ->withName($name)
-            ->withData($encrypted);
+            ->withSecret($encrypted);
 
         if ($environment) {
             $encryptedProperty->withEnvironment($environment);

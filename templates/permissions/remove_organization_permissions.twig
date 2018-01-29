@@ -1,0 +1,72 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+{% import 'macros.git.twig' as git_macros %}
+{% import 'macros.form.twig' as form_macros %}
+
+{% set page_title = 'Manage Permissions' %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+    <li><a href="{{ uriFor('organization', {'organization': organization.id}) }}">{{ organization.name }}</a></li>
+{% endblock %}
+
+{% block content %}
+    {{ block('meta') }}
+
+    <h2>Manage Permissions</h2>
+    {{ block('remove_permission_form') }}
+
+    <h2>Permission Levels</h2>
+    {% include 'permissions/partial.permission_descriptions.twig' %}
+
+{% endblock %}
+
+{% block remove_permission_form %}
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
+
+    <form method="post">
+        {{ form_macros.csrf_input('organization_permissions.remove') }}
+
+        <ul class="form-fields form-wrapper">
+            <li>
+                <label>Revoke access from multiple users at once.</label>
+                <small>
+                    Flip a switch <i>off</i> and save your changes to remove access.
+                </small>
+
+                <ul>
+                    {% for perm in permissions %}
+                        <li>
+                            <label class="checkbox-toggle">
+                                {% set is_selected = perm.id in form.permissions ? ' checked' : '' %}
+                                <input type="checkbox" name="permissions[]" value="{{ perm.id }}" {{ is_selected }}>
+                                <b class="checkbox-toggle--pill"></b>
+                                {% if perm.type == 'admin' or perm.type == 'super' %}
+                                    {{ perm.user.name }} {{ macros.status('Prod', 'error') }}
+                                {% elseif perm.type == 'owner' %}
+                                    {{ perm.user.name }} {{ macros.status('Owner', 'notice') }}
+                                {% else %}
+                                    {{ perm.user.name }} {{ macros.status('Member', 'info') }}
+                                {% endif %}
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
+
+        <p>
+            <button type="submit" class="btn btn--destructive">Update Permissions</button>
+            <a href="{{ uriFor('organization', {'organization': organization.id}) }}">Cancel</a>
+        </p>
+    </form>
+{% endblock %}
+
+{% block meta %}
+    <ul class="meta-box">
+        <li>
+            <h6>Organization</h6>
+            {{ organization.name }}
+        </li>
+    </ul>
+{% endblock %}

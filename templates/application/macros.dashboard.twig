@@ -1,0 +1,66 @@
+{% macro push_card(application, target, last_job) %}
+    {% import 'macros.twig' as macros %}
+    {% import 'macros.git.twig' as git_macros %}
+
+    <article class="card">
+        <header class="card__header">
+            <h4>
+                <a href="{{ uriFor('target', {'application': target.application.id, 'target': target.id}) }}">{{ target.name }}</a>
+
+                {% if target.url %}
+                    <a class="icon--link" href="{{ target.url }}">
+                        {{ macros.icon('outgoing') }}
+                    </a>
+                {% endif %}
+
+                {% if last_job %}
+                    <a class="rollback icon--link" href="{{ uriFor('rollback', {'application': application.id, 'target': target.id}) }}">
+                        <span class="hint--top" aria-label="View deployment history or rollback to a successful build">
+                            {{- macros.icon('revert') -}}
+                        </span>
+                    </a>
+                {% endif %}
+            </h4>
+        </header>
+
+        <section class="card__details">
+            <ul>
+                <li>
+                    <b>Deployed:</b>
+                    {% if last_job.created -%}
+                        {{ last_job.created|html5date }}
+                    {%- else -%}
+                        Never
+                    {%- endif %}
+                </li>
+
+                <li>
+                    <b>Release:</b>
+                    {% if last_job -%}
+                        {{ macros.job_status_prefix(last_job, true) }}
+                    {%- else -%}
+                        None
+                    {%- endif %}
+                </li>
+                <li>
+                    <b>Build:</b>
+                    {% if last_job -%}
+                        {{ macros.job_status_prefix(last_job.build, true) }}
+                    {%- else -%}
+                        None
+                    {%- endif %}
+                </li>
+                <li>
+                    <b>Version Control:</b>
+                    {% if last_job -%}
+                        {% set is_current = is_vcs_ref_current(last_job.build.application, last_job.build) %}
+                        {{ git_macros.vcs_ref(last_job.build.application, last_job.build, is_current) }}
+                        {{ git_macros.vcs_commit(last_job.build.application, last_job.build) }}
+                    {%- else -%}
+                        None
+                    {%- endif %}
+                </li>
+            </ul>
+        </section>
+    </article>
+{% endmacro %}

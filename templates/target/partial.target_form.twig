@@ -1,0 +1,140 @@
+{% block rsync_fields %}
+    {% import 'macros.form.twig' as form_macros %}
+
+    <li data-type-specific data-rsync>
+        {% set has_error = form_macros.has_error(errors, 'rsync_servers') ? ' is-error' : '' %}
+        <label for="rsync_servers">Server hostnames</label>
+        <input class="text-input{{ has_error }}" type="text" name="rsync_servers" id="rsync_servers" maxlength="200" value="{{ form.rsync_servers }}">
+        <small>
+            The hostnames of the server(s) to deploy to.
+        </small>
+    </li>
+
+    <li data-type-specific data-rsync>
+        {% set has_error = form_macros.has_error(errors, 'rsync_path') ? ' is-error' : '' %}
+        <label for="rsync_path">File path</label>
+        <input class="text-input{{ has_error }}" type="text" name="rsync_path" id="rsync_path" maxlength="200" value="{{ form.rsync_path }}" pattern="^\/[^\n\t]+">
+        <small>
+            The absolute path to the file directory on the server.
+            Paths must begin with a forward slash (/).
+        </small>
+    </li>
+{% endblock %}
+
+{% block script_fields %}
+
+{% endblock %}
+
+{% block aws_fields %}
+    {% import 'macros.form.twig' as form_macros %}
+
+    <li data-type-specific data-s3 data-eb data-cd>
+        {% set has_error = form_macros.has_error(errors, 'aws_region') ? ' is-error' : '' %}
+        <label for="aws_region">AWS Region</label>
+        <select class="select-input{{ has_error }}" name="aws_region" id="aws_region">
+            <option></option>
+            {% for region in aws_regions %}
+                {% set is_selected = form.aws_region == region ? ' selected' : '' %}
+                <option value="{{ region }}"{{ is_selected }}>{{ region }}</option>
+            {% endfor %}
+        </select>
+    </li>
+{% endblock %}
+
+{% block codedeploy_fields %}
+    {% import 'macros.form.twig' as form_macros %}
+
+    <li data-type-specific data-cd>
+        {% set has_error = form_macros.has_error(errors, 'cd_name') ? ' is-error' : '' %}
+        <label for="cd_name">CodeDeploy Application Name</label>
+        <input class="text-input{{ has_error }}" type="text" name="cd_name" id="cd_name" maxlength="100" value="{{ form.cd_name }}">
+    </li>
+
+    <li data-type-specific data-cd>
+        {% set has_error = form_macros.has_error(errors, 'cd_group') ? ' is-error' : '' %}
+        <label for="cd_group">CodeDeploy Deployment Group</label>
+        <input class="text-input{{ has_error }}" type="text" name="cd_group" id="cd_group" maxlength="100" value="{{ form.cd_group }}">
+    </li>
+
+    <li data-type-specific data-cd>
+        {% set has_error = form_macros.has_error(errors, 'cd_config') ? ' is-error' : '' %}
+        <label for="cd_config">CodeDeploy Configuration</label>
+        <input class="text-input{{ has_error }}" type="text" name="cd_config" id="cd_config" maxlength="100" value="{{ form.cd_config }}">
+    </li>
+{% endblock %}
+
+{% block beanstalk_fields %}
+    {% import 'macros.form.twig' as form_macros %}
+
+    <li data-type-specific data-eb>
+        {% set has_error = form_macros.has_error(errors, 'eb_name') ? ' is-error' : '' %}
+        <label for="eb_name">Elastic Beanstalk Application Name</label>
+        <input class="text-input{{ has_error }}" type="text" name="eb_name" id="eb_name" maxlength="100" value="{{ form.eb_name }}">
+    </li>
+
+    <li data-type-specific data-eb>
+        {% set has_error = form_macros.has_error(errors, 'eb_environment') ? ' is-error' : '' %}
+        <label for="eb_environment">Elastic Beanstalk Environment Name or ID</label>
+        <input class="text-input{{ has_error }}" type="text" name="eb_environment" id="eb_environment" maxlength="100" value="{{ form.eb_environment }}">
+    </li>
+{% endblock %}
+
+{% block s3_only_fields %}
+    {% import 'macros.form.twig' as form_macros %}
+
+    <li data-type-specific data-s3>
+        {% set has_error = form_macros.has_error(errors, 's3_method') ? ' is-error' : '' %}
+        <label for="s3_method">S3 Method</label>
+        <select class="select-input{{ has_error }}" name="s3_method" id="s3_method">
+            <option></option>
+            {% for method in s3_methods %}
+                {% set is_selected = form.s3_method == method ? ' selected' : '' %}
+                <option value="{{ method }}"{{ is_selected }}>{{ method }}</option>
+            {% endfor %}
+        </select>
+    </li>
+
+    <li data-type-specific data-s3>
+        {% set has_error = form_macros.has_error(errors, 's3_local_path') ? ' is-error' : '' %}
+        <label for="s3_local_path">S3 Local Path</label>
+        <input class="text-input{{ has_error }}" type="text" name="s3_local_path" id="s3_local_path" maxlength="100" value="{{ form.s3_local_path }}">
+        <small>
+            <b>Optional.</b> Defaults to <code>.</code> (working dir).
+        </small>
+    </li>
+{% endblock %}
+
+{% block s3_fields %}
+    {% import 'macros.form.twig' as form_macros %}
+
+    <li data-type-specific data-s3 data-eb data-cd>
+        {% set has_error = form_macros.has_error(errors, 's3_bucket') ? ' is-error' : '' %}
+        <label for="s3_bucket">S3 Bucket</label>
+        <input class="text-input{{ has_error }}" type="text" name="s3_bucket" id="s3_bucket" maxlength="100" value="{{ form.s3_bucket }}">
+    </li>
+
+    <li data-type-specific data-s3 data-eb data-cd>
+        {% set has_error = form_macros.has_error(errors, 's3_remote_path') ? ' is-error' : '' %}
+        <label for="s3_remote_path">S3 Remote Path</label>
+        <input class="text-input{{ has_error }}" type="text" name="s3_remote_path" id="s3_remote_path" maxlength="100" value="{{ form.s3_remote_path }}">
+        <small>
+            <b>Available variables:</b><br>
+            <span>
+                <code>$APP_ID</code>,
+                <code>$APP_NAME</code>,
+                <code>$ENV_NAME</code>,
+                <code>$BUILD_ID</code>,
+                <code>$RELEASE_ID</code>,
+                <code>$DATE</code> (YYYYMMDD),
+                <code>$TIME</code> (HHMMSS),
+            </span>
+
+            <br><b>Default values:</b>
+            <ul>
+                <li>S3: <code>$RELEASE_ID.tar.gz</code></li>
+                <li>CodeDeploy: <code>$APP_ID/$RELEASE_ID.tar.gz</code></li>
+                <li>Beanstalk: <code>$APP_ID/$RELEASE_ID.zip</code></li>
+            </ul>
+        </small>
+    </li>
+{% endblock %}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2016 Quicken Loans Inc.
+ * @copyright (c) 2017 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -8,45 +8,30 @@
 namespace Hal\UI\Twig;
 
 use Exception;
-use Hal\UI\Github\GitHubURLBuilder;
-use Hal\UI\Service\GitHubService;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\JobType\Build;
+use Hal\Core\Type\VCSProviderEnum;
+use Hal\UI\VersionControl\VCS;
 use QL\MCP\Cache\CachingTrait;
-use Twig_Extension;
-use Twig_SimpleFilter;
-use Twig_SimpleFunction;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
+use Twig\Extension\AbstractExtension;
 
-class GitHubExtension extends Twig_Extension
+class GitHubExtension extends AbstractExtension
 {
     use CachingTrait;
 
-    const NAME = 'github_permissions';
+    /**
+     * @var VCS
+     */
+    private $vcs;
 
     /**
-     * @var GitHubService
+     * @param VCS $vcs
      */
-    private $github;
-
-    /**
-     * @var GitHubURLBuilder
-     */
-    private $urlBuilder;
-
-    /**
-     * @param GitHubService $github
-     * @param GitHubURLBuilder $urlBuilder
-     */
-    public function __construct(GitHubService $github, GitHubURLBuilder $urlBuilder)
+    public function __construct(VCS $vcs)
     {
-        $this->github = $github;
-        $this->urlBuilder = $urlBuilder;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getName()
-    {
-        return self::NAME;
+        $this->vcs = $vcs;
     }
 
     /**
@@ -55,15 +40,12 @@ class GitHubExtension extends Twig_Extension
     public function getFunctions()
     {
         return [
-            new Twig_SimpleFunction('githubRepoUrl', [$this->urlBuilder, 'githubRepoURL']),
-            new Twig_SimpleFunction('githubCommitUrl', [$this->urlBuilder, 'githubCommitURL']),
-            new Twig_SimpleFunction('githubBranchUrl', [$this->urlBuilder, 'githubBranchURL']),
-            new Twig_SimpleFunction('githubPullRequestUrl', [$this->urlBuilder, 'githubPullRequestURL']),
-            new Twig_SimpleFunction('githubReferenceUrl', [$this->urlBuilder, 'githubReferenceURL']),
-            new Twig_SimpleFunction('githubReleaseUrl', [$this->urlBuilder, 'githubReleaseURL']),
-            new Twig_SimpleFunction('githubUserUrl', [$this->urlBuilder, 'githubUserUrl']),
+            new TwigFunction('vcs_ref_url', [$this, 'formatVCSReferenceLink']),
 
-            new Twig_SimpleFunction('githubCommitIsCurrent', [$this, 'commitIsCurrent'])
+            new TwigFunction('vcs_url', [$this, 'formatVCSLink']),
+            new TwigFunction('vcs_text', [$this, 'formatVCSText']),
+
+            new TwigFunction('is_vcs_ref_current', [$this, 'isVCSRefCurrent'])
         ];
     }
 
@@ -73,36 +55,9 @@ class GitHubExtension extends Twig_Extension
     public function getFilters()
     {
         return [
-            new Twig_SimpleFilter('gitref', [$this, 'resolveGitReference']),
-            new Twig_SimpleFilter('commit', [$this, 'formatGitCommit'])
+            new TwigFilter('vcsref', [$this, 'resolveVCSReference']),
+            new TwigFilter('commit', [$this, 'formatVCSCommit'])
         ];
-    }
-
-    /**
-     * Check if a commit hash is the most recent for a given Github user, repo, and reference
-     *
-     * @param string $user
-     * @param string $repo
-     * @param string $reference
-     * @param string $commit
-     *
-     * @return bool
-     */
-    public function commitIsCurrent($user, $repo, $reference, $commit)
-    {
-        // cache ref comparisons in memory
-        $key = md5($user . $repo . $reference . $commit);
-
-        if (null !== ($isCurrent = $this->getFromCache($key))) {
-            return $isCurrent;
-        }
-
-        $latest = $this->resolveRefToLatestCommit($user, $repo, $reference);
-        $isCurrent = ($latest == $commit) ? true : false;
-
-        $this->setToCache($key, $isCurrent, 120);
-
-        return $isCurrent;
     }
 
     /**
@@ -112,63 +67,176 @@ class GitHubExtension extends Twig_Extension
      *
      * @return string
      */
-    public function formatGitCommit($reference)
+    public function formatVCSCommit($reference)
     {
         return substr($reference, 0, 7);
+    }
+
+    /**
+     * @param Application|null $application
+     *
+     * @return string
+     */
+    public function formatVCSLink($application): string
+    {
+        if (!$application instanceof Application) {
+            return '';
+        }
+
+        $provider = $application->provider();
+        $githubs = [VCSProviderEnum::TYPE_GITHUB, VCSProviderEnum::TYPE_GITHUB_ENTERPRISE];
+
+        if ($provider) {
+            if (in_array($provider->type(), $githubs)) {
+                $github = $this->vcs->authenticate($application->provider());
+                return $github->url()->githubRepoURL(
+                    $application->parameter('gh.owner'),
+                    $application->parameter('gh.repo')
+                );
+
+            } elseif ($provider === VCSProviderEnum::TYPE_GITHUB) {
+                return $application->parameter('git.link');
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * @param Application|null $application
+     * @param string $reference
+     *
+     * @return string
+     */
+    public function formatVCSReferenceLink($application, $reference): string
+    {
+        if (!$application instanceof Application) {
+            return '';
+        }
+
+        $provider = $application->provider();
+        $githubs = [VCSProviderEnum::TYPE_GITHUB, VCSProviderEnum::TYPE_GITHUB_ENTERPRISE];
+
+        if ($provider) {
+            if (in_array($provider->type(), $githubs)) {
+                $github = $this->vcs->authenticate($application->provider());
+
+                $ref = $github->resolver()->resolveRefType($reference);
+                return $github->url()->githubRefURL(
+                    $application->parameter('gh.owner'),
+                    $application->parameter('gh.repo'),
+                    ...$ref
+                );
+
+            } elseif ($provider === VCSProviderEnum::TYPE_GIT) {
+                return '#';
+            }
+        }
+
+        return '#';
+    }
+
+    /**
+     * @param Application|null $application
+     *
+     * @return string
+     */
+    public function formatVCSText($application): string
+    {
+        if (!$application instanceof Application) {
+            return '';
+        }
+
+        $provider = $application->provider();
+        $githubs = [VCSProviderEnum::TYPE_GITHUB, VCSProviderEnum::TYPE_GITHUB_ENTERPRISE];
+
+        if ($provider) {
+            if (in_array($provider->type(), $githubs)) {
+                return sprintf(
+                    '%s/%s',
+                    $application->parameter('gh.owner'),
+                    $application->parameter('gh.repo')
+                );
+
+            } elseif ($provider->type() === VCSProviderEnum::TYPE_GIT) {
+                return 'clone';
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Check if a vcs ref is the most recent for a given application build
+     *
+     * @param Application|null $application
+     * @param Build|null $build
+     *
+     * @return bool
+     */
+    public function isVCSRefCurrent($application, $build)
+    {
+        if (!$application instanceof Application) {
+            return false;
+        }
+
+        if (!$build instanceof Build) {
+            return false;
+        }
+
+        $key = md5($application->id() . $build->reference());
+
+        if (null !== ($latest = $this->getFromCache($key))) {
+            return $latest;
+        }
+
+        $github = $this->vcs->authenticate($application->provider());
+        if (!$github) {
+            $this->setToCache($key, false, 15);
+            return false;
+        }
+
+        $resolved = $github->resolver()->resolve(
+            $application->parameter('gh.owner'),
+            $application->parameter('gh.repo'),
+            $build->reference()
+        );
+
+        if ($resolved) {
+            $isCurrent = ($resolved[1] == $build->commit()) ? true : false;
+        } else {
+            $isCurrent = false;
+        }
+
+        $this->setToCache($key, $isCurrent, 120);
+        return $isCurrent;
     }
 
     /**
      * Format an arbitrary git reference for display
      *
      * @param string $reference
+     * @param Application|mixed $application
      *
      * @return array
      */
-    public function resolveGitReference($reference)
+    public function resolveVCSReference($reference, $application): array
     {
-        if ($tag = $this->github->parseRefAsTag($reference)) {
-            return ['tag', $tag];
+        if (!$application instanceof Application) {
+            return ['branch', $reference];
         }
 
-        if ($pull = $this->github->parseRefAsPull($reference)) {
-            return ['pull', $pull];
-        }
+        $provider = $application->provider();
+        $githubs = [VCSProviderEnum::TYPE_GITHUB, VCSProviderEnum::TYPE_GITHUB_ENTERPRISE];
 
-        if ($commit = $this->github->parseRefAsCommit($reference)) {
-            return ['commit', $commit];
+        if ($provider) {
+            if (in_array($provider->type(), $githubs)) {
+                $github = $this->vcs->authenticate($provider);
+
+                return $github->resolver()->resolveRefType($reference);
+            }
         }
 
         return ['branch', $reference];
-    }
-
-    /**
-     * Check if a commit hash is the most recent for a given Github user, repo, and reference
-     *
-     * @param string $user
-     * @param string $repo
-     * @param string $reference
-     *
-     * @return string|null
-     */
-    private function resolveRefToLatestCommit($user, $repo, $reference)
-    {
-        $key = md5($user . $repo . $reference);
-
-        if (null !== ($latest = $this->getFromCache($key))) {
-            return $latest;
-        }
-
-        try {
-            $resolve = $this->github->resolve($user, $repo, $reference);
-            $latest = (is_array($resolve)) ? $resolve[1] : null;
-
-        // Fuck off weird errors
-        } catch (Exception $ex) {
-            $latest = null;
-        }
-
-        $this->setToCache($key, $latest, 15);
-
-        return $latest;
     }
 }

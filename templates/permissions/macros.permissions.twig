@@ -1,0 +1,17 @@
+{% macro permission_type_label(type) %}
+    {% import 'macros.twig' as macros %}
+
+    {%- if type == 'member' -%}
+        {{ macros.status('Member', 'info') }}
+
+    {%- elseif type == 'owner' -%}
+        {{ macros.status('Owner', 'notice') }}
+
+    {%- elseif type in ['admin', 'super'] -%}
+        {{ macros.status('Admin', 'warning') }}
+
+    {%- else -%}
+        {{ macros.status('Unknown', 'info') }}
+
+    {%- endif -%}
+{% endmacro %}

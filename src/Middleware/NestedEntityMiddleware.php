@@ -13,10 +13,10 @@ use Hal\Core\Entity\{
     Application,
     EncryptedProperty,
     Target,
-    User,
-    UserPermission,
-    UserToken
+    User
 };
+use Hal\Core\Entity\User\UserPermission;
+use Hal\Core\Entity\User\UserToken;
 use QL\Panthor\MiddlewareInterface;
 
 /**

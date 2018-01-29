@@ -12,7 +12,7 @@ use Exception;
 use Hal\Core\Crypto\Encryption;
 use Hal\Core\Entity\Credential;
 use Hal\Core\Type\CredentialEnum;
-use Hal\UI\Flash;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
@@ -25,6 +25,7 @@ use QL\Panthor\Utility\URI;
 
 class EditCredentialController implements ControllerInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
@@ -88,9 +89,7 @@ class EditCredentialController implements ControllerInterface
         $form = $this->getFormData($request, $credential);
 
         if ($modified = $this->handleForm($form, $request, $credential)) {
-            $msg = sprintf(self::MSG_SUCCESS, $credential->name());
-
-            $this->withFlash($request, Flash::SUCCESS, $msg);
+            $this->withFlashSuccess($request, sprintf(self::MSG_SUCCESS, $credential->name()));
             return $this->withRedirectRoute($response, $this->uri, 'credential', ['credential' => $modified->id()]);
         }
 
@@ -99,7 +98,7 @@ class EditCredentialController implements ControllerInterface
             'form' => $form,
             'errors' => $this->credentialValidator->errors(),
 
-            'credential_types' => AddCredentialController::HUMAN_READABLE_TYPES
+            'credential_options' => CredentialEnum::options()
         ]);
     }
 
@@ -113,6 +112,10 @@ class EditCredentialController implements ControllerInterface
     private function handleForm(array $data, ServerRequestInterface $request, Credential $credential): ?Credential
     {
         if ($request->getMethod() !== 'POST') {
+            return null;
+        }
+
+        if (!$this->isCSRFValid($request)) {
             return null;
         }
 

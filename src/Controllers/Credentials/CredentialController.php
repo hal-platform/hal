@@ -9,10 +9,8 @@ namespace Hal\UI\Controllers\Credentials;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Exception;
 use Hal\Core\Crypto\Encryption;
 use Hal\Core\Entity\Credential;
-use Hal\Core\Entity\Release;
 use Hal\Core\Entity\Target;
 use Hal\Core\Type\CredentialEnum;
 use Hal\UI\Controllers\TemplatedControllerTrait;
@@ -38,7 +36,7 @@ class CredentialController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $targetRepository;
+    private $targetRepo;
 
     /**
      * @param TemplateInterface $template
@@ -53,7 +51,7 @@ class CredentialController implements ControllerInterface
         $this->template = $template;
         $this->encryption = $encryption;
 
-        $this->targetRepository = $em->getRepository(Target::class);
+        $this->targetRepo = $em->getRepository(Target::class);
     }
 
     /**
@@ -63,17 +61,9 @@ class CredentialController implements ControllerInterface
     {
         $credential = $request->getAttribute(Credential::class);
 
-        $targets = $this->targetRepository->findBy(['credential' => $credential]);
+        $targets = $this->targetRepo->findBy(['credential' => $credential]);
 
-        $decrypted = false;
-        if ($credential->type() === CredentialEnum::TYPE_AWS_STATIC) {
-            $decrypted = $this->decrypt($credential->details()->secret());
-
-        } elseif ($credential->type() === CredentialEnum::TYPE_PRIVATEKEY) {
-            if ($credential->details()->file()) {
-                $decrypted = $this->decrypt($credential->details()->file());
-            }
-        }
+        $decrypted = $this->decrypt($credential);
 
         return $this->withTemplate($request, $response, $this->template, [
             'credential' => $credential,
@@ -85,19 +75,27 @@ class CredentialController implements ControllerInterface
     }
 
     /**
-     * @param string $encrypted
+     * @param Credential $credential
      *
      * @return string|bool|null
      */
-    private function decrypt($encrypted)
+    private function decrypt(Credential $credential)
     {
-        try {
-            $decrypted = $this->encryption->decrypt($encrypted);
+        $decrypted = false;
+        $secret = '';
 
-            return $decrypted;
-
-        } catch (Exception $ex) {
-            return null;
+        if ($credential->type() === CredentialEnum::TYPE_AWS_STATIC) {
+            $secret = $credential->details()->secret();
         }
+
+        if ($credential->type() === CredentialEnum::TYPE_PRIVATEKEY) {
+            $secret = $credential->details()->file();
+        }
+
+        if ($secret) {
+            $decrypted = $this->encryption->decrypt($secret);
+        }
+
+        return $decrypted;
     }
 }

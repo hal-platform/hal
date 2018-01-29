@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Organization;
+use Hal\Core\Entity\User\UserPermission;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,6 +31,7 @@ class OrganizationController implements ControllerInterface
      * @var EntityRepository
      */
     private $applicationRepo;
+    private $permissionRepo;
 
     /**
      * @param TemplateInterface $template
@@ -39,6 +41,7 @@ class OrganizationController implements ControllerInterface
     {
         $this->template = $template;
         $this->applicationRepo = $em->getRepository(Application::class);
+        $this->permissionRepo = $em->getRepository(UserPermission::class);
     }
 
     /**
@@ -49,11 +52,23 @@ class OrganizationController implements ControllerInterface
         $organization = $request->getAttribute(Organization::class);
 
         $applications = $this->applicationRepo
-            ->findBy(['organization' => $organization], ['identifier' => 'ASC']);
+            ->findBy(['organization' => $organization], ['name' => 'ASC']);
 
         return $this->withTemplate($request, $response, $this->template, [
             'organization' => $organization,
-            'applications' => $applications
+
+            'applications' => $applications,
+            'permissions' => $this->getPermissions($organization)
         ]);
+    }
+
+    /**
+     * @param Organization $organization
+     *
+     * @return array
+     */
+    private function getPermissions(Organization $organization)
+    {
+        return $this->permissionRepo->findBy(['organization' => $organization]);
     }
 }

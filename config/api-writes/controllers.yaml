@@ -4,8 +4,8 @@ services:
         class: 'Hal\UI\Controllers\API\Build\StartBuildController'
         arguments:
             - '@doctrine.em'
-            - '@build.start.validator'
-            - '@release.start.validator'
+            - '@validator.build'
+            - '@validator.release'
             - '@api.response_formatter'
             - '@api_normalizer.build'
             - '@problem.renderer'
@@ -14,6 +14,6 @@ services:
         class: 'Hal\UI\Controllers\API\Release\DeployController'
         arguments:
             - '@doctrine.em'
-            - '@release.start.validator'
+            - '@validator.release'
             - '@api.response_formatter'
             - '@problem.renderer'

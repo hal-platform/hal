@@ -1,0 +1,38 @@
+{% import 'macros.twig' as macros %}
+
+{% block token_table %}
+    <table>
+        <thead>
+            <tr>
+                <th class="t10">ID</th>
+                <th>Name</th>
+                <th>Token Secret</th>
+                <th class="t15"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if user.tokens|length > 0 %}
+                {% for token in user.tokens %}
+                    <tr>
+                        <td>{{ token|short_guid }}</td>
+                        <td>{{ token.name }}</td>
+                        <td>
+                            {% if is_owner %}
+                                <code>{{ token.value }}</code>
+                            {% else %}
+                                {{ macros.status('Not Available', 'info', 'locked') }}
+                            {% endif %}
+                        </td>
+                        <td class="tr">
+                            <a href="{{ uriFor('user_token.remove', {'user': user.id, 'user_token': token.id}) }}">Revoke Token</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4">User has no personal access tokens saved.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+{% endblock %}

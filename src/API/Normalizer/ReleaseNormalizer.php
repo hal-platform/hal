@@ -7,26 +7,13 @@
 
 namespace Hal\UI\API\Normalizer;
 
-use Hal\Core\Entity\Release;
+use Hal\Core\Entity\JobType\Release;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResourceNormalizerInterface;
 
 class ReleaseNormalizer implements ResourceNormalizerInterface
 {
-    /**
-     * @var EnvironmentNormalizer
-     */
-    private $environmentNormalizer;
-
-    /**
-     * @param EnvironmentNormalizer $environmentNormalizer
-     */
-    public function __construct(EnvironmentNormalizer $environmentNormalizer)
-    {
-        $this->environmentNormalizer = $environmentNormalizer;
-    }
-
     /**
      * @param Release|null $input
      *
@@ -85,21 +72,12 @@ class ReleaseNormalizer implements ResourceNormalizerInterface
             )
         ];
 
-        if ($release->target()) {
-            $embed += [
-                'environment' => $release->target()->group()->environment()
-            ];
-
-            $links += [
-                'environment' => $this->environmentNormalizer->link($release->target()->group()->environment())
-            ];
-        }
-
         $resource = new HypermediaResource($data, $links, [
             'user' => $release->user(),
             'build' => $release->build(),
             'target' => $release->target(),
-            'application' => $release->application()
+            'application' => $release->application(),
+            'environment' => $release->environment(),
         ]);
 
         $resource->withEmbedded($embed);

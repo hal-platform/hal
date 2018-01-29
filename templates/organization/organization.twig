@@ -5,79 +5,84 @@
 {% set page_title = 'Organization' %}
 
 {% set is_admin = current_authorizations.isSuper() %}
+{% set can_edit = is_admin or current_authorizations.isOwnerOf(organization) %}
 {% set is_removable = is_admin and not applications %}
 
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+{% endblock %}
+
 {% block content %}
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('applications') }}">Back to Applications</a>
-        </p>
-    </div>
-
-    <ul class="meta-box">
-        <li>
-            <h6>Name</h6>
-            {{ organization.identifier }}
-        </li>
-
-        <li>
-            <h6>Description</h6>
-            {{ organization.name }}
-        </li>
-    </ul>
+    {{ block('meta') }}
 
     <h2>Applications</h2>
     {{ block('app_table') }}
 
+    {{ block('actions') }}
+
+    <h2>Authorization and Permissions</h2>
+    {% include 'permissions/partial.permissions.twig' with { 'organization': organization, 'permissions': permissions, 'can_edit': can_edit } %}
+
+{% endblock %}
+
+{% block meta %}
+    <ul class="meta-box">
+        <li>
+            <h6>ID</h6>
+            {{ organization|short_guid }}
+        </li>
+        <li>
+            <h6>Name</h6>
+            {{ organization.name }}
+        </li>
+        <li>
+            <h6>Dated Added</h6>
+            {{ organization.created|html5date }}
+        </li>
+    </ul>
+{% endblock %}
+
+{% block actions %}
     {% if not is_removable %}
         <p><b>Note:</b> All associated applications must be removed or transferred to remove this organization.</p>
     {% endif %}
 
-    {{ block('actions') }}
+    <p>
+        <a class="btn" href="{{ uriFor('application.add') }}">Add Application</a>
+        {% if is_admin %}
+            <a class="btn btn--action" href="{{ uriFor('organization.edit', {'organization': organization.id}) }}">Edit Organization</a>
+        {% else %}
+            {{ macros.disabled_button('Edit Organization') }}
+        {% endif %}
 
-{% endblock %}
-
-{% block actions %}
-    <ul class="list--bare">
-        <li><a class="btn" href="{{ uriFor('application.add') }}">Add Application</a></li>
-        <li>
-            {% if is_admin %}
-                <a class="btn btn--action" href="{{ uriFor('organization.edit', {'organization': organization.id}) }}">Edit Organization</a>
-            {% else %}
-                {{ macros.disabled_button('Edit Organization') }}
-            {% endif %}
-        </li>
-        <li>
-            {% if is_removable %}
-                <a class="btn btn--destructive" href="{{ uriFor('organization.remove', {'organization': organization.id}) }}">Remove Organization</a>
-            {% else %}
-                {{ macros.disabled_button('Remove Organization') }}
-            {% endif %}
-        </li>
-    </ul>
+        {% if is_removable %}
+            <a class="btn btn--destructive" href="{{ uriFor('organization.remove', {'organization': organization.id}) }}">Remove Organization</a>
+        {% else %}
+            {{ macros.disabled_button('Remove Organization') }}
+        {% endif %}
+    </p>
 {% endblock %}
 
 {% block app_table %}
 
     {% if applications %}
-        <table class="table--spacing-medium">
+        <table>
             <thead>
                 <tr>
+                    <th class="t15">ID</th>
                     <th>Application</th>
-                    <th class="t40">Source Code</th>
-                    <th class="t15"></th>
+                    <th class="t40">Version Control</th>
+                    <th class="t10"></th>
                 </tr>
             </thead>
             <tbody>
             {% for application in applications %}
                 <tr>
+                    <td><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.id|short_guid }}</a></td>
                     <td>{{ application.name }}</td>
-                    <td>{{ git_macros.gitsource(application) }}</td>
+                    <td>{{ git_macros.vcs(application) }}</td>
                     <td>
                         <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Dashboard</a>
-                        <a href="{{ uriFor('application', {'application': application.id}) }}">Manage</a>
                     </td>
                 </tr>
             {% endfor %}

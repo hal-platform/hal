@@ -11,11 +11,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Organization;
+use Hal\Core\Entity\System\VersionControlProvider;
 use Hal\Core\Utility\SortingTrait;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Flash;
 use Hal\UI\Validator\ApplicationValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,6 +26,7 @@ use QL\Panthor\Utility\URI;
 
 class EditApplicationController implements ControllerInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use SortingTrait;
@@ -42,6 +44,7 @@ class EditApplicationController implements ControllerInterface
      */
     private $applicationRepo;
     private $organizationRepo;
+    private $vcsRepo;
 
     /**
      * @var EntityManagerInterface
@@ -74,6 +77,7 @@ class EditApplicationController implements ControllerInterface
 
         $this->applicationRepo = $em->getRepository(Application::class);
         $this->organizationRepo = $em->getRepository(Organization::class);
+        $this->vcsRepo = $em->getRepository(VersionControlProvider::class);
         $this->em = $em;
 
         $this->applicationValidator = $applicationValidator;
@@ -92,7 +96,7 @@ class EditApplicationController implements ControllerInterface
         if ($modified = $this->handleForm($form, $request, $application)) {
             $message = sprintf(self::MSG_SUCCESS, $application->name());
 
-            $this->withFlash($request, Flash::SUCCESS, $message);
+            $this->withFlashSuccess($request, $message);
             return $this->withRedirectRoute($response, $this->uri, 'application', ['application' => $modified->id()]);
         }
 
@@ -101,7 +105,8 @@ class EditApplicationController implements ControllerInterface
             'errors' => $this->applicationValidator->errors(),
 
             'application' => $application,
-            'organizations' => $this->getOrganizations()
+            'organizations' => $this->getOrganizations(),
+            'vcs' => $this->vcsRepo->findAll()
         ]);
     }
 
@@ -118,13 +123,20 @@ class EditApplicationController implements ControllerInterface
             return null;
         }
 
+        if (!$this->isCSRFValid($request)) {
+            return null;
+        }
+
         $application = $this->applicationValidator->isEditValid(
             $application,
             $data['name'],
-            $data['description'],
-            $data['github'],
-            $data['organization']
+            $data['organization'],
+            $data['vcs_provider']
         );
+
+        if ($application && $application->provider()) {
+            $application = $this->applicationValidator->isVCSValid($application, $data);
+        }
 
         if ($application) {
             $this->em->persist($application);
@@ -156,18 +168,28 @@ class EditApplicationController implements ControllerInterface
         $isPost = ($request->getMethod() === 'POST');
 
         $name = $request->getParsedBody()['name'] ?? '';
-        $description = $request->getParsedBody()['description'] ?? '';
         $organization = $request->getParsedBody()['organization'] ?? '';
-        $github = $request->getParsedBody()['github'] ?? '';
+        $vcs = $request->getParsedBody()['vcs_provider'] ?? '';
+
+        $ghOwner = $request->getParsedBody()['gh_owner'] ?? '';
+        $ghRepo = $request->getParsedBody()['gh_repo'] ?? '';
+        $gitLink = $request->getParsedBody()['git_link'] ?? '';
 
         $originalOrganizationID = $application->organization() ? $application->organization()->id() : '';
-        $originalGitHub = sprintf('%s/%s', $application->gitHub()->owner(), $application->gitHub()->repository());
+        $originalVCSID = $application->provider() ? $application->provider()->id() : '';
+        $originalGHOwner = $application->parameter('gh.owner');
+        $originalGHRepo = $application->parameter('gh.repo');
+        $originalGitLink = $application->parameter('git.link');
 
         $form = [
-            'name' => $isPost ? $name : $application->identifier(),
-            'description' => $isPost ? $description : $application->name(),
+            'name' => $isPost ? $name : $application->name(),
+
             'organization' => $isPost ? $organization : $originalOrganizationID,
-            'github' => $isPost ? $github : $originalGitHub,
+            'vcs_provider' => $isPost ? $vcs : $originalVCSID,
+
+            'gh_owner' => $isPost ? $ghOwner : $originalGHOwner,
+            'gh_repo' => $isPost ? $ghRepo : $originalGHRepo,
+            'git_link' => $isPost ? $gitLink : $originalGitLink,
         ];
 
         return $form;

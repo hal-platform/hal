@@ -12,13 +12,14 @@ use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Organization;
 use Hal\Core\Entity\User;
-use Hal\Core\Entity\UserPermission;
+use Hal\Core\Entity\System\VersionControlProvider;
+use Hal\Core\Entity\User\UserPermission;
 use Hal\Core\Type\UserPermissionEnum;
 use Hal\Core\Utility\SortingTrait;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Flash;
 use Hal\UI\Security\AuthorizationService;
 use Hal\UI\Validator\ApplicationValidator;
 use Psr\Http\Message\ResponseInterface;
@@ -29,6 +30,7 @@ use QL\Panthor\Utility\URI;
 
 class AddApplicationController implements ControllerInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use SortingTrait;
@@ -49,8 +51,9 @@ class AddApplicationController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $organizationRepo;
     private $applicationRepo;
+    private $organizationRepo;
+    private $vcsRepo;
 
     /**
      * @var ApplicationValidator
@@ -85,6 +88,7 @@ class AddApplicationController implements ControllerInterface
 
         $this->applicationRepo = $em->getRepository(Application::class);
         $this->organizationRepo = $em->getRepository(Organization::class);
+        $this->vcsRepo = $em->getRepository(VersionControlProvider::class);
         $this->em = $em;
 
         $this->applicationValidator = $applicationValidator;
@@ -105,14 +109,16 @@ class AddApplicationController implements ControllerInterface
 
             $msg = sprintf(self::MSG_SUCCESS, $application->name());
 
-            $this->withFlash($request, Flash::SUCCESS, $msg);
+            $this->withFlashSuccess($request, $msg);
             return $this->withRedirectRoute($response, $this->uri, 'applications');
         }
 
         return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
             'errors' => $this->applicationValidator->errors(),
-            'organizations' => $this->getOrganizations()
+
+            'organizations' => $this->getOrganizations(),
+            'vcs' => $this->vcsRepo->findAll()
         ]);
     }
 
@@ -128,15 +134,21 @@ class AddApplicationController implements ControllerInterface
             return null;
         }
 
+        if (!$this->isCSRFValid($request)) {
+            return null;
+        }
+
         $application = $this->applicationValidator->isValid(
             $data['name'],
-            $data['description'],
-            $data['github'],
-            $data['organization']
+            $data['organization'],
+            $data['vcs_provider']
         );
 
+        if ($application && $application->provider()) {
+            $application = $this->applicationValidator->isVCSValid($application, $data);
+        }
+
         if ($application) {
-            // persist to database
             $this->em->persist($application);
             $this->em->flush();
         }
@@ -160,14 +172,19 @@ class AddApplicationController implements ControllerInterface
      *
      * @return array
      */
-    private function getFormData(ServerRequestInterface $request): array
+    private function getFormData(ServerRequestInterface $request)
     {
-        $form = [
-            'name' => $request->getParsedBody()['name'] ?? '',
-            'description' => $request->getParsedBody()['description'] ?? '',
+        $data = $request->getParsedBody();
 
-            'organization' => $request->getParsedBody()['organization'] ?? '',
-            'github' => $request->getParsedBody()['github'] ?? ''
+        $form = [
+            'name' => $data['name'] ?? '',
+
+            'organization' => $data['organization'] ?? '',
+            'vcs_provider' => $data['vcs_provider'] ?? '',
+
+            'gh_owner' => $data['gh_owner'] ?? '',
+            'gh_repo' => $data['gh_repo'] ?? '',
+            'git_link' => $data['git_link'] ?? '',
         ];
 
         return $form;

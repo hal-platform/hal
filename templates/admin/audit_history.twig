@@ -2,20 +2,16 @@
 {% import 'macros.twig' as macros %}
 {% import 'macros.pagination.twig' as pagination %}
 
-{% set page_title = "Audit History" %}
+{% set page_title = 'Audit History' %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+{% endblock %}
 
 {% block content %}
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('admin') }}">Back to Admin Dashboard</a>
-        </p>
-    </div>
-
     {{ pagination.pagination(page, last, 'admin.audit_history', {}) }}
 
-    <table class="table--spacing-medium">
+    <table>
         <thead>
             <tr>
                 <th>Time</th>
@@ -43,13 +39,13 @@
                 <tr>
                     <td colspan="4">
                         <div class="pre-wrapper">
-                            <pre>{{ event.data|jsonPretty }}</pre>
+                            <pre>{{ event.data|json_pretty }}</pre>
                         </div>
                     </td>
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="4">No logs found.</td>
+                    <td colspan="4">No events found.</td>
                 </tr>
             {% endfor %}
         </tbody>

@@ -1,7 +1,7 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
 
-{% set page_title = 'Help' %}
+{% set page_title = 'Help and FAQ' %}
 
 {% set s_1 = 'Who should I contact for support or permission changes?' %}
 
@@ -26,8 +26,6 @@
 {% set o_3 = 'Release Notes' %}
 
 {% block content %}
-    <h1>Help &amp; FAQ</h1>
-
     <a class="btn" href="{{ uriFor('help.setup') }}">Application Setup Guide</a>
     <a class="btn" href="{{ uriFor('help.scripting') }}">Build and Deployment Scripting Guide</a>
 
@@ -48,7 +46,7 @@
 {% endblock %}
 
 {% block table_of_contents %}
-    <ul class="list--bare">
+    <ul>
         <li>
             <a href="#help-support"><h4>Support</h4></a>
             <ul class="list--bullet">

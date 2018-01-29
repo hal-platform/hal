@@ -1,24 +1,50 @@
 {% extends 'base.twig' %}
 {% import 'macros.form.twig' as form_macros %}
 
+{% use 'target/partial.target_form.twig' %}
+
+{% set js_components = ['add_target_form'] %}
 {% set page_title = 'Add Template' %}
 
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+    <li><a href="{{ uriFor('templates') }}">Templates</a></li>
+{% endblock %}
+
 {% block content %}
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
+    <p>
+        All configuration is optional when defining templates. Any missing fields can then be provided by the
+        applications that use these templates.
+    </p>
+    <p>
+        <b>Example:</b><br>
+        You can create a template for usage with <b>Elastic Beanstalk</b> and specify the <b>region</b> and <b>S3 upload location</b>
+        in the template. Applications that use the template will only need to specify the beanstalk application and environment,
+        as the other required configuration will be inherited from the template.
+    </p>
+    <p>
+        Configuration for the same fields provided by the applications is optional, but will <b>override</b> the template if provided.
+    </p>
 
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('groups') }}">Back to Templates</a>
-        </p>
-    </div>
+    <hr>
 
-    {{ form_macros.formErrors(errors) }}
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
 
-    <form method="post" class="form-wrapper">
-        <ul class="form-fields">
+    <form method="post" class="js-target-form">
+        {{ form_macros.csrf_input('template.add') }}
+
+        <ul class="form-fields form-wrapper">
             <li>
                 <label>Environment</label>
-                <ul class="list--bare">
+                <ul>
+                    <li>
+                        {% set is_selected = form.environment == '' ? ' checked' : '' %}
+                        <label for="env-noop">
+                            <input type="radio" id="env-noop" name="environment" value="" {{ is_selected }}>
+                            None
+                        </label>
+                    </li>
+
                     {% for environment in environments %}
                         {% set is_selected = form.environment == environment.id ? ' checked' : '' %}
                         <li>
@@ -32,25 +58,22 @@
             </li>
 
             <li>
-                <label>Type</label>
-                <ul class="list--bare">
-                    {% for type in group_types %}
-                        {% set is_selected = form.group_type == type ? ' checked' : '' %}
+                <label>Deployment Type</label>
+                <ul>
+                    {% set is_selected = form.deployment_type == '' ? ' checked' : '' %}
+                    <li>
+                        <label for="type-noop">
+                            <input type="radio" id="type-noop" name="deployment_type" value="" data-target-select data-target-type=""{{ is_selected }}>
+                            None
+                        </label>
+                    </li>
 
+                    {% for type in deployment_types %}
+                        {% set is_selected = form.deployment_type == type ? ' checked' : '' %}
                         <li>
                             <label for="type-{{ type }}">
-                                <input type="radio" id="type-{{ type }}" name="group_type" value="{{ type }}"{{ is_selected }}>
-                                {% if type == 'rsync' -%}
-                                    RSync (On-premises Linux)
-                                {%- elseif type == 'eb' -%}
-                                    Elastic Beanstalk (AWS)
-                                {%- elseif type == 'cd' -%}
-                                    CodeDeploy (AWS)
-                                {%- elseif type == 's3' -%}
-                                    S3 (AWS)
-                                {%- elseif type == 'script' -%}
-                                    Script (Any)
-                                {%- endif %}
+                                <input type="radio" id="type-{{ type }}" name="deployment_type" value="{{ type }}" data-target-select data-target-type="{{ type }}"{{ is_selected }}>
+                                {{ type|target_type }}
                             </label>
                         </li>
                     {% endfor %}
@@ -58,32 +81,38 @@
             </li>
 
             <li>
-                <label for="hostname">Hostname</label>
-                <input type="text" name="hostname" id="hostname" maxlength="60" value="{{ form.hostname }}" class="text-input">
-                <small>RSync Only</small>
+                {% set has_error = form_macros.has_error(errors, 'name') ? ' is-error' : '' %}
+                <label for="name">Name</label>
+                <input class="text-input{{ has_error }}" type="text" name="name" id="name" maxlength="80" value="{{ form.name }}" required>
             </li>
 
             <li>
-                <label>Region</label>
-                <ul class="list--bare">
-                    {% for region in aws_regions %}
-                        {% set is_selected = form.region == region ? ' checked' : '' %}
-                        <li>
-                            <label for="region-{{ region }}">
-                                <input type="radio" id="region-{{ region }}" name="region" value="{{ region }}"{{ is_selected }}>
-                                {{ region }}
-                            </label>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <small>AWS Only</small>
+                {% set has_error = form_macros.has_error(errors, 'script_context') ? ' is-error' : '' %}
+                <label for="script_context">Script Context</label>
+                <input class="text-input{{ has_error }}" type="text" name="script_context" id="script_context" maxlength="100" value="{{ form.script_context }}">
+                <small>
+                    <b>Optional.</b> Pass extra context text or data to your scripts and commands in your <code>.hal9000.yml</code> configuration.
+                    <b style="color:indianred">Do not use this for secrets!</b>
+                </small>
             </li>
         </ul>
 
-        <ul class="list--bare">
-            <li><input class="btn btn--action" type="submit" value="Add Template"></li>
-            <li><a class="btn" href="{{ uriFor('groups') }}">Cancel</a></li>
+        <hr>
+
+        <ul class="form-fields form-wrapper">
+            {{ block('rsync_fields') }}
+            {{ block('script_fields') }}
+            {{ block('aws_fields') }}
+            {{ block('codedeploy_fields') }}
+            {{ block('beanstalk_fields') }}
+            {{ block('s3_only_fields') }}
+            {{ block('s3_fields') }}
         </ul>
+
+        <p>
+            <button type="submit" class="btn btn--action">Add Template</button>
+            <a href="{{ uriFor('templates') }}">Cancel</a>
+        </p>
 
     </form>
 {% endblock %}

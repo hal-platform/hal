@@ -1,0 +1,309 @@
+html {
+    background-color: mix(#ffffff, $light-grey, 50%);
+    margin-bottom: 2em;
+    box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
+body {
+    font-family: $base-font-stack;
+    font-size: $base-font-size;
+    line-height: $base-line-height;
+    color: $base-text-color;
+}
+
+/////////////////
+//
+// Main
+//
+/////////////////
+main {
+    max-width: 60em;
+    margin: 0 auto;
+    padding: 1.25em .75em;
+
+    background-color: $white;
+    position: relative;
+
+    // clearfix
+    &:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    @include breakpoint($bp-small) {
+        padding: 1.5em;
+        border-radius: 5px;
+
+    }
+
+    @include breakpoint($bp-medium) {
+        margin-top: -6em;
+    }
+}
+
+nav {
+    background-color: $text-color;
+    box-shadow: 0px 5px 5px tint($grey, 50%);
+
+    @include breakpoint($bp-medium) {
+        padding-bottom: 6em;
+    }
+}
+
+/////////////////
+//
+// p, a, blockquote
+//
+/////////////////
+p {
+    margin: 0;
+    padding: 0;
+    margin-top: 1em;
+}
+
+main > p {
+    max-width: 40em;
+}
+
+a {
+    color: $link-color;
+    text-decoration: none;
+
+    &:hover,
+    &:active,
+    &:focus{
+        color: $link-interaction-color;
+        text-decoration: underline;
+    }
+}
+
+blockquote {
+    border-left: 4px solid $light-grey;
+    color: tint($text-color, 50%);
+    font-size: 90%;
+    margin-left: .5em;
+    padding: 0 15px;
+}
+
+::-moz-selection {
+    background: $selection-bg-color;
+    color: $selection-text-color;
+    text-shadow: none;
+}
+
+::selection {
+    background: $selection-bg-color;
+    color: $selection-text-color;
+    text-shadow: none;
+}
+
+/////////////////
+//
+// Headers
+//
+/////////////////
+h1, h2, h3, h4, h5, h6 {
+    line-height: 100%;
+    font-family: $heading-font-stack;
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
+    color: $heading-color;
+}
+
+// Page header
+h1 {
+    font-size: $h1-size;
+    font-weight: bold;
+    color: $hal-cyan;
+    @include margin-y(.5em, 1em);
+
+    strong, b {
+        color: tint($hal-cyan, 50%);
+    }
+}
+
+// Section header
+h2 {
+    font-size: $h2-size;
+    color: $bright-blue;
+    @include margin-y(.5em);
+}
+
+h3 {
+    font-size: $h3-size;
+    @include margin-y(.75em, .25em);
+}
+
+// Label header
+h4 {
+    font-size: $h4-size;
+    @include margin-y(.75em, 0);
+}
+
+h6 {
+    font-size: $h6-size;
+    font-weight: bold;
+    @include margin-y(.75em, .25em);
+}
+
+/////////////////
+//
+// Forms
+//
+/////////////////
+form label {
+    display: block;
+    margin-bottom: 0;
+}
+
+input[type=text],
+input[type=password],
+input[type=url],
+select,
+textarea {
+    display: block;
+    padding: .5em;
+    border: 1px solid $text-color;
+    border-radius: 0;
+
+    height: 2.5em;
+    width: 100%;
+    background: $white;
+    box-shadow:
+        inset 0 2px 0 $grey,
+        inset 2px 0px 0 $grey,
+        inset -2px 0px 0 $grey,
+        inset 0px -2px 0 $grey;
+
+    &:focus {
+        box-shadow:
+            inset 0 2px 0 $blue,
+            inset 2px 0px 0 $blue,
+            inset -2px 0px 0 $blue,
+            inset 0px -2px 0 $blue;
+    }
+}
+
+select {
+    background: $white;
+}
+
+input[readonly],
+select[readonly],
+textarea[readonly],
+input[disabled],
+select[disabled],
+textarea[disabled] {
+    border-color: $lightest-grey;
+    background-color: $light-grey;
+    color: $text-color;
+}
+
+input[disabled],
+select[disabled],
+textarea[disabled] {
+    cursor: not-allowed;
+    color: $grey;
+}
+
+/////////////////
+//
+// Lists
+//
+/////////////////
+ul, ol {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+// Remove vertical spacing from nested lists.
+li {
+    > ul,
+    > ol {
+         margin-bottom: 0;
+     }
+}
+
+/////////////////
+//
+// Tables
+//
+/////////////////
+table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 17em;
+    margin-top: 1em;
+
+    th,
+    td {
+        padding: .25em;
+        margin: 0;
+        text-align: left;
+    }
+}
+
+thead {
+    border-bottom: 5px solid $dark-blue;
+    th {
+        text-align: left;
+    }
+}
+
+tbody tr {
+    font-size: .85em;
+    border-bottom: 1px dotted $light-grey;
+    &:last-child {
+        border-bottom: 0;
+    }
+}
+
+/////////////////
+//
+// code, pre, other
+//
+/////////////////
+
+pre, code {
+    font-family: menlo, monospace, sans-serif;
+    font-size: .75em;
+
+    color: $red;
+    background: $light-grey;
+    margin: 0;
+    padding: .25em;
+    text-align: left;
+}
+
+pre {
+    white-space: pre;
+    word-wrap: normal;
+    overflow: auto;
+    // overflow-x: auto;
+}
+
+time {
+    white-space: nowrap;
+}
+
+svg {
+    fill: currentColor;
+}
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: .25em solid $light-grey;
+    padding: 0;
+    margin: 1em 0;
+}

@@ -10,7 +10,7 @@ namespace Hal\UI\Controllers\Application;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Application;
-use Hal\Core\Entity\UserPermission;
+use Hal\Core\Entity\User\UserPermission;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -50,6 +50,7 @@ class ApplicationController implements ControllerInterface
 
         return $this->withTemplate($request, $response, $this->template, [
             'application' => $application,
+
             'permissions' => $this->getPermissions($application)
         ]);
     }

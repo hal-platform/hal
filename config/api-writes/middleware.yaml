@@ -1,7 +1,7 @@
 services:
     middleware.api_writes_token:
         class: 'Hal\UI\Middleware\ACL\TokenMiddleware'
-        arguments: ['@doctrine.em', '@problem.renderer']
+        arguments: ['@doctrine.em', '@user_session.handler', '@problem.renderer']
         calls:
             - ['setLoggerMessageFactory', ['@mcp.logger.factory']]
 

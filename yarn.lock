@@ -2903,10 +2903,6 @@ mkdirp@0.5.1, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0, mkd
   dependencies:
     minimist "0.0.8"
 
-modularscale-sass@~2.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/modularscale-sass/-/modularscale-sass-2.1.1.tgz#a42c3a392457ac83a6b8c29a183c95540e6b388b"
-
 ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
@@ -3051,6 +3047,10 @@ normalize-url@^1.4.0:
     prepend-http "^1.0.0"
     query-string "^4.1.0"
     sort-keys "^1.0.0"
+
+normalize.css@~7.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/normalize.css/-/normalize.css-7.0.0.tgz#abfb1dd82470674e0322b53ceb1aaf412938e4bf"
 
 npm-run-path@^2.0.0:
   version "2.0.2"
@@ -3973,119 +3973,6 @@ sass-loader@~6.0.6:
 sax@~1.2.1:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
-
-scales-base-blockquotes@^1.0.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/scales-base-blockquotes/-/scales-base-blockquotes-1.1.0.tgz#c641c35d463d8a9994d1f54e16f3ebb0efb40b63"
-
-scales-base-forms@^1.0.0:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/scales-base-forms/-/scales-base-forms-1.3.1.tgz#f21df44ab7ab4cf376d981b422bb69df55f9596b"
-
-scales-base-images@^1.0.0:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/scales-base-images/-/scales-base-images-1.1.1.tgz#b7a77fbb54a51970ea24647557cc6628dd6f95e1"
-
-scales-base-lists@^1.0.0:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/scales-base-lists/-/scales-base-lists-1.1.1.tgz#afda23acf92581d2469dbb720b71e5c845df4083"
-
-scales-base-tables@^1.0.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/scales-base-tables/-/scales-base-tables-1.2.0.tgz#35e551bd4978a8f2d74c3b10ae32c00d70a1c467"
-
-scales-base-typography@^1.0.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/scales-base-typography/-/scales-base-typography-1.3.0.tgz#be77c71974bc410a82103ce7eb81a42e19c45852"
-
-scales-overrides-size@^1.0.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/scales-overrides-size/-/scales-overrides-size-1.1.0.tgz#09998df56a1fc7dc13fa4408883f1ae61d6aacc7"
-
-scales-overrides-spacing@^1.0.0:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/scales-overrides-spacing/-/scales-overrides-spacing-1.1.1.tgz#8ae6c9604661670d876f9337360b9c6ca36a9e92"
-
-scales-patterns-box@^1.0.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/scales-patterns-box/-/scales-patterns-box-1.2.0.tgz#e19ba0da484085162c6d09cba161c044f789595a"
-  dependencies:
-    scales-utilities-clearfix "^1.0.0"
-
-scales-patterns-buttons@^1.0.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/scales-patterns-buttons/-/scales-patterns-buttons-1.3.0.tgz#eb4fa3ee081fb4060946d6ee48e2c381bbea58ca"
-
-scales-patterns-flag@^1.0.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/scales-patterns-flag/-/scales-patterns-flag-1.2.0.tgz#7867412bf41cdbdcf44aea7cf2f1a0f502a6c598"
-
-scales-patterns-horizontal-list@^1.0.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/scales-patterns-horizontal-list/-/scales-patterns-horizontal-list-1.2.0.tgz#7b4e38442d1b88be66527f891d6a78b757f13417"
-
-scales-patterns-media-object@^1.0.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/scales-patterns-media-object/-/scales-patterns-media-object-1.2.0.tgz#dd47fad6944dbe39d5aabbed3237cafb0341c569"
-  dependencies:
-    scales-utilities-clearfix "^1.0.0"
-
-scales-patterns-multi-col-list@^1.0.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/scales-patterns-multi-col-list/-/scales-patterns-multi-col-list-1.1.0.tgz#86ef6ffad0ef43853d2237eee4b4b2ac1eff16f8"
-  dependencies:
-    scales-utilities-clearfix "^1.0.0"
-
-scales-patterns-split@^1.0.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/scales-patterns-split/-/scales-patterns-split-1.1.0.tgz#a77517d48db78b6c47b1eefdb4649cd5faf05353"
-
-scales-patterns-stats@^1.0.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/scales-patterns-stats/-/scales-patterns-stats-1.1.0.tgz#0c1cc45616e6fcff7ca6c0a9e24a7514a6c617c5"
-  dependencies:
-    scales-utilities-clearfix "^1.0.0"
-
-scales-patterns-vertical-list@^1.0.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/scales-patterns-vertical-list/-/scales-patterns-vertical-list-1.1.0.tgz#1fa7c25e548f0005e41ea5e3f0628ec0b6b83369"
-
-scales-utilities-clearfix@^1.0.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/scales-utilities-clearfix/-/scales-utilities-clearfix-1.2.0.tgz#0dd95d379c62a2db5896fc76d92c99176b16506e"
-
-scales-utilities-normalize@^3.0.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/scales-utilities-normalize/-/scales-utilities-normalize-3.1.0.tgz#0ff49c2cfe2d15273fadd7e84f73510bbcec0b50"
-
-scales-utilities-reset@^1.0.0:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/scales-utilities-reset/-/scales-utilities-reset-1.2.1.tgz#5120deffd9bcb193c1d93959a4b409e51c36b9dc"
-
-scalescss@2.2.2:
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/scalescss/-/scalescss-2.2.2.tgz#d83233a978d645362ec3faf86dce7f97a19d878a"
-  dependencies:
-    scales-base-blockquotes "^1.0.0"
-    scales-base-forms "^1.0.0"
-    scales-base-images "^1.0.0"
-    scales-base-lists "^1.0.0"
-    scales-base-tables "^1.0.0"
-    scales-base-typography "^1.0.0"
-    scales-overrides-size "^1.0.0"
-    scales-overrides-spacing "^1.0.0"
-    scales-patterns-box "^1.0.0"
-    scales-patterns-buttons "^1.0.0"
-    scales-patterns-flag "^1.0.0"
-    scales-patterns-horizontal-list "^1.0.0"
-    scales-patterns-media-object "^1.0.0"
-    scales-patterns-multi-col-list "^1.0.0"
-    scales-patterns-split "^1.0.0"
-    scales-patterns-stats "^1.0.0"
-    scales-patterns-vertical-list "^1.0.0"
-    scales-utilities-clearfix "^1.0.0"
-    scales-utilities-normalize "^3.0.0"
-    scales-utilities-reset "^1.0.0"
 
 schema-utils@^0.3.0:
   version "0.3.0"

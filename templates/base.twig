@@ -15,9 +15,7 @@
             </title>
             {% endblock %}
             {% block page_icon %}
-                <!-- <link type="image/x-icon" rel="shortcut icon" href="/hal.ico"> -->
-                <!-- <link type="image/png" rel="icon" href="/hal.png"> -->
-                <link type="image/png" rel="shortcut icon" href="/hal.ico">
+                <link type="image/png" rel="icon" href="/hal.png">
             {% endblock %}
             {% block page_meta %}
                 <meta name="format-detection" content="telephone=no">
@@ -40,6 +38,22 @@
 
             {% block page_main %}
             <main>
+                {% block breadcrumb %}
+                    <ul class="breadcrumb mbm">
+                        <li><a href="{{ uriFor('home') }}">Home</a></li>
+                        {% block breadcrumb_links %}{% endblock %}
+                       <li>
+                            <b>
+                                {%- if page_title -%}
+                                    {{ page_title }}
+                                {%- else -%}
+                                    Hal
+                                {%- endif -%}
+                            </b>
+                        </li>
+                    </ul>
+                {% endblock %}
+
                 {% embed 'base.flash.twig' %}{% endembed %}
 
                 {# main page content #}

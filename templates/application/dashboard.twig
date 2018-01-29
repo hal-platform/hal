@@ -1,18 +1,22 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
-{% import 'application/macros.twig' as app_macros %}
+{% import 'application/macros.dashboard.twig' as app_macros %}
 {% set js_components = ['application_dashboard'] %}
 
 {% set page_title = 'Application Dashboard' %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+    {% if application.organization -%}
+        <li><a href="{{ uriFor('organization', {'organization': application.organization.id}) }}">{{ application.organization.name }}</a></li>
+    {%- endif %}
+    <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
+{% endblock %}
 
 {% set can_user_build = current_authorizations.canBuild(application) %}
 {% set can_user_deploy = current_authorizations.canDeploy(application, selected_environment) %}
 
 {% block content %}
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
-    </div>
-
     {{ block('env_picker') }}
 
     {% if selected_environment %}
@@ -33,39 +37,36 @@
 
 {% block env_picker %}
     {% if environments|length > 0 %}
-    <h4>Change environment</h4>
-        <ul class="list--bare tabs">
+        <h4>Change environment</h4>
+        <ul class="tabs">
             {% for environment in environments %}
                 {% set is_selected = environment.id == selected_environment.id ? 'active' : '' %}
-                <li class="{{ is_selected }}">
-                    <a href="{{ uriFor('application.dashboard', {'application': application.id}, {'environment': environment.id}) }}">
+                <li>
+                    <a href="{{ uriFor('application.dashboard', {'application': application.id}, {'environment': environment.id}) }}" class="{{ is_selected }}">
                         <span class="tab-text">{{ environment.name }}</span>
                     </a>
                 </li>
             {% endfor %}
 
             {% set is_selected = selected_environment == '' ? 'active' : '' %}
-            <li class="{{ is_selected }}">
-                <a href="{{ uriFor('application.dashboard', {'application': application.id}, {'environment': ''}) }}">
+            <li>
+                <a href="{{ uriFor('application.dashboard', {'application': application.id}, {'environment': ''}) }}" class="{{ is_selected }}">
                     <span class="tab-text">None</span>
                 </a>
             </li>
         </ul>
-
     {% endif %}
 {% endblock %}
 
 {% block target_cards %}
     {% if targets %}
-        <div>
-            <ul class="list--bare cards">
-                {% for target in targets %}
-                    <li data-deploy="{{ target.id }}">
-                        {{ app_macros.pushCard(application, target, target.release) }}
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
+        <ul class="cards">
+            {% for target in targets %}
+                <li data-deploy="{{ target.id }}">
+                    {{ app_macros.push_card(application, target, target.lastJob) }}
+                </li>
+            {% endfor %}
+        </ul>
     {% else %}
         <p>
             This application has no deployment targets
@@ -78,16 +79,14 @@
 {% endblock %}
 
 {% block page_buttons %}
-    <ul class="list--bare">
-        <li>
-            {% if can_user_build %}
-                <a class="btn btn--action" href="{{ uriFor('build.start', {'application': application.id}) }}">Start New Build</a>
-            {% else %}
-                {{ macros.disabled_button('Start New Build') }}
-            {% endif %}
-        </li>
-        <li><a class="btn" href="{{ uriFor('build.history.page1', {'application': application.id}) }}">Build History</a></li>
-        <li><a class="btn" href="{{ uriFor('release.history.page1', {'application': application.id}) }}">Release History</a></li>
-        <li><a class="btn" href="{{ uriFor('application', {'application': application.id}) }}">Manage Application</a></li>
-    </ul>
+    <p>
+        {% if can_user_build %}
+            <a class="btn btn--action" href="{{ uriFor('build.start', {'application': application.id}) }}">Start New Build</a>
+        {% else %}
+            {{ macros.disabled_button('Start New Build') }}
+        {% endif %}
+        <a class="btn" href="{{ uriFor('builds', {'application': application.id}) }}">Build History</a>
+        <a class="btn" href="{{ uriFor('releases', {'application': application.id}) }}">Release History</a>
+        <a class="btn" href="{{ uriFor('application', {'application': application.id}) }}">Manage Application</a>
+    </p>
 {% endblock %}

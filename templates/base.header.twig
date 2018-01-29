@@ -4,7 +4,7 @@
     {% block banner %}
         <div class="hal-grill">
             <div class="wrapper">
-                <a href="/">
+                <a href="{{ uriFor('home') }}">
                     <div class="hal">
                         <div class="hal-reflection hal-reflection-left"></div>
                         <div class="hal-reflection hal-reflection-center"></div>
@@ -34,7 +34,7 @@
                         {% if current_authorizations.isSuper() %}
                             <li><a href="{{ uriFor('admin') }}">{{ macros.icon('watch') }} Admin</a></li>
                         {% else %}
-                            <li><a href="{{ uriFor('dashboard') }}">{{ macros.icon('dashboard') }} Dashboard</a></li>
+                            <li><a href="{{ uriFor('home') }}">{{ macros.icon('dashboard') }} Dashboard</a></li>
                         {% endif %}
 
                         <li><a href="{{ uriFor('queue') }}">{{ macros.icon('in') }} Queue</a></li>
@@ -42,7 +42,11 @@
                         <li><a href="{{ uriFor('settings') }}">{{ macros.icon('settings') }} Settings</a></li>
 
                         <li><a href="{{ uriFor('help') }}">{{ macros.icon('question') }} Help</a></li>
-                        <li><a href="{{ uriFor('signout') }}">{{ macros.icon('sign-out') }} Sign Out</a></li>
+                        <li>
+                            <form method="post" action="{{ uriFor('signout') }}">
+                                <button type="submit">{{ macros.icon('sign-out') }} Sign Out</button>
+                            </form>
+                        </li>
                     </ul>
 
                 {% else %}

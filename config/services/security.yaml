@@ -1,6 +1,28 @@
 services:
     ####################################################################################################################
-    # AUTHORIZATIONS
+    # authentications
+    ####################################################################################################################
+
+    auth:
+        class: 'Hal\UI\Security\Auth'
+        arguments:
+            -
+                ldap: '@auth.ldap'
+                internal: '@auth.internal'
+
+    auth.internal:
+        class: 'Hal\UI\Security\UserAuthentication\InternalAuth'
+        arguments: ['@doctrine.em']
+
+    auth.ldap:
+        class: 'Hal\UI\Security\UserAuthentication\LdapAuth'
+        arguments:
+            - '@doctrine.em'
+            - '%ldap.query_restriction%'
+            - '%ldap.unique_attribute%'
+
+    ####################################################################################################################
+    # authorizations
     ####################################################################################################################
 
     service.authorization:
@@ -17,7 +39,22 @@ services:
         arguments: ['@doctrine.em']
 
     ####################################################################################################################
-    # CRYPTO
+    # forms
+    ####################################################################################################################
+
+    csrf:
+        class: 'Hal\UI\Security\CSRFManager'
+        arguments: ['@clock']
+
+    user_session.handler:
+        class: 'Hal\UI\Security\UserSessionHandler'
+        arguments:
+            - '@doctrine.em'
+            - '@service.authorization'
+            - '@clock'
+
+    ####################################################################################################################
+    # crypto
     ####################################################################################################################
 
     encryption:

@@ -9,10 +9,10 @@ namespace Hal\UI\Controllers\Build;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Application;
-use Hal\Core\Entity\Build;
+use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Entity\Environment;
-use Hal\Core\Repository\BuildRepository;
 use Hal\Core\Repository\EnvironmentRepository;
+use Hal\Core\Repository\JobType\BuildRepository;
 use Hal\UI\Controllers\PaginationTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\SharedStaticConfiguration;
@@ -44,22 +44,14 @@ class BuildsController implements ControllerInterface
     private $environmentRepo;
 
     /**
-     * @var callable
-     */
-    private $notFound;
-
-    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param callable $notFound
      */
-    public function __construct(TemplateInterface $template, EntityManagerInterface $em, callable $notFound)
+    public function __construct(TemplateInterface $template, EntityManagerInterface $em)
     {
         $this->template = $template;
         $this->buildRepo = $em->getRepository(Build::class);
         $this->environmentRepo = $em->getRepository(Environment::class);
-
-        $this->notFound = $notFound;
     }
 
     /**
@@ -71,9 +63,6 @@ class BuildsController implements ControllerInterface
         $searchFilter = $request->getQueryParams()['search'] ?? '';
 
         $page = $this->getCurrentPage($request);
-        if ($page === null) {
-            return ($this->notFound)($request, $response);
-        }
 
         if ($environment = $this->getEnvironmentFromSearchFilter($searchFilter)) {
             $sanitizedSearchFilter = trim(preg_replace(self::REGEX_ENV, '', $searchFilter, 1));
@@ -83,8 +72,7 @@ class BuildsController implements ControllerInterface
             $builds = $this->buildRepo->getByApplication($application, SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1), $searchFilter);
         }
 
-        $total = count($builds);
-        $last = ceil($total / SharedStaticConfiguration::LARGE_PAGE_SIZE);
+        $last = $this->getLastPage($builds, SharedStaticConfiguration::LARGE_PAGE_SIZE);
 
         return $this->withTemplate($request, $response, $this->template, [
             'page' => $page,

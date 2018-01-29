@@ -25,8 +25,6 @@ parameters:
     r.alphanum: '[A-Za-z0-9]+'
     r.digit: '[0-9]+'
     r.guid: '[0-9a-zA-Z\-]{32,36}'
-    r.build: '[A-Za-z0-9\_\-\.]+'
-    r.release: '%r.build%'
     r.date: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
     r.api.queue: '[A-Za-z0-9\+\-\.]+'
 
@@ -136,3 +134,11 @@ parameters:
     encrypter.secret.path: '%env(HAL_CRYPTO_SECRETPATH)%'
     encrypter.publickey: '%env(HAL_CRYPTO_PUBLICKEY)%'
     encrypter.encryptedkey: '%env(HAL_CRYPTO_PRIVATEKEY)%'
+
+    ############################################################################
+    # authentication
+    ############################################################################
+    ldap.query_restriction:
+        objectCategory: 'person'
+        # objectClass: 'user'
+    ldap.unique_attribute: 'sAMAccountName'

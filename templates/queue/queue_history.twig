@@ -5,24 +5,23 @@
 {% if is_today %}
     {% set js_components = ['job_queue'] %}
 {% endif %}
-{% set page_title = 'Build and Release History' %}
+
+{% set page_title = 'Queue History' %}
 
 {% block content %}
-    <div class="nav--page">
-        <h1>Queue History</h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('queue') }}">Current Job Queue</a>
-            <a class="btn btn--small btn--back" href="{{ uriFor('builds.history.page1') }}">All Builds</a>
-            <a class="btn btn--small btn--back" href="{{ uriFor('releases.history.page1') }}">All Releases</a>
-        </p>
-    </div>
-
+    {{ block('links') }}
     {{ pagination.time_pagination(selected_date, 'queue.history') }}
 
     {% include 'partial.pending_job_table.twig' with {'pending': pending, 'history_view': true} only %}
 
     {{ pagination.time_pagination(selected_date, 'queue.history') }}
-
+    {{ block('links') }}
 {% endblock %}
 
+{% block links %}
+    <p>
+        <a class="btn" href="{{ uriFor('queue') }}">Current Job Queue</a>
+        <a class="btn" href="{{ uriFor('builds.history') }}">Build History</a>
+        <a class="btn" href="{{ uriFor('releases.history') }}">Release History</a>
+    </p>
+{% endblock %}

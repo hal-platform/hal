@@ -1,4 +1,4 @@
-{% macro app_row(currentUser, application, allow_collapse) %}
+{% macro app_row(current_user, application, allow_collapse) %}
     {% import 'macros.twig' as macros %}
     {% import 'macros.git.twig' as git_macros %}
 
@@ -7,25 +7,30 @@
     {% else %}
         <tr>
     {% endif %}
+
         <td>
-            {% if currentUser.settings.isFavoriteApplication(application) %}
+            {% if application.id in current_user.setting('favorite_applications') %}
                 <form method="post"
-                      action="{{ uriFor('settings.favorite_applications.remove', {'application': application.id}) }}"
+                      action="{{ uriFor('api_internal.settings.favorite_applications.remove', {'application': application.id}) }}"
                       data-app-id="{{ application.id }}"
-                      class="form--fav">
-                    <label class="form--fav__label fav-added">
-                        <input type="submit">
-                        {{ macros.icon('star-2', '', 'Remove from favorites') }}
+                      class="form--inline js-fav">
+                    <label class="fav-added">
+                        <button type="submit"></button>
+                        <span class="hint--left" aria-label="Remove from favorites">
+                            {{ macros.icon('star-2') }}
+                        </span>
                     </label>
                 </form>
             {% else %}
                 <form method="post"
-                      action="{{ uriFor('settings.favorite_applications.add', {'application': application.id}) }}"
+                      action="{{ uriFor('api_internal.settings.favorite_applications.add', {'application': application.id}) }}"
                       data-app-id="{{ application.id }}"
-                      class="form--fav">
-                    <label class="form--fav__label fav-normal">
-                        <input type="submit">
-                        {{ macros.icon('star-2', '', 'Add to favorites') }}
+                      class="form--inline js-fav">
+                    <label class="fav-normal">
+                        <button type="submit"></button>
+                        <span class="hint--left" aria-label="Add to favorites">
+                            {{ macros.icon('star-2') }}
+                        </span>
                     </label>
                 </form>
             {% endif %}
@@ -33,13 +38,18 @@
             {{ application.name }}
         </td>
         <td>
-            {{ git_macros.gitsource(application) }}
+            {% if application.provider %}
+                {{ git_macros.vcs(application) }}
+                <span class="js-search-query">{{ application.parameter('gh.owner') ~ '/' ~ application.parameter('gh.repo') }}</span>
+            {% else %}
+                None
+            {% endif %}
             <span class="js-search-query">{{ application.name }}</span>
-            <span class="js-search-query">{{ application.gitHub.owner ~ '/' ~ application.gitHub.repository }}</span>
         </td>
-        <td>
+        <td class="tr">
             <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Dashboard</a>
-            <a href="{{ uriFor('application', {'application': application.id}) }}">Manage</a>
+            • <a href="{{ uriFor('application', {'application': application.id}) }}">Manage</a>
         </td>
+
     </tr>
 {% endmacro %}

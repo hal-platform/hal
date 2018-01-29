@@ -1,7 +1,7 @@
 services:
 
     ####################################################################################################################
-    # PERMISSIONS
+    # permissions
     ####################################################################################################################
 
     middleware.signed_in:
@@ -31,10 +31,18 @@ services:
             - '@middleware.permissions.twig'
     middleware.permissions.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['denied.twig']]]
+        calls: [['setTemplate', ['error.denied.twig']]]
 
     ####################################################################################################################
-    # ENTITY LOADING
+    # forms loading
+    ####################################################################################################################
+
+    middleware.require_csrf:
+        class: 'Hal\UI\Middleware\CSRFMiddleware'
+        arguments: ['@csrf']
+
+    ####################################################################################################################
+    # entity loading
     ####################################################################################################################
 
     middleware.require_entity:
@@ -46,7 +54,7 @@ services:
         arguments: ['@notFoundHandler']
 
     ####################################################################################################################
-    # REMOVALS
+    # entity removals
     ####################################################################################################################
 
     middleware.removal_confirmation.twig:
@@ -55,7 +63,7 @@ services:
 
     middleware.removal_confirmation.token:
         class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
-        arguments: ['@middleware.removal_confirmation.twig', 'token']
+        arguments: ['@middleware.removal_confirmation.twig', 'user_token']
     middleware.removal_confirmation.organization:
         class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
         arguments: ['@middleware.removal_confirmation.twig', 'organization']
@@ -69,9 +77,9 @@ services:
         class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
         arguments: ['@middleware.removal_confirmation.twig', 'encrypted']
 
-    middleware.removal_confirmation.group:
+    middleware.removal_confirmation.template:
         class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
-        arguments: ['@middleware.removal_confirmation.twig', 'group']
+        arguments: ['@middleware.removal_confirmation.twig', 'template']
     middleware.removal_confirmation.environment:
         class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
         arguments: ['@middleware.removal_confirmation.twig', 'environment']
@@ -79,3 +87,9 @@ services:
         class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
         arguments: ['@middleware.removal_confirmation.twig', 'credential']
 
+    middleware.removal_confirmation.vcs_provider:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'system_vcs']
+    middleware.removal_confirmation.id_provider:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'system_idp']

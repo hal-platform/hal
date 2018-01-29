@@ -221,9 +221,9 @@ Build <a href="/build/123456">123456</a>
 #}
 {% macro job_status_prefix_link(job, prefix) %}
     {% if job is release %}
-        {{ prefix }}<a href="{{ uriFor('release', {'release': job.id}) }}">{{ job|shortGUID }}</a>
+        {{ prefix }}<a href="{{ uriFor('release', {'release': job.id}) }}">{{ job|short_guid }}</a>
     {% else %}
-        {{ prefix }}<a href="{{ uriFor('build', {'build': job.id}) }}">{{ job|shortGUID }}</a>
+        {{ prefix }}<a href="{{ uriFor('build', {'build': job.id}) }}">{{ job|short_guid }}</a>
     {% endif %}
 {% endmacro %}
 
@@ -233,5 +233,33 @@ Build <a href="/build/123456">123456</a>
         {% set btn_size = ' btn--' ~ size %}
     {% endif %}
 
-    <button class="btn btn--disabled{{ btn_size }}">{{ text }}</button>
+    <button class="btn {{ btn_size }}" disabled>{{ text }}</button>
 {% endmacro %}
+
+{% macro user_display_link(user) %}
+    {%- if user is same as(null) -%}
+        None
+
+    {%- elseif user -%}
+        <a href="{{ uriFor('user', {'user': user.id }) }}">
+            {{ user.name|lower }}
+        </a>
+
+    {%- else -%}
+        Unknown
+    {%- endif -%}
+{% endmacro %}
+
+{% macro output_parameter(entity, parameter_name, default) -%}
+    {% set default_value = default|default('Not defined') %}
+    {% set value = entity.parameter(parameter_name) %}
+
+    {%- if value|length > 0 -%}
+        <p>
+            <code>{{ value }}</code>
+        </p>
+    {%- else -%}
+        <p>{{ default_value }}</p>
+    {%- endif -%}
+{%- endmacro %}
+

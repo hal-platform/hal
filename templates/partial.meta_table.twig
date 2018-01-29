@@ -1,0 +1,60 @@
+{% import _self as macros %}
+
+<table>
+    <thead>
+        <tr>
+            <th class="t40">Name</th>
+            <th>Data</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if metadata %}
+            {% for meta in metadata %}
+                <tr>
+                    <td class="meta-name">
+                        <span class="meta-nowrap">{{ meta.name }}</span>
+                    </td>
+
+                    <td>
+                        {{ macros.meta_display(meta.value) }}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="2">No metadata found.</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+{% macro meta_display(value) %}
+    {% import _self as macros %}
+
+    {% set meta_length = value|length %}
+    {% set meta_lines = value|occurences("\n") %}
+
+    {% if meta_lines == 0 %}
+        {% if value starts with "http://" or value starts with "https://" %}
+            <a href="{{ value }}" class="meta-nowrap">{{ value }}</a>
+        {% else %}
+            {{ macros.standard_meta_display(value) }}
+        {% endif %}
+
+    {% elseif meta_lines > 5 %}
+        <div class="pre-wrapper">
+            <pre style="max-height: 10em;" id="meta-{{ meta.id }}">{{ value }}</pre>
+            <small><a href="#" data-meta-expand="meta-{{ meta.id }}">Show all...</a></small>
+        </div>
+
+    {% else %}
+        {{ macros.standard_meta_display(value) }}
+
+    {% endif %}
+{% endmacro %}
+
+{% macro standard_meta_display(value) %}
+    <div class="pre-wrapper">
+        <pre>{{ value }}</pre>
+    </div>
+{% endmacro %}

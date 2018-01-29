@@ -1,7 +1,8 @@
+{# expected context = events, can_load #}
+
 {% import 'macros.twig' as macros %}
 
-{# expected context = logs, canLoad #}
-<table class="js-event-logs table--spacing-medium table--bodied">
+<table class="js-event-logs table--bodied">
     <thead>
         <tr>
             <th>Event</th>
@@ -11,26 +12,26 @@
         </tr>
     </thead>
 
-    {% for log in logs %}
-        {% if canLoad and log.parameters %}
-            <tbody data-log="{{ log.id }}" data-log-loadable="1">
+    {% for event in events %}
+        {% if can_load and event.parameters %}
+            <tbody data-log="{{ event.id }}" data-log-loadable="1">
         {% else %}
-            <tbody data-log="{{ log.id }}">
+            <tbody data-log="{{ event.id }}">
         {% endif %}
-            <tr class="{{ log.status == 'failure' ? 'event-log--error' : '' }}">
+            <tr class="{{ event.status == 'failure' ? 'event-log--error' : '' }}">
                 <td>
-                    {% if log.status == 'success' %}
-                        {{ macros.status(log.stage|formatEvent, 'success', 'tick') }}
+                    {% if event.status == 'success' %}
+                        {{ macros.status(event.stage|format_event_to_stage, 'success', 'tick') }}
 
-                    {% elseif log.status == 'failure' %}
-                        {{ macros.status(log.stage|formatEvent, 'error', 'spam') }}
+                    {% elseif event.status == 'failure' %}
+                        {{ macros.status(event.stage|format_event_to_stage, 'error', 'spam') }}
 
                     {% else %}
-                        {{ macros.status(log.stage|formatEvent, 'info', 'paragraph-justify-2') }}
+                        {{ macros.status(event.stage|format_event_to_stage, 'info', 'paragraph-justify-2') }}
                     {% endif %}
                 </td>
-                <td>{{ log.created|html5date }}</td>
-                <td>{{ log.message }}</td>
+                <td>{{ event.created|html5date }}</td>
+                <td>{{ event.message }}</td>
 
                 <td class="tr js-event-logs-loader"></td>
             </tr>
@@ -38,7 +39,7 @@
     {% else %}
         <tbody class="js-empty-row">
             <tr>
-                <td colspan="4">No logs found.</td>
+                <td colspan="4">No events found.</td>
             </tr>
         </tbody>
     {% endfor %}

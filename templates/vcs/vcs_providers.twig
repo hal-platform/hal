@@ -1,0 +1,92 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+{% import _self as page_macros %}
+
+{% set page_title = 'Version Control Providers' %}
+
+{% set is_admin = current_authorizations.isSuper() %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+{% endblock %}
+
+{% block content %}
+    <p>
+        Version Control Systems allow applications to specify a system where their project code is located. Hal
+        supports external version control systems based on <b>git</b> such as <b>GitHub</b>.
+    </p>
+
+    {{ block('vcs_table') }}
+
+    <p>
+        {% if is_admin %}
+            <a class="btn" href="{{ uriFor('vcs_providers.add') }}">Add Version Control</a>
+        {% else %}
+            {{ macros.disabled_button('Add Version Control') }}
+        {% endif %}
+    </p>
+
+{% endblock %}
+
+{% block vcs_table %}
+
+    {% if vcs_providers %}
+        <table>
+            <thead>
+                <tr>
+                    <th class="t15">ID</th>
+                    <th class="t15">Type</th>
+                    <th>Name</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vcs in vcs_providers %}
+                    <tr>
+                        <td>
+                            <a href="{{ uriFor('vcs_provider', {'system_vcs': vcs.id}) }}">{{ vcs|short_guid }}</a>
+                        </td>
+                        <td>
+                            {{ vcs.formatType() }}
+                        </td>
+                        <td>
+                            {{ page_macros.application_count(application_counts, vcs) }}
+                            {{ vcs.name }}
+                        </td>
+                        <td>
+                            {{ page_macros.vcs_details(vcs) }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>There are no version control providers.</p>
+    {% endif %}
+
+{% endblock %}
+
+{% macro application_count(application_counts, vcs) %}
+    {% import 'macros.twig' as macros %}
+
+    {% set apps = application_counts[vcs.id] ?: 0 %}
+    {%- if apps > 0 -%}
+        <span class="hint--top" aria-label="{{ apps }} applications are using this VCS">
+            {{- macros.status(apps, 'success') -}}
+        </span>
+    {%- else -%}
+        {{ macros.status(apps, 'info') }}
+    {%- endif %}
+{% endmacro %}
+
+{% macro vcs_details(vcs) %}
+    {% if vcs.type == 'git' %}
+        URL: <code>{{ vcs.parameter('git.link') }}</code>
+
+    {% elseif vcs.type == 'gh' %}
+        URL: <code>{{ vcs.parameter('gh.url') }}</code>
+
+    {% elseif vcs.type == 'ghe' %}
+        URL: <code>{{ vcs.parameter('ghe.url') }}</code>
+    {% endif %}
+{% endmacro %}

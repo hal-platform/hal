@@ -9,6 +9,7 @@ caret-left
 caret-right
 chevron-down
 chevron-up
+clock
 code
 commit
 compose-3
@@ -16,6 +17,7 @@ cross
 cross-2
 dashboard
 github
+folder-2
 in
 info
 key
@@ -126,7 +128,6 @@ chevron-left
 chevron-right
 clipboard
 clipboard-2
-clock
 cloud
 cloud-add
 cloud-add-2
@@ -181,7 +182,6 @@ flask-full
 flask-empty
 floppy
 folder
-folder-2
 folder-add
 folder-add-2
 folder-duplicate
@@ -418,11 +418,11 @@ zoom-out-2
             </div>
 
             <h2>Active Icons</h2>
-            <ul class="list--bare col-list" style="font-size:120%;">
+            <ul style="display:flex; flex-wrap:wrap; font-size:120%;">
                 {% for icon in icons_active %}
                     {% if icon %}
                         {% set icon = icon|trim %}
-                        <li>
+                        <li class="mvt" style="width:33%">
                             <svg class="icon"><use xlink:href="/icons.svg#{{ icon }}"></use></svg> <code>#{{ icon }}</code>
                         </li>
                     {% endif %}
@@ -430,11 +430,11 @@ zoom-out-2
             </ul>
 
             <h2>Other Icons</h2>
-            <ul class="list--bare col-list" style="font-size:120%;">
+            <ul style="display:flex; flex-wrap:wrap; font-size:120%;">
                 {% for icon in icons_inactive %}
                     {% if icon %}
                         {% set icon = icon|trim %}
-                        <li>
+                        <li class="mvt" style="width:33%">
                             <svg class="icon"><use xlink:href="/icons-other.svg#{{ icon }}"></use></svg> <code>#{{ icon }}</code>
                         </li>
                     {% endif %}

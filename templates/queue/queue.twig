@@ -1,21 +1,21 @@
 {% extends 'base.twig' %}
 
 {% set js_components = ['job_queue'] %}
-{% set page_title = 'Queue' %}
+{% set page_title = 'Current Job Queue' %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('queue.history') }}">Queue History</a></li>
+{% endblock %}
 
 {% block content %}
-    <div class="nav--page">
-        <h1>Current Job Queue</h1>
+    {{ block('links') }}
+    {% include 'partial.pending_job_table.twig' with { 'pending': pending } only %}
+    {{ block('links') }}
+{% endblock %}
 
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('queue.history.page1') }}">Queue History</a>
-            <a class="btn btn--small btn--back" href="{{ uriFor('builds.history.page1') }}">All Builds</a>
-            <a class="btn btn--small btn--back" href="{{ uriFor('releases.history.page1') }}">All Releases</a>
-        </p>
-    </div>
-
-    {% include 'partial.pending_job_table.twig' with {'pending': pending} only %}
-
-    <p><a class="btn" href="{{ uriFor('queue.history.page1') }}">Queue History</a></p>
-
+{% block links %}
+    <p>
+        <a class="btn" href="{{ uriFor('builds.history') }}">Build History</a>
+        <a class="btn" href="{{ uriFor('releases.history') }}">Release History</a>
+    </p>
 {% endblock %}

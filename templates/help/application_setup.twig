@@ -1,29 +1,24 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
 
-{% set page_title = 'Help : Application Setup' %}
+{% set page_title = 'Help - Application Setup Guide' %}
+
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('help') }}">Help and FAQ</a></li>
+{% endblock %}
 
 {% set halContact = '<a href="mailto:' ~ hal_administrators_email ~ '">' ~ hal_administrators_email ~ '</a>' %}
 
 {% block content %}
-
-    <div class="nav--page">
-        <h1>Help - Application Setup Guide</h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('help') }}">Back to Help</a>
-        </p>
-    </div>
-
     <p>
         Once a project has been added to Hal, deployment targets must be added and assigned to start deployments.
         This guide will help you step through all the requirements for setting up an application for deployments through Hal.
     </p>
 
-    <ul class="list--bare">
+    <ul>
         <li>
             <ul class="list--bullet">
-                <li><a href="#onprem-rsync">On-premise - Rsync</a></li>
+                <li><a href="#onprem-rsync">On-premise - RSync</a></li>
                 <li><a href="#aws-elastic-beanstalk">AWS - Elastic Beanstalk</a></li>
                 <li><a href="#aws-codedeploy">AWS - CodeDeploy</a></li>
                 <li><a href="#aws-s3">AWS - S3</a></li>

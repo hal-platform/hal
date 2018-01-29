@@ -1,0 +1,111 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+{% import 'macros.form.twig' as form_macros %}
+
+{% set page_title = 'Sign in' %}
+
+{% block content %}
+
+    <h1>Hal Deployment System</h1>
+    <p>It deploys code to other, less capable machines.</p>
+
+    {% if id_providers|length %}
+        {{ block('signin_form') }}
+    {% else %}
+        <div class="mvl">
+            {{ macros.alert('error', 'No identity providers are configured!') }}
+        </div>
+    {% endif %}
+
+{% endblock %}
+
+{% block signin_form %}
+    {{ form_macros.form_errors(errors, is_csrf_error) }}
+
+    {% if selected_idp.type == 'internal' %}
+        <h2>Sign in via <b>{{ selected_idp.name }}</b></h2>
+        {{ block('internal_signin_form') }}
+
+    {% elseif selected_idp.type == 'ldap' %}
+        <h2>Sign in via <b>{{ selected_idp.name }}</b></h2>
+        {{ block('ldap_signin_form') }}
+
+    {% elseif selected_idp.type == 'ghe' %}
+        <h2>Sign in via <b>{{ selected_idp.name }}</b></h2>
+        {{ block('github_enterprise_signin_form') }}
+
+    {% elseif selected_idp.type == 'gh' %}
+        <h2>Sign in via <b>{{ selected_idp.name }}</b></h2>
+        {{ block('github_signin_form') }}
+
+    {% else %}
+        {{ block('idp_selector') }}
+
+    {% endif %}
+{% endblock %}
+
+{% block idp_selector %}
+    <h2>How would you like to sign in?</h2>
+
+    <ul>
+        {% for idp in id_providers %}
+            <li class="mvm">
+                <a class="btn" href="{{ uriFor('signin', {}, {'idp': idp.id}) }}">Sign in with {{ idp.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block internal_signin_form %}
+    <form method="post">
+        {{ form_macros.csrf_input('signin') }}
+        <input type="hidden" name="idp" value="{{ selected_idp.id }}">
+
+        <ul class="form-fields form-wrapper">
+            <li>
+                <label for="username">Username</label>
+                <input class="text-input" type="text" id="username" name="internal_username" autofocus>
+            </li>
+            <li>
+                <label for="password">Password</label>
+                <input class="text-input" type="password" id="password" name="internal_password">
+            </li>
+        </ul>
+
+        <p>
+            <button type="submit" class="btn">Sign in</button>
+            <a href="{{ uriFor('signin', {}, {'idp': 'remove'}) }}">Cancel</a>
+        </p>
+    </form>
+{% endblock %}
+
+{% block ldap_signin_form %}
+    <form method="post">
+        {{ form_macros.csrf_input('signin') }}
+        <input type="hidden" name="idp" value="{{ selected_idp.id }}">
+
+        <ul class="form-fields form-wrapper">
+            <li>
+                <label for="username">Username</label>
+                <input class="text-input" type="text" id="username" name="ldap_username" autofocus>
+            </li>
+            <li>
+                <label for="password">Password</label>
+                <input class="text-input" type="password" id="password" name="ldap_password">
+            </li>
+        </ul>
+
+        <p>
+            <button type="submit" class="btn">Sign in</button>
+            <a href="{{ uriFor('signin', {}, {'idp': 'remove'}) }}">Cancel</a>
+        </p>
+    </form>
+{% endblock %}
+
+{% block github_enterprise_signin_form %}
+    <p>GitHub Enterprise sign in not yet available!</p>
+{% endblock %}
+
+{% block github_signin_form %}
+    <p>GitHub.com Sign in not yet available!</p>
+{% endblock %}

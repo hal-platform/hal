@@ -15,3 +15,9 @@
     margin-top: $top;
     margin-bottom: $bottom;
 }
+
+@mixin limit-overflow-text() {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

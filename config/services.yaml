@@ -54,8 +54,8 @@ services:
     slim.global_middleware.user_session:
         class: 'Hal\UI\Middleware\UserSessionGlobalMiddleware'
         arguments:
-            - '@doctrine.em'
-            - '@service.authorization'
+            - '@user_session.handler'
+            - '@csrf'
             - '@uri'
         calls:
             - ['setLoggerMessageFactory', ['@mcp.logger.factory']]
@@ -76,33 +76,6 @@ services:
     # DOMAIN-SPECIFIC SERVICES
     ####################################################################################################################
 
-    ldap.auth:
-        class: 'Hal\UI\Auth'
-        arguments:
-            - '@ldap.auth.symfony'
-            - '%ldap.base_dn%'
-            - '%ldap.domain%'
-            - 'person'
-            - 'sAMAccountName'
-
-    ldap.auth.symfony:
-        class: 'Symfony\Component\Ldap\Ldap'
-        factory: ['Symfony\Component\Ldap\Ldap', 'create']
-        arguments:
-            - 'ext_ldap'
-            -
-                host: '%ldap.host%'
-                port: '%ldap.port%'
-
-    permissions:
-        class: 'Hal\UI\Service\PermissionService'
-        arguments:
-            - '@doctrine.em'
-            - '@json'
-        calls:
-            - ['setCache', ['@cache']]
-            - ['setCacheTTL', ['%cache.permissions.ttl%']]
-
     banner:
         class: 'Hal\UI\System\GlobalBannerService'
         arguments:
@@ -118,12 +91,12 @@ services:
             - '%cookie.preferences.ttl%'
 
     service.event_logs:
-        class: 'Hal\UI\Service\EventLogService'
+        class: 'Hal\UI\Service\JobEventsService'
         arguments:
+            - '@doctrine.em'
             - '@redis'
             - '@json'
             - '@clock'
-            - '@doctrine.em'
 
     job_queue:
         class: 'Hal\UI\Service\JobQueueService'

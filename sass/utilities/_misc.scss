@@ -1,15 +1,24 @@
 .tl {
     text-align: left;
 }
+.tc {
+    text-align: center;
+}
 .tr {
     text-align: right;
 }
 
-.fixed-size-label {
-    display: inline-block;
-    min-width: 10em;
+.maxch-10 {
+    max-width: 10ch;
+    @include limit-overflow-text();
 }
 
-.fixed-nobreak {
-    white-space: nowrap;
+.maxch-20 {
+    max-width: 20ch;
+    @include limit-overflow-text();
+}
+
+.maxch-30 {
+    max-width: 30ch;
+    @include limit-overflow-text();
 }

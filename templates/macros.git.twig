@@ -1,68 +1,3 @@
-{#
-Link to github for a branch, pull request, or commit
-
-Example:
-```
-<a href="https://github.com/example/repo/pull/42">Pull Request 42</a>
-<span class="hint--top" aria-label="This commit is update to date with HEAD">
-    <svg class="icon icon--success"><use xlink:href="/icons.svg#pull"></use></svg>
-</span>
-```
-#}
-{% macro gitref(build, sliced, isCurrent, hideTooltip) %}
-    {% import 'macros.twig' as macros %}
-
-    {% set sliced = sliced|default(false) %}
-    {% set hideTooltip = hideTooltip|default(false) %}
-
-    {% set resolved = build.reference|gitref %}
-    {% if resolved %}
-        {% set type = resolved|first %}
-        {% set ref = resolved|last %}
-
-        {% set icontype = 'branch' %}
-        {% if (type == 'pull') %}{% set icontype = 'pull' %}{% endif %}
-        {% if (type == 'tag') %}{% set icontype = 'tag' %}{% endif %}
-        {% if (type == 'commit') %}{% set icontype = 'commit' %}{% endif %}
-
-        {% if type in ['branch', 'tag'] and sliced and ref.length > 20 %}
-            {% set ref = ref[0:20] %}
-        {% endif %}
-
-        <a href="{{ githubReferenceUrl(build.application.gitHub.owner, build.application.gitHub.repository, build.reference) }}">
-            {% if type == 'pull' %}
-                Pull Request {{ ref }}
-            {% elseif type == 'tag' %}
-                Release {{ ref }}
-            {% elseif type == 'commit' %}
-                Commit {{ ref|commit }}
-            {% elseif type == 'branch' %}
-                {{ ref }}
-            {% endif %}
-        </a>
-
-        {% set iconcolor = '' %}
-        {% if (isCurrent is same as(true)) %}{% set iconcolor = 'icon--success' %}{% endif %}
-        {% if (isCurrent is same as(false)) %}{% set iconcolor = 'icon--warning' %}{% endif %}
-
-        {% if not hideTooltip and isCurrent is not same as(null) %}
-            {% if isCurrent is same as(true) %}
-
-                <span class="hint--top" aria-label="This commit is update to date with HEAD">
-                    {{ macros.icon(icontype, iconcolor) }}
-                </span>
-            {% elseif isCurrent is same as(false) %}
-                <span class="hint--top" aria-label="This commit is behind HEAD">
-                    {{ macros.icon(icontype, iconcolor) }}
-                </span>
-            {% endif %}
-        {% else %}
-            {{ macros.icon(icontype, iconcolor) }}
-        {% endif %}
-
-    {% endif %}
-
-{% endmacro %}
 
 {#
 Link to github repository
@@ -73,13 +8,86 @@ Example:
 <svg class="icon"><use xlink:href="/icons.svg#github"></use></svg>
 ```
 #}
-{% macro gitsource(application) %}
+{% macro vcs(application) %}
     {% import 'macros.twig' as macros %}
-    <a href="{{ githubRepoUrl(application.gitHub.owner, application.gitHub.repository) }}">{{ application.gitHub.owner }}/{{ application.gitHub.repository }}</a> {{ macros.icon('github') }}
+
+    {%- if application.provider is same as(null) -%}
+        None
+
+    {%- elseif application.provider.type in ['ghe', 'gh'] -%}
+        {{ macros.icon('github') }}
+        <a href="{{ vcs_url(application) }}">{{ vcs_text(application) }}</a>
+
+    {%- elseif application.provider.type in ['git'] -%}
+        <a href="{{ vcs_url(application) }}">{{ vcs_text(application) }}</a>
+        {{ macros.icon('code') }}
+
+    {%- else %}
+        {{ macros.icon('spam') }} <a href="#">Unknown</a>
+    {%- endif -%}
+
 {% endmacro %}
 
 {#
-Link to github repository
+Link to vcs ref
+
+Example:
+```
+<a href="https://github.com/example/repo/tree/master">master</a>
+<svg class="icon"><use xlink:href="/icons.svg#branch"></use></svg>
+```
+#}
+{% macro vcs_ref(application, build, is_current) %}
+    {% import _self as self_macros %}
+
+    {% set resolved = build.reference|vcsref(application) %}
+    {% set ref = resolved|last %}
+
+    <a href="{{ vcs_ref_url(build.application, build.reference) }}">
+        {%- if type == 'pull' -%}
+            {%- set icontype = 'pull' -%}
+            Pull Request {{ ref }}
+
+        {%- elseif type == 'tag' -%}
+            {%- set icontype = 'tag' -%}
+            Release {{ ref -}}
+
+        {%- elseif type == 'commit' -%}
+            {%- set icontype = 'commit' -%}
+            Commit {{ ref|commit -}}
+
+        {%- else -%}
+            {%- set icontype = 'branch' -%}
+            {{- ref -}}
+        {%- endif -%}
+    </a>
+    {{ self_macros.vcs_icon(icontype, is_current) }}
+{% endmacro %}
+
+{% macro vcs_icon(icontype, is_current) %}
+    {% import 'macros.twig' as macros %}
+
+    {% set iconcolor = '' %}
+    {% if (is_current is same as(true)) %}{% set iconcolor = 'icon--success' %}{% endif %}
+    {% if (is_current is same as(false)) %}{% set iconcolor = 'icon--warning' %}{% endif %}
+
+    {%- if is_current is not same as(null) -%}
+        {%- if is_current -%}
+            <span class="hint--top" aria-label="This commit is update to date with HEAD">
+                {{- macros.icon(icontype, iconcolor) -}}
+            </span>
+        {%- else -%}
+            <span class="hint--top" aria-label="This commit is behind HEAD">
+                {{- macros.icon(icontype, iconcolor) -}}
+            </span>
+        {%- endif -%}
+    {%- else -%}
+        {{- macros.icon(icontype, iconcolor) -}}
+    {%- endif -%}
+{% endmacro %}
+
+{#
+Link to vcs commit
 
 Example:
 ```
@@ -87,18 +95,12 @@ Example:
 <svg class="icon"><use xlink:href="/icons.svg#commit"></use></svg>
 ```
 #}
-{% macro gitcommit(build) %}
+{% macro vcs_commit(application, build) %}
     {% import 'macros.twig' as macros %}
 
-    {% set resolved = build.commit|gitref %}
-    {% if resolved %}
-        {% set ref = resolved|last %}
+    {% set resolved = build.commit|vcsref(application) %}
+    {% set ref = resolved|last %}
 
-        <a href="{{ githubCommitUrl(build.application.gitHub.owner, build.application.gitHub.repository, build.commit) }}">
-            {{ ref|commit }}
-        </a>
-        {{ macros.icon('commit') }}
-
-    {% endif %}
-
+    <a href="{{ vcs_ref_url(build.application, ref) }}">{{ ref|commit }}</a>
+    {{ macros.icon('commit') }}
 {% endmacro %}

@@ -1,10 +1,10 @@
 parameters:
     routes:
 
-        dashboard:
+        home:
             method: 'GET'
             route: '/'
-            stack: ['middleware.signed_in', 'dashboard.page']
+            stack: ['middleware.signed_in', 'home.page']
 
         # github.authorization:
         #     method: 'GET'
@@ -27,20 +27,25 @@ parameters:
             stack:  ['denied.page']
 
         ####################################################################################################################
-        # SIGN-IN CONTROLLERS
+        # sign in / authentication
         ####################################################################################################################
 
         signin:
             method: ['GET', 'POST']
             route: '/signin'
-            stack: ['signin.middleware', 'signin.page']
+            stack: ['middleware.require_csrf', 'signin.middleware', 'signin.page']
         signout:
-            method: 'GET'
+            method: 'POST'
             route: '/signout'
-            stack: ['signout.page']
+            stack: ['signout.handler']
+
+        signin.setup:
+            method: ['GET', 'POST']
+            route: '/signin-setup/{user:%r.guid%}/{setup_token:%r.guid%}'
+            stack: ['middleware.require_entity', 'middleware.require_csrf', 'signin.setup.page']
 
         ################################################################################################################
-        # HELP ROUTES
+        # help
         ################################################################################################################
 
         latest.release:
@@ -72,17 +77,18 @@ parameters:
             stack: ['help.application_setup.page']
 
         ################################################################################################################
-        # USER ROUTES
+        # users
         ################################################################################################################
 
-        users.page1:
-            method: 'GET'
-            route: '/users'
-            stack: ['middleware.signed_in', 'users.page']
         users:
             method: 'GET'
-            route: '/users/page/{page:%r.digit%}'
+            route: '/users[/page/{page:%r.digit%}]'
             stack: ['middleware.signed_in', 'users.page']
+
+        user.add:
+            method: ['GET', 'POST']
+            route: '/users/add'
+            stack: ['middleware.signed_in', 'middleware.is_super', 'middleware.require_csrf', 'user.add.page']
 
         user.management:
             route: '/users/{user:%r.guid%}'
@@ -93,50 +99,50 @@ parameters:
                     route: ''
                     stack: ['user.page']
 
-                user.toggle:
+                user.edit:
+                    method: ['GET', 'POST']
+                    route: '/edit'
+                    stack: ['middleware.is_admin_or_self', 'middleware.require_csrf', 'user.edit.page']
+
+                user.disable:
                     method: 'POST'
-                    route: '/toggle'
-                    stack: ['middleware.is_admin', 'user.toggle.handler']
+                    route: '/disable'
+                    stack: ['middleware.is_super', 'middleware.require_csrf', 'user.disable.handler']
+                user.enable:
+                    method: 'POST'
+                    route: '/enable'
+                    stack: ['middleware.is_super', 'middleware.require_csrf', 'user.disable.handler']
+                user.regenerate_setup:
+                    method: 'POST'
+                    route: '/regenerate-setup-token'
+                    stack: ['middleware.is_super', 'middleware.require_csrf', 'user.regenerate_setup.handler']
 
                 token.management:
                     route: '/tokens'
                     stack: ['middleware.is_admin_or_self']
                     routes:
-                        user.token.add:
+                        user_token.add:
                             method: 'POST'
                             route: '/add'
-                            stack: ['user.token.add.handler']
-                        user.token.remove:
+                            stack: ['middleware.require_csrf', 'user.token.add.handler']
+                        user_token.remove:
                             method: ['GET', 'POST']
-                            route: '/{token:%r.guid%}/revoke'
-                            stack: ['middleware.nested_entity', 'middleware.removal_confirmation.token', 'user.token.remove.handler']
+                            route: '/{user_token:%r.guid%}/revoke'
+                            stack: ['middleware.nested_entity', 'middleware.require_csrf', 'middleware.removal_confirmation.token', 'user.token.remove.handler']
 
         settings:
             method: ['GET', 'POST']
             route: '/settings'
-            stack: ['middleware.signed_in', 'user.settings.middleware', 'user.settings.page']
-
-        settings.management:
-            route: '/settings/favorite-applications/{application:%r.digit%}'
-            stack: ['middleware.signed_in', 'middleware.require_entity']
-            routes:
-                settings.favorite_applications.add:
-                    method: 'POST'
-                    route: ''
-                    stack: ['api_internal.settings.favorite_applications.add']
-                settings.favorite_applications.remove:
-                    method: 'POST'
-                    route: '/remove'
-                    stack: ['api_internal.settings.favorite_applications.remove']
+            stack: ['middleware.signed_in', 'middleware.require_csrf', 'user.settings.middleware', 'user.settings.page']
 
         ################################################################################################################
-        # ORGANIZATION ROUTES
+        # organizations
         ################################################################################################################
 
         organization.add:
             method: ['GET', 'POST']
             route: '/organizations/add'
-            stack: ['middleware.signed_in', 'organization.add.page']
+            stack: ['middleware.signed_in', 'middleware.require_csrf', 'organization.add.page']
 
         organization.management:
             route: '/organizations/{organization:%r.guid%}'
@@ -149,14 +155,14 @@ parameters:
                 organization.edit:
                     method: ['GET', 'POST']
                     route: '/edit'
-                    stack: ['middleware.is_admin', 'organization.edit.page']
+                    stack: ['middleware.is_admin', 'middleware.require_csrf', 'organization.edit.page']
                 organization.remove:
                     method: ['GET', 'POST']
                     route: '/remove'
-                    stack: ['middleware.is_admin', 'middleware.removal_confirmation.organization', 'organization.remove.handler']
+                    stack: ['middleware.is_admin', 'middleware.require_csrf', 'middleware.removal_confirmation.organization', 'organization.remove.handler']
 
         ################################################################################################################
-        # APPLICATION ROUTES
+        # applications
         ################################################################################################################
 
         applications:
@@ -167,7 +173,7 @@ parameters:
         application.add:
             method: ['GET', 'POST']
             route: '/applications/add'
-            stack: ['middleware.signed_in', 'application.add.page']
+            stack: [ 'middleware.signed_in', 'middleware.require_csrf', 'application.add.page']
 
         application.management:
             route: '/applications/{application:%r.guid%}'
@@ -185,21 +191,11 @@ parameters:
                 application.edit:
                     method: ['GET', 'POST']
                     route: '/edit'
-                    stack: ['middleware.is_owner', 'application.edit.page']
+                    stack: ['middleware.is_owner', 'middleware.require_csrf', 'application.edit.page']
                 application.remove:
                     method: ['GET', 'POST']
                     route: '/remove'
-                    stack: ['middleware.is_owner', 'middleware.removal_confirmation.application', 'application.remove.handler']
-
-                application_permission.add:
-                    method: ['GET', 'POST']
-                    route: '/permissions/add'
-                    stack: ['middleware.is_owner', 'application.permission_add.page']
-
-                application_permission.remove:
-                    method: ['GET', 'POST']
-                    route: '/permissions/remove'
-                    stack: ['middleware.is_owner', 'application.permission_remove.page']
+                    stack: ['middleware.is_owner', 'middleware.require_csrf', 'middleware.removal_confirmation.application', 'application.remove.handler']
 
                 # are these application routes or build/release routes?
                 # It's nice to be able to use route groups to nest common url prefixes.
@@ -207,24 +203,16 @@ parameters:
                 build.start:
                     method: ['GET', 'POST']
                     route: '/build'
-                    stack: ['middleware.signed_in', 'middleware.require_entity', 'build.start.middleware', 'build.start.page']
+                    stack: ['middleware.require_csrf', 'build.start.middleware', 'build.start.page']
 
-                build.history.page1:
+                builds:
                     method: 'GET'
-                    route: '/builds'
-                    stack: ['builds.page']
-                build.history:
-                    method: 'GET'
-                    route: '/builds/page/{page:%r.digit%}'
+                    route: '/builds[/page/{page:%r.digit%}]'
                     stack: ['builds.page']
 
-                release.history.page1:
+                releases:
                     method: 'GET'
-                    route: '/releases'
-                    stack: ['releases.page']
-                release.history:
-                    method: 'GET'
-                    route: '/releases/page/{page:%r.digit%}'
+                    route: '/releases[/page/{page:%r.digit%}]'
                     stack: ['releases.page']
 
                 targets:
@@ -234,7 +222,7 @@ parameters:
                 target.add:
                     method: ['GET', 'POST']
                     route: '/targets/add'
-                    stack: ['middleware.is_owner', 'target.add.middleware', 'target.add.page']
+                    stack: ['middleware.is_owner', 'middleware.require_csrf', 'target.add.middleware', 'target.add.page']
 
                 target.management:
                     route: '/targets/{target:%r.guid%}'
@@ -247,19 +235,15 @@ parameters:
                         target.edit:
                             method: ['GET', 'POST']
                             route: '/edit'
-                            stack: ['middleware.is_owner', 'target.edit.middleware', 'target.edit.page']
+                            stack: ['middleware.is_owner', 'middleware.require_csrf', 'target.edit.middleware', 'target.edit.page']
                         target.remove:
                             method: ['GET', 'POST']
                             route: '/remove'
-                            stack: ['middleware.is_owner', 'middleware.removal_confirmation.target', 'target.remove.handler']
+                            stack: ['middleware.is_owner', 'middleware.require_csrf', 'middleware.removal_confirmation.target', 'target.remove.handler']
 
-                        rollback.page1:
-                            method: 'GET'
-                            route: '/releases'
-                            stack: ['release.rollback.page']
                         rollback:
                             method: 'GET'
-                            route: '/releases/page/{page:%r.digit%}'
+                            route: '/releases[/page/{page:%r.digit%}]'
                             stack: ['release.rollback.page']
 
                 encrypted.configuration:
@@ -269,7 +253,7 @@ parameters:
                 encrypted.add:
                     method: ['GET', 'POST']
                     route: '/encrypted-configuration/add'
-                    stack: ['middleware.is_owner', 'encrypted.add.middleware', 'encrypted.add.page']
+                    stack: ['middleware.is_owner', 'middleware.require_csrf', 'encrypted.add.middleware', 'encrypted.add.page']
 
                 encrypted.management:
                     route: '/encrypted-configuration/{encrypted:%r.guid%}'
@@ -282,72 +266,45 @@ parameters:
                         encrypted.remove:
                             method: ['GET', 'POST']
                             route: '/remove'
-                            stack: ['middleware.removal_confirmation.encrypted', 'encrypted.remove.handler']
+                            stack: ['middleware.require_csrf', 'middleware.removal_confirmation.encrypted', 'encrypted.remove.handler']
 
-        ################################################################################################################
-        # SERVER Routes
-        ################################################################################################################
+        ####################################################################################################################
+        # target templates
+        ####################################################################################################################
 
-        groups:
-            method: 'GET'
-            route: '/groups'
-            stack: ['middleware.signed_in', 'groups.page']
-
-        group.add:
-            method: ['GET', 'POST']
-            route: '/groups/add'
-            stack: ['middleware.is_admin', 'group.add.page']
-
-        group.management:
-            route: '/groups/{group:%r.guid%}'
-            stack: ['middleware.signed_in', 'middleware.require_entity']
+        templates.management:
+            route: '/target-templates'
+            stack: ['middleware.signed_in']
             routes:
-                group:
+                templates:
                     method: 'GET'
                     route: ''
-                    stack: ['group.page']
-                group.edit:
+                    stack: ['templates.page']
+
+                template.add:
                     method: ['GET', 'POST']
-                    route: '/edit'
-                    stack: ['middleware.is_admin', 'group.edit.page']
-                group.remove:
-                    method: ['GET', 'POST']
-                    route: '/remove'
-                    stack: ['middleware.is_admin', 'middleware.removal_confirmation.group', 'group.remove.handler']
+                    route: '/add'
+                    stack: ['middleware.is_admin', 'middleware.require_csrf', 'template.add.page']
+
+                template.management:
+                    route: '/{template:%r.guid%}'
+                    stack: ['middleware.require_entity']
+                    routes:
+                        template:
+                            method: 'GET'
+                            route: ''
+                            stack: ['template.page']
+                        template.edit:
+                            method: ['GET', 'POST']
+                            route: '/edit'
+                            stack: ['middleware.is_admin', 'middleware.require_csrf', 'template.edit.page']
+                        template.remove:
+                            method: ['GET', 'POST']
+                            route: '/remove'
+                            stack: ['middleware.is_admin', 'middleware.require_csrf', 'middleware.removal_confirmation.template', 'template.remove.handler']
 
         ################################################################################################################
-        # ENVIRONMENT ROUTES
-        ################################################################################################################
-
-        environments:
-            method: 'GET'
-            route: '/environments'
-            stack: ['middleware.signed_in', 'environments.page']
-
-        environment.add:
-            method: ['GET', 'POST']
-            route: '/environments/add'
-            stack: ['middleware.is_admin', 'environment.add.page']
-
-        environment.management:
-            route: '/environments/{environment:%r.guid%}'
-            stack: ['middleware.signed_in', 'middleware.require_entity']
-            routes:
-                environment:
-                    method: 'GET'
-                    route: ''
-                    stack: ['environment.page']
-                environment.edit:
-                    method: ['GET', 'POST']
-                    route: '/edit'
-                    stack: ['middleware.is_admin', 'environment.edit.page']
-                environment.remove:
-                    method: ['GET', 'POST']
-                    route: '/remove'
-                    stack: ['middleware.is_admin', 'middleware.removal_confirmation.environment', 'environment.remove.handler']
-
-        ################################################################################################################
-        # QUEUE ROUTES
+        # queue
         ################################################################################################################
 
         queue:
@@ -355,66 +312,123 @@ parameters:
             route: '/queue'
             stack: ['middleware.signed_in', 'queue.page']
 
-        queue.history.page1:
-            method: 'GET'
-            route: '/queue-history'
-            stack: ['middleware.signed_in', 'queue.history.page']
-
         queue.history:
             method: 'GET'
-            route: '/queue-history/date/{date:%r.date%}'
+            route: '/queue-history[/date/{date:%r.date%}]'
             stack: ['middleware.signed_in', 'queue.history.page']
 
         ################################################################################################################
-        # BUILD ROUTES
+        # builds
         ################################################################################################################
 
-        build:
-            method: 'GET'
-            route: '/builds/{build:%r.build%}'
-            stack: ['middleware.signed_in', 'middleware.require_entity', 'build.page']
+        build.management:
+            route: '/builds/{build:%r.guid%}'
+            stack: ['middleware.signed_in', 'middleware.require_entity']
+            routes:
 
-        build.start:
-            method: ['GET', 'POST']
-            route: '/applications/{application:%r.digit%}/build[/environment/{environment:%r.digit%}]'
-            stack: ['middleware.signed_in', 'middleware.require_entity', 'build.start.middleware', 'build.start.page']
+                build:
+                    method: 'GET'
+                    route: ''
+                    stack: ['build.page']
 
-        builds.history.page1:
-            method: 'GET'
-            route: '/builds'
-            stack: ['middleware.signed_in', 'builds.history.page']
+                release.start:
+                    method: ['GET', 'POST']
+                    route: '/release'
+                    stack: ['middleware.require_csrf', 'deploy.middleware', 'release.start.page']
+
         builds.history:
             method: 'GET'
-            route: '/builds/page/{page:%r.digit%}'
+            route: '/builds[/page/{page:%r.digit%}]'
             stack: ['middleware.signed_in', 'builds.history.page']
 
         ################################################################################################################
-        # Release ROUTES
+        # releases
         ################################################################################################################
 
-        release:
-            method: 'GET'
-            route: '/releases/{release:%r.release%}'
-            stack: ['middleware.signed_in', 'middleware.require_entity', 'release.page']
+        release.management:
+            route: '/releases/{release:%r.guid%}'
+            stack: ['middleware.signed_in', 'middleware.require_entity']
+            routes:
 
-        release.start:
-            method: ['GET', 'POST']
-            route: '/builds/{build:%r.build%}/release'
-            stack: ['middleware.signed_in', 'middleware.require_entity', 'deploy.select_environment.middleware', 'deploy.middleware', 'release.start.page']
-
-        releases.history.page1:
-            method: 'GET'
-            route: '/releases'
-            stack: ['middleware.signed_in', 'releases.history.page']
+                release:
+                    method: 'GET'
+                    route: ''
+                    stack: ['release.page']
 
         releases.history:
             method: 'GET'
-            route: '/releases/page/{page:%r.digit%}'
+            route: '/releases[/page/{page:%r.digit%}]'
             stack: ['middleware.signed_in', 'releases.history.page']
 
         ################################################################################################################
-        # ADMIN ROUTES
+        # permissions
         ################################################################################################################
+
+        permissions.management:
+            route: ''
+            stack: ['middleware.signed_in', 'middleware.require_entity']
+
+            routes:
+                application_permissions.management:
+                    route: '/applications/{application:%r.guid%}/permissions'
+                    stack: ['middleware.is_owner']
+
+                    routes:
+                        application_permissions.add:
+                            method: ['GET', 'POST']
+                            route: '/add'
+                            stack: ['middleware.require_csrf', 'application_permissions_add.page']
+
+                        application_permissions.remove:
+                            method: ['GET', 'POST']
+                            route: '/remove'
+                            stack: ['middleware.require_csrf', 'application_permissions_remove.page']
+
+                organization_permissions.management:
+                    route: '/organizations/{organization:%r.guid%}/permissions'
+                    stack: ['middleware.is_owner']
+
+                    routes:
+                        organization_permissions.add:
+                            method: ['GET', 'POST']
+                            route: '/add'
+                            stack: ['middleware.require_csrf', 'organization_permissions_add.page']
+
+                        organization_permissions.remove:
+                            method: ['GET', 'POST']
+                            route: '/remove'
+                            stack: ['middleware.require_csrf', 'organization_permissions_remove.page']
+
+                ################################################################################################################
+                # admin - permissions
+                ################################################################################################################
+
+                admin.permissions:
+                    method: 'GET'
+                    route: '/admin/permissions[/page/{page:%r.digit%}]'
+                    stack: ['middleware.is_super', 'admin.permissions.page']
+
+                user_permissions.management:
+                    route: '/users/{user:%r.guid%}/permissions'
+                    stack: ['middleware.is_super', 'middleware.require_entity', 'middleware.nested_entity']
+                    routes:
+                        user_permissions.add:
+                            method: ['GET', 'POST']
+                            route: '/add'
+                            stack: ['middleware.require_csrf', 'user_permissions.add.page']
+                        user_permissions.remove:
+                            method: ['GET', 'POST']
+                            route: '/{user_permission:%r.guid%}/remove'
+                            stack: ['middleware.require_csrf', 'user_permissions.remove.page']
+
+        ################################################################################################################
+        # administrative
+        ################################################################################################################
+
+        hal_bootstrap:
+            method: ['GET', 'POST']
+            route: '/hal-bootstrap'
+            stack: ['middleware.require_csrf', 'hal_bootstrap.page']
 
         admin.management:
             route: '/admin'
@@ -425,13 +439,9 @@ parameters:
                     route: ''
                     stack: ['admin.dashboard.page']
 
-                admin.audit_history.page1:
-                    method: 'GET'
-                    route: '/audit-history'
-                    stack: ['admin.audit_history.page']
                 admin.audit_history:
                     method: 'GET'
-                    route: '/audit-history/page/{page:%r.digit%}'
+                    route: '/audit-history[/page/{page:%r.digit%}]'
                     stack: ['admin.audit_history.page']
 
                 admin.system_dashboard:
@@ -442,15 +452,112 @@ parameters:
                 admin.cache_management:
                     method: ['GET', 'POST']
                     route: '/caches'
-                    stack: ['admin.cache_management.handler', 'admin.cache_management.page']
+                    stack: ['middleware.require_csrf', 'admin.cache_management.handler', 'admin.cache_management.page']
 
                 admin.global_banner:
                     method: ['GET', 'POST']
                     route: '/global-banner'
-                    stack: ['admin.global_banner.page']
+                    stack: ['middleware.require_csrf', 'admin.global_banner.page']
 
                 ################################################################################################################
-                # CREDENTIAL ROUTES
+                # admin - environments
+                ################################################################################################################
+
+                environments:
+                    method: 'GET'
+                    route: '/environments'
+                    stack: ['environments.page']
+
+                environment.add:
+                    method: ['GET', 'POST']
+                    route: '/environments/add'
+                    stack: ['middleware.require_csrf', 'environment.add.page']
+
+                environment.management:
+                    route: '/environments/{environment:%r.guid%}'
+                    stack: ['middleware.require_entity']
+                    routes:
+                        environment:
+                            method: 'GET'
+                            route: ''
+                            stack: ['environment.page']
+                        environment.edit:
+                            method: ['GET', 'POST']
+                            route: '/edit'
+                            stack: ['middleware.require_csrf', 'environment.edit.page']
+                        environment.remove:
+                            method: ['GET', 'POST']
+                            route: '/remove'
+                            stack: ['middleware.require_csrf', 'middleware.removal_confirmation.environment', 'environment.remove.handler']
+
+                ################################################################################################################
+                # admin - idp
+                ################################################################################################################
+
+                id_providers:
+                    method: 'GET'
+                    route: '/idp'
+                    stack: ['id_providers.page']
+
+                id_providers.add:
+                    method: ['GET', 'POST']
+                    route: '/idp/add'
+                    stack: ['middleware.require_csrf', 'id_providers.add.page']
+
+                id_provider.management:
+                    route: '/idp/{system_idp:%r.guid%}'
+                    stack: ['middleware.require_entity']
+                    routes:
+                        id_provider:
+                            method: 'GET'
+                            route: ''
+                            stack: ['id_provider.page']
+
+                        id_provider.edit:
+                            method: ['GET', 'POST']
+                            route: '/edit'
+                            stack: ['middleware.require_csrf', 'id_provider.edit.page']
+
+                        id_provider.remove:
+                            method: ['GET', 'POST']
+                            route: '/remove'
+                            stack: ['middleware.require_csrf', 'middleware.removal_confirmation.id_provider', 'id_provider.remove.handler']
+
+                ################################################################################################################
+                # admin - vcs
+                ################################################################################################################
+
+                vcs_providers:
+                    method: 'GET'
+                    route: '/vcs'
+                    stack: ['vcs_providers.page']
+
+                vcs_providers.add:
+                    method: ['GET', 'POST']
+                    route: '/vcs/add'
+                    stack: ['middleware.require_csrf', 'vcs_providers.add.page']
+
+                vcs_provider.management:
+                    route: '/vcs/{system_vcs:%r.guid%}'
+                    stack: ['middleware.require_entity']
+                    routes:
+                        vcs_provider:
+                            method: 'GET'
+                            route: ''
+                            stack: ['vcs_provider.page']
+
+                        vcs_provider.edit:
+                            method: ['GET', 'POST']
+                            route: '/edit'
+                            stack: ['middleware.require_csrf', 'vcs_provider.edit.page']
+
+                        vcs_provider.remove:
+                            method: ['GET', 'POST']
+                            route: '/remove'
+                            stack: ['middleware.require_csrf', 'middleware.removal_confirmation.vcs_provider', 'vcs_provider.remove.handler']
+
+                ################################################################################################################
+                # admin - credentials
                 ################################################################################################################
 
                 credentials:
@@ -461,7 +568,7 @@ parameters:
                 credential.add:
                     method: ['GET', 'POST']
                     route: '/credentials/add'
-                    stack: ['middleware.is_super', 'credential.add.page']
+                    stack: ['middleware.require_csrf', 'middleware.is_super', 'credential.add.page']
 
                 credential.management:
                     route: '/credentials/{credential:%r.guid%}'
@@ -475,35 +582,9 @@ parameters:
                         credential.edit:
                             method: ['GET', 'POST']
                             route: '/edit'
-                            stack: ['credential.edit.page']
+                            stack: ['middleware.require_csrf', 'credential.edit.page']
 
                         credential.remove:
                             method: ['GET', 'POST']
                             route: '/remove'
-                            stack: ['middleware.is_super', 'middleware.removal_confirmation.credential', 'credential.remove.handler']
-
-                ################################################################################################################
-                # PERMISSION ROUTES
-                ################################################################################################################
-
-                admin.permissions:
-                    method: 'GET'
-                    route: '/permissions'
-                    stack: ['admin.permissions.page']
-
-                user_permissions.management:
-                    route: '/users/{user:%r.guid%}'
-                    stack: ['middleware.require_entity', 'middleware.nested_entity']
-                    routes:
-                        admin.permissions.refresh:
-                            method: 'POST'
-                            route: '/refresh'
-                            stack: ['admin.permissions.refresh.handler']
-                        admin.permissions.add:
-                            method: ['GET', 'POST']
-                            route: '/add'
-                            stack: ['admin.permissions.add.page']
-                        admin.permissions.remove:
-                            method: ['GET', 'POST']
-                            route: '/permission/{user_permission:%r.guid%}/remove'
-                            stack: ['admin.permissions.remove.middleware', 'admin.permissions.remove.handler']
+                            stack: ['middleware.is_super', 'middleware.require_csrf', 'middleware.removal_confirmation.credential', 'credential.remove.handler']

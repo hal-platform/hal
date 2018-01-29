@@ -8,25 +8,26 @@
 namespace Hal\UI\Controllers\Target;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Target;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Flash;
 use Hal\UI\Validator\TargetValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\Application;
-use Hal\Core\Entity\Target;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
 
 class EditTargetMiddleware implements MiddlewareInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
 
-    const MSG_SUCCESS = 'Target updated.';
+    private const MSG_SUCCESS = 'Deployment target updated.';
 
     /**
      * @var EntityManagerInterface
@@ -64,59 +65,33 @@ class EditTargetMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
+        $application = $request->getAttribute(Application::class);
+        $target = $request->getAttribute(Target::class);
+        $form = $this->validator->getFormData($request, $target);
+
+        $context = ['form' => $form];
+
         if ($request->getMethod() !== 'POST') {
+            $request = $this->withContext($request, $context);
             return $next($request, $response);
         }
 
-        $application = $request->getAttribute(Application::class);
-        $target = $request->getAttribute(Target::class);
-        $form = $this->getFormData($request);
+        if (!$this->isCSRFValid($request)) {
+            $request = $this->withContext($request, $context);
+            return $next($request, $response);
+        }
 
-        $target = $this->validator->isEditValid($target, ...array_values($form));
+        $target = $this->validator->isEditValid($target, $target->environment(), $form);
 
         if (!$target) {
-            return $next(
-                $this->withContext($request, ['errors' => $this->validator->errors()]),
-                $response
-            );
+            $request = $this->withContext($request, $context + ['errors' => $this->validator->errors()]);
+            return $next($request, $response);
         }
 
         $this->em->persist($target);
         $this->em->flush();
 
-        $this->withFlash($request, Flash::SUCCESS, self::MSG_SUCCESS);
+        $this->withFlashSuccess($request, self::MSG_SUCCESS);
         return $this->withRedirectRoute($response, $this->uri, 'target', ['application' => $application->id(), 'target' => $target->id()]);
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     *
-     * @return array
-     */
-    private function getFormData(ServerRequestInterface $request)
-    {
-        $form = [
-            'name' => $request->getParsedBody()['name'] ?? '',
-            'path' => $request->getParsedBody()['path'] ?? '',
-
-            'cd_name' => $request->getParsedBody()['cd_name'] ?? '',
-            'cd_group' => $request->getParsedBody()['cd_group'] ?? '',
-            'cd_config' => $request->getParsedBody()['cd_config'] ?? '',
-
-            'eb_name' => $request->getParsedBody()['eb_name'] ?? '',
-            'eb_environment' => $request->getParsedBody()['eb_environment'] ?? '',
-
-            's3_method' => $request->getParsedBody()['s3_method'] ?? '',
-            's3_bucket' => $request->getParsedBody()['s3_bucket'] ?? '',
-            's3_local_path' => $request->getParsedBody()['s3_local_path'] ?? '',
-            's3_remote_path' => $request->getParsedBody()['s3_remote_path'] ?? '',
-
-            'script_context' => $request->getParsedBody()['script_context'] ?? '',
-
-            'url' => $request->getParsedBody()['url'] ?? '',
-            'credential' => $request->getParsedBody()['credential'] ?? ''
-        ];
-
-        return $form;
     }
 }

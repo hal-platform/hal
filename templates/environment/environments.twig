@@ -5,39 +5,37 @@
 
 {% set is_admin = current_authorizations.isSuper() %}
 
-{% block content %}
-    <h1>{{ page_title }}</h1>
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
+{% endblock %}
 
+{% block content %}
     {{ block('env_table') }}
 
-    <ul class="list--bare">
-        <li><a class="btn" href="{{ uriFor('applications') }}">Applications</a></li>
-        <li>
-            {% if is_admin %}
-                <a class="btn btn--action" href="{{ uriFor('environment.add') }}">Add Environment</a>
-            {% else %}
-                {{ macros.disabled_button('Add Environment') }}
-            {% endif %}
-        </li>
-    </ul>
+    <p>
+        {% if is_admin %}
+            <a class="btn" href="{{ uriFor('environment.add') }}">Add Environment</a>
+        {% else %}
+            {{ macros.disabled_button('Add Environment') }}
+        {% endif %}
+    </p>
 
 {% endblock %}
 
 {% block env_table %}
+    <table>
+        <thead>
+            <tr>
+                <th class="t15">ID</th>
+                <th>Environment</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if envs %}
 
-    {% if envs %}
-        <table class="table--spacing-medium">
-            <thead>
-                <tr>
-                    <th class="t15">ID</th>
-                    <th>Environment</th>
-                    <th class="t15"></th>
-                </tr>
-            </thead>
-            <tbody>
                 {% for environment in envs %}
                     <tr>
-                        <td>{{ environment|shortGUID }}</td>
+                        <td><a href="{{ uriFor('environment', {'environment': environment.id}) }}">{{ environment|short_guid }}</a></td>
                         <td>
                             {% if environment.isProduction %}
                                 {{ macros.status(environment.name, 'info', 'key') }}
@@ -45,15 +43,15 @@
                                 {{ environment.name }}
                             {% endif %}
                         </td>
-                        <td>
-                            <a href="{{ uriFor('environment', {'environment': environment.id}) }}">Manage</a>
-                        </td>
                     </tr>
                 {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>There are no environments.</p>
-    {% endif %}
 
+            {% else %}
+                <tr>
+                    <td colspan="2">There are no environments.</td>
+                <tr>
+            {% endif %}
+
+        </tbody>
+    </table>
 {% endblock %}

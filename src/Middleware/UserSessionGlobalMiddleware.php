@@ -7,27 +7,24 @@
 
 namespace Hal\UI\Middleware;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\User;
-use Hal\Core\Entity\UserPermission;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Security\AuthorizationService;
+use Hal\UI\Security\CSRFManager;
+use Hal\UI\Security\UserSessionHandler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\MCP\Logger\MessageFactoryInterface;
 use QL\MCP\Logger\MessageInterface;
 use QL\Panthor\MiddlewareInterface;
+use QL\Panthor\Session\SessionInterface;
 use QL\Panthor\Utility\URI;
+use function random_bytes;
 
 /**
- * If there is a user session, load the User.
- *
- * The user is loaded from the database and populates into:
- * - Request (attribute: current_user)
- * - Template Context (variable: current_user)
+ * - Ensure a session cookie is present and load session details in the request and template context if so.
+ * - Add CSRF details to session/memory
  */
 class UserSessionGlobalMiddleware implements MiddlewareInterface
 {
@@ -35,22 +32,17 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
     use SessionTrait;
     use TemplatedControllerTrait;
 
-    public const SESSION_ATTRIBUTE = 'user_id';
-    public const USER_ATTRIBUTE = 'current_user';
-    public const AUTHORIZATIONS_ATTRIBUTE = 'current_authorizations';
-
-    private const ROUTE_SIGNOUT = 'signout';
+    public const CSRF_ATTRIBUTE = 'csrf';
 
     /**
-     * @var EntityRepository
+     * @var UserSessionHandler
      */
-    private $userRepo;
-    private $permissionRepo;
+    private $userHandler;
 
     /**
-     * @var AuthorizationService
+     * @var CSRFManager
      */
-    private $authorizationService;
+    private $csrf;
 
     /**
      * @var URI
@@ -63,19 +55,14 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
     private $factory;
 
     /**
-     * @param EntityManagerInterface $em
-     * @param AuthorizationService $authorizationService
+     * @param UserSessionHandler $userHandler
+     * @param CSRFManager $csrf
      * @param URI $uri
      */
-    public function __construct(
-        EntityManagerInterface $em,
-        AuthorizationService $authorizationService,
-        URI $uri
-    ) {
-        $this->userRepo = $em->getRepository(User::class);
-        $this->permissionRepo = $em->getRepository(UserPermission::class);
-
-        $this->authorizationService = $authorizationService;
+    public function __construct(UserSessionHandler $userHandler, CSRFManager $csrf, URI $uri)
+    {
+        $this->userHandler = $userHandler;
+        $this->csrf = $csrf;
         $this->uri = $uri;
     }
 
@@ -84,68 +71,34 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $session = $this->getSession($request);
+        $session = $this->userHandler->getFreshSession($request);
 
-        // If no user-id, continue on seamlessly.
-        if (!$userID = $session->get(self::SESSION_ATTRIBUTE)) {
-            return $next($request, $response);
-        }
+        $sessionID = $session->get(UserSessionHandler::SESSION_ID_ATTRIBUTE);
 
-        $user = $this->userRepo->find($userID);
+        $csrfs = $session->get(self::CSRF_ATTRIBUTE) ?: [];
+        $this->csrf->loadCSRFs($csrfs, $sessionID);
+
+        $request = $this->userHandler->attachSessionUserToRequest($request, $session);
 
         // sign out user if not found, or is disabled
-        if (!$user instanceof User || $user->isDisabled()) {
-            //stops redirect
-            $this->getSession($request)->clear();
-            // @todo CHANGE TO POST!!!!
-            return $this->withRedirectRoute($response, $this->uri, self::ROUTE_SIGNOUT);
+        // Note this does not fail if NO user session is provided.
+        // Only if a user ID session exists and is invalid
+        if (!$request) {
+            $session->clear();
+            return $this->withRedirectRoute($response, $this->uri, 'signin');
         }
 
-        $this->attachUserToLogger($user);
+        // Attach user details to logger if user session is present.
+        if ($user = $this->getUser($request)) {
+            $this->attachUserToLogger($user);
+        }
 
-        $request = $this->appendUserToRequest($request, $user);
-        $request = $this->appendAuthorizationsToRequest($request, $user);
+        $response = $next($request, $response);
 
-        // Save user to request attributes
-        return $next($request, $response);
-    }
+        // Set the CSRFs so they can be rendered back out
+        $session->set(self::CSRF_ATTRIBUTE, $this->csrf->getCSRFs());
 
-    /**
-     * Add user to the server attrs for controllers/middleware
-     * Add user to template context for templates
-     *
-     * @param ServerRequestInterface $request
-     * @param User $user
-     *
-     * @return ServerRequestInterface
-     */
-    private function appendUserToRequest(ServerRequestInterface $request, User $user): ServerRequestInterface
-    {
-        $request = $this
-            ->withContext($request, [self::USER_ATTRIBUTE => $user])
-            ->withAttribute(self::USER_ATTRIBUTE, $user);
-
-        return $request;
-    }
-
-    /**
-     * Add authorizations to the server attrs for controllers/middleware
-     * Add authorizations to template context for templates
-     *
-     * @param ServerRequestInterface $request
-     * @param User $user
-     *
-     * @return ServerRequestInterface
-     */
-    private function appendAuthorizationsToRequest(ServerRequestInterface $request, User $user): ServerRequestInterface
-    {
-        $authorizations = $this->authorizationService->getUserAuthorizations($user);
-
-        $request = $this
-            ->withContext($request, [self::AUTHORIZATIONS_ATTRIBUTE => $authorizations])
-            ->withAttribute(self::AUTHORIZATIONS_ATTRIBUTE, $authorizations);
-
-        return $request;
+        return $response;
     }
 
     /**
@@ -159,7 +112,7 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
             return;
         }
 
-        $this->factory->setDefaultProperty(MessageInterface::USER_NAME, $user->username());
+        $this->factory->setDefaultProperty(MessageInterface::USER_NAME, $user->name());
     }
 
     /**

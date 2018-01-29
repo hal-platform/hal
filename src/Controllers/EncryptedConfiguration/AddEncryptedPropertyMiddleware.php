@@ -9,11 +9,10 @@ namespace Hal\UI\Controllers\EncryptedConfiguration;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Flash;
-use Hal\UI\Utility\ValidatorTrait;
 use Hal\UI\Validator\EncryptedPropertyValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -27,10 +26,10 @@ use QL\Panthor\Utility\URI;
 
 class AddEncryptedPropertyMiddleware implements MiddlewareInterface
 {
+    use CSRFTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
-    use ValidatorTrait;
 
     const MSG_SUCCESS = 'Encrypted Property "%s" added.';
 
@@ -61,28 +60,16 @@ class AddEncryptedPropertyMiddleware implements MiddlewareInterface
     private $uri;
 
     /**
-     * @var callable
-     */
-    private $random;
-
-    /**
-     * @var array
-     */
-    private $errors;
-
-    /**
      * @param EntityManagerInterface $em
      * @param Encryption $encrypter
      * @param EncryptedPropertyValidator $validator
      * @param URI $uri
-     * @param callable $random
      */
     public function __construct(
         EntityManagerInterface $em,
         Encryption $encrypter,
         EncryptedPropertyValidator $validator,
-        URI $uri,
-        callable $random
+        URI $uri
     ) {
         $this->em = $em;
         $this->encryptedRepo = $em->getRepository(EncryptedProperty::class);
@@ -91,9 +78,6 @@ class AddEncryptedPropertyMiddleware implements MiddlewareInterface
         $this->encrypter = $encrypter;
         $this->validator = $validator;
         $this->uri = $uri;
-        $this->random = $random;
-
-        $this->errors = [];
     }
 
     /**
@@ -102,6 +86,10 @@ class AddEncryptedPropertyMiddleware implements MiddlewareInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         if ($request->getMethod() !== 'POST') {
+            return $next($request, $response);
+        }
+
+        if (!$this->isCSRFValid($request)) {
             return $next($request, $response);
         }
 
@@ -117,18 +105,14 @@ class AddEncryptedPropertyMiddleware implements MiddlewareInterface
 
         // if didn't create a property, add errors and pass through to controller
         if (!$encrypted) {
-            return $next(
-                $this->withContext($request, ['errors' => $this->validator->errors()]),
-                $response
-            );
+            return $next($this->withContext($request, ['errors' => $this->validator->errors()]), $response);
         }
 
         // persist to database
         $this->em->persist($encrypted);
         $this->em->flush();
 
-        $message = sprintf(self::MSG_SUCCESS, $encrypted->name());
-        $this->withFlash($request, Flash::SUCCESS, $message);
+        $this->withFlashSuccess($request, sprintf(self::MSG_SUCCESS, $encrypted->name()));
         return $this->withRedirectRoute($response, $this->uri, 'encrypted.configuration', ['application' => $application->id()]);
     }
 }

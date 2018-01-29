@@ -1,0 +1,87 @@
+{% macro deploy_targets_table(targets, selected, can_user_deploy, can_deploy_now) %}
+    {% import _self as macros %}
+
+    <table>
+        <thead>
+            <tr>
+                <th>Target</th>
+                <th class="t30">Last Code Deployed</th>
+                <th class="t30">Last Deployed On</th>
+                <th class="t15"></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% if targets %}
+                {% for target in targets %}
+                    {{ macros.deploy_target_row(target, target.lastJob, selected, can_user_deploy, can_deploy_now) }}
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4">No targets available.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+{% endmacro %}
+
+{% macro deploy_target_row(target, release, selected, can_user_deploy, can_deploy_now) %}
+    {% import 'macros.twig' as macros %}
+    {% import 'macros.git.twig' as git_macros %}
+
+    {% set is_selected = (target.id == selected) %}
+    {% set needs_credentials = target.isAWS() and not target.credential %}
+    {% set target_tooltip = target.formatType() ~ ': ' ~ target.formatParameters() %}
+
+    <tr>
+        <td>
+            <span class="hint--right" aria-label="{{ target_tooltip }}">{{ target.name }}</span>
+        </td>
+        {% if release %}
+            {% set build = release.build %}
+
+            <td>
+                {% set is_current = is_vcs_ref_current(build.application, build) %}
+
+                {{ git_macros.vcs_ref(build.application, build, is_current) }}
+                {{ git_macros.vcs_commit(build.application, build) }}
+            </td>
+            <td>
+                {% if release.inProgress() %}
+                    Now
+                {% else %}
+                    {{ release.created|html5date }}
+                {% endif %}
+                ({{ macros.job_status_prefix(release, true, false) }})
+            </td>
+        {% else %}
+
+            {# No successful releases #}
+            <td>Never deployed</td>
+            <td>Never deployed</td>
+
+        {% endif %}
+
+        <td class="tr">
+            {% if release.inProgress() %}
+                {{ macros.status('Please Wait', 'info', 'clock') }}
+
+            {% elseif needs_credentials %}
+                {{ macros.status('No Credentials', 'error', 'spam-2') }}
+
+            {% elseif can_user_deploy %}
+                <label class="checkbox-check mrn" for="sel-{{ target.id }}">
+                    <input
+                        type="checkbox"
+                        class="js-toggle-box"
+                        name="targets[]"
+                        id="sel-{{ target.id }}"
+                        value="{{ target.id }}"{{ is_selected ? ' checked' : '' }}>
+                    <b class="checkbox-check--tick"></b>{{ can_deploy_now ? 'Deploy Now' : 'Deploy When Ready' }}
+                </label>
+            {% else %}
+                No Access
+            {% endif %}
+        </td>
+    </tr>
+{% endmacro %}

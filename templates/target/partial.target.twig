@@ -1,0 +1,77 @@
+{% block rsync_meta %}
+    {% import 'macros.twig' as target_macros %}
+
+    <h4>Servers</h4>
+    {{ target_macros.output_parameter(target, 'servers') }}
+
+    <h4>File path</h4>
+    {{ target_macros.output_parameter(target, 'path') }}
+
+{% endblock %}
+
+{% block script_meta %}
+
+{% endblock %}
+
+{% block cd_meta %}
+    {% import 'macros.twig' as target_macros %}
+
+    <h4>AWS Region</h4>
+    {{ target_macros.output_parameter(target, 'region') }}
+
+    <h4>CodeDeploy Application Name</h4>
+    {{ target_macros.output_parameter(target, 'application') }}
+
+    <h4>CodeDeploy Deployment Group</h4>
+    {{ target_macros.output_parameter(target, 'group') }}
+
+    <h4>CodeDeploy Configuration</h4>
+    {{ target_macros.output_parameter(target, 'configuration') }}
+
+    <h4>S3 Bucket</h4>
+    {{ target_macros.output_parameter(target, 'bucket') }}
+
+    <h4>S3 File</h4>
+    {{ target_macros.output_parameter(target, 'path', '$APPID/$PUSHID.zip') }}
+
+{% endblock %}
+
+{% block eb_meta %}
+    {% import 'macros.twig' as target_macros %}
+
+    <h4>AWS Region</h4>
+    {{ target_macros.output_parameter(target, 'region') }}
+
+    <h4>Elastic Beanstalk Application Name</h4>
+    {{ target_macros.output_parameter(target, 'application') }}
+
+    <h4>Elastic Beanstalk Environment</h4>
+    {{ target_macros.output_parameter(target, 'environment') }}
+
+    <h4>S3 Bucket</h4>
+    {{ target_macros.output_parameter(target, 'bucket') }}
+
+    <h4>S3 File</h4>
+    {{ target_macros.output_parameter(target, 'path', '$APPID/$PUSHID.zip') }}
+
+{% endblock %}
+
+{% block s3_meta %}
+    {% import 'macros.twig' as target_macros %}
+
+    <h4>AWS Region</h4>
+    {{ target_macros.output_parameter(target, 'region') }}
+
+    <h4>S3 Method</h4>
+    {{ target_macros.output_parameter(target, 's3_method') }}
+
+    <h4>S3 Bucket</h4>
+    {{ target_macros.output_parameter(target, 'bucket') }}
+
+    <h4>S3 Source</h4>
+    {{ target_macros.output_parameter(target, 'source', '.') }}
+
+    <h4>S3 Destination</h4>
+    {{ target_macros.output_parameter(target, 'path') }}
+
+{% endblock %}

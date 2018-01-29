@@ -5,15 +5,12 @@
 
 {% set can_edit = current_authorizations.isSuper() or current_authorizations.isOwnerOf(application) %}
 
+{% block breadcrumb_links %}
+    <li><a href="{{ uriFor('applications') }}">Applications</a></li>
+    <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
+{% endblock %}
+
 {% block content %}
-    <div class="nav--page">
-        <h1>{{ page_title }}</h1>
-
-        <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('application', {'application': application.id}) }}">Back to Application</a>
-        </p>
-    </div>
-
     <ul class="meta-box">
         <li>
             <h6>Application</h6>
@@ -31,46 +28,62 @@
         a single environment (such as multiple regions, servers, or canary/blue/green environments).
     </p>
 
-    {% if targets_by_env %}
-
-        <table class="table--spacing-medium">
+    {% if sorted_targets %}
+        <table>
             <thead>
                 <tr>
+                    <th class="t15">ID</th>
+                    <th class="t15">Type</th>
                     <th class="t40">Name</th>
                     <th>Parameters</th>
-                    <th class="t10"></th>
                 </tr>
             </thead>
 
-            {% for name, targets in targets_by_env %}
-                {% set environment = environments[name] %}
-                {% if targets %}
-                    <tbody>
+            {% for sorted in sorted_targets %}
+                {% set environment = sorted.environment %}
+                {% set targets = sorted.targets %}
+
+                <tbody>
+                    <tr>
+                        <th colspan="4" class="table-mid-header">
+                            <a href="{{ uriFor('environment', {'environment': environment.id}) }}">{{ environment.name }}</a>
+                            <a href="{{ uriFor('target.add', {'application': application.id}, {'environment': environment.id}) }}" style="float: right" >Add More Targets</a>
+                        </th>
+                    </tr>
+
+                    {% for target in targets %}
                         <tr>
-                            <th colspan="3" class="table-mid-header" id="env-{{ environment.id }}">
-                                <a href="{{ uriFor('environment', {'environment': environment.id}) }}">{{ environment.name }}</a>
-                            </th>
-                        </tr>
+                            <td>
+                                <a href="{{ uriFor('target', {'application': application.id, 'target': target.id}) }}">{{ target.id|short_guid }}</a>
+                            </td>
+                            <td>
+                                {% if target.isAWS() and not target.credential -%}
+                                    <span class="hint--right" aria-label="No credentials are assigned.">{{ macros.status_icon('', 'error') }}</span>
+                                {%- endif %}
+                                {{ target.formatType() }}
+                            </td>
+                            <td>{{ target.name }}</td>
+                            <td>
+                                {% if target.type == 'rsync' %}
+                                    Path: <code>{{ target.formatParameters() }}</code>
 
-                        {% for target in targets %}
-                            <tr>
-                                <td>
-                                    {% if target.group.isAWS() and not target.credential -%}
-                                        <span class="hint--right" aria-label="No credentials are assigned.">{{ macros.status_icon('', 'error') }}</span>
-                                    {%- endif %}
-                                    {{ target.format(false) }}
-                                </td>
-                                <td>
-                                    {{ target.group.format(true) }}: {{ target.formatParameters() }}
-                                </td>
-                                <td>
-                                    <a href="{{ uriFor('target', {'application': target.application.id, 'target': target.id}) }}">Manage</a>
-                                </td>
-                            <tr>
-                        {% endfor %}
-                    </tbody>
-                {% endif %}
+                                {% elseif target.type == 'eb' %}
+                                    Beanstalk Environment: <code>{{ target.formatParameters() }}</code>
 
+                                {% elseif target.type == 's3' %}
+                                    Bucket/Object: <code>{{ target.formatParameters() }}</code>
+
+                                {% elseif target.type == 'cd' %}
+                                    CodeDeploy Group: <code>{{ target.formatParameters() }}</code>
+
+                                {% elseif target.type == 'script' %}
+                                    Context: <code>{{ target.formatParameters() }}</code>
+
+                                {% endif %}
+                            </td>
+                        <tr>
+                    {% endfor %}
+                </tbody>
             {% endfor %}
         </table>
     {% else %}
@@ -79,14 +92,12 @@
 
     {% endif %}
 
-    <ul class="list--bare">
-        <li>
-            {% if can_edit %}
-                <a class="btn" href="{{ uriFor('target.add', {'application': application.id}) }}">Add Deployment Target</a>
-            {% else %}
-                {{ macros.disabled_button('Add Deployment Target') }}
-            {% endif %}
-        </li>
-    </ul>
+    <p>
+        {% if can_edit %}
+            <a class="btn" href="{{ uriFor('target.add', {'application': application.id}) }}">Add Deployment Target</a>
+        {% else %}
+            {{ macros.disabled_button('Add Deployment Target') }}
+        {% endif %}
+    </p>
 
 {% endblock %}

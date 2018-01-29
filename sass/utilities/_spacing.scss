@@ -1,0 +1,65 @@
+$spacing-baseline: 1em;
+
+$space-t: $spacing-baseline / 4;
+$space-s: $spacing-baseline / 2;
+$space-m: $spacing-baseline;
+$space-l: $spacing-baseline * 2;
+$space-h: $spacing-baseline * 3;
+
+// Padding
+.ptn, .pvn, .pan { padding-top: 0 !important; }
+.ptt, .pvt, .pat { padding-top: $space-t !important; }
+.pts, .pvs, .pas { padding-top: $space-s !important; }
+.ptm, .pvm, .pam { padding-top: $space-m !important; }
+.ptl, .pvl, .pal { padding-top: $space-l !important; }
+.pth, .pvh, .pah { padding-top: $space-h !important; }
+
+.prn, .phn, .pan { padding-right: 0 !important; }
+.prt, .pht, .pat { padding-right: $space-t !important; }
+.prs, .phs, .pas { padding-right: $space-s !important; }
+.prm, .phm, .pam { padding-right: $space-m !important; }
+.prl, .phl, .pal { padding-right: $space-l !important; }
+.prh, .phh, .pah { padding-right: $space-h !important; }
+
+.pbn, .pvn, .pan { padding-bottom: 0 !important; }
+.pbt, .pvt, .pat { padding-bottom: $space-t !important; }
+.pbs, .pvs, .pas { padding-bottom: $space-s !important; }
+.pbm, .pvm, .pam { padding-bottom: $space-m !important; }
+.pbl, .pvl, .pal { padding-bottom: $space-l !important; }
+.pbh, .pvh, .pah { padding-bottom: $space-h !important; }
+
+.pln, .phn, .pan { padding-left: 0 !important; }
+.plt, .pht, .pat { padding-left: $space-t !important; }
+.pls, .phs, .pas { padding-left: $space-s !important; }
+.plm, .phm, .pam { padding-left: $space-m !important; }
+.pll, .phl, .pal { padding-left: $space-l !important; }
+.plh, .phh, .pah { padding-left: $space-h !important; }
+
+// Margins
+.mtn, .mvn, .man { margin-top: 0 !important; }
+.mtt, .mvt, .mat { margin-top: $space-t !important; }
+.mts, .mvs, .mas { margin-top: $space-s !important; }
+.mtm, .mvm, .mam { margin-top: $space-m !important; }
+.mtl, .mvl, .mal { margin-top: $space-l !important; }
+.mth, .mvh, .mah { margin-top: $space-h !important; }
+
+.mrn, .mhn, .man { margin-right: 0 !important; }
+.mrt, .mht, .mat { margin-right: $space-t !important; }
+.mrs, .mhs, .mas { margin-right: $space-s !important; }
+.mrm, .mhm, .mam { margin-right: $space-m !important; }
+.mrl, .mhl, .mal { margin-right: $space-l !important; }
+.mrh, .mhh, .mah { margin-right: $space-h !important; }
+
+.mbn, .mvn, .man { margin-bottom: 0 !important; }
+.mbt, .mvt, .mat { margin-bottom: $space-t !important; }
+.mbs, .mvs, .mas { margin-bottom: $space-s !important; }
+.mbm, .mvm, .mam { margin-bottom: $space-m !important; }
+.mbl, .mvl, .mal { margin-bottom: $space-l !important; }
+.mbh, .mvh, .mah { margin-bottom: $space-h !important; }
+
+.mln, .mhn, .man { margin-left: 0 !important; }
+.mlt, .mht, .mat { margin-left: $space-t !important; }
+.mls, .mhs, .mas { margin-left: $space-s !important; }
+.mlm, .mhm, .mam { margin-left: $space-m !important; }
+.mll, .mhl, .mal { margin-left: $space-l !important; }
+.mlh, .mhh, .mah { margin-left: $space-h !important; }

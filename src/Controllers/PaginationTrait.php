@@ -7,7 +7,9 @@
 
 namespace Hal\UI\Controllers;
 
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Hal\UI\API\Hyperlink;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 trait PaginationTrait
@@ -19,24 +21,54 @@ trait PaginationTrait
      *
      * @param ServerRequestInterface $request
      *
-     * @return int|null
+     * @return int
      */
-    private function getCurrentPage(ServerRequestInterface $request): ?int
+    private function getCurrentPage(ServerRequestInterface $request): int
     {
         if (!$route = $request->getAttribute('route')) {
-            return null;
+            return 1;
         }
 
         $params = $route->getArguments();
 
         $page = (isset($params['page'])) ? intval($params['page']) : 1;
 
-        // 404, invalid page
+        // invalid page
         if ($page < 1) {
-            return null;
+            return 1;
         }
 
         return $page;
+    }
+
+    /**
+     * Destructure actual array of entities from a Paginator.
+     *
+     * @param Paginator $paginator
+     *
+     * @return array
+     */
+    private function getEntitiesForPage(Paginator $paginator): array
+    {
+        $entities = [];
+
+        foreach ($paginator as $entity) {
+            $entities[] = $entity;
+        }
+
+        return $entities;
+    }
+
+    /**
+     * @param array $items
+     * @param int $pageSize
+     *
+     * @return int
+     */
+    private function getLastPage($items, int $pageSize): int
+    {
+        $total = count($items);
+        return ceil($total / $pageSize);
     }
 
     /**

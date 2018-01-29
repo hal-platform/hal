@@ -1,0 +1,80 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+{% set js_components = ['job_queue'] %}
+
+{% set page_title = 'Dashboard' %}
+
+{% block content %}
+    <h3><span class="js-slow-typed" data-text="Hello, Dave.^1000 You're looking well today.">Hello</span></h3>
+
+    {# @todo session is not available in context - find another way to get this #}
+    {% if session.get('is-first-login') or not favorites %}
+       {{ block('intro') }}
+    {% endif %}
+
+    {% if favorites %}
+        <h2>Favorite Applications</h2>
+        {{ block('favorite_apps') }}
+    {% endif %}
+
+    {% if pending %}
+        <h2>Current Job Queue</h2>
+        {% include 'partial.pending_job_table.twig' with {'pending': pending} only %}
+    {% endif %}
+
+{% endblock %}
+
+{% block intro %}
+    <section>
+        <h3>My name is Hal.</h3>
+        <h5>I deploy code to other, less capable machines.</h5>
+
+        <p>
+            This is the latest version of the Hal deployment system for Quicken Loans applications.
+            The 9000 series is the most reliable computer ever made. No 9000 computer has ever made a mistake or distorted information. We are all, by any practical definition of the words, foolproof and incapable of error.
+        </p>
+        <p>
+            <b>To deploy an application:</b> Find the application under the applications menu option.
+        </p>
+        <p>
+            <b>To add an application:</b> Add the application from the applications page. You should probably read <a href="{{ uriFor('help') }}">support page</a> for additional instructions and supported systems and project types.
+            We wouldn't want you doing something foolish, after all.
+        </p>
+        <p>
+            If you you do not have the correct permissions or need support to remedy a mistake you have made, please check the <a href="{{ uriFor('help') }}">support page</a> for assistance.
+        </p>
+
+        <p>I look forward to working with you.</p>
+    </section>
+{% endblock %}
+
+{% block favorite_apps %}
+    <section>
+        <ul class="cards">
+            <li>
+                {% for application in favorites %}
+                    <article class="card">
+                        <header class="card__header">
+                            <h4>
+                                <a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a>
+                            </h4>
+                        </header>
+
+                        <section class="card__details">
+                            <div style="display:flex;">
+                                <div class="tc" style="margin:auto">
+                                    <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Dashboard</a>
+                                </div>
+                                <div class="tc" style="margin:auto">
+                                    {% if current_authorizations.canBuild(application) %}
+                                        <a href="{{ uriFor('build.start', {'application': application.id}) }}">Start Build</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </section>
+                    </article>
+                {% endfor %}
+            </li>
+        </ul>
+    </section>
+{% endblock %}

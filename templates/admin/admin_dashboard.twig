@@ -1,0 +1,50 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+
+{% set page_title = 'Administrators' %}
+
+{% block content %}
+    <h2>User Management</h2>
+    <div>
+        <a class="btn" href="{{ uriFor('users') }}">
+            {{ macros.icon('users') }} Users
+        </a>
+
+        <a class="btn" href="{{ uriFor('admin.permissions') }}">
+            {{ macros.icon('safe') }} Manage Permissions
+        </a>
+    </div>
+
+    <h2>Manage Deployments</h2>
+    <div>
+        <a class="btn" href="{{ uriFor('environments') }}">
+            {{ macros.icon('leaf') }} Environments
+        </a>
+
+        <a class="btn" href="{{ uriFor('templates') }}">
+            {{ macros.icon('folder-2') }} Target Templates
+        </a>
+    </div>
+
+    <h2>Security</h2>
+    <div>
+        <a class="btn" href="{{ uriFor('id_providers') }}">Identity Providers</a>
+
+        <a class="btn" href="{{ uriFor('credentials') }}">
+            {{ macros.icon('locked') }} Credentials
+        </a>
+
+        <a class="btn" href="{{ uriFor('admin.audit_history') }}">
+            {{ macros.icon('watch') }} Audit History
+        </a>
+    </div>
+
+    <h2>Manage Hal System</h2>
+    <div>
+        <a class="btn" href="{{ uriFor('admin.system_dashboard') }}">System Dashboard</a>
+        <a class="btn" href="{{ uriFor('vcs_providers') }}">Version Control Systems</a>
+        <a class="btn" href="{{ uriFor('admin.cache_management') }}">Cache Management</a>
+        <a class="btn" href="{{ uriFor('admin.global_banner') }}">Admin Messages</a>
+    </div>
+
+{% endblock %}
