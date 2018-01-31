@@ -186,6 +186,10 @@ class DeployMiddleware implements MiddlewareInterface
             }
         }
 
+        if (!$metadatas) {
+            return true;
+        }
+
         $metas = [];
 
         foreach ($releases as $release) {

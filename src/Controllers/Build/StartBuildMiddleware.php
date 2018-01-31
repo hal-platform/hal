@@ -170,6 +170,10 @@ class StartBuildMiddleware implements MiddlewareInterface
             }
         }
 
+        if (!$metadatas) {
+            return true;
+        }
+
         $metas = $this->metaValidator->isBulkValid($build, $metadatas);
         if (!$metas) {
             return false;
