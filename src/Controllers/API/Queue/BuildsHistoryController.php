@@ -76,7 +76,7 @@ class BuildsHistoryController implements ControllerInterface
             $builds[] = $build;
         }
 
-        $links = $this->buildPaginationLinks('api.build.list.paged', $page, $total, SharedStaticConfiguration::LARGE_PAGE_SIZE);
+        $links = $this->buildPaginationLinks('api.build.history.paged', $page, $total, SharedStaticConfiguration::LARGE_PAGE_SIZE);
 
         $data = [
             'count' => count($builds),

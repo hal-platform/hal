@@ -10,10 +10,10 @@ namespace Hal\UI\Controllers\API\Release;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
-use Hal\UI\Service\EventLogService;
+use Hal\UI\Service\JobEventsService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\Release;
+use Hal\Core\Entity\JobType\Release;
 use QL\Panthor\ControllerInterface;
 
 class EventsController implements ControllerInterface
@@ -26,15 +26,15 @@ class EventsController implements ControllerInterface
     private $formatter;
 
     /**
-     * @var EventLogService
+     * @var JobEventsService
      */
     private $logService;
 
     /**
      * @param ResponseFormatter $formatter
-     * @param EventLogService $logService
+     * @param JobEventsService $logService
      */
-    public function __construct(ResponseFormatter $formatter, EventLogService $logService)
+    public function __construct(ResponseFormatter $formatter, JobEventsService $logService)
     {
         $this->formatter = $formatter;
         $this->logService = $logService;
@@ -46,7 +46,7 @@ class EventsController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $release = $request->getAttribute(Release::class);
-        $events = $this->logService->getLogs($release);
+        $events = $this->logService->getEvents($release);
 
         $data = [
             'count' => count($events)

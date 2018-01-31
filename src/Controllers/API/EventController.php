@@ -7,7 +7,7 @@
 
 namespace Hal\UI\Controllers\API;
 
-use Hal\Core\Entity\JobEvent;
+use Hal\Core\Entity\Job\JobEvent;
 use Hal\UI\API\Normalizer\EventNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;

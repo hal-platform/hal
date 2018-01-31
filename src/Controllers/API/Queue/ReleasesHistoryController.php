@@ -77,7 +77,7 @@ class ReleasesHistoryController implements ControllerInterface
             $releases[] = $push;
         }
 
-        $links = $this->buildPaginationLinks('api.release.list.paged', $page, $total, SharedStaticConfiguration::LARGE_PAGE_SIZE);
+        $links = $this->buildPaginationLinks('api.release.history.paged', $page, $total, SharedStaticConfiguration::LARGE_PAGE_SIZE);
 
         $data = [
             'count' => count($releases),

@@ -7,11 +7,11 @@
 
 namespace Hal\UI\Controllers\API\Build;
 
-use Hal\Core\Entity\Build;
+use Hal\Core\Entity\JobType\Build;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
-use Hal\UI\Service\EventLogService;
+use Hal\UI\Service\JobEventsService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -26,15 +26,15 @@ class EventsController implements ControllerInterface
     private $formatter;
 
     /**
-     * @var EventLogService
+     * @var JobEventsService
      */
     private $logService;
 
     /**
      * @param ResponseFormatter $formatter
-     * @param EventLogService $logService
+     * @param JobEventsService $logService
      */
-    public function __construct(ResponseFormatter $formatter, EventLogService $logService)
+    public function __construct(ResponseFormatter $formatter, JobEventsService $logService)
     {
         $this->formatter = $formatter;
         $this->logService = $logService;
@@ -46,7 +46,7 @@ class EventsController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $build = $request->getAttribute(Build::class);
-        $events = $this->logService->getLogs($build);
+        $events = $this->logService->getEvents($build);
 
         $data = [
             'count' => count($events)
