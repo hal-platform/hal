@@ -8,7 +8,7 @@
 namespace Hal\UI\API\Normalizer;
 
 use Hal\Core\Entity\Group;
-use Hal\Core\Type\GroupEnum;
+use Hal\Core\Type\TargetEnum;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResourceNormalizerInterface;
@@ -85,7 +85,7 @@ class TargetNormalizer implements ResourceNormalizerInterface
         $type = $target->type();
 
         switch ($type) {
-            case GroupEnum::TYPE_S3:
+            case TargetEnum::TYPE_S3:
                 return [
                     's3_method' => $target->parameter(Target::PARAM_S3_METHOD),
                     's3_bucket' => $target->parameter(Target::PARAM_BUCKET),
@@ -93,7 +93,7 @@ class TargetNormalizer implements ResourceNormalizerInterface
                     's3_remote_path' => $target->parameter(Target::PARAM_REMOTE_PATH),
                 ];
 
-            case GroupEnum::TYPE_EB:
+            case TargetEnum::TYPE_EB:
                 return [
                     's3_bucket' => $target->parameter(Target::PARAM_BUCKET),
                     's3_local_path' => $target->parameter(Target::PARAM_LOCAL_PATH),
@@ -102,7 +102,7 @@ class TargetNormalizer implements ResourceNormalizerInterface
                     'eb_environment' => $target->parameter(Target::PARAM_ENV),
                 ];
 
-            case GroupEnum::TYPE_CD:
+            case TargetEnum::TYPE_CD:
                 return [
                     's3_bucket' => $target->parameter(Target::PARAM_BUCKET),
                     's3_local_path' => $target->parameter(Target::PARAM_LOCAL_PATH),
@@ -112,10 +112,10 @@ class TargetNormalizer implements ResourceNormalizerInterface
                     'cd_configuration' => $target->parameter(Target::PARAM_CONFIG),
                 ];
 
-            case GroupEnum::TYPE_RSYNC:
+            case TargetEnum::TYPE_RSYNC:
                 return ['path' => $target->parameter(Target::PARAM_REMOTE_PATH)];
 
-            case GroupEnum::TYPE_SCRIPT:
+            case TargetEnum::TYPE_SCRIPT:
                 return ['script_context' => $target->parameter(TARGET::PARAM_CONTEXT)];
 
             default:

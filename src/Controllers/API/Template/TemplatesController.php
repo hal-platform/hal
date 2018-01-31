@@ -5,11 +5,11 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\API\Group;
+namespace Hal\UI\Controllers\API\Template;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\Core\Entity\Group;
-use Hal\Core\Repository\GroupRepository;
+use Hal\Core\Entity\TargetTemplate;
+use Hal\Core\Repository\TargetTemplateRepository;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
@@ -20,7 +20,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 
-class GroupsController implements ControllerInterface
+class TemplatesController implements ControllerInterface
 {
     use APITrait;
     use PaginationTrait;
@@ -33,9 +33,9 @@ class GroupsController implements ControllerInterface
     private $formatter;
 
     /**
-     * @var GroupRepository
+     * @var TargetTemplateRepository
      */
-    private $groupRepository;
+    private $templateRepository;
 
     /**
      * @var ProblemRendererInterface
@@ -53,7 +53,7 @@ class GroupsController implements ControllerInterface
         ProblemRendererInterface $problem
     ) {
         $this->formatter = $formatter;
-        $this->groupRepository = $em->getRepository(Group::class);
+        $this->templateRepository = $em->getRepository(TargetTemplate::class);
         $this->problem = $problem;
     }
 
@@ -67,27 +67,27 @@ class GroupsController implements ControllerInterface
             return $this->withProblem($this->problem, $response, 404, self::ERR_PAGE);
         }
 
-        $pagination = $this->groupRepository->getPagedResults(SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1));
+        $pagination = $this->templateRepository->getPagedResults(SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1));
         $total = count($pagination);
 
-        $servers = [];
-        foreach ($pagination as $server) {
-            $servers[] = $server;
+        $templates = [];
+        foreach ($pagination as $template) {
+            $templates[] = $template;
         }
 
-        $links = $this->buildPaginationLinks('api.groups.paged', $page, $total, SharedStaticConfiguration::LARGE_PAGE_SIZE);
+        $links = $this->buildPaginationLinks('api.templates.paged', $page, $total, SharedStaticConfiguration::LARGE_PAGE_SIZE);
 
         $data = [
-            'count' => count($servers),
+            'count' => count($templates),
             'total' => $total,
             'page' => $page
         ];
 
         $resource = new HypermediaResource($data, $links, [
-            'groups' => $servers
+            'templates' => $templates
         ]);
 
-        $status = (count($servers) > 0) ? 200 : 404;
+        $status = (count($templates) > 0) ? 200 : 404;
         $data = $this->formatter->buildHypermediaResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $data, $status);

@@ -14,9 +14,9 @@ use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResourceNormalizerInterface;
 use Hal\Core\Entity\Target;
-use Hal\Core\Entity\Group;
+use Hal\Core\Entity\TargetTemplate;
 
-class GroupNormalizer implements ResourceNormalizerInterface
+class TemplateNormalizer implements ResourceNormalizerInterface
 {
     use SortingTrait;
 
@@ -34,13 +34,13 @@ class GroupNormalizer implements ResourceNormalizerInterface
     }
 
     /**
-     * @param Group $input
+     * @param TargetTemplate $input
      *
      * @return mixed
      */
     public function normalize($input)
     {
-        if (!$input instanceof Group) {
+        if (!$input instanceof TargetTemplate) {
             return null;
         }
 
@@ -48,48 +48,48 @@ class GroupNormalizer implements ResourceNormalizerInterface
     }
 
     /**
-     * @param Group|null $group
+     * @param TargetTemplate|null $template
      *
      * @return Hyperlink|null
      */
-    public function link($group): ?Hyperlink
+    public function link($template): ?Hyperlink
     {
-        if (!$group instanceof Group) {
+        if (!$template instanceof TargetTemplate) {
             return null;
         }
 
         return new Hyperlink(
-            ['api.group', ['group' => $group->id()]],
-            $group->format(false)
+            ['api.template', ['template' => $template->id()]],
+            $template->name()
         );
     }
 
     /**
-     * @param Group|null $group
+     * @param TargetTemplate|null $template
      * @param array $embed
      *
      * @return HypermediaResource|null
      */
-    public function resource($group, array $embed = ['environment']): ?HypermediaResource
+    public function resource($template, array $embed = ['environment']): ?HypermediaResource
     {
-        if (!$group instanceof Group) {
+        if (!$template instanceof TargetTemplate) {
             return null;
         }
 
         $data = [
-            'id' => $group->id(),
-            'type' => $group->type(),
-            'name' => $group->name()
+            'id' => $template->id(),
+            'type' => $template->type(),
+            'name' => $template->name()
         ];
 
         $links = [
-            'self' => $this->link($group)
+            'self' => $this->link($template)
         ];
 
-        $targets = $this->targetRepository->findBy(['group' => $group->id()]);
+        $targets = $this->targetRepository->findBy(['template' => $template->id()]);
 
         $resource = new HypermediaResource($data, $links, [
-            'environment' => $group->environment(),
+            'environment' => $template->environment(),
             'targets' => $targets
         ]);
 

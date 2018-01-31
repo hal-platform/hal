@@ -42,7 +42,7 @@ class IndexController implements ControllerInterface
             'organizations' => new Hyperlink('api.organizations'),
 
             'environments' => new Hyperlink('api.environments'),
-            'groups' => new Hyperlink('api.groups'),
+            'templates' => new Hyperlink('api.templates'),
 
             'users' => new Hyperlink('api.users'),
             'queue' => new Hyperlink('api.queue'),
