@@ -1,6 +1,6 @@
 ## Authentication
 
-> Make sure to replace `beepboopbeepboop` with your API token.  
+> Make sure to replace `beepboopbeepboop` with your API token.
 > To authorize a request, use the following code.
 
 ```http
@@ -43,7 +43,7 @@ Content-Type: application/hal+json
 ```
 
 Hal uses API tokens to allow access to the API. You can register a new Hal API token by signing into Hal and generating
-a token from the [Settings](https://hal9000/settings) page. You may also revoke your tokens from this same page.
+a token from the [Settings](/settings) page. You may also revoke your tokens from this same page.
 
 Hal expects the API token to be included in all **write** API requests. Reads do not require authentication.
 

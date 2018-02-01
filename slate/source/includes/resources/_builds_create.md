@@ -1,7 +1,7 @@
 ## Create Build
 
 ```http
-GET /api/applications/24/build HTTP/1.1
+GET /api/applications/1f68d71a-5de4-4f61-b657-eebb090ba8fe/build HTTP/1.1
 Accept: application/json
 Host: hal.computer
 Content-Type: application/json
@@ -21,7 +21,7 @@ $client = new Client([
     'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
-$response = $client->post('/api/applications/24/build', [
+$response = $client->post('/api/applications/1f68d71a-5de4-4f61-b657-eebb090ba8fe/build', [
     'json' => [
         'environment' => 'test',
         'reference' => 'pull/45'
@@ -35,7 +35,7 @@ curl \
   --header "Authorization: token HAL_TOKEN" \
   --form environment=test \
   --form reference=master \
-  "https://hal.computer/api/applications/24/build"
+  "https://hal.computer/api/applications/1f68d71a-5de4-4f61-b657-eebb090ba8fe/build"
 ```
 
 > ### Response - Success
@@ -49,19 +49,19 @@ Content-Type: application/hal+json
 {
     "_links": {
         "self": {
-            "href": "https://hal.computer/api/builds/b2.5LcovUf",
-            "title": "b2.5LcovUf"
+            "href": "https://hal.computer/api/builds/9c27e9e1-90c9-4f8c-81c3-79febdea08e1",
+            "title": "9c27e9e1-90c9-4f8c-81c3-79febdea08e1"
         },
         "user": {
-            "href": "https://hal.computer/api/users/3001",
+            "href": "https://hal.computer/api/users/50290099-7b8a-471f-b9be-dbf7e9148349",
             "title": "SKluck"
         },
         "application": {
-            "href": "https://hal.computer/api/applications/24",
+            "href": "https://hal.computer/api/applications/1f68d71a-5de4-4f61-b657-eebb090ba8fe",
             "title": "HAL Agent"
         },
         "environment": {
-            "href": "https://hal.computer/api/environments/1",
+            "href": "https://hal.computer/api/environments/a930555a-c330-435d-b720-1eb9d21b966f",
             "title": "test"
         },
         "events": {
@@ -80,7 +80,7 @@ Content-Type: application/hal+json
             "type": "text/html"
         }
     },
-    "id": "b2.5LcovUf",
+    "id": "9c27e9e1-90c9-4f8c-81c3-79febdea08e1",
     "status": "Waiting",
     "created": "2016-01-20T18:09:46Z",
     "start": null,
@@ -102,9 +102,11 @@ Content-Type: application/problem+json
     "status": 400,
     "title": "Bad Request",
     "detail": "Cannot start build due to form submission failure. Please check errors.",
-    "errors": [
-        "Environment is required."
-    ]
+    "errors": {
+        "reference": [
+            "You must select a valid git reference."
+        ]
+    }
 }
 ```
 

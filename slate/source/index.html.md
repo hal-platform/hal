@@ -20,7 +20,7 @@ includes:
   - resources/applications
   - resources/organizations
   - resources/environments
-  - resources/groups
+  - resources/templates
   - resources/targets
   - resources/builds
   - resources/builds_create

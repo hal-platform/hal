@@ -36,10 +36,10 @@ Content-Type: application/hal+json
 {
     "_links": {
         "self": {
-            "href": "https://localhost.hal/api/queue?since=2016-01-12T13%3A45%3A00Z"
+            "href": "https://hal.computer/api/queue?since=2016-01-12T13%3A45%3A00Z"
         },
         "refresh": {
-            "href": "https://localhost.hal/api/queue-refresh/build1+push2"
+            "href": "https://hal.computer/api/queue-refresh/build1+push2"
         }
     },
     "_embedded": {
@@ -123,7 +123,7 @@ Content-Type: application/hal+json
 ```json
 {
     "_links": {
-        "self": "https://localhost.hal/api/queue?since=2016-01-12T13%3A45%3A00Z"
+        "self": "https://hal.computer/api/queue?since=2016-01-12T13%3A45%3A00Z"
     },
     "_embedded": {
         "jobs": [
@@ -167,7 +167,7 @@ Unlike the **Queue** endpoint, the refresh endpoint only embeds the parent **bui
 ```http
 GET /api/queue/date/2016-01-12 HTTP/1.1
 Accept: application/json
-Host: hal9000
+Host: hal.computer
 Authorization: token "HAL_TOKEN"
 ```
 
@@ -179,7 +179,7 @@ Content-Type: application/hal+json
 ```php
 <?php
 $client = new Client([
-    'base_uri' => 'https://hal9000',
+    'base_uri' => 'https://hal.computer',
     'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
@@ -187,7 +187,7 @@ $response = $client->get('/api/queue/date/2016-01-12');
 ```
 
 ```shell
-curl "https://hal9000/api/queue/date/2016-01-12"
+curl "https://hal.computer/api/queue/date/2016-01-12"
 ```
 
 > ### Response
@@ -195,7 +195,7 @@ curl "https://hal9000/api/queue/date/2016-01-12"
 ```json
 {
     "_links": {
-        "self": "https://localhost.hal/api/queue/date/2016-01-12"
+        "self": "https://hal.computer/api/queue/date/2016-01-12"
     },
     "_embedded": {
         "jobs": [
@@ -217,7 +217,7 @@ Get a list of jobs queued on the specified date. This list can contain both **Bu
 
 ### HTTP Request
 
-`GET https://hal9000/api/queue/date/{date}`
+`GET https://hal.computer/api/queue/date/{date}`
 
 ### URL Parameters
 
@@ -242,7 +242,7 @@ push            | Deployment
 ```http
 GET /api/builds HTTP/1.1
 Accept: application/json
-Host: hal9000
+Host: hal.computer
 Authorization: token "HAL_TOKEN"
 ```
 
@@ -254,7 +254,7 @@ Content-Type: application/hal+json
 ```php
 <?php
 $client = new Client([
-    'base_uri' => 'https://hal9000',
+    'base_uri' => 'https://hal.computer',
     'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
@@ -262,7 +262,7 @@ $response = $client->get('/api/builds');
 ```
 
 ```shell
-curl "https://hal9000/api/builds"
+curl "https://hal.computer/api/builds"
 ```
 
 > ### Response
@@ -271,35 +271,35 @@ curl "https://hal9000/api/builds"
 {
     "_links": {
         "next": {
-            "href": "https://hal9000/api/builds/page/2"
+            "href": "https://hal.computer/api/builds/page/2"
         },
         "last": {
-            "href": "https://hal9000/api/builds/page/3"
+            "href": "https://hal.computer/api/builds/page/3"
         },
         "builds": [
             {
-                "href": "https://hal9000/api/builds/b2.5KXYaoX",
-                "title": "b2.5KXYaoX"
+                "href": "https://hal.computer/api/builds/d05e734a-9d3f-429f-afa7-9007f295ac1c",
+                "title": "d05e734a-9d3f-429f-afa7-9007f295ac1c"
             },
             {
-                "href": "https://hal9000/api/builds/b2.5KXaayW",
-                "title": "b2.5KXaayW"
+                "href": "https://hal.computer/api/builds/8ca89dee-7b9f-4721-9644-b1a1ea1856b3",
+                "title": "8ca89dee-7b9f-4721-9644-b1a1ea1856b3"
             },
             {
-                "href": "https://hal9000/api/builds/b2.5KXQs4V",
-                "title": "b2.5KXQs4V"
+                "href": "https://hal.computer/api/builds/ab041611-bbe3-4e62-ad9a-83a417938e2b",
+                "title": "ab041611-bbe3-4e62-ad9a-83a417938e2b"
             },
             {
-                "href": "https://hal9000/api/builds/b2.5KX7Pxg",
-                "title": "b2.5KX7Pxg"
+                "href": "https://hal.computer/api/builds/c54feb33-255a-43fe-9e54-c565a7fad0b5",
+                "title": "c54feb33-255a-43fe-9e54-c565a7fad0b5"
             },
             {
-                "href": "https://hal9000/api/builds/b2.5yUBm4E",
-                "title": "b2.5yUBm4E"
+                "href": "https://hal.computer/api/builds/7df9262f-50c9-4ddd-9440-093a8949f972",
+                "title": "7df9262f-50c9-4ddd-9440-093a8949f972"
             }
             //additional builds pruned for brevity
         ],
-        "self": "https://hal9000/api/builds"
+        "self": "https://hal.computer/api/builds"
     },
     "count": 25,
     "total": 70,
@@ -317,7 +317,7 @@ Builds are listed in descending order, based on time they were created (page 3 b
 
 ### HTTP Request
 
-`GET https://hal9000/api/builds(/page/{page})`
+`GET https://hal.computer/api/builds(/page/{page})`
 
 ### URL Parameters
 
@@ -331,7 +331,7 @@ page      | **Optional** - Page number to retrieve
 ```http
 GET /api/releases HTTP/1.1
 Accept: application/json
-Host: hal9000
+Host: hal.computer
 Authorization: token "HAL_TOKEN"
 ```
 
@@ -343,7 +343,7 @@ Content-Type: application/hal+json
 ```php
 <?php
 $client = new Client([
-    'base_uri' => 'https://hal9000',
+    'base_uri' => 'https://hal.computer',
     'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
@@ -351,7 +351,7 @@ $response = $client->get('/api/releases');
 ```
 
 ```shell
-curl "https://hal9000/api/releases"
+curl "https://hal.computer/api/releases"
 ```
 
 > ### Response
@@ -360,35 +360,35 @@ curl "https://hal9000/api/releases"
 {
     "_links": {
         "next": {
-            "href": "https://hal9000/api/releases/page/2"
+            "href": "https://hal.computer/api/releases/page/2"
         },
         "last": {
-            "href": "https://hal9000/api/releases/page/3"
+            "href": "https://hal.computer/api/releases/page/3"
         },
         "releases": [
             {
-                "href": "https://hal9000/api/releases/p2.5ty8Ump",
-                "title": "p2.5ty8Ump"
+                "href": "https://hal.computer/api/releases/f2afe003-46f4-4561-82c8-1c102096c583",
+                "title": "f2afe003-46f4-4561-82c8-1c102096c583"
             },
             {
-                "href": "https://hal9000/api/releases/p2.5tsr91h",
-                "title": "p2.5tsr91h"
+                "href": "https://hal.computer/api/releases/b770a726-19b4-49a7-9105-05f9d02ab58f",
+                "title": "b770a726-19b4-49a7-9105-05f9d02ab58f"
             },
             {
-                "href": "https://hal9000/api/releases/p2.5tqRjuq",
-                "title": "p2.5tqRjuq"
+                "href": "https://hal.computer/api/releases/f41d439c-bd5b-4e99-a8fd-f488155d522b",
+                "title": "f41d439c-bd5b-4e99-a8fd-f488155d522b"
             },
             {
-                "href": "https://hal9000/api/releases/p2.5tqxUqB",
-                "title": "p2.5tqxUqB"
+                "href": "https://hal.computer/api/releases/19010668-433f-4a19-8cb5-34fe5ba9b019",
+                "title": "19010668-433f-4a19-8cb5-34fe5ba9b019"
             },
             {
-                "href": "https://hal9000/api/releases/p2.5tq5nBL",
-                "title": "p2.5tq5nBL"
+                "href": "https://hal.computer/api/releases/b4dc963d-3cb2-47c6-90ab-527e6af03441",
+                "title": "b4dc963d-3cb2-47c6-90ab-527e6af03441"
             }
             //additional releases pruned for brevity
         ]
-        "self": "https://hal9000/api/releases"
+        "self": "https://hal.computer/api/releases"
     },
     "count": 25,
     "total": 70,
@@ -406,7 +406,7 @@ Releases are listed in descending order, based on time they were created (page 3
 
 ### HTTP Request
 
-`GET https://hal9000/api/releases(/page/{page})`
+`GET https://hal.computer/api/releases(/page/{page})`
 
 ### URL Parameters
 
