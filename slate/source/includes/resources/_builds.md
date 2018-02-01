@@ -19,7 +19,7 @@ application            | **Link** - Application of build                     | r
 environment            | **Link** - Environment built                        | resource |
 events                 | **Link** - Events for build                         | list     |
 page                   | **Link** - Page in frontend UI for this build       |          |
-start_push_page        | **Link** - Page to initiate push of this build      |          |
+start_release_page     | **Link** - Page to initiate release of this build   |          |
 github_reference_page  | **Link** - GitHub page for the git reference        |          |
 github_commit_page     | **Link** - GitHub page for the exact commit SHA     |          |
 
@@ -178,8 +178,8 @@ Content-Type: application/hal+json
             "href": "https://github.com/hal-platform/hal-agent/tree/master",
             "type": "text/html"
         },
-        "start_push_page": {
-            "href": "https://hal.computer/builds/cf5717ad-527d-4649-843a-08ad01386a52/push",
+        "start_release_page": {
+            "href": "https://hal.computer/builds/cf5717ad-527d-4649-843a-08ad01386a52/release",
             "type": "text/html"
         }
     },
@@ -238,7 +238,7 @@ Content-Type: application/hal+json
 ```json
 {
     "_links": {
-        "push": {
+        "release": {
             "href": "https://hal.computer/api/builds/cf5717ad-527d-4649-843a-08ad01386a52",
             "title": "cf5717ad-527d-4649-843a-08ad01386a52"
         },

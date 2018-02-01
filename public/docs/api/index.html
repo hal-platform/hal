@@ -658,8 +658,8 @@ for multiple applications.</p>
 <td></td>
 </tr>
 <tr>
-<td>pushes</td>
-<td><strong>Link</strong> - List of pushes for this application</td>
+<td>releases</td>
+<td><strong>Link</strong> - List of releases for this application</td>
 <td>list</td>
 <td></td>
 </tr>
@@ -778,8 +778,8 @@ for multiple applications.</p>
         </span><span class="s2">"builds"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
             </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/applications/1f68d71a-5de4-4f61-b657-eebb090ba8fe/builds"</span><span class="w">
         </span><span class="p">},</span><span class="w">
-        </span><span class="s2">"pushes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-          </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/applications/1f68d71a-5de4-4f61-b657-eebb090ba8fe/pushes"</span><span class="w">
+        </span><span class="s2">"releases"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/applications/1f68d71a-5de4-4f61-b657-eebb090ba8fe/releases"</span><span class="w">
         </span><span class="p">},</span><span class="w">
         </span><span class="s2">"page"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
             </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/applications/1f68d71a-5de4-4f61-b657-eebb090ba8fe"</span><span class="p">,</span><span class="w">
@@ -1726,7 +1726,7 @@ these environments are usually more sensitive.</p>
     </span><span class="s2">"end"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2015-02-16T17:35:07Z"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
-<p>Get the most recent push to this target. This push may be a failure or success.</p>
+<p>Get the most recent release to this target. This release may be a failure or success.</p>
 
 <p>This endpoint returns a <strong>Release</strong> resource. see <a href="#releases">Releases</a> for more information about the <strong>Release</strong> resource.</p>
 
@@ -1748,7 +1748,7 @@ these environments are usually more sensitive.</p>
 </tr>
 <tr>
 <td>status</td>
-<td><strong>Optional</strong> - Filter by status. Can be used to get the most recent successful push.</td>
+<td><strong>Optional</strong> - Filter by status. Can be used to get the most recent successful release.</td>
 </tr>
 </tbody></table>
 
@@ -1840,8 +1840,8 @@ work in all environments) are not supported at this time, but likely will be in 
 <td></td>
 </tr>
 <tr>
-<td>start_push_page</td>
-<td><strong>Link</strong> - Page to initiate push of this build</td>
+<td>start_release_page</td>
+<td><strong>Link</strong> - Page to initiate release of this build</td>
 <td></td>
 <td></td>
 </tr>
@@ -2000,8 +2000,8 @@ work in all environments) are not supported at this time, but likely will be in 
             </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/hal-platform/hal-agent/tree/master"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text/html"</span><span class="w">
         </span><span class="p">},</span><span class="w">
-        </span><span class="s2">"start_push_page"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/builds/cf5717ad-527d-4649-843a-08ad01386a52/push"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"start_release_page"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/builds/cf5717ad-527d-4649-843a-08ad01386a52/release"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text/html"</span><span class="w">
         </span><span class="p">}</span><span class="w">
     </span><span class="p">},</span><span class="w">
@@ -2055,7 +2055,7 @@ work in all environments) are not supported at this time, but likely will be in 
 <span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/hal+json</span>
 </code></pre><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
     </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"push"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"release"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
             </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/builds/cf5717ad-527d-4649-843a-08ad01386a52"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cf5717ad-527d-4649-843a-08ad01386a52"</span><span class="w">
         </span><span class="p">},</span><span class="w">
@@ -2170,10 +2170,10 @@ embed events in the request.</p>
             </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"test"</span><span class="w">
         </span><span class="p">},</span><span class="w">
         </span><span class="s2">"events"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/builds/b2.5LcovUf/events"</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/builds/9c27e9e1-90c9-4f8c-81c3-79febdea08e1/events"</span><span class="w">
         </span><span class="p">},</span><span class="w">
         </span><span class="s2">"page"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/builds/b2.5LcovUf"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/builds/9c27e9e1-90c9-4f8c-81c3-79febdea08e1"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text/html"</span><span class="w">
         </span><span class="p">},</span><span class="w">
         </span><span class="s2">"github_reference_page"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
@@ -2823,7 +2823,7 @@ build commands, <code class="prettyprint">stdout</code> will be recorded, and al
 <td>name</td>
 <td>Event name</td>
 <td>string</td>
-<td><code class="prettyprint">push.start</code></td>
+<td><code class="prettyprint">release.start</code></td>
 </tr>
 <tr>
 <td>order</td>
@@ -2886,7 +2886,7 @@ build commands, <code class="prettyprint">stdout</code> will be recorded, and al
     </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
             </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/job-events/e34a3e76-d2a4-4ff7-a3c7-76999dee0708"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"[1] Resolved push properties"</span><span class="w">
+            </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"[1] Resolved release properties"</span><span class="w">
         </span><span class="p">},</span><span class="w">
         </span><span class="s2">"job"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
             </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/releases/f95def5f-bb7f-4643-adbf-ece49d3d7317"</span><span class="p">,</span><span class="w">
@@ -2896,16 +2896,16 @@ build commands, <code class="prettyprint">stdout</code> will be recorded, and al
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"e34a3e76-d2a4-4ff7-a3c7-76999dee0708"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"release.start"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"order"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Resolved push properties"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Resolved release properties"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"success"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"created"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-01-12T17:35:04Z"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="s2">"Method"</span><span class="p">:</span><span class="w"> </span><span class="s2">"rsync"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"Location"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="s2">"path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/temp/build/hal-push-f95def5f-bb7f-4643-adbf-ece49d3d7317"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/temp/build/hal-release-f95def5f-bb7f-4643-adbf-ece49d3d7317"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"archive"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/archive/hal-71d7e2cd-f375-49bf-bb69-7ce0dac45558.tar.gz"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"tempArchive"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/temp/build/hal-push-f95def5f-bb7f-4643-adbf-ece49d3d7317.tar.gz"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"tempZipArchive"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/temp/build/hal-push-f95def5f-bb7f-4643-adbf-ece49d3d7317.zip"</span><span class="w">
+            </span><span class="s2">"tempArchive"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/temp/build/hal-release-f95def5f-bb7f-4643-adbf-ece49d3d7317.tar.gz"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"tempZipArchive"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/temp/build/hal-release-f95def5f-bb7f-4643-adbf-ece49d3d7317.zip"</span><span class="w">
         </span><span class="p">}</span><span class="w">
     </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
@@ -3140,7 +3140,7 @@ build commands, <code class="prettyprint">stdout</code> will be recorded, and al
             </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/queue?since=2016-01-12T13%3A45%3A00Z"</span><span class="w">
         </span><span class="p">},</span><span class="w">
         </span><span class="s2">"refresh"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/queue-refresh/build1+push2"</span><span class="w">
+            </span><span class="s2">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal.computer/api/queue-refresh/build1+release2"</span><span class="w">
         </span><span class="p">}</span><span class="w">
     </span><span class="p">},</span><span class="w">
     </span><span class="s2">"_embedded"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
@@ -3150,15 +3150,15 @@ build commands, <code class="prettyprint">stdout</code> will be recorded, and al
                 </span><span class="err">//build</span><span class="w">
             </span><span class="p">},</span><span class="w">
             </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"push2"</span><span class="w">
-                </span><span class="err">//push</span><span class="w">
+                </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"release2"</span><span class="w">
+                </span><span class="err">//release</span><span class="w">
             </span><span class="p">}</span><span class="w">
         </span><span class="p">]</span><span class="w">
     </span><span class="p">},</span><span class="w">
     </span><span class="s2">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
-<p>Get a list of active jobs. This list can contain both <strong>Builds</strong> and <strong>Pushes</strong>.</p>
+<p>Get a list of active jobs. This list can contain both <strong>Builds</strong> and <strong>Releases</strong>.</p>
 
 <h3 id="http-request">HTTP Request</h3>
 
@@ -3188,7 +3188,7 @@ build commands, <code class="prettyprint">stdout</code> will be recorded, and al
 
 <h3 id="embedded-resources">Embedded Resources</h3>
 
-<p><strong>Builds</strong> and <strong>Pushes</strong> are embedded in the queue. In addition, the following resources are embedded within their parent.</p>
+<p><strong>Builds</strong> and <strong>Releases</strong> are embedded in the queue. In addition, the following resources are embedded within their parent.</p>
 
 <table><thead>
 <tr>
@@ -3201,21 +3201,21 @@ build commands, <code class="prettyprint">stdout</code> will be recorded, and al
 <td>Application</td>
 </tr>
 <tr>
-<td>push</td>
+<td>release</td>
 <td>Application</td>
 </tr>
 <tr>
-<td>push</td>
+<td>release</td>
 <td>Build</td>
 </tr>
 <tr>
-<td>push</td>
+<td>release</td>
 <td>Deployment</td>
 </tr>
 </tbody></table>
 
 <h2 id="get-refreshed-status-of-jobs">Get refreshed status of jobs</h2>
-<pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/queue-refresh/build1+push2+build3</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/queue-refresh/build1+release2+build3</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
 <span class="na">Host</span><span class="p">:</span> <span class="s">hal.computer</span>
 <span class="na">Authorization</span><span class="p">:</span> <span class="s">token "HAL_TOKEN"</span>
@@ -3225,9 +3225,9 @@ build commands, <code class="prettyprint">stdout</code> will be recorded, and al
     <span class="s1">'headers'</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">'token %s'</span><span class="p">,</span> <span class="nb">getenv</span><span class="p">(</span><span class="s1">'HAL_TOKEN'</span><span class="p">))]</span>
 <span class="p">]);</span>
 
-<span class="nv">$jobs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'build1'</span><span class="p">,</span> <span class="s1">'push2'</span><span class="p">,</span> <span class="s1">'build3'</span><span class="p">];</span>
+<span class="nv">$jobs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'build1'</span><span class="p">,</span> <span class="s1">'release2'</span><span class="p">,</span> <span class="s1">'build3'</span><span class="p">];</span>
 <span class="nv">$response</span> <span class="o">=</span> <span class="nv">$client</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'/api/queue-refresh/'</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">' '</span><span class="p">,</span> <span class="nv">$jobs</span><span class="p">));</span>
-</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://hal.computer/api/queue-refresh/build1+push2+build3"</span>
+</code></pre><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://hal.computer/api/queue-refresh/build1+release2+build3"</span>
 </code></pre>
 <blockquote>
 <h3 id="response">Response</h3>
@@ -3245,8 +3245,8 @@ build commands, <code class="prettyprint">stdout</code> will be recorded, and al
                 </span><span class="err">//build</span><span class="w">
             </span><span class="p">},</span><span class="w">
             </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"push2"</span><span class="w">
-                </span><span class="err">//push</span><span class="w">
+                </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"release2"</span><span class="w">
+                </span><span class="err">//release</span><span class="w">
             </span><span class="p">}</span><span class="w">
         </span><span class="p">]</span><span class="w">
     </span><span class="p">},</span><span class="w">
@@ -3269,7 +3269,7 @@ build commands, <code class="prettyprint">stdout</code> will be recorded, and al
 </thead><tbody>
 <tr>
 <td>jobs</td>
-<td>Space-delimited list of build or push IDs.</td>
+<td>Space-delimited list of build or release IDs.</td>
 </tr>
 </tbody></table>
 
@@ -3279,7 +3279,7 @@ build commands, <code class="prettyprint">stdout</code> will be recorded, and al
 
 <h3 id="embedded-resources">Embedded Resources</h3>
 
-<p>Unlike the <strong>Queue</strong> endpoint, the refresh endpoint only embeds the parent <strong>builds</strong> and <strong>pushes</strong>.</p>
+<p>Unlike the <strong>Queue</strong> endpoint, the refresh endpoint only embeds the parent <strong>builds</strong> and <strong>releases</strong>.</p>
 
 <h2 id="get-all-jobs-for-a-specific-date">Get all jobs for a specific date</h2>
 <pre class="highlight http tab-http"><code><span class="nf">GET</span> <span class="nn">/api/queue/date/2016-01-12</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
@@ -3311,15 +3311,15 @@ build commands, <code class="prettyprint">stdout</code> will be recorded, and al
                 </span><span class="err">//build</span><span class="w">
             </span><span class="p">},</span><span class="w">
             </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"push2"</span><span class="w">
-                </span><span class="err">//push</span><span class="w">
+                </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"release2"</span><span class="w">
+                </span><span class="err">//release</span><span class="w">
             </span><span class="p">}</span><span class="w">
         </span><span class="p">]</span><span class="w">
     </span><span class="p">},</span><span class="w">
     </span><span class="s2">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
-<p>Get a list of jobs queued on the specified date. This list can contain both <strong>Builds</strong> and <strong>Pushes</strong>.</p>
+<p>Get a list of jobs queued on the specified date. This list can contain both <strong>Builds</strong> and <strong>Releases</strong>.</p>
 
 <h3 id="http-request">HTTP Request</h3>
 
@@ -3341,7 +3341,7 @@ build commands, <code class="prettyprint">stdout</code> will be recorded, and al
 
 <h3 id="embedded-resources">Embedded Resources</h3>
 
-<p><strong>Builds</strong> and <strong>Pushes</strong> are embedded in the queue. In addition, the following resources are embedded within their parent.</p>
+<p><strong>Builds</strong> and <strong>Releases</strong> are embedded in the queue. In addition, the following resources are embedded within their parent.</p>
 
 <table><thead>
 <tr>
@@ -3354,15 +3354,15 @@ build commands, <code class="prettyprint">stdout</code> will be recorded, and al
 <td>Application</td>
 </tr>
 <tr>
-<td>push</td>
+<td>release</td>
 <td>Application</td>
 </tr>
 <tr>
-<td>push</td>
+<td>release</td>
 <td>Build</td>
 </tr>
 <tr>
-<td>push</td>
+<td>release</td>
 <td>Deployment</td>
 </tr>
 </tbody></table>

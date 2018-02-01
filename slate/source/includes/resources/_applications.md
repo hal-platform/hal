@@ -14,7 +14,7 @@ name            | Application name                                              
 organization    | **Link** - Organization this application belongs to             | resource |
 targets         | **Link** - List of targets for this application                 | list     |
 builds          | **Link** - List of builds for this application                  | list     |
-pushes          | **Link** - List of pushes for this application                  | list     |
+releases        | **Link** - List of releases for this application                | list     |
 page            | **Link** - Page in frontend UI for this application             |
 status_page     | **Link** - Status page for this application                     |
 github_page     | **Link** - GitHub page for the repository of this application   |
@@ -135,8 +135,8 @@ Content-Type: application/hal+json
         "builds": {
             "href": "https://hal.computer/api/applications/1f68d71a-5de4-4f61-b657-eebb090ba8fe/builds"
         },
-        "pushes": {
-          "href": "https://hal.computer/api/applications/1f68d71a-5de4-4f61-b657-eebb090ba8fe/pushes"
+        "releases": {
+            "href": "https://hal.computer/api/applications/1f68d71a-5de4-4f61-b657-eebb090ba8fe/releases"
         },
         "page": {
             "href": "https://hal.computer/api/applications/1f68d71a-5de4-4f61-b657-eebb090ba8fe",

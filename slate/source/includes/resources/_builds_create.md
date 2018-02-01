@@ -65,10 +65,10 @@ Content-Type: application/hal+json
             "title": "test"
         },
         "events": {
-            "href": "https://hal.computer/api/builds/b2.5LcovUf/events"
+            "href": "https://hal.computer/api/builds/9c27e9e1-90c9-4f8c-81c3-79febdea08e1/events"
         },
         "page": {
-            "href": "https://hal.computer/builds/b2.5LcovUf",
+            "href": "https://hal.computer/builds/9c27e9e1-90c9-4f8c-81c3-79febdea08e1",
             "type": "text/html"
         },
         "github_reference_page": {

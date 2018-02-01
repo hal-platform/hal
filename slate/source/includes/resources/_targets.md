@@ -275,7 +275,7 @@ Content-Type: application/hal+json
 }
 ```
 
-Get the most recent push to this target. This push may be a failure or success.
+Get the most recent release to this target. This release may be a failure or success.
 
 This endpoint returns a **Release** resource. see [Releases](#releases) for more information about the **Release** resource.
 
@@ -288,4 +288,4 @@ This endpoint returns a **Release** resource. see [Releases](#releases) for more
 Parameter | Description
 --------- | -----------
 id        | The unique ID of the target
-status    | **Optional** - Filter by status. Can be used to get the most recent successful push.
+status    | **Optional** - Filter by status. Can be used to get the most recent successful release.

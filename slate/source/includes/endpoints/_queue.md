@@ -39,7 +39,7 @@ Content-Type: application/hal+json
             "href": "https://hal.computer/api/queue?since=2016-01-12T13%3A45%3A00Z"
         },
         "refresh": {
-            "href": "https://hal.computer/api/queue-refresh/build1+push2"
+            "href": "https://hal.computer/api/queue-refresh/build1+release2"
         }
     },
     "_embedded": {
@@ -49,8 +49,8 @@ Content-Type: application/hal+json
                 //build
             },
             {
-                "id": "push2"
-                //push
+                "id": "release2"
+                //release
             }
         ]
     },
@@ -58,7 +58,7 @@ Content-Type: application/hal+json
 }
 ```
 
-Get a list of active jobs. This list can contain both **Builds** and **Pushes**.
+Get a list of active jobs. This list can contain both **Builds** and **Releases**.
 
 ### HTTP Request
 
@@ -80,19 +80,19 @@ since     | **Optional** - A valid ISO8601-formatted datetime such as `2016-01-1
 
 ### Embedded Resources
 
-**Builds** and **Pushes** are embedded in the queue. In addition, the following resources are embedded within their parent.
+**Builds** and **Releases** are embedded in the queue. In addition, the following resources are embedded within their parent.
 
 Parent          | Embedded Resource
 --------------- | -----------------
 build           | Application
-push            | Application
-push            | Build
-push            | Deployment
+release         | Application
+release         | Build
+release         | Deployment
 
 ## Get refreshed status of jobs
 
 ```http
-GET /api/queue-refresh/build1+push2+build3 HTTP/1.1
+GET /api/queue-refresh/build1+release2+build3 HTTP/1.1
 Accept: application/json
 Host: hal.computer
 Authorization: token "HAL_TOKEN"
@@ -105,12 +105,12 @@ $client = new Client([
     'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
-$jobs = ['build1', 'push2', 'build3'];
+$jobs = ['build1', 'release2', 'build3'];
 $response = $client->get('/api/queue-refresh/' . implode(' ', $jobs));
 ```
 
 ```shell
-curl "https://hal.computer/api/queue-refresh/build1+push2+build3"
+curl "https://hal.computer/api/queue-refresh/build1+release2+build3"
 ```
 
 > ### Response
@@ -132,8 +132,8 @@ Content-Type: application/hal+json
                 //build
             },
             {
-                "id": "push2"
-                //push
+                "id": "release2"
+                //release
             }
         ]
     },
@@ -151,7 +151,7 @@ Get the current status of jobs. This can be used to update the current status of
 
 Parameter | Description
 --------- | -----------
-jobs      | Space-delimited list of build or push IDs.
+jobs      | Space-delimited list of build or release IDs.
 
 <aside class="warning">
     The queue cannot retrieve the current status of more than 50 jobs at once.
@@ -159,7 +159,7 @@ jobs      | Space-delimited list of build or push IDs.
 
 ### Embedded Resources
 
-Unlike the **Queue** endpoint, the refresh endpoint only embeds the parent **builds** and **pushes**.
+Unlike the **Queue** endpoint, the refresh endpoint only embeds the parent **builds** and **releases**.
 
 
 ## Get all jobs for a specific date
@@ -204,8 +204,8 @@ curl "https://hal.computer/api/queue/date/2016-01-12"
                 //build
             },
             {
-                "id": "push2"
-                //push
+                "id": "release2"
+                //release
             }
         ]
     },
@@ -213,7 +213,7 @@ curl "https://hal.computer/api/queue/date/2016-01-12"
 }
 ```
 
-Get a list of jobs queued on the specified date. This list can contain both **Builds** and **Pushes**.
+Get a list of jobs queued on the specified date. This list can contain both **Builds** and **Releases**.
 
 ### HTTP Request
 
@@ -227,14 +227,14 @@ date      | A valid ISO8601-formatted date such as `2016-01-12`. Jobs created on
 
 ### Embedded Resources
 
-**Builds** and **Pushes** are embedded in the queue. In addition, the following resources are embedded within their parent.
+**Builds** and **Releases** are embedded in the queue. In addition, the following resources are embedded within their parent.
 
 Parent          | Embedded Resource
 --------------- | -----------------
 build           | Application
-push            | Application
-push            | Build
-push            | Deployment
+release         | Application
+release         | Build
+release         | Deployment
 
 
 ## Get Build History for all applications

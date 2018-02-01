@@ -11,7 +11,7 @@ Please note that many events can be recorded at the same time, so time is an unr
 Attribute       | Description                                         | Type     | Example
 --------------- | --------------------------------------------------- | -------- | -------------
 id              | Unique event ID                                     | string   | `e34a3e76-d2a4-4ff7-a3c7-76999dee0708`
-name            | Event name                                          | string   | `push.start`
+name            | Event name                                          | string   | `release.start`
 order           | Order of the event                                  | number   | `2`
 message         | Event message                                       | string   | `Build compiled successfully`
 status          | Status of this message                              | string   | `success`
@@ -54,7 +54,7 @@ Content-Type: application/hal+json
     "_links": {
         "self": {
             "href": "https://hal.computer/api/job-events/e34a3e76-d2a4-4ff7-a3c7-76999dee0708",
-            "title": "[1] Resolved push properties"
+            "title": "[1] Resolved release properties"
         },
         "job": {
             "href": "https://hal.computer/api/releases/f95def5f-bb7f-4643-adbf-ece49d3d7317",
@@ -64,16 +64,16 @@ Content-Type: application/hal+json
     "id": "e34a3e76-d2a4-4ff7-a3c7-76999dee0708",
     "name": "release.start",
     "order": 0,
-    "message": "Resolved push properties",
+    "message": "Resolved release properties",
     "status": "success",
     "created": "2016-01-12T17:35:04Z",
     "data": {
         "Method": "rsync",
         "Location": {
-            "path": "/temp/build/hal-push-f95def5f-bb7f-4643-adbf-ece49d3d7317",
+            "path": "/temp/build/hal-release-f95def5f-bb7f-4643-adbf-ece49d3d7317",
             "archive": "/archive/hal-71d7e2cd-f375-49bf-bb69-7ce0dac45558.tar.gz",
-            "tempArchive": "/temp/build/hal-push-f95def5f-bb7f-4643-adbf-ece49d3d7317.tar.gz",
-            "tempZipArchive": "/temp/build/hal-push-f95def5f-bb7f-4643-adbf-ece49d3d7317.zip"
+            "tempArchive": "/temp/build/hal-release-f95def5f-bb7f-4643-adbf-ece49d3d7317.tar.gz",
+            "tempZipArchive": "/temp/build/hal-release-f95def5f-bb7f-4643-adbf-ece49d3d7317.zip"
         }
     }
 }
