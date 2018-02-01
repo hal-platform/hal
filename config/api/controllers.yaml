@@ -187,6 +187,21 @@ services:
         arguments: ['@api.response_formatter', '@api_normalizer.environment']
 
     ####################################################################################################################
+    # VERSION CONTROL PROVIDER CONTROLLERS
+    ####################################################################################################################
+
+    vcs_providers.api:
+        class: 'Hal\UI\Controllers\API\VersionControl\VersionControlProvidersController'
+        arguments:
+            - '@api.response_formatter'
+            - '@doctrine.em'
+            - '@problem.renderer'
+
+    vcs_provider.api:
+        class: 'Hal\UI\Controllers\API\VersionControl\VersionControlProviderController'
+        arguments: ['@api.response_formatter', '@api_normalizer.vcs_provider']
+
+    ####################################################################################################################
     # USER CONTROLLERS
     ####################################################################################################################
 

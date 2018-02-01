@@ -229,12 +229,12 @@ parameters:
                 api.vcs_providers:
                     method: 'GET'
                     route: '/vcs-providers'
-                    stack: ['TODO_TODO_TODO']
+                    stack: ['vcs_providers.api']
 
                 api.vcs_provider:
                     method: 'GET'
                     route: '/vcs-providers/{system_vcs:%r.guid%}'
-                    stack: ['middleware.api_require_entity', 'TODO_TODO_TODO']
+                    stack: ['middleware.api_require_entity', 'vcs_provider.api']
 
                 ########################################################################################################
                 # users
