@@ -84,7 +84,7 @@ class VersionControlProvidersController implements ControllerInterface
         ];
 
         $resource = new HypermediaResource($data, $links, [
-            'versionControlProviders' => $versionControlProviders
+            'vcs_providers' => $versionControlProviders
         ]);
 
         $status = (count($versionControlProviders) > 0) ? 200 : 404;
