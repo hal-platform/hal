@@ -100,7 +100,7 @@ class TargetNormalizer implements ResourceNormalizerInterface
                     'source' => $target->parameter(Target::PARAM_LOCAL_PATH),
                     'path' => $target->parameter(Target::PARAM_REMOTE_PATH),
                     'application' => $target->parameter(Target::PARAM_APP),
-                    'eenvironment' => $target->parameter(Target::PARAM_ENV),
+                    'environment' => $target->parameter(Target::PARAM_ENV),
                 ];
 
             case TargetEnum::TYPE_CD:
@@ -110,7 +110,7 @@ class TargetNormalizer implements ResourceNormalizerInterface
                     'path' => $target->parameter(Target::PARAM_REMOTE_PATH),
                     'application' => $target->parameter(Target::PARAM_APP),
                     'group' => $target->parameter(Target::PARAM_GROUP),
-                    'cconfiguration' => $target->parameter(Target::PARAM_CONFIG),
+                    'configuration' => $target->parameter(Target::PARAM_CONFIG),
                 ];
 
             case TargetEnum::TYPE_RSYNC:
