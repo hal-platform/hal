@@ -9,8 +9,7 @@ namespace Hal\UI\Controllers\API\Queue;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\JobType\Build;
-use Hal\Core\Repository\BuildRepository;
-use Hal\UI\API\Hyperlink;
+use Hal\Core\Repository\JobType\BuildRepository;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;

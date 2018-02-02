@@ -7,7 +7,6 @@
 
 namespace Hal\UI\API\Normalizer;
 
-use Hal\Core\Entity\Group;
 use Hal\Core\Type\TargetEnum;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
