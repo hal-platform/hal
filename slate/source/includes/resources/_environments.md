@@ -8,7 +8,7 @@ these environments are usually more sensitive.
 
 Attribute       | Description                | Type     | Example
 --------------- | -------------------------- | -------- | -------------
-id              | Unique environment ID      | number   | `42`
+id              | Unique environment ID      | number   | `bb1faf2c-6710-4233-9fee-6deec56cfa67`
 name            | Unique environment name    | string   | `test`, `prod`
 is_production   | Is environment production? | bool     | `true`
 
@@ -47,19 +47,19 @@ Content-Type: application/hal+json
     "_links": {
         "environments": [
             {
-                "href": "https://hal.computer/api/environments/1",
+                "href": "https://hal.computer/api/environments/bb1faf2c-6710-4233-9fee-6deec56cfa67",
                 "title": "dev"
             },
             {
-                "href": "https://hal.computer/api/environments/2",
+                "href": "https://hal.computer/api/environments/e7b3a5ee-8a2c-4d29-bc67-cb07368f841c",
                 "title": "staging"
             },
             {
-                "href": "https://hal.computer/api/environments/3",
+                "href": "https://hal.computer/api/environments/3541ffc8-8596-40d2-b0e5-4ec56f62335e",
                 "title": "prod"
             },
             {
-                "href": "https://hal.computer/api/environments/4",
+                "href": "https://hal.computer/api/environments/9eadf152-1ae6-44d9-b07c-6a1b3d9df027",
                 "title": "security"
             }
         ],
@@ -80,7 +80,7 @@ This endpoint retrieves all environments.
 ## Get Environment
 
 ```http
-GET /api/environments/4 HTTP/1.1
+GET /api/environments/9eadf152-1ae6-44d9-b07c-6a1b3d9df027 HTTP/1.1
 Accept: application/json
 Host: hal.computer
 Authorization: token "HAL_TOKEN"
@@ -93,11 +93,11 @@ $client = new Client([
     'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
-$response = $client->get('/api/environments/4');
+$response = $client->get('/api/environments/9eadf152-1ae6-44d9-b07c-6a1b3d9df027');
 ```
 
 ```shell
-curl "https://hal.computer/api/environments/4"
+curl "https://hal.computer/api/environments/9eadf152-1ae6-44d9-b07c-6a1b3d9df027"
 ```
 
 > ### Response
@@ -111,12 +111,12 @@ Content-Type: application/hal+json
 {
     "_links": {
         "self": {
-            "href": "https://hal.computer/api/environments/1",
-            "title": "test"
+            "href": "https://hal.computer/api/environments/9eadf152-1ae6-44d9-b07c-6a1b3d9df027",
+            "title": "security"
         }
     },
-    "id": 1,
-    "name": "test",
+    "id": "9eadf152-1ae6-44d9-b07c-6a1b3d9df027",
+    "name": "security",
     "is_production": false
 }
 ```

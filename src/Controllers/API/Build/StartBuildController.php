@@ -46,7 +46,7 @@ class StartBuildController implements ControllerInterface
     /**
      * @var ReleaseValidator
      */
-    private $pushValidator;
+    private $releaseValidator;
 
     /**
      * @var ResponseFormatter
@@ -66,7 +66,7 @@ class StartBuildController implements ControllerInterface
     /**
      * @param EntityManagerInterface $em
      * @param BuildValidator $buildValidator
-     * @param ReleaseValidator $pushValidator
+     * @param ReleaseValidator $releaseValidator
      * @param ResponseFormatter $formatter
      * @param BuildNormalizer $normalizer
      * @param ProblemRendererInterface $problemRenderer
@@ -74,14 +74,14 @@ class StartBuildController implements ControllerInterface
     public function __construct(
         EntityManagerInterface $em,
         BuildValidator $buildValidator,
-        ReleaseValidator $pushValidator,
+        ReleaseValidator $releaseValidator,
         ResponseFormatter $formatter,
         BuildNormalizer $normalizer,
         ProblemRendererInterface $problemRenderer
     ) {
         $this->em = $em;
         $this->buildValidator = $buildValidator;
-        $this->pushValidator = $pushValidator;
+        $this->releaseValidator = $releaseValidator;
 
         $this->formatter = $formatter;
         $this->normalizer = $normalizer;
@@ -115,9 +115,9 @@ class StartBuildController implements ControllerInterface
                 return $this->renderProblem($response, $this->problemRenderer, $problem);
             }
 
-            $children = $this->pushValidator->isProcessValid($application, $user, $build->environment(), $build, $targets);
+            $children = $this->releaseValidator->isScheduledJobValid($application, $user, $build->environment(), $build, $targets);
             if (!$children) {
-                $problem = new HTTPProblem(400, self::ERR_INVALID_DEPLOY, ['errors' => $this->pushValidator->errors()]);
+                $problem = new HTTPProblem(400, self::ERR_INVALID_DEPLOY, ['errors' => $this->releaseValidator->errors()]);
                 return $this->renderProblem($response, $this->problemRenderer, $problem);
             }
         }

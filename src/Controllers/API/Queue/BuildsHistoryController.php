@@ -9,8 +9,7 @@ namespace Hal\UI\Controllers\API\Queue;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\JobType\Build;
-use Hal\Core\Repository\BuildRepository;
-use Hal\UI\API\Hyperlink;
+use Hal\Core\Repository\JobType\BuildRepository;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
@@ -76,7 +75,7 @@ class BuildsHistoryController implements ControllerInterface
             $builds[] = $build;
         }
 
-        $links = $this->buildPaginationLinks('api.build.list.paged', $page, $total, SharedStaticConfiguration::LARGE_PAGE_SIZE);
+        $links = $this->buildPaginationLinks('api.build.history.paged', $page, $total, SharedStaticConfiguration::LARGE_PAGE_SIZE);
 
         $data = [
             'count' => count($builds),

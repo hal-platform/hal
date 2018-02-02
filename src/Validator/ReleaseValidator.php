@@ -133,7 +133,6 @@ class ReleaseValidator
         foreach ($targets as $target) {
             $process = (new ScheduledAction)
                 ->withStatus(ScheduledActionStatusEnum::TYPE_PENDING)
-                ->withMessage($user)
 
                 ->withUser($user)
                 ->withTriggerJob($build)

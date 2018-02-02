@@ -98,23 +98,23 @@ parameters:
                             stack: ['releases.api']
 
                 ########################################################################################################
-                # lolwut
+                # deployment target templates
                 ########################################################################################################
 
-                api.groups:
+                api.templates:
                     method: 'GET'
-                    route: '/groups'
-                    stack: ['groups.api']
+                    route: '/templates'
+                    stack: ['templates.api']
 
-                api.groups.paged:
+                api.templates.paged:
                     method: 'GET'
-                    route: '/groups/page/{page:%r.digit%}'
-                    stack: ['groups.api']
+                    route: '/templates/page/{page:%r.digit%}'
+                    stack: ['templates.api']
 
-                api.group:
+                api.template:
                     method: 'GET'
-                    route: '/groups/{group:%r.guid%}'
-                    stack: ['middleware.api_require_entity', 'group.api']
+                    route: '/templates/{template:%r.guid%}'
+                    stack: ['middleware.api_require_entity', 'template.api']
 
                 ########################################################################################################
                 # deployment targets
@@ -229,12 +229,12 @@ parameters:
                 api.vcs_providers:
                     method: 'GET'
                     route: '/vcs-providers'
-                    stack: ['TODO_TODO_TODO']
+                    stack: ['vcs_providers.api']
 
                 api.vcs_provider:
                     method: 'GET'
                     route: '/vcs-providers/{system_vcs:%r.guid%}'
-                    stack: ['middleware.api_require_entity', 'TODO_TODO_TODO']
+                    stack: ['middleware.api_require_entity', 'vcs_provider.api']
 
                 ########################################################################################################
                 # users

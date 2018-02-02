@@ -5,17 +5,17 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\API;
+namespace Hal\UI\Controllers\API\VersionControl;
 
-use Hal\Core\Entity\Job\JobEvent;
-use Hal\UI\API\Normalizer\EventNormalizer;
+use Hal\Core\Entity\System\VersionControlProvider;
+use Hal\UI\API\Normalizer\VersionControlProviderNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 
-class EventController implements ControllerInterface
+class VersionControlProviderController implements ControllerInterface
 {
     use APITrait;
 
@@ -25,15 +25,15 @@ class EventController implements ControllerInterface
     private $formatter;
 
     /**
-     * @var EventNormalizer
+     * @var VersionControlProviderNormalizer
      */
     private $normalizer;
 
     /**
      * @param ResponseFormatter $formatter
-     * @param EventNormalizer $normalizer
+     * @param VersionControlProviderNormalizer $normalizer
      */
-    public function __construct(ResponseFormatter $formatter, EventNormalizer $normalizer)
+    public function __construct(ResponseFormatter $formatter, VersionControlProviderNormalizer $normalizer)
     {
         $this->formatter = $formatter;
         $this->normalizer = $normalizer;
@@ -44,9 +44,9 @@ class EventController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $event = $request->getAttribute(JobEvent::class);
+        $vcs = $request->getAttribute(VersionControlProvider::class);
 
-        $resource = $this->normalizer->resource($event, ['data']);
+        $resource = $this->normalizer->resource($vcs);
         $body = $this->formatter->buildHypermediaResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $body, 200);

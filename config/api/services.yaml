@@ -22,7 +22,7 @@ services:
             - ['addNormalizer', ['Hal\Core\Entity\JobType\Build', '@api_normalizer.build']]
             - ['addNormalizer', ['Hal\Core\Entity\JobType\Release', '@api_normalizer.release']]
             - ['addNormalizer', ['Hal\Core\Entity\Job\JobEvent', '@api_normalizer.event']]
-            # - ['addNormalizer', ['Hal\Core\Entity\Group', '@api_normalizer.group']]
+            - ['addNormalizer', ['Hal\Core\Entity\TargetTemplate', '@api_normalizer.template']]
             - ['addNormalizer', ['Hal\Core\Entity\User', '@api_normalizer.user']]
             - ['addNormalizer', ['Hal\Core\Entity\System\VersionControlProvider', '@api_normalizer.vcs_provider']]
             - ['addNormalizer', ['QL\MCP\Common\Time\TimePoint', '@api_normalizer.timepoint']]
@@ -57,8 +57,8 @@ services:
         class: 'Hal\UI\API\Normalizer\ApplicationNormalizer'
         arguments: ['@vcs']
 
-    api_normalizer.group:
-        class: 'Hal\UI\API\Normalizer\GroupNormalizer'
+    api_normalizer.template:
+        class: 'Hal\UI\API\Normalizer\TemplateNormalizer'
         arguments: ['@doctrine.em']
 
     api_normalizer.timepoint:

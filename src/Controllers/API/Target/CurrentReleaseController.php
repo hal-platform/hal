@@ -58,7 +58,7 @@ class CurrentReleaseController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $target = $request->getAttribute(Target::class);
-        $push = $target->release();
+        $push = $target->lastJob();
 
         if (!$push) {
             return $this->withProblem($this->problem, $response, 404, self::ERR_NEVER_DEPLOYED);

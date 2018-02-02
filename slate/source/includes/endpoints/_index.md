@@ -43,14 +43,18 @@ Content-Type: application/hal+json
         "environments": {
             "href": "https://hal.computer/api/environments"
         },
-        "groups": {
-            "href": "https://hal.computer/api/groups"
+        "templates": {
+            "href": "https://hal.computer/api/templates"
         },
         "users": {
             "href": "https://hal.computer/api/users"
         },
         "queue": {
             "href": "https://hal.computer/api/queue"
+        },
+        "documentation": {
+            "href": "https://hal.computer/docs/api",
+            "type": "text/html"
         },
         "self": {
             "href": "https://hal.computer/api"

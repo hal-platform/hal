@@ -8,8 +8,7 @@ belongs to has no bearing on who can deploy an application.
 
 Attribute       | Description                                          | Type     | Example
 --------------- | ---------------------------------------------------- | -------- | -------------
-id              | Unique organization ID                               | number   | `5`
-key             | Unique alphanumeric identifier for this organization | string   | `testing`, `example-organization`
+id              | Unique organization ID                               | number   | `f115a0a4-c5bb-41f9-85fc-1f30b82d7f15`
 name            | Organization name                                    | string   | `Test Organization`
 
 ## Get All Organizations
@@ -47,16 +46,16 @@ Content-Type: application/hal+json
     "_links": {
         "organizations": [
             {
-                "href": "https://hal.computer/api/organizations/12",
-                "title": "sample-org"
+                "href": "https://hal.computer/api/organizations/44620f93-786a-46d8-a983-3e5074d85604",
+                "title": "Sample Organization"
             },
             {
-                "href": "https://hal.computer/api/organizations/360",
-                "title": "test-org"
+                "href": "https://hal.computer/api/organizations/a85fbeee-dc8f-4b14-a4cb-9df1b833cb84",
+                "title": "Test Organization"
             },
             {
-                "href": "https://hal.computer/api/organizations/5",
-                "title": "testing"
+                "href": "https://hal.computer/api/organizations/42eeaa4f-6ba9-4dc6-a2c7-2bd76482f441",
+                "title": "Example Application Organization"
             }
         ],
         "self": {
@@ -76,7 +75,7 @@ Get all organizations.
 ## Get Organization
 
 ```http--response
-GET /api/organizations/5 HTTP/1.1
+GET /api/organizations/42eeaa4f-6ba9-4dc6-a2c7-2bd76482f441 HTTP/1.1
 Accept: application/json
 Host: hal.computer
 Authorization: token "HAL_TOKEN"
@@ -89,11 +88,11 @@ $client = new Client([
     'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
-$response = $client->get('/api/organizations/5');
+$response = $client->get('/api/organizations/42eeaa4f-6ba9-4dc6-a2c7-2bd76482f441');
 ```
 
 ```shell
-curl "https://hal.computer/api/organizations/5"
+curl "https://hal.computer/api/organizations/42eeaa4f-6ba9-4dc6-a2c7-2bd76482f441"
 ```
 
 > ### Response
@@ -107,12 +106,11 @@ Content-Type: application/hal+json
 {
     "_links": {
         "self": {
-            "href": "https://hal.computer/api/organizations/5",
+            "href": "https://hal.computer/api/organizations/42eeaa4f-6ba9-4dc6-a2c7-2bd76482f441",
             "title": "testing"
         }
     },
-    "id": 1,
-    "key": "testing",
+    "id": "42eeaa4f-6ba9-4dc6-a2c7-2bd76482f441",
     "name": "Example Application Organization"
 }
 ```

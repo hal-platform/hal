@@ -7,8 +7,8 @@ work in all environments) are not supported at this time, but likely will be in 
 
 Attribute              | Description                                         | Type     | Example
 ---------------------- | --------------------------------------------------- | -------- | -------------
-id                     | Unique build ID                                     | string   | `b2.abcdef`
-status                 | Current status                                      | string   | `Success`, `Waiting`, `Error`
+id                     | Unique build ID                                     | string   | `389c7f25-a6c9-4f19-8382-a8245674a7db`
+status                 | Current status                                      | string   | `pending`, `running`, `success`, `failure`
 created                | Time build was created in ISO 8601                  | string   | `2016-01-06T20:41:22Z`
 start                  | Time build was started in ISO 8601                  | string   | `2016-01-06T20:42:00Z`
 end                    | Time build was finished in ISO 8601                 | string   | `2016-01-06T20:45:36Z`
@@ -19,14 +19,14 @@ application            | **Link** - Application of build                     | r
 environment            | **Link** - Environment built                        | resource |
 events                 | **Link** - Events for build                         | list     |
 page                   | **Link** - Page in frontend UI for this build       |          |
-start_push_page        | **Link** - Page to initiate push of this build      |          |
+start_release_page     | **Link** - Page to initiate release of this build   |          |
 github_reference_page  | **Link** - GitHub page for the git reference        |          |
 github_commit_page     | **Link** - GitHub page for the exact commit SHA     |          |
 
 ## Get All Builds
 
 ```http
-GET /api/applications/24/builds HTTP/1.1
+GET /api/applications/58483556-0f73-4c97-af24-954cce3a73cc/builds HTTP/1.1
 Accept: application/json
 Host: hal.computer
 Authorization: token "HAL_TOKEN"
@@ -39,11 +39,11 @@ $client = new Client([
     'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
-$response = $client->get('/api/applications/24/builds');
+$response = $client->get('/api/applications/58483556-0f73-4c97-af24-954cce3a73cc/builds');
 ```
 
 ```shell
-curl "https://hal.computer/api/applications/24/builds"
+curl "https://hal.computer/api/applications/58483556-0f73-4c97-af24-954cce3a73cc/builds"
 ```
 
 > ### Response
@@ -57,34 +57,34 @@ Content-Type: application/hal+json
 {
     "_links": {
         "self": {
-            "href": "https://hal.computer/api/applications/24/builds"
+            "href": "https://hal.computer/api/applications/58483556-0f73-4c97-af24-954cce3a73cc/builds"
         },
         "next": {
-            "href": "https://hal.computer/api/applications/24/builds/page/2"
+            "href": "https://hal.computer/api/applications/58483556-0f73-4c97-af24-954cce3a73cc/builds/page/2"
         },
         "last": {
-            "href": "https://hal.computer/api/applications/24/builds/page/3"
+            "href": "https://hal.computer/api/applications/58483556-0f73-4c97-af24-954cce3a73cc/builds/page/3"
         },
         "builds": [
             {
-                "href": "https://hal.computer/api/builds/b2.5KXYaoX",
-                "title": "b2.5KXYaoX"
+                "href": "https://hal.computer/api/builds/cf5717ad-527d-4649-843a-08ad01386a52",
+                "title": "cf5717ad-527d-4649-843a-08ad01386a52"
             },
             {
-                "href": "https://hal.computer/api/builds/b2.5KXaayW",
-                "title": "b2.5KXaayW"
+                "href": "https://hal.computer/api/builds/b8c528c0-3476-430d-b0c1-f0c2b0c66592",
+                "title": "b8c528c0-3476-430d-b0c1-f0c2b0c66592"
             },
             {
-                "href": "https://hal.computer/api/builds/b2.5KXQs4V",
-                "title": "b2.5KXQs4V"
+                "href": "https://hal.computer/api/builds/8abde05a-dde6-43dd-a2c4-87c7f581fdfc",
+                "title": "8abde05a-dde6-43dd-a2c4-87c7f581fdfc"
             },
             {
-                "href": "https://hal.computer/api/builds/b2.5KX7Pxg",
-                "title": "b2.5KX7Pxg"
+                "href": "https://hal.computer/api/builds/caa8ccdb-6e0e-4857-b4f9-697e12ad071a",
+                "title": "caa8ccdb-6e0e-4857-b4f9-697e12ad071a"
             },
             {
-                "href": "https://hal.computer/api/builds/b2.5yUBm4E",
-                "title": "b2.5yUBm4E"
+                "href": "https://hal.computer/api/builds/c5803620-665f-4897-8912-4cd988d91754",
+                "title": "c5803620-665f-4897-8912-4cd988d91754"
             }
             //additional builds pruned for brevity
         ]
@@ -117,7 +117,7 @@ page      | **Optional** - Page number to retrieve
 ## Get Build
 
 ```http
-GET /api/builds/b2.5KXaayW HTTP/1.1
+GET /api/builds/cf5717ad-527d-4649-843a-08ad01386a52 HTTP/1.1
 Accept: application/json
 Host: hal.computer
 Authorization: token "HAL_TOKEN"
@@ -130,11 +130,11 @@ $client = new Client([
     'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
-$response = $client->get('/api/builds/b2.5KXaayW');
+$response = $client->get('/api/builds/cf5717ad-527d-4649-843a-08ad01386a52');
 ```
 
 ```shell
-curl "https://hal.computer/api/builds/b2.5KXaayW"
+curl "https://hal.computer/api/builds/cf5717ad-527d-4649-843a-08ad01386a52"
 ```
 
 > ### Response
@@ -148,26 +148,26 @@ Content-Type: application/hal+json
 {
     "_links": {
         "self": {
-            "href": "https://hal.computer/api/builds/b2.5KXaayW",
-            "title": "b2.5KXaayW"
+            "href": "https://hal.computer/api/builds/cf5717ad-527d-4649-843a-08ad01386a52",
+            "title": "cf5717ad-527d-4649-843a-08ad01386a52"
         },
         "user": {
-            "href": "https://hal.computer/api/users/3001",
+            "href": "https://hal.computer/api/users/50290099-7b8a-471f-b9be-dbf7e9148349",
             "title": "SKluck"
         },
         "application": {
-            "href": "https://hal.computer/api/applications/24",
+            "href": "https://hal.computer/api/applications/58483556-0f73-4c97-af24-954cce3a73cc",
             "title": "Hal Agent"
         },
         "environment": {
-            "href": "https://hal.computer/api/environments/1",
+            "href": "https://hal.computer/api/environments/a930555a-c330-435d-b720-1eb9d21b966f",
             "title": "test"
         },
         "events": {
-            "href": "https://hal.computer/api/builds/b2.5KXaayW/events"
+            "href": "https://hal.computer/api/builds/cf5717ad-527d-4649-843a-08ad01386a52/events"
         },
         "page": {
-            "href": "https://hal.computer/builds/b2.5KXaayW",
+            "href": "https://hal.computer/builds/cf5717ad-527d-4649-843a-08ad01386a52",
             "type": "text/html"
         },
         "github_reference_page": {
@@ -178,12 +178,12 @@ Content-Type: application/hal+json
             "href": "https://github.com/hal-platform/hal-agent/tree/master",
             "type": "text/html"
         },
-        "start_push_page": {
-            "href": "https://hal.computer/builds/b2.5KXaayW/push",
+        "start_release_page": {
+            "href": "https://hal.computer/builds/cf5717ad-527d-4649-843a-08ad01386a52/release",
             "type": "text/html"
         }
     },
-    "id": "b2.5KXaayW",
+    "id": "cf5717ad-527d-4649-843a-08ad01386a52",
     "status": "Success",
     "created": "2016-01-06T20:41:22Z",
     "start": "2016-01-06T20:41:35Z",
@@ -208,7 +208,7 @@ id        | The unique ID of the build
 ## Get Events for Build
 
 ```http
-GET /api/builds/b2.5KXaayW/events HTTP/1.1
+GET /api/builds/cf5717ad-527d-4649-843a-08ad01386a52/events HTTP/1.1
 Accept: application/json
 Host: hal.computer
 Authorization: token "HAL_TOKEN"
@@ -221,11 +221,11 @@ $client = new Client([
     'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
-$response = $client->get('/api/builds/b2.5KXaayW/events');
+$response = $client->get('/api/builds/cf5717ad-527d-4649-843a-08ad01386a52/events');
 ```
 
 ```shell
-curl "https://hal.computer/api/builds/b2.5KXaayW/events"
+curl "https://hal.computer/api/builds/cf5717ad-527d-4649-843a-08ad01386a52/events"
 ```
 
 > ### Response
@@ -238,30 +238,30 @@ Content-Type: application/hal+json
 ```json
 {
     "_links": {
-        "push": {
-            "href": "https://hal.computer/api/builds/b2.5KXaayW",
-            "title": "b2.5KXaayW"
+        "release": {
+            "href": "https://hal.computer/api/builds/cf5717ad-527d-4649-843a-08ad01386a52",
+            "title": "cf5717ad-527d-4649-843a-08ad01386a52"
         },
         "events": [
             {
-                "href": "https://hal.computer/api/job-events/e34a3e76d2a44ff7a3c7",
-                "title": "[1] Resolved build properties"
+                "href": "https://hal.computer/api/job-events/38ad5416-6ee9-4407-8e5b-d2a198dc8d80",
+                "title": "[0] Resolved build properties"
             },
             {
-                "href": "https://hal.computer/api/job-events/d3c75e80d95a4d4b8681",
-                "title": "[2] Reticulating splines"
+                "href": "https://hal.computer/api/job-events/0304ce63-1f81-4a51-a80b-867fb468f61b",
+                "title": "[1] Reticulating splines"
             },
             {
-                "href": "https://hal.computer/api/job-events/93ac503d0b334da5a41f",
-                "title": "[3] Prepare build environment"
+                "href": "https://hal.computer/api/job-events/e7767e9a-0d23-4290-b268-e89e5d5c0b9f",
+                "title": "[2] Prepare build environment"
             },
             {
-                "href": "https://hal.computer/api/job-events/e87ce283a6514f4a8215",
-                "title": "[4] Archive build"
+                "href": "https://hal.computer/api/job-events/e8ef08f8-c35d-40c0-95eb-787fb1a647b1",
+                "title": "[3] Archive build"
             }
         ],
         "self": {
-            "href": "https://hal.computer/api/builds/b2.5KXaayW/events"
+            "href": "https://hal.computer/api/builds/cf5717ad-527d-4649-843a-08ad01386a52/events"
         }
     },
     "count": 4

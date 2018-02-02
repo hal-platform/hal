@@ -5,13 +5,11 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\API\Build;
+namespace Hal\UI\Controllers\API\Template;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\Core\Entity\Application;
-use Hal\Core\Entity\JobType\Build;
-use Hal\Core\Repository\JobType\BuildRepository;
-use Hal\UI\API\Hyperlink;
+use Hal\Core\Entity\TargetTemplate;
+use Hal\Core\Repository\TargetTemplateRepository;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
@@ -22,7 +20,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 
-class BuildsController implements ControllerInterface
+class TemplatesController implements ControllerInterface
 {
     use APITrait;
     use PaginationTrait;
@@ -35,9 +33,9 @@ class BuildsController implements ControllerInterface
     private $formatter;
 
     /**
-     * @var BuildRepository
+     * @var TargetTemplateRepository
      */
-    private $buildRepo;
+    private $templateRepository;
 
     /**
      * @var ProblemRendererInterface
@@ -55,7 +53,7 @@ class BuildsController implements ControllerInterface
         ProblemRendererInterface $problem
     ) {
         $this->formatter = $formatter;
-        $this->buildRepo = $em->getRepository(Build::class);
+        $this->templateRepository = $em->getRepository(TargetTemplate::class);
         $this->problem = $problem;
     }
 
@@ -64,34 +62,32 @@ class BuildsController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $application = $request->getAttribute(Application::class);
-
         $page = $this->getCurrentPage($request);
         if ($page === null) {
             return $this->withProblem($this->problem, $response, 404, self::ERR_PAGE);
         }
 
-        $pagination = $this->buildRepo->getByApplication($application, SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1));
+        $pagination = $this->templateRepository->getPagedResults(SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1));
         $total = count($pagination);
 
-        $builds = [];
-        foreach ($pagination as $build) {
-            $builds[] = $build;
+        $templates = [];
+        foreach ($pagination as $template) {
+            $templates[] = $template;
         }
 
-        $links = $this->buildPaginationLinks('api.builds.history', $page, $total, SharedStaticConfiguration::LARGE_PAGE_SIZE, ['application' => $application->id()]);
+        $links = $this->buildPaginationLinks('api.templates.paged', $page, $total, SharedStaticConfiguration::LARGE_PAGE_SIZE);
 
         $data = [
-            'count' => count($builds),
+            'count' => count($templates),
             'total' => $total,
             'page' => $page
         ];
 
         $resource = new HypermediaResource($data, $links, [
-            'builds' => $builds
+            'templates' => $templates
         ]);
 
-        $status = (count($builds) > 0) ? 200 : 404;
+        $status = (count($templates) > 0) ? 200 : 404;
         $data = $this->formatter->buildHypermediaResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $data, $status);

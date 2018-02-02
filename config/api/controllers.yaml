@@ -71,19 +71,19 @@ services:
             - '@problem.renderer'
 
     ####################################################################################################################
-    # SERVER CONTROLLERS
+    # TEMPLATE CONTROLLERS
     ####################################################################################################################
 
-    groups.api:
-        class: 'Hal\UI\Controllers\API\Group\GroupsController'
+    templates.api:
+        class: 'Hal\UI\Controllers\API\Template\TemplatesController'
         arguments:
             - '@api.response_formatter'
             - '@doctrine.em'
             - '@problem.renderer'
 
-    group.api:
-        class: 'Hal\UI\Controllers\API\Group\GroupController'
-        arguments: ['@api.response_formatter', '@api_normalizer.group']
+    template.api:
+        class: 'Hal\UI\Controllers\API\Template\TemplateController'
+        arguments: ['@api.response_formatter', '@api_normalizer.template']
 
     ####################################################################################################################
     # TARGET CONTROLLERS
@@ -185,6 +185,21 @@ services:
     environment.api:
         class: 'Hal\UI\Controllers\API\Environment\EnvironmentController'
         arguments: ['@api.response_formatter', '@api_normalizer.environment']
+
+    ####################################################################################################################
+    # VERSION CONTROL PROVIDER CONTROLLERS
+    ####################################################################################################################
+
+    vcs_providers.api:
+        class: 'Hal\UI\Controllers\API\VersionControl\VersionControlProvidersController'
+        arguments:
+            - '@api.response_formatter'
+            - '@doctrine.em'
+            - '@problem.renderer'
+
+    vcs_provider.api:
+        class: 'Hal\UI\Controllers\API\VersionControl\VersionControlProviderController'
+        arguments: ['@api.response_formatter', '@api_normalizer.vcs_provider']
 
     ####################################################################################################################
     # USER CONTROLLERS

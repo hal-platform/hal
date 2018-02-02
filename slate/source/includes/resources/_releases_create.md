@@ -1,14 +1,14 @@
 ## Deploy Release
 
 ```http
-POST /api/builds/b2.64U218P/deploy HTTP/1.1
+POST /api/builds/d4c5f758-930b-4099-a059-926ea81a9c3f/deploy HTTP/1.1
 Accept: application/json
 Host: hal.computer
 Content-Type: application/json
 Authorization: token "HAL_TOKEN"
 
 {
-    "targets": ["1234", "5678", "9999"]
+    "targets": ["4f7e6c57-9887-4d05-a4b5-d429cd152e4d", "5235be5d-38e6-41de-aedd-f23be3b39c4e", "a080d0c6-f405-468d-b393-91b8be0ef934"]
 }
 ```
 
@@ -19,9 +19,9 @@ $client = new Client([
     'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
-$response = $client->post('/api/builds/b2.64U218P/deploy', [
+$response = $client->post('/api/builds/d4c5f758-930b-4099-a059-926ea81a9c3f/deploy', [
     'json' => [
-        'targets' => ["1234"]
+        'targets' => ["4f7e6c57-9887-4d05-a4b5-d429cd152e4d"]
     ]
 ]);
 ```
@@ -30,9 +30,9 @@ $response = $client->post('/api/builds/b2.64U218P/deploy', [
 curl \
   --request POST \
   --header "Authorization: token HAL_TOKEN" \
-  --form targets[]=1234 \
-  --form targets[]=5678 \
-  "https://hal.computer/api/builds/b2.64U218P/deploy"
+  --form targets[]="4f7e6c57-9887-4d05-a4b5-d429cd152e4d" \
+  --form targets[]="5235be5d-38e6-41de-aedd-f23be3b39c4e" \
+  "https://hal.computer/api/builds/d4c5f758-930b-4099-a059-926ea81a9c3f/deploy"
 ```
 
 > ### Response - Success
@@ -46,7 +46,7 @@ Content-Type: application/hal+json
 {
     "_links": {
         "self": {
-            "href": "https://hal.computer/api/builds/b2.64U218P/deploy"
+            "href": "https://hal.computer/api/builds/d4c5f758-930b-4099-a059-926ea81a9c3f/deploy"
         }
     },
     "count": 2,
@@ -54,35 +54,35 @@ Content-Type: application/hal+json
         {
             "_links": {
                 "self": {
-                    "href": "https://hal.computer/api/releases/p3.65ghrn4",
-                    "title": "p3.65ghrn4"
+                    "href": "https://hal.computer/api/releases/58629258-af32-43eb-91f0-80fd41319d3b",
+                    "title": "58629258-af32-43eb-91f0-80fd41319d3b"
                 },
                 "user": {
-                    "href": "https://hal.computer/api/users/5555",
+                    "href": "https://hal.computer/api/users/75b384eb-926a-4586-b0a4-934fbf583b2f",
                     "title": "HAL_USER"
                 },
                 "target": {
-                    "href": "https://hal.computer/api/targets/1234",
+                    "href": "https://hal.computer/api/targets/4f7e6c57-9887-4d05-a4b5-d429cd152e4d",
                     "title": "Test Target 1"
                 },
                 "build": {
-                    "href": "https://hal.computer/api/builds/b2.64U218P",
-                    "title": "b2.64U218P"
+                    "href": "https://hal.computer/api/builds/d4c5f758-930b-4099-a059-926ea81a9c3f",
+                    "title": "d4c5f758-930b-4099-a059-926ea81a9c3f"
                 },
                 "application": {
-                    "href": "https://hal.computer/api/application/999",
+                    "href": "https://hal.computer/api/application/978f9bab-14a2-438b-b6b8-f922004d2a93",
                     "title": "Hal"
                 },
                 "events": {
-                    "href": "https://hal.computer/api/releases/p3.65ghrn4/events"
+                    "href": "https://hal.computer/api/releases/58629258-af32-43eb-91f0-80fd41319d3b/events"
                 },
                 "page": {
-                    "href": "https://hal.computer/releases/p3.65ghrn4",
+                    "href": "https://hal.computer/releases/58629258-af32-43eb-91f0-80fd41319d3b",
                     "type": "text/html"
                 }
             },
-            "id": "p3.65ghrn4",
-            "status": "Waiting",
+            "id": "58629258-af32-43eb-91f0-80fd41319d3b",
+            "status": "pending",
             "created": "2017-03-15T12:00:00Z",
             "start": null,
             "end": null
@@ -90,35 +90,35 @@ Content-Type: application/hal+json
         {
             "_links": {
                 "self": {
-                    "href": "https://hal.computer/api/releases/p3.65gA633",
-                    "title": "p3.65gA633"
+                    "href": "https://hal.computer/api/releases/e0ff7da5-98fe-4523-a55a-7712788a7650",
+                    "title": "e0ff7da5-98fe-4523-a55a-7712788a7650"
                 },
                 "user": {
-                    "href": "https://hal.computer/api/users/5555",
+                    "href": "https://hal.computer/api/users/75b384eb-926a-4586-b0a4-934fbf583b2f",
                     "title": "HAL_USER"
                 },
                 "target": {
-                    "href": "https://hal.computer/api/targets/5678",
+                    "href": "https://hal.computer/api/targets/5235be5d-38e6-41de-aedd-f23be3b39c4e",
                     "title": "Test Target 2"
                 },
                 "build": {
-                    "href": "https://hal.computer/api/builds/b2.64U218P",
-                    "title": "b2.64U218P"
+                    "href": "https://hal.computer/api/builds/d4c5f758-930b-4099-a059-926ea81a9c3f",
+                    "title": "d4c5f758-930b-4099-a059-926ea81a9c3f"
                 },
                 "application": {
-                    "href": "https://hal.computer/api/application/999",
+                    "href": "https://hal.computer/api/application/978f9bab-14a2-438b-b6b8-f922004d2a93",
                     "title": "Hal"
                 },
                 "events": {
-                    "href": "https://hal.computer/api/releases/p3.65gA633/events"
+                    "href": "https://hal.computer/api/releases/e0ff7da5-98fe-4523-a55a-7712788a7650/events"
                 },
                 "page": {
-                    "href": "https://hal.computer/releases/p3.65gA633",
+                    "href": "https://hal.computer/releases/e0ff7da5-98fe-4523-a55a-7712788a7650",
                     "type": "text/html"
                 }
             },
-            "id": "p3.65gA633",
-            "status": "Waiting",
+            "id": "e0ff7da5-98fe-4523-a55a-7712788a7650",
+            "status": "pending",
             "created": "2017-03-15T12:00:00Z",
             "start": null,
             "end": null
@@ -140,12 +140,12 @@ Content-Type: application/problem+json
     "title": "Bad Request",
     "detail": "Cannot deploy release due to form submission failure. Please check errors.",
     "errors": [
-        "Push to "1234" cannot be created, deployment already in progress."
+        "Push to "4f7e6c57-9887-4d05-a4b5-d429cd152e4d" cannot be created, deployment already in progress."
     ]
 }
 ```
 
-Deploy a release. Releases are created with the status of "Pending" or "Waiting". Releases are added the queue and processed
+Deploy a release. Releases are created with the status of "pending". Releases are added the queue and processed
 as soon as an agent is available.
 
 Clients must authenticate to use this endpoint.

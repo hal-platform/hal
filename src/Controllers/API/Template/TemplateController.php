@@ -5,17 +5,17 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\API\Group;
+namespace Hal\UI\Controllers\API\Template;
 
-use Hal\Core\Entity\Group;
-use Hal\UI\API\Normalizer\GroupNormalizer;
+use Hal\Core\Entity\TargetTemplate;
+use Hal\UI\API\Normalizer\TemplateNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 
-class GroupController implements ControllerInterface
+class TemplateController implements ControllerInterface
 {
     use APITrait;
 
@@ -25,15 +25,15 @@ class GroupController implements ControllerInterface
     private $formatter;
 
     /**
-     * @var GroupNormalizer
+     * @var TemplateNormalizer
      */
     private $normalizer;
 
     /**
      * @param ResponseFormatter $formatter
-     * @param GroupNormalizer $normalizer
+     * @param TemplateNormalizer $normalizer
      */
-    public function __construct(ResponseFormatter $formatter, GroupNormalizer $normalizer)
+    public function __construct(ResponseFormatter $formatter, TemplateNormalizer $normalizer)
     {
         $this->formatter = $formatter;
         $this->normalizer = $normalizer;
@@ -44,9 +44,9 @@ class GroupController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $group = $request->getAttribute(Group::class);
+        $template = $request->getAttribute(TargetTemplate::class);
 
-        $resource = $this->normalizer->resource($group, ['environment']);
+        $resource = $this->normalizer->resource($template, ['environment']);
         $body = $this->formatter->buildHypermediaResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $body);

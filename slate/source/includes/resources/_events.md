@@ -10,20 +10,19 @@ Please note that many events can be recorded at the same time, so time is an unr
 
 Attribute       | Description                                         | Type     | Example
 --------------- | --------------------------------------------------- | -------- | -------------
-id              | Unique event ID                                     | string   | `e34a3e76d2a44ff7a3c776999dee0708`
-event           | Event name                                          | string   | `push.start`
+id              | Unique event ID                                     | string   | `e34a3e76-d2a4-4ff7-a3c7-76999dee0708`
+name            | Event name                                          | string   | `release.start`
 order           | Order of the event                                  | number   | `2`
 message         | Event message                                       | string   | `Build compiled successfully`
 status          | Status of this message                              | string   | `success`
 created         | Time event was created in ISO 8601                  | string   | `2016-01-06T20:45:36Z`
 data            | Context data                                        | object   |
-build           | **Link, Optional** - Parent build of this event     | resource |
-push            | **Link, Optional** - Parent push of this event      | resource |
+job             | **Link** - Parent build or release of this event    | resource |
 
 ## Get Event
 
 ```http
-GET /api/job-events/e34a3e76d2a44ff7a3c776999dee0708 HTTP/1.1
+GET /api/job-events/e34a3e76-d2a4-4ff7-a3c7-76999dee0708 HTTP/1.1
 Accept: application/json
 Host: hal.computer
 Authorization: token "HAL_TOKEN"
@@ -36,11 +35,11 @@ $client = new Client([
     'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
-$response = $client->get('/api/job-events/e34a3e76d2a44ff7a3c776999dee0708');
+$response = $client->get('/api/job-events/e34a3e76-d2a4-4ff7-a3c7-76999dee0708');
 ```
 
 ```shell
-curl "https://hal.computer/api/job-events/e34a3e76d2a44ff7a3c776999dee0708"
+curl "https://hal.computer/api/job-events/e34a3e76-d2a4-4ff7-a3c7-76999dee0708"
 ```
 
 > ### Response
@@ -54,27 +53,27 @@ Content-Type: application/hal+json
 {
     "_links": {
         "self": {
-            "href": "https://hal.computer/api/job-events/e34a3e76d2a44ff",
-            "title": "[1] Resolved push properties"
+            "href": "https://hal.computer/api/job-events/e34a3e76-d2a4-4ff7-a3c7-76999dee0708",
+            "title": "[1] Resolved release properties"
         },
-        "push": {
-            "href": "https://hal.computer/api/pushes/p2.5tqQFTF",
-            "title": "p2.5tqQFTF"
+        "job": {
+            "href": "https://hal.computer/api/releases/f95def5f-bb7f-4643-adbf-ece49d3d7317",
+            "title": "f95def5f-bb7f-4643-adbf-ece49d3d7317"
         }
     },
-    "id": "e34a3e76d2a44ff",
-    "event": "push.start",
-    "order": 1,
-    "message": "Resolved push properties",
+    "id": "e34a3e76-d2a4-4ff7-a3c7-76999dee0708",
+    "name": "release.start",
+    "order": 0,
+    "message": "Resolved release properties",
     "status": "success",
     "created": "2016-01-12T17:35:04Z",
     "data": {
         "Method": "rsync",
         "Location": {
-            "path": "/temp/build/hal-push-p2.5tqQFTF",
-            "archive": "/archive/hal-b2.5tqD2TB.tar.gz",
-            "tempArchive": "/temp/build/hal-push-p2.5tqQFTF.tar.gz",
-            "tempZipArchive": "/temp/build/hal-push-p2.5tqQFTF.zip"
+            "path": "/temp/build/hal-release-f95def5f-bb7f-4643-adbf-ece49d3d7317",
+            "archive": "/archive/hal-71d7e2cd-f375-49bf-bb69-7ce0dac45558.tar.gz",
+            "tempArchive": "/temp/build/hal-release-f95def5f-bb7f-4643-adbf-ece49d3d7317.tar.gz",
+            "tempZipArchive": "/temp/build/hal-release-f95def5f-bb7f-4643-adbf-ece49d3d7317.zip"
         }
     }
 }
