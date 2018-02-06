@@ -11,6 +11,7 @@ use Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\User;
+use Hal\Core\Entity\Identity;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
 use Hal\UI\Utility\OptionTrait;
@@ -34,7 +35,7 @@ class LDAPAuth
 
     private const LDAP_ADAPTER = 'ext_ldap';
 
-    private const ERR_USER_NOT_FOUND = 'Invalid sign-in information. Please try again.';
+    private const ERR_IDENTITY_NOT_FOUND = 'Invalid sign-in information. Please try again.';
     private const ERR_IDP_MISCONFIGURED = 'LDAP Identity Provider is misconfigured.';
 
     /**
@@ -45,7 +46,7 @@ class LDAPAuth
     /**
      * @var EntityRepository
      */
-    private $userRepo;
+    private $identityRepo;
 
     /**
      * @var array
@@ -65,7 +66,7 @@ class LDAPAuth
     public function __construct(EntityManagerInterface $em, array $queryRestriction, string $defaultUsernameAttribute)
     {
         $this->em = $em;
-        $this->userRepo = $em->getRepository(User::class);
+        $this->identityRepo = $em->getRepository(Identity::class);
 
         $this->queryRestriction = $queryRestriction;
         $this->defaultUsernameAttribute = $defaultUsernameAttribute;
@@ -83,7 +84,7 @@ class LDAPAuth
     public function authenticate(UserIdentityProvider $idp, string $username, string $password): ?User
     {
         if (strlen($username) === 0 || strlen($password) === 0) {
-            $this->addError(self::ERR_USER_NOT_FOUND);
+            $this->addError(self::ERR_IDENTITY_NOT_FOUND);
             return null;
         }
 
@@ -96,24 +97,24 @@ class LDAPAuth
         $data = $this->retrieveUser($idp, $ldap, $username, $password);
 
         if (!$data) {
-            $this->addError(self::ERR_USER_NOT_FOUND);
+            $this->addError(self::ERR_IDENTITY_NOT_FOUND);
             return null;
         }
 
-        $user = $this->userRepo->findOneBy([
+        $identity = $this->identityRepo->findOneBy([
             'provider' => $idp,
             'providerUniqueID' => $data['id']
         ]);
 
-        if ($user instanceof User) {
-            return $user;
+        if ($identity instanceof Identity) {
+            return $identity->user();
         }
 
         if ($this->isFlagEnabled(self::AUTO_CREATE_USER)) {
             return $this->autoCreateUser($idp, $data);
         }
 
-        $this->addError(self::ERR_USER_NOT_FOUND);
+        $this->addError(self::ERR_IDENTITY_NOT_FOUND);
         return null;
     }
 
@@ -125,7 +126,7 @@ class LDAPAuth
      *
      * @return array|null
      */
-    private function retrieveUser(UserIdentityProvider $idp, LdapInterface $ldap, $username, $password)
+    private function retrieveIdentity(UserIdentityProvider $idp, LdapInterface $ldap, $username, $password)
     {
         $fqUsername = $username;
         if ($domain = $idp->parameter(LDAPValidator::ATTR_DOMAIN)) {
@@ -153,7 +154,7 @@ class LDAPAuth
             'username' => $attribute
         ];
 
-        $data = $this->getUserData($ldap, $dn, $query, $attributes);
+        $data = $this->getIdentityData($ldap, $dn, $query, $attributes);
 
         return $data;
     }
@@ -166,7 +167,7 @@ class LDAPAuth
      *
      * @return array|null
      */
-    private function getUserData(LdapInterface $ldap, $baseDN, $query, array $attributes)
+    private function getIdentityData(LdapInterface $ldap, $baseDN, $query, array $attributes)
     {
         try {
             $query = $ldap->query($baseDN, $query, [
@@ -185,7 +186,7 @@ class LDAPAuth
 
         $entry = $results[0];
 
-        $user = [];
+        $identity = [];
         foreach ($attributes as $attr => $adAttr) {
             $value = $entry->getAttribute($adAttr)[0];
 
@@ -197,10 +198,10 @@ class LDAPAuth
                 $value = unpack("H*hex", $value)['hex'];
             }
 
-            $user[$attr] = $value;
+            $identity[$attr] = $value;
         }
 
-        return $user;
+        return $identity;
     }
 
     /**

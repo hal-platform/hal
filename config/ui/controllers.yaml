@@ -587,6 +587,7 @@ services:
             - '@validator.environment'
             - '@validator.vcs'
             - '@validator.idp'
+            - '@validator.identity'
             - '@validator.user'
             - '@uri'
     hal_bootstrap.twig:

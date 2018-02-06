@@ -10,6 +10,7 @@ namespace Hal\UI\Controllers\Admin;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\Identity;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\User\UserPermission;
 use Hal\Core\Entity\System\SystemSetting;
@@ -23,6 +24,7 @@ use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Validator\EnvironmentValidator;
+use Hal\UI\Validator\IdentityValidator;
 use Hal\UI\Validator\UserIdentityProviderValidator;
 use Hal\UI\Validator\UserValidator;
 use Hal\UI\Validator\ValidatorErrorTrait;
@@ -81,6 +83,11 @@ class HalBootstrapController implements ControllerInterface
     private $idpValidator;
 
     /**
+     * @var IdentityValidator
+     */
+    private $identityValidator;
+
+    /**
      * @var UserValidator
      */
     private $userValidator;
@@ -96,6 +103,7 @@ class HalBootstrapController implements ControllerInterface
      * @param EnvironmentValidator $envValidator
      * @param VersionControlProviderValidator $vcsValidator
      * @param UserIdentityProviderValidator $idpValidator
+     * @param IdentityValidator $identityValidator
      * @param UserValidator $userValidator
      * @param URI $uri
      */
@@ -105,6 +113,7 @@ class HalBootstrapController implements ControllerInterface
         EnvironmentValidator $envValidator,
         VersionControlProviderValidator $vcsValidator,
         UserIdentityProviderValidator $idpValidator,
+        IdentityValidator $identityValidator,
         UserValidator $userValidator,
         URI $uri
     ) {
@@ -114,6 +123,7 @@ class HalBootstrapController implements ControllerInterface
         $this->envValidator = $envValidator;
         $this->vcsValidator = $vcsValidator;
         $this->idpValidator = $idpValidator;
+        $this->identityValidator = $identityValidator;
         $this->userValidator = $userValidator;
         $this->uri = $uri;
 
@@ -229,29 +239,34 @@ class HalBootstrapController implements ControllerInterface
             'cost' => 10,
         ]);
 
-        $admin = $this->userValidator->isValid([
-            'name' => $username,
+        $adminUser = $this->userValidator->isValid([
+            'name' => $username
+        ]);
+
+        $adminIdentity = $this->identityValidator->isValid([
             'internal_username' => $username,
             'id_provider' => $idp->id()
         ]);
 
-        if (!$admin) {
+        if (!$adminUser || !$adminIdentity) {
             $this->addError(self::ERR_ADMIN_USER);
             return;
         }
 
-        $admin
+        $adminIdentity
             ->withParameter('internal.setup_token', null)
             ->withParameter('internal.setup_token_expiry', null)
             ->withParameter('internal.setup_token', null)
-            ->withParameter('internal.password', $hashed);
+            ->withParameter('internal.password', $hashed)
+            ->withUser($adminUser);
 
         // make user admin
         $permissions = (new UserPermission)
             ->withType(UserPermissionEnum::TYPE_SUPER)
-            ->withUser($admin);
+            ->withUser($adminUser);
 
-        $this->em->persist($admin);
+        $this->em->persist($adminUser);
+        $this->em->persist($adminIdentity);
         $this->em->persist($permissions);
     }
 

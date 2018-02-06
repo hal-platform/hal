@@ -10,6 +10,7 @@ namespace Hal\UI\Security\UserAuthentication;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\User;
+use Hal\Core\Entity\Identity;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
 use Hal\UI\Validator\ValidatorErrorTrait;
@@ -22,20 +23,20 @@ class InternalAuth
     // todo move to UserIdentityProvider?
     const PARAM_PW = 'internal.password';
 
-    const ERR_USER_NOT_FOUND = 'Invalid sign-in information. Please try again.';
+    const ERR_IDENTITY_NOT_FOUND = 'Invalid sign-in information. Please try again.';
     const ERR_IDP_MISCONFIGURED = 'Internal Auth Identity Provider is misconfigured.';
 
     /**
      * @var EntityRepository
      */
-    private $userRepo;
+    private $identityRepo;
 
     /**
      * @param EntityManagerInterface $em
      */
     public function __construct(EntityManagerInterface $em)
     {
-        $this->userRepo = $em->getRepository(User::class);
+        $this->identityRepo = $em->getRepository(Identity::class);
     }
 
     /**
@@ -48,54 +49,54 @@ class InternalAuth
     public function authenticate(UserIdentityProvider $idp, string $username, string $password): ?User
     {
         if (strlen($username) === 0 || strlen($password) === 0) {
-            $this->addError(self::ERR_USER_NOT_FOUND);
+            $this->addError(self::ERR_IDENTITY_NOT_FOUND);
             return null;
         }
 
-        $user = $this->getUserData($idp, $username);
-        if (!$user) {
-            $this->addError(self::ERR_USER_NOT_FOUND);
+        $identity = $this->getIdentityData($idp, $username);
+        if (!$identity) {
+            $this->addError(self::ERR_IDENTITY_NOT_FOUND);
             return null;
         }
 
-        $hashed = $user->parameter(self::PARAM_PW);
+        $hashed = $identity->parameter(self::PARAM_PW);
         if (strlen($hashed) === 0) {
-            $this->addError(self::ERR_USER_NOT_FOUND);
+            $this->addError(self::ERR_IDENTITY_NOT_FOUND);
             return null;
         }
 
         $isGood = password_verify($password, $hashed);
         if (!$isGood) {
-            $this->addError(self::ERR_USER_NOT_FOUND);
+            $this->addError(self::ERR_IDENTITY_NOT_FOUND);
             return null;
         }
 
-        return $user;
+        return $identity->user();
     }
 
     /**
      * @param UserIdentityProvider $idp
      * @param string $username
      *
-     * @return User|null
+     * @return Identity|null
      */
-    private function getUserData(UserIdentityProvider $idp, $username)
+    private function getIdentityData(UserIdentityProvider $idp, $username)
     {
         if ($idp->type() !== IdentityProviderEnum::TYPE_INTERNAL) {
             $this->addError(self::ERR_IDP_MISCONFIGURED);
             return null;
         }
 
-        $user = $this->userRepo->findOneBy([
+        $identity = $this->identityRepo->findOneBy([
             'provider' => $idp,
             'providerUniqueID' => $username
         ]);
 
-        if (!$user instanceof User) {
-            $this->addError(self::ERR_USER_NOT_FOUND);
+        if (!$identity instanceof Identity) {
+            $this->addError(self::ERR_IDENTITY_NOT_FOUND);
             return null;
         }
 
-        return $user;
+        return $identity;
     }
 }
