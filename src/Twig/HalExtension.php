@@ -10,11 +10,13 @@ namespace Hal\UI\Twig;
 use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Entity\JobType\Release;
 use Hal\Core\Entity\Credential;
+use Hal\Core\Entity\Job\JobEvent;
 use Hal\Core\Entity\Organization;
 use Hal\Core\Entity\Target;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Entity\System\VersionControlProvider;
 use Hal\Core\Type\CredentialEnum;
+use Hal\Core\Type\JobEventStageEnum;
 use Hal\Core\Type\TargetEnum;
 use Hal\Core\Type\IdentityProviderEnum;
 use Hal\Core\Type\VCSProviderEnum;
@@ -76,8 +78,6 @@ class HalExtension extends AbstractExtension
 
             new TwigFilter('json_pretty', [$this, 'formatPrettyJSON'], ['is_safe' => ['html']]),
 
-            new TwigFilter('format_event_to_stage', [$this, 'formatEventToStage']),
-
             new TwigFilter('short_guid', [$this, 'formatShortGUID']),
             new TwigFilter('occurences', [$this, 'findOccurences']),
 
@@ -86,6 +86,7 @@ class HalExtension extends AbstractExtension
             new TwigFilter('vcs_type', [$this, 'formatVCS']),
             new TwigFilter('credential_type', [$this, 'formatCredential']),
             new TwigFilter('target_type', [$this, 'formatTarget']),
+            new TwigFilter('event_stage', [$this, 'formatEventStage']),
         ];
     }
 
@@ -145,18 +146,17 @@ class HalExtension extends AbstractExtension
     }
 
     /**
-     * @param string $event
+     * @param mixed $event
      *
      * @return string
      */
-    public function formatEventToStage($event)
+    public function formatEventStage($event)
     {
-        if (preg_match('#^(build|release).([a-z]*)$#', $event, $matches)) {
-            $subevent = array_pop($matches);
-            return ucfirst($subevent);
+        if ($event instanceof JobEvent) {
+            $event = $event->stage();
         }
 
-        return $event;
+        return JobEventStageEnum::format($event);
     }
 
     /**

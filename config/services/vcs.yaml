@@ -48,7 +48,7 @@ services:
         class: 'Github\HttpClient\Builder'
 
     github.http_cache.plugin:
-        class: 'Hal\UI\VersionControl\GitHub\MCPCachePlugin'
+        class: 'Hal\Core\VersionControl\GitHub\MCPCachePlugin'
         arguments:
             - '@cache.github'
             - '@github.http_cache.http_stream_factory'
