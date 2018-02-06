@@ -18,7 +18,7 @@
         <ul class="form-fields form-wrapper">
             <li>
                 <label for="name">Property Name</label>
-                <input class="text-input" name="name" id="name" maxlength="64" value="{{ form.name }}" required>
+                <input type="text" class="text-input" type="text" name="name" id="name" maxlength="64" value="{{ form.name }}" required>
                 <small>
                     This will be uppercased and prefixed with <code>ENCRYPTED_</code> at runtime.
                 </small>
@@ -26,7 +26,7 @@
 
             <li>
                 <label for="decrypted">Value</label>
-                <input class="text-input" name="decrypted" id="decrypted" maxlength="200" value="{{ form.decrypted }}" autocomplete="off" required>
+                <input type="text" class="text-input" name="decrypted" id="decrypted" maxlength="200" value="{{ form.decrypted }}" autocomplete="off" required>
                 <small>
                     This will be encrypted once saved, and only unencrypted during project build.
                 </small>
