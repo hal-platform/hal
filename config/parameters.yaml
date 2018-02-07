@@ -76,13 +76,6 @@ parameters:
     ldap.base_dn: '%env(HAL_LDAP_BASE_DN)%'
 
     ############################################################################
-    # github
-    ############################################################################
-    github.token: '%env(HAL_GITHUB_ENTERPRISE_TOKEN)%'
-    github.baseurl.site: '%env(HAL_GITHUB_ENTERPRISE_URL)%'
-    github.baseurl.api: '%github.baseurl.site%/api/v3'
-
-    ############################################################################
     # cache
     ############################################################################
     redis.server: '%env(HAL_REDIS_SERVER)%'
