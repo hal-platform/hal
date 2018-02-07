@@ -9,11 +9,12 @@ namespace Hal\UI\Controllers\User;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\User;
+use Hal\Core\Entity\User\UserIdentity;
 use Hal\Core\Type\IdentityProviderEnum;
 use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
-use Hal\UI\Validator\UserValidator;
+use Hal\UI\Validator\UserIdentityValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -41,7 +42,7 @@ HTML;
     private $em;
 
     /**
-     * @var UserValidator
+     * @var UserIdentityValidator
      */
     private $validator;
 
@@ -52,10 +53,10 @@ HTML;
 
     /**
      * @param EntityManagerInterface $em
-     * @param UserValidator $validator
+     * @param UserIdentityValidator $validator
      * @param URI $uri
      */
-    public function __construct(EntityManagerInterface $em, UserValidator $validator, URI $uri)
+    public function __construct(EntityManagerInterface $em, UserIdentityValidator $validator, URI $uri)
     {
         $this->em = $em;
         $this->validator = $validator;
@@ -69,7 +70,9 @@ HTML;
     {
         $user = $request->getAttribute(User::class);
 
-        if ($user->provider()->type() !== IdentityProviderEnum::TYPE_INTERNAL) {
+        $identity = $user->identities()->first();
+
+        if ($identity->provider()->type() !== IdentityProviderEnum::TYPE_INTERNAL) {
             $this->withFlashError($request, self::ERR_INTERNAL_ONLY);
             return $this->withRedirectRoute($response, $this->uri, 'user', ['user' => $user->id()]);
         }
@@ -79,7 +82,7 @@ HTML;
             return $this->withRedirectRoute($response, $this->uri, 'user', ['user' => $user->id()]);
         }
 
-        $changed = $this->validator->resetUserSetup($user);
+        $changed = $this->validator->resetIdentitySetup($identity);
         if (!$changed) {
             $this->withFlashError($request, self::ERR_CSRF_OR_STATE);
             return $this->withRedirectRoute($response, $this->uri, 'user', ['user' => $user->id()]);
@@ -88,24 +91,26 @@ HTML;
         $this->em->merge($changed);
         $this->em->flush();
 
-        return $this->sendSuccessInstructions($user, $request, $response);
+        return $this->sendSuccessInstructions($identity, $request, $response);
     }
 
     /**
-     * @param User $user
+     * @param UserIdentity $identity
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      *
      * @return ResponseInterface
      */
-    private function sendSuccessInstructions(User $user, ServerRequestInterface $request, ResponseInterface $response)
+    private function sendSuccessInstructions(UserIdentity $identity, ServerRequestInterface $request, ResponseInterface $response)
     {
+        $user = $identity->user();
+
         $setupURL = $this->uri->absoluteURIFor(
             $request->getUri(),
             'signin.setup',
             [
                 'user' => $user->id(),
-                'setup_token' => $user->parameter('internal.setup_token')
+                'setup_token' => $identity->parameter('internal.setup_token')
             ]
         );
 

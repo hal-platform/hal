@@ -47,6 +47,8 @@
         <tbody>
             {% if permissions %}
                 {% for p in permissions %}
+                    {% set user_identity = p.user.identities|first %}
+
                     <tr>
                         <td>
                             <a href="{{ uriFor('user', {'user': p.user.id}) }}">{{ p.user|short_guid }}</a>
@@ -55,7 +57,7 @@
                             {% endif %}
                         </td>
                         <td>
-                            {{ p.user.provider.formatType() }}
+                            {{ user_identity.provider.formatType() }}
                         </td>
                         <td>
                             {{ p.user.name }}

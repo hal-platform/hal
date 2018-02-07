@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2017 Quicken Loans Inc.
+ * @copyright (c) 2018 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -9,13 +9,13 @@ namespace Hal\UI\Validator;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\Core\Entity\Identity;
+use Hal\Core\Entity\User\UserIdentity;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use QL\MCP\Common\GUID;
 use QL\MCP\Common\Time\Clock;
 use Psr\Http\Message\ServerRequestInterface;
 
-class IdentityValidator
+class UserIdentityValidator
 {
     use ValidatorErrorTrait;
     use ValidatorTrait;
@@ -48,7 +48,7 @@ class IdentityValidator
      */
     public function __construct(EntityManagerInterface $em, Clock $clock)
     {
-        $this->identityRepo = $em->getRepository(Identity::class);
+        $this->identityRepo = $em->getRepository(UserIdentity::class);
         $this->idpRepo = $em->getRepository(UserIdentityProvider::class);
 
         $this->clock = $clock;
@@ -57,9 +57,9 @@ class IdentityValidator
     /**
      * @param array $data
      *
-     * @return Identity|null
+     * @return UserIdentity|null
      */
-    public function isValid(array $data): ?Identity
+    public function isValid(array $data): ?UserIdentity
     {
         $providerID = $data['id_provider'] ?? '';
         $internalUsername = $data['internal_username'] ?? '';
@@ -90,7 +90,7 @@ class IdentityValidator
             return null;
         }
 
-        $identity = (new Identity)
+        $identity = (new UserIdentity)
             ->withProviderUniqueID($internalUsername)
             ->withProvider($idp);
 
@@ -98,22 +98,22 @@ class IdentityValidator
     }
 
     /**
-     * @param Identity $identity
+     * @param UserIdentity $identity
      * @param array $data
      *
-     * @return Identity|null
+     * @return UserIdentity|null
      */
-    public function isEditValid(Identity $identity, array $data): ?Identity
+    public function isEditValid(UserIdentity $identity, array $data): ?UserIdentity
     {
         return null;
     }
 
     /**
-     * @param Identity $identity
+     * @param UserIdentity $identity
      *
-     * @return Identity|null
+     * @return UserIdentity|null
      */
-    public function resetIdentitySetup(Identity $identity): ?Identity
+    public function resetIdentitySetup(UserIdentity $identity): ?UserIdentity
     {
         $this->resetErrors();
 
@@ -125,7 +125,7 @@ class IdentityValidator
         $setupToken = GUID::create()->format(GUID::STANDARD | GUID::HYPHENATED);
         $tokenExpiry = $this->clock
             ->read()
-            ->modify(IdentityValidator::SETUP_EXPIRY)
+            ->modify(self::SETUP_EXPIRY)
             ->format('Y-m-d\TH:i:s\Z', 'UTC');
 
         $identity
@@ -137,11 +137,11 @@ class IdentityValidator
 
     /**
      * @param ServerRequestInterface $request
-     * @param Identity|null $identity
+     * @param UserIdentity|null $identity
      *
      * @return array
      */
-    public function getFormData(ServerRequestInterface $request, ?Identity $identity): array
+    public function getFormData(ServerRequestInterface $request, ?UserIdentity $identity): array
     {
         $data = $request->getParsedBody();
 

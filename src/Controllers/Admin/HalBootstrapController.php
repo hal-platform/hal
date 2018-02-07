@@ -10,8 +10,8 @@ namespace Hal\UI\Controllers\Admin;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Environment;
-use Hal\Core\Entity\Identity;
 use Hal\Core\Entity\User;
+use Hal\Core\Entity\User\UserIdentity;
 use Hal\Core\Entity\User\UserPermission;
 use Hal\Core\Entity\System\SystemSetting;
 use Hal\Core\Entity\System\UserIdentityProvider;
@@ -26,6 +26,7 @@ use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Validator\EnvironmentValidator;
 use Hal\UI\Validator\IdentityValidator;
 use Hal\UI\Validator\UserIdentityProviderValidator;
+use Hal\UI\Validator\UserIdentityValidator;
 use Hal\UI\Validator\UserValidator;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\VersionControlProviderValidator;
@@ -83,7 +84,7 @@ class HalBootstrapController implements ControllerInterface
     private $idpValidator;
 
     /**
-     * @var IdentityValidator
+     * @var UserIdentityValidator
      */
     private $identityValidator;
 
@@ -103,7 +104,7 @@ class HalBootstrapController implements ControllerInterface
      * @param EnvironmentValidator $envValidator
      * @param VersionControlProviderValidator $vcsValidator
      * @param UserIdentityProviderValidator $idpValidator
-     * @param IdentityValidator $identityValidator
+     * @param UserIdentityValidator $identityValidator
      * @param UserValidator $userValidator
      * @param URI $uri
      */
@@ -113,7 +114,7 @@ class HalBootstrapController implements ControllerInterface
         EnvironmentValidator $envValidator,
         VersionControlProviderValidator $vcsValidator,
         UserIdentityProviderValidator $idpValidator,
-        IdentityValidator $identityValidator,
+        UserIdentityValidator $identityValidator,
         UserValidator $userValidator,
         URI $uri
     ) {

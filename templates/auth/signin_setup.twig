@@ -10,6 +10,8 @@
 {% block content %}
     {{ form_macros.form_errors(errors, is_csrf_error) }}
 
+    {% set user_identity = user.identities|first %}
+
     <form method="post">
         {{ form_macros.csrf_input('signin.setup') }}
 
@@ -21,7 +23,7 @@
         <ul class="form-fields form-wrapper">
             <li>
                 <label for="username">Username</label>
-                <input class="text-input" type="text" id="username" value="{{ user.providerUniqueID }}" readonly>
+                <input class="text-input" type="text" id="username" value="{{ user_identity.providerUniqueID }}" readonly>
             </li>
             <li>
                 {% set has_error = form_macros.has_error(errors, 'new_password') ? ' is-error' : '' %}

@@ -117,8 +117,8 @@ services:
         class: 'Hal\UI\Validator\UserValidator'
         arguments: ['@doctrine.em']
 
-    validator.identity:
-        class: 'Hal\UI\Validator\IdentityValidator'
+    validator.user_identity:
+        class: 'Hal\UI\Validator\UserIdentityValidator'
         arguments: ['@doctrine.em', '@clock']
 
     ####################################################################################################################

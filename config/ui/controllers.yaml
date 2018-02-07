@@ -166,6 +166,7 @@ services:
             - '@user.add.twig'
             - '@doctrine.em'
             - '@validator.user'
+            - '@validator.user_identity'
             - '@uri'
     user.add.twig:
         parent: 'twig.template'
@@ -191,7 +192,7 @@ services:
         class: 'Hal\UI\Controllers\User\RegenerateSetupTokenHandler'
         arguments:
             - '@doctrine.em'
-            - '@validator.user'
+            - '@validator.user_identity'
             - '@uri'
 
     user.settings.page:
@@ -587,7 +588,7 @@ services:
             - '@validator.environment'
             - '@validator.vcs'
             - '@validator.idp'
-            - '@validator.identity'
+            - '@validator.user_identity'
             - '@validator.user'
             - '@uri'
     hal_bootstrap.twig:

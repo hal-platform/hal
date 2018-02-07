@@ -41,6 +41,7 @@
         <tbody>
             {% if users %}
                 {% for user in users %}
+                    {% set user_identity = user.identities|first %}
                     <tr>
                         <td>
                             <a href="{{ uriFor('user', {'user': user.id}) }}">{{ user|short_guid }}</a>
@@ -49,7 +50,7 @@
                             {% endif %}
                         </td>
                         <td>
-                            {{ user.provider.formatType() }}
+                            {{ user_identity.provider.formatType() }}
                         </td>
                         <td>
                             {{ user.name }}

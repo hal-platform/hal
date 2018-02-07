@@ -5,6 +5,7 @@
 {% set page_title = user.name %}
 
 {% set is_super = current_authorizations.isSuper() %}
+{% set user_identity = user.identities|first %}
 
 {% block breadcrumb_links %}
     <li><a href="{{ uriFor('admin') }}">Administrators</a></li>
@@ -78,15 +79,15 @@
 
         <li>
             <h6>ID Provider</h6>
-            {{ user.provider.formatType() }}
+            {{ user_identity.provider.formatType() }}
             {% if is_super %}
                 <ul class="mts">
                     <li>
-                        <b>Provider User ID: </b> {{ user.providerUniqueID }}
+                        <b>Provider User ID: </b> {{ user_identity.providerUniqueID }}
                     </li>
                     <li>
                         <b>Sign-In Status:</b>
-                        {% if user.parameter('internal.setup_token') %}
+                        {% if user_identity.parameter('internal.setup_token') %}
                             {% if is_setup_token_expired %}
                                 {{ macros.status('Setup token is expired.', 'error') }}
                             {% else %}
@@ -137,7 +138,7 @@
             {{ macros.disabled_button('Disable User') }}
         {% endif %}
 
-        {% if is_super and user.provider.type == 'internal' %}
+        {% if is_super and user_identity.provider.type == 'internal' %}
             <form method="post" action="{{ uriFor('user.regenerate_setup', {'user': user.id}) }}" class="form--inline">
                 {{ form_macros.csrf_input('user.regenerate_setup') }}
                 <button type="submit" class="btn btn--action">Regenerate user setup token</button>

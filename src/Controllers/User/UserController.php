@@ -112,7 +112,9 @@ class UserController implements ControllerInterface
      */
     private function isSetupTokenExpired(User $user)
     {
-        $expiry = $user->parameter('internal.setup_token_expiry');
+        $identity = $user->identities()->first();
+
+        $expiry = $identity->parameter('internal.setup_token_expiry');
         if (!$expiry) {
             return false;
         }

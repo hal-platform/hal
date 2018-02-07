@@ -10,7 +10,7 @@ namespace Hal\UI\Security\UserAuthentication;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\User;
-use Hal\Core\Entity\Identity;
+use Hal\Core\Entity\User\UserIdentity;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
 use Hal\UI\Validator\ValidatorErrorTrait;
@@ -36,7 +36,7 @@ class InternalAuth
      */
     public function __construct(EntityManagerInterface $em)
     {
-        $this->identityRepo = $em->getRepository(Identity::class);
+        $this->identityRepo = $em->getRepository(UserIdentity::class);
     }
 
     /**
@@ -92,7 +92,7 @@ class InternalAuth
             'providerUniqueID' => $username
         ]);
 
-        if (!$identity instanceof Identity) {
+        if (!$identity instanceof UserIdentity) {
             $this->addError(self::ERR_IDENTITY_NOT_FOUND);
             return null;
         }

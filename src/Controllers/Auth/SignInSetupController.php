@@ -9,6 +9,7 @@ namespace Hal\UI\Controllers\Auth;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\User;
+use Hal\Core\Entity\User\UserIdentity;
 use Hal\Core\Type\IdentityProviderEnum;
 use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
@@ -83,13 +84,15 @@ class SignInSetupController implements ControllerInterface
             ->getAttribute('route')
             ->getArgument('setup_token');
 
-        if ($user->provider()->type() !== IdentityProviderEnum::TYPE_INTERNAL) {
+        $identity = $user->identities()->first();
+
+        if ($identity->provider()->type() !== IdentityProviderEnum::TYPE_INTERNAL) {
             // Only internal supported
             return $response;
         }
 
-        $storedToken = $user->parameter('internal.setup_token');
-        $expiry = $user->parameter('internal.setup_token_expiry');
+        $storedToken = $identity->parameter('internal.setup_token');
+        $expiry = $identity->parameter('internal.setup_token_expiry');
 
         if (!$expiry || !$storedToken || !$token) {
             return $this->byebye($request, $response);
@@ -105,7 +108,7 @@ class SignInSetupController implements ControllerInterface
 
         $form = $this->getFormData($request);
 
-        if ($updated = $this->handleForm($user, $form, $request)) {
+        if ($updated = $this->handleForm($identity, $form, $request)) {
             $this->em->persist($updated);
             $this->em->flush();
 
@@ -134,13 +137,13 @@ class SignInSetupController implements ControllerInterface
     }
 
     /**
-     * @param User $user
+     * @param UserIdentity $identity
      * @param array $data
      * @param ServerRequestInterface $request
      *
-     * @return User|null
+     * @return UserIdentity|null
      */
-    private function handleForm(User $user, array $data, ServerRequestInterface $request): ?User
+    private function handleForm(UserIdentity $identity, array $data, ServerRequestInterface $request): ?UserIdentity
     {
         if ($request->getMethod() !== 'POST') {
             return null;
@@ -159,15 +162,12 @@ class SignInSetupController implements ControllerInterface
             'cost' => 10,
         ]);
 
-        $user
+        $identity
             ->withParameter('internal.setup_token', null)
             ->withParameter('internal.setup_token_expiry', null)
             ->withParameter('internal.password', $hashed);
 
-        $this->em->persist($user);
-        $this->em->flush();
-
-        return $user;
+        return $identity;
     }
 
     /**

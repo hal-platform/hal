@@ -21,6 +21,9 @@
 {% endblock %}
 
 {% block meta %}
+
+    {% set user_identity = user.identities|first %}
+
     <ul class="meta-box">
         <li>
             <h6>User ID</h6>
@@ -29,10 +32,10 @@
 
         <li>
             <h6>ID Provider</h6>
-            {{ user.provider.formatType() }}
+            {{ user_identity.provider.formatType() }}
             <ul class="mts">
                 <li>
-                    <b>Provider User ID: </b> {{ user.providerUniqueID }}
+                    <b>Provider User ID: </b> {{ user_identity.providerUniqueID }}
                 </li>
             </ul>
         </li>

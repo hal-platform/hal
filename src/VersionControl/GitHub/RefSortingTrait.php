@@ -121,10 +121,12 @@ trait RefSortingTrait
      */
     private function getUsernameForGitHubMatching(User $user)
     {
-        if ($user->provider()->type() === IdentityProviderEnum::TYPE_INTERNAL) {
+        $identity = $user->identities()->first();
+
+        if ($identity->provider()->type() === IdentityProviderEnum::TYPE_INTERNAL) {
             return $user->name();
-        } elseif ($user->provider()->type() === IdentityProviderEnum::TYPE_LDAP) {
-            return $user->providerUniqueID();
+        } elseif ($identity->provider()->type() === IdentityProviderEnum::TYPE_LDAP) {
+            return $identity->providerUniqueID();
         }
 
         return $user->name();

@@ -10,12 +10,14 @@ namespace Hal\UI\Controllers\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\User;
+use Hal\Core\Entity\User\UserIdentity;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Validator\UserValidator;
+use Hal\UI\Validator\UserIdentityValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -58,6 +60,11 @@ HTML;
     private $validator;
 
     /**
+     * @var UserIdentityValidator
+     */
+    private $identityValidator;
+
+    /**
      * @var URI
      */
     private $uri;
@@ -66,12 +73,14 @@ HTML;
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param UserValidator $validator
+     * @param UserIdentityValidator $validator
      * @param URI $uri
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
         UserValidator $validator,
+        UserIdentityValidator $identityValidator,
         URI $uri
     ) {
         $this->template = $template;
@@ -81,6 +90,7 @@ HTML;
         $this->em = $em;
 
         $this->validator = $validator;
+        $this->identityValidator = $identityValidator;
         $this->uri = $uri;
     }
 
@@ -93,12 +103,13 @@ HTML;
         $form = $this->getFormData($request);
 
         if ($user = $this->handleForm($form, $request)) {
-            return $this->sendSuccessInstructions($user, $request, $response);
+            $identity = $user->identities()->first();
+            return $this->sendSuccessInstructions($identity, $request, $response);
         }
 
         return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
-            'errors' => $this->validator->errors(),
+            'errors' => array_merge($this->validator->errors(), $this->identityValidator->errors()),
 
             'id_providers' => $this->idpRepo->findAll()
         ]);
@@ -121,11 +132,18 @@ HTML;
         }
 
         $user = $this->validator->isValid($data);
+        $identity = $this->identityValidator->isValid($data);
 
-        if ($user) {
-            $this->em->persist($user);
-            $this->em->flush();
+        if (!$user || !$identity) {
+            return null;
         }
+
+        $identity->withUser($user);
+        $user->identities()->add($identity);
+
+        $this->em->persist($user);
+        $this->em->persist($identity);
+        $this->em->flush();
 
         return $user;
     }
@@ -137,14 +155,16 @@ HTML;
      *
      * @return ResponseInterface
      */
-    private function sendSuccessInstructions(User $user, ServerRequestInterface $request, ResponseInterface $response)
+    private function sendSuccessInstructions(UserIdentity $identity, ServerRequestInterface $request, ResponseInterface $response)
     {
+        $user = $identity->user();
+
         $setupURL = $this->uri->absoluteURIFor(
             $request->getUri(),
             'signin.setup',
             [
                 'user' => $user->id(),
-                'setup_token' => $user->parameter('internal.setup_token')
+                'setup_token' => $identity->parameter('internal.setup_token')
             ]
         );
 

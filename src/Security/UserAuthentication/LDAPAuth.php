@@ -11,7 +11,7 @@ use Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\User;
-use Hal\Core\Entity\Identity;
+use Hal\Core\Entity\User\UserIdentity;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
 use Hal\UI\Utility\OptionTrait;
@@ -66,7 +66,7 @@ class LDAPAuth
     public function __construct(EntityManagerInterface $em, array $queryRestriction, string $defaultUsernameAttribute)
     {
         $this->em = $em;
-        $this->identityRepo = $em->getRepository(Identity::class);
+        $this->identityRepo = $em->getRepository(UserIdentity::class);
 
         $this->queryRestriction = $queryRestriction;
         $this->defaultUsernameAttribute = $defaultUsernameAttribute;
@@ -106,7 +106,7 @@ class LDAPAuth
             'providerUniqueID' => $data['id']
         ]);
 
-        if ($identity instanceof Identity) {
+        if ($identity instanceof UserIdentity) {
             return $identity->user();
         }
 
@@ -213,12 +213,16 @@ class LDAPAuth
     private function autoCreateUser(UserIdentityProvider $idp, array $data): User
     {
         $user = (new User)
-            ->withName(strtolower($data['username']))
+            ->withName(strtolower($data['username']));
+
+        $identity = (new UserIdentity)
+            ->withProviderUniqueID($data['id'])
             ->withParameter('ldap.id', $data['id'])
             ->withParameter('ldap.username', $data['username'])
-            ->withProviderUniqueID($data['id'])
+            ->withUser($user)
             ->withProvider($idp);
 
+        $this->em->persist($identity);
         $this->em->persist($user);
         $this->em->flush();
 
