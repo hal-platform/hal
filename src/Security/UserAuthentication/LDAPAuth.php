@@ -94,7 +94,7 @@ class LDAPAuth
             return null;
         }
 
-        $data = $this->retrieveUser($idp, $ldap, $username, $password);
+        $data = $this->retrieveIdentity($idp, $ldap, $username, $password);
 
         if (!$data) {
             $this->addError(self::ERR_IDENTITY_NOT_FOUND);
