@@ -121,5 +121,5 @@
 {% endblock %}
 
 {% block events %}
-    {% include 'partial.event_table.twig' with { 'events': logs, 'can_load': release.isFinished } only %}
+    {% include 'partial.event_table.twig' with { 'events': events, 'can_load': release.isFinished } only %}
 {% endblock %}
