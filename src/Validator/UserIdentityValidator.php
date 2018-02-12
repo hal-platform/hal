@@ -61,13 +61,19 @@ class UserIdentityValidator
      */
     public function isValid(array $data): ?UserIdentity
     {
-        $providerID = $data['id_provider'] ?? '';
-        $internalUsername = $data['internal_username'] ?? '';
-
         $this->resetErrors();
+        $providerID = $data['id_provider'] ?? '';
 
         $idp = null;
         if (!$providerID || !$idp = $this->idpRepo->find($providerID)) {
+            $this->addError(self::ERR_INVALID_IDP);
+        }
+
+        $username = '';
+        if ($idp->type() === 'internal') {
+            $username = $data['internal_username'] ?? '';
+            $this->validateInternalUsername($username);
+        } else {
             $this->addError(self::ERR_INVALID_IDP);
         }
 
@@ -75,14 +81,8 @@ class UserIdentityValidator
             return null;
         }
 
-        // Only internal allowed for now.
-        if ($idp->type() !== 'internal') {
-            $this->addError(self::ERR_INVALID_IDP);
-        }
 
-        $this->validateUsername($internalUsername);
-
-        if ($dupe = $this->identityRepo->findOneBy(['provider' => $idp, 'providerUniqueID' => $internalUsername])) {
+        if ($dupe = $this->identityRepo->findOneBy(['provider' => $idp, 'providerUniqueID' => $username])) {
             $this->addError(self::ERR_DUPE_USERNAME);
         }
 
@@ -91,10 +91,14 @@ class UserIdentityValidator
         }
 
         $identity = (new UserIdentity)
-            ->withProviderUniqueID($internalUsername)
+            ->withProviderUniqueID($username)
             ->withProvider($idp);
 
-        return $this->resetIdentitySetup($identity);
+        if ($idp->type() === 'internal') {
+            return $this->resetIdentitySetup($identity);
+        } else {
+            return $identity;
+        }
     }
 
     /**
@@ -155,7 +159,7 @@ class UserIdentityValidator
      *
      * @return void
      */
-    private function validateUsername($username)
+    private function validateInternalUsername($username)
     {
         if (!$this->validateIsRequired($username) || !$this->validateSanityCheck($username)) {
             $this->addRequiredError('Username', 'internal_username');

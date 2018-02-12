@@ -22,12 +22,26 @@
 {% block gh_meta %}
     {% import 'macros.twig' as macros %}
 
-    {{ macros.alert('error', 'GitHub.com not enabled.') }}
+    <h4>Client ID</h4>
+    {{ macros.output_parameter(idp, 'ghe.client_id') }}
+
+    <h4>Client Secret</h4>
+    {{ macros.output_parameter(idp, 'ghe.client_secret') }}
+
+    <h4>API Domain</h4>
+    {{ macros.output_parameter(idp, 'ghe.domain') }}
 {% endblock %}
 
 {% block ghe_meta %}
     {% import 'macros.twig' as macros %}
 
-    {{ macros.alert('error', 'GitHub Enterprise not enabled.') }}
+    <h4>Client ID</h4>
+    {{ macros.output_parameter(idp, 'gh.client_id') }}
+
+    <h4>Client Secret</h4>
+    {{ macros.output_parameter(idp, 'gh.client_secret') }}
+
+    <h4>Domain</h4>
+    {{ macros.output_parameter(idp, 'gh.api_domain') }}
 
 {% endblock %}

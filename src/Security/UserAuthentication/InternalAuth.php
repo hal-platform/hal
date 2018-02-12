@@ -55,7 +55,6 @@ class InternalAuth
 
         $identity = $this->getIdentityData($idp, $username);
         if (!$identity) {
-            $this->addError(self::ERR_IDENTITY_NOT_FOUND);
             return null;
         }
 

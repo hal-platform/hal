@@ -103,9 +103,25 @@
 {% endblock %}
 
 {% block github_enterprise_signin_form %}
-    <p>GitHub Enterprise sign in not yet available!</p>
+    <form method="post">
+        {{ form_macros.csrf_input('signin') }}
+        <input type="hidden" name="idp" value="{{ selected_idp.id }}">
+
+        <p>
+            <button type="submit" class="btn">Sign in</button>
+            <a href="{{ uriFor('signin', {}, {'idp': 'remove'}) }}">Cancel</a>
+        </p>
+    </form>
 {% endblock %}
 
 {% block github_signin_form %}
-    <p>GitHub.com Sign in not yet available!</p>
+    <form method="post">
+        {{ form_macros.csrf_input('signin') }}
+        <input type="hidden" name="idp" value="{{ selected_idp.id }}">
+
+        <p>
+            <button type="submit" class="btn">Sign in</button>
+            <a href="{{ uriFor('signin', {}, {'idp': 'remove'}) }}">Cancel</a>
+        </p>
+    </form>
 {% endblock %}

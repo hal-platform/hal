@@ -140,9 +140,13 @@ services:
         arguments:
             - '@doctrine.em'
             -
+                gh: '@validator.idp.gh'
                 ghe: '@validator.idp.ghe'
                 ldap: '@validator.idp.ldap'
                 internal: '@validator.idp.internal'
+
+    validator.idp.gh:
+        class: 'Hal\UI\Validator\IdentityProviders\GitHubValidator'
 
     validator.idp.ghe:
         class: 'Hal\UI\Validator\IdentityProviders\GitHubEnterpriseValidator'

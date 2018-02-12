@@ -68,7 +68,8 @@ class LDAPValidator implements IdentityProviderValidatorInterface
             ->withParameter(self::ATTR_HOST, $hostname)
             ->withParameter(self::ATTR_DOMAIN, $domain)
             ->withParameter(self::ATTR_BASE_DN, $baseDN)
-            ->withParameter(self::ATTR_UNIQUE_ID, $uniqueID);
+            ->withParameter(self::ATTR_UNIQUE_ID, $uniqueID)
+            ->withIsOAuth(false);
 
         return $provider;
     }

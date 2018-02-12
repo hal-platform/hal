@@ -24,7 +24,7 @@ class UserIdentityProviderValidator
     private const ERT_CHARACTERS_RELAXED_WHITESPACE = '%s must not contain tabs or newlines';
 
     private const ERR_DUPE_NAME = 'An IDP provider with this name already exists';
-    private const ERR_TYPE_REQUIRED = 'Please select a identity provider type.';
+    private const ERR_TYPE_REQUIRED = 'Please select an identity provider type.';
 
     /**
      * @var EntityRepository

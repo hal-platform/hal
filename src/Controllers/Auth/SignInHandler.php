@@ -18,6 +18,7 @@ use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Security\Auth;
 use Hal\UI\Security\UserSessionHandler;
+use Hal\UI\Security\CSRFManager;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -55,6 +56,11 @@ class SignInHandler implements MiddlewareInterface
     private $userHandler;
 
     /**
+     * @var CSRFManager
+     */
+    private $csrf;
+
+    /**
      * @var URI
      */
     private $uri;
@@ -63,12 +69,14 @@ class SignInHandler implements MiddlewareInterface
      * @param EntityManagerInterface $em
      * @param Auth $auth
      * @param UserSessionHandler $userHandler
+     * @param CSRFManager $csrf
      * @param URI $uri
      */
     public function __construct(
         EntityManagerInterface $em,
         Auth $auth,
         UserSessionHandler $userHandler,
+        CSRFManager $csrf,
         URI $uri
     ) {
         $this->em = $em;
@@ -76,6 +84,7 @@ class SignInHandler implements MiddlewareInterface
 
         $this->auth = $auth;
         $this->userHandler = $userHandler;
+        $this->csrf = $csrf;
         $this->uri = $uri;
     }
 
@@ -103,6 +112,56 @@ class SignInHandler implements MiddlewareInterface
         }
 
         $data = $this->getFormData($request, $idp);
+
+        if ($idp->isOAuth()) {
+            return $this->twoPhaseFlow($request, $response, $next, $idp, $data);
+        }
+
+        return $this->singlePhaseFlow($request, $response, $next, $idp, $data);
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param callable $next
+     * @param UserIdentityProvider $idp
+     * @param array $data
+     *
+     * @return ResponseInterface $response
+     */
+    private function twoPhaseFlow(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        callable $next,
+        UserIdentityProvider $idp,
+        $data
+    ) {
+        $authURL = $this->auth->authorize($idp, $data);
+
+        if (!$authURL) {
+            $this->importErrors($this->auth->errors());
+            return $next($this->withContext($request, ['errors' => $this->errors()]), $response);
+        }
+
+        return $this->withRedirectAbsoluteURL($response, $authURL);
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param callable $next
+     * @param UserIdentityProvider $idp
+     * @param array $data
+     *
+     * @return ResponseInterface $response
+     */
+    private function singlePhaseFlow(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        callable $next,
+        UserIdentityProvider $idp,
+        $data
+    ) {
         $user = $this->auth->authenticate($idp, $data);
 
         if (!$user instanceof User) {
@@ -149,6 +208,22 @@ class SignInHandler implements MiddlewareInterface
             return [
                 'username' => $form['ldap_username'] ?? '',
                 'password' => $form['ldap_password'] ?? '',
+            ];
+        }
+
+        if ($idp->type() === IdentityProviderEnum::TYPE_GITHUB_ENTERPRISE) {
+            return [
+                'redirect_uri' => $this->uri->absoluteURIFor($request->getUri(), 'signin.callback'),
+                'state' => $this->csrf->generateToken('oauth.ghe'), // @TODO: CONSTANT for token
+                'scope' => ['user', 'user:email']
+            ];
+        }
+
+        if ($idp->type() === IdentityProviderEnum::TYPE_GITHUB) {
+            return [
+                'redirect_uri' => $this->uri->absoluteURIFor($request->getUri(), 'signin.callback'),
+                'state' => $this->csrf->generateToken('oauth.gh'), // @TODO: CONSTANT for token
+                'scope' => ['user', 'user:email']
             ];
         }
 

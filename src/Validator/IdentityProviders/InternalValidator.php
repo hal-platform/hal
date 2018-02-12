@@ -29,7 +29,8 @@ class InternalValidator implements IdentityProviderValidatorInterface
     {
         $this->resetErrors();
 
-        return new UserIdentityProvider;
+        return (new UserIdentityProvider())
+            ->withIsOAuth(false);
     }
 
     /**

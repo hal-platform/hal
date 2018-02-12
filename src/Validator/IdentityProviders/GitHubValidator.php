@@ -14,19 +14,19 @@ use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;
 use Psr\Http\Message\ServerRequestInterface;
 
-class GitHubEnterpriseValidator implements IdentityProviderValidatorInterface
+class GitHubValidator implements IdentityProviderValidatorInterface
 {
     use OptionTrait;
     use ValidatorErrorTrait;
     use ValidatorTrait;
 
-    public const ATTR_CLIENT_ID = 'ghe.client_id';
-    public const ATTR_CLIENT_SECRET = 'ghe.client_secret';
-    public const ATTR_DOMAIN = 'ghe.domain';
+    public const ATTR_CLIENT_ID = 'gh.client_id';
+    public const ATTR_CLIENT_SECRET = 'gh.client_secret';
+    public const ATTR_API_DOMAIN = 'gh.api_domain';
 
-    private const REGEX_CHARACTER_CLASS_DOMAIN = '[Hh][Tt]{2}[Pp]([Ss])?\:\/\/[a-zA-Z0-9]{1}[a-zA-Z0-9\.\-]{3,150}(\:[0-9]{1,5})?';
+    private const REGEX_CHARACTER_CLASS_API_DOMAIN = '[Hh][Tt]{2}[Pp]([Ss])?\:\/\/[a-zA-Z0-9]{1}[a-zA-Z0-9\.\-]{3,150}(\:[0-9]{1,5})?';
 
-    private const ERR_INVALID_DOMAIN = 'Please enter a valid Github domain.';
+    private const ERR_INVALID_API_DOMAIN = 'Please enter a valid API Domain.';
 
     /**
      * @param array $parameters
@@ -37,13 +37,13 @@ class GitHubEnterpriseValidator implements IdentityProviderValidatorInterface
     {
         $this->resetErrors();
 
-        $clientID = trim($parameters['ghe_client_id'] ?? '');
-        $clientSecret = trim($parameters['ghe_client_secret'] ?? '');
-        $domain = rtrim(trim($parameters['ghe_domain'] ?? ''), '/');
+        $clientID = trim($parameters['gh_client_id'] ?? '');
+        $clientSecret = trim($parameters['gh_client_secret'] ?? '');
+        $apiDomain = rtrim(trim($parameters['gh_api_domain'] ?? ''), '/');
 
         $this->validateClientID($clientID);
         $this->validateClientSecret($clientSecret);
-        $this->validateDomain($domain);
+        $this->validateDomain($apiDomain);
 
         if ($this->hasErrors()) {
             return null;
@@ -52,7 +52,7 @@ class GitHubEnterpriseValidator implements IdentityProviderValidatorInterface
         $provider = (new UserIdentityProvider)
             ->withParameter(self::ATTR_CLIENT_ID, $clientID)
             ->withParameter(self::ATTR_CLIENT_SECRET, $clientSecret)
-            ->withParameter(self::ATTR_DOMAIN, $domain)
+            ->withParameter(self::ATTR_API_DOMAIN, $apiDomain)
             ->withIsOAuth(true);
 
         return $provider;
@@ -68,13 +68,13 @@ class GitHubEnterpriseValidator implements IdentityProviderValidatorInterface
     {
         $this->resetErrors();
 
-        $clientID = trim($parameters['ghe_client_id'] ?? '');
-        $clientSecret = trim($parameters['ghe_client_secret'] ?? '');
-        $domain = rtrim(trim($parameters['ghe_domain'] ?? ''), '/');
+        $clientID = trim($parameters['gh_client_id'] ?? '');
+        $clientSecret = trim($parameters['gh_client_secret'] ?? '');
+        $apiDomain = rtrim(trim($parameters['gh_api_domain'] ?? ''), '/');
 
         $this->validateClientID($clientID);
         $this->validateClientSecret($clientSecret);
-        $this->validateDomain($domain);
+        $this->validateDomain($apiDomain);
 
         if ($this->hasErrors()) {
             return null;
@@ -83,7 +83,7 @@ class GitHubEnterpriseValidator implements IdentityProviderValidatorInterface
         $provider
             ->withParameter(self::ATTR_CLIENT_ID, $clientID)
             ->withParameter(self::ATTR_CLIENT_SECRET, $clientSecret)
-            ->withParameter(self::ATTR_DOMAIN, $domain);
+            ->withParameter(self::ATTR_API_DOMAIN, $apiDomain);
 
         return $provider;
     }
@@ -99,62 +99,47 @@ class GitHubEnterpriseValidator implements IdentityProviderValidatorInterface
         $data = $request->getParsedBody();
 
         if ($provider && $request->getMethod() !== 'POST') {
-            $data['ghe_client_id'] = $provider->parameter(self::ATTR_CLIENT_ID);
-            $data['ghe_client_secret'] = $provider->parameter(self::ATTR_CLIENT_SECRET);
-            $data['ghe_domain'] = $provider->parameter(self::ATTR_DOMAIN);
+            $data['gh_client_id'] = $provider->parameter(self::ATTR_CLIENT_ID);
+            $data['gh_client_secret'] = $provider->parameter(self::ATTR_CLIENT_SECRET);
+            $data['gh_api_domain'] = $provider->parameter(self::ATTR_API_DOMAIN);
         }
 
         return [
-            'ghe_client_id' => $data['ghe_client_id'],
-            'ghe_client_secret' => $data['ghe_client_secret'],
-            'ghe_domain' => $data['ghe_domain']
+            'gh_client_id' => $data['gh_client_id'],
+            'gh_client_secret' => $data['gh_client_secret'],
+            'gh_api_domain' => $data['gh_api_domain']
         ];
     }
 
-    /**
-     * @param string $clientID
-     *
-     * @return void
-     */
     private function validateClientID($clientID)
     {
         if (!$this->validateIsRequired($clientID) || !$this->validateSanityCheck($clientID)) {
-            $this->addRequiredError('Client ID', 'ghe_client_id');
+            $this->addRequiredError('Client ID', 'gh_client_id');
             return;
         }
     }
 
-    /**
-     * @param string $clientSecret
-     *
-     * @return void
-     */
     private function validateClientSecret($clientSecret)
     {
         if (!$this->validateIsRequired($clientSecret) || !$this->validateSanityCheck($clientSecret)) {
-            $this->addRequiredError('Client Secret', 'ghe_client_secret');
+            $this->addRequiredError('Client Secret', 'gh_client_secret');
             return;
         }
     }
 
-    /**
-     * @param string $domain
-     *
-     * @return void
-     */
-    private function validateDomain($domain)
+    private function validateDomain($apiDomain)
     {
-        if (!$this->validateIsRequired($domain) || !$this->validateSanityCheck($domain)) {
-            $this->addRequiredError('Domain', 'ghe_domain');
+        if (!$this->validateIsRequired($apiDomain) || !$this->validateSanityCheck($apiDomain)) {
+            $this->addRequiredError('API Domain', 'gh_api_domain');
             return;
         }
 
-        if (!$this->validateCharacterWhitelist($domain, self::REGEX_CHARACTER_CLASS_DOMAIN)) {
-            $this->addError(self::ERR_INVALID_DOMAIN, 'ghe_domain');
+        if (!$this->validateCharacterWhitelist($apiDomain, self::REGEX_CHARACTER_CLASS_API_DOMAIN)) {
+            $this->addError(self::ERR_INVALID_API_DOMAIN, 'gh_api_domain');
         }
 
-        if (!$this->validateLength($domain, 8, 100)) {
-            $this->addLengthError('Domain', 8, 100, 'ghe_domain');
+        if (!$this->validateLength($apiDomain, 8, 100)) {
+            $this->addLengthError('API Domain', 8, 100, 'gh_api_domain');
         }
     }
 }

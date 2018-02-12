@@ -9,7 +9,7 @@ namespace Hal\UI\Controllers\Admin\IDP;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\Core\Entity\User;
+use Hal\Core\Entity\User\UserIdentity;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
@@ -36,7 +36,7 @@ class RemoveIdentityProviderHandler implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $userRepo;
+    private $userIdentityRepo;
 
     /**
      * @var URI
@@ -52,7 +52,7 @@ class RemoveIdentityProviderHandler implements ControllerInterface
         $this->em = $em;
         $this->uri = $uri;
 
-        $this->userRepo = $em->getRepository(User::class);
+        $this->userIdentityRepo = $em->getRepository(UserIdentity::class);
     }
 
     /**
@@ -87,7 +87,7 @@ class RemoveIdentityProviderHandler implements ControllerInterface
      */
     private function canIDPBeRemoved(UserIdentityProvider $idp)
     {
-        $hasUsers = $this->userRepo->findOneBy(['provider' => $idp]);
+        $hasUsers = $this->userIdentityRepo->findOneBy(['provider' => $idp]);
 
         return ($hasUsers === null);
     }

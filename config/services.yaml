@@ -102,6 +102,10 @@ services:
         class: 'Hal\UI\Service\JobQueueService'
         arguments: ['@doctrine.em', '@clock']
 
+    service.user_identity:
+        class: 'Hal\UI\Service\UserIdentityService'
+        arguments: ['@doctrine.em']
+
     ####################################################################################################################
     # HELPERS
     ####################################################################################################################

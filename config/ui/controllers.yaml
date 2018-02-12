@@ -50,10 +50,21 @@ services:
             - '@doctrine.em'
             - '@auth'
             - '@user_session.handler'
+            - '@csrf'
             - '@uri'
     signout.handler:
         class: 'Hal\UI\Controllers\Auth\SignOutHandler'
         arguments: ['@uri']
+
+    signin.callback.handler:
+        class: 'Hal\UI\Controllers\Auth\SignInCallbackHandler'
+        arguments:
+            - '@doctrine.em'
+            - '@auth'
+            - '@user_session.handler'
+            - '@cookie.handler'
+            - '@csrf'
+            - '@uri'
 
     signin.setup.page:
         class: 'Hal\UI\Controllers\Auth\SignInSetupController'

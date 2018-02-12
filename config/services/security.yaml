@@ -6,9 +6,12 @@ services:
     auth:
         class: 'Hal\UI\Security\Auth'
         arguments:
+            - '@service.oauth_provider.factory'
             -
                 ldap: '@auth.ldap'
                 internal: '@auth.internal'
+                ghe: '@auth.github_enterprise'
+                gh: '@auth.github'
 
     auth.internal:
         class: 'Hal\UI\Security\UserAuthentication\InternalAuth'
@@ -20,6 +23,18 @@ services:
             - '@doctrine.em'
             - '%ldap.query_restriction%'
             - '%ldap.unique_attribute%'
+
+    auth.github_enterprise:
+        class: 'Hal\UI\Security\UserAuthentication\OAuth'
+        arguments:
+            - '@service.user_identity'
+            - '@service.oauth_provider.factory'
+
+    auth.github:
+        class: 'Hal\UI\Security\UserAuthentication\OAuth'
+        arguments:
+            - '@service.user_identity'
+            - '@service.oauth_provider.factory'
 
     ####################################################################################################################
     # authorizations
@@ -37,6 +52,9 @@ services:
     service.authorization_hydrator:
         class: 'Hal\UI\Security\AuthorizationHydrator'
         arguments: ['@doctrine.em']
+
+    service.oauth_provider.factory:
+        class: 'Hal\UI\Security\OAuthProviderFactory'
 
     ####################################################################################################################
     # forms

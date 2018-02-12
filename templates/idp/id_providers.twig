@@ -87,9 +87,9 @@
         Server: <code>{{ idp.parameter('ldap.host') }}</code>
 
     {% elseif idp.type == 'gh' %}
-        TBD
+        API: <code>{{ idp.parameter('gh.api_domain') }}</code>
 
     {% elseif idp.type == 'ghe' %}
-        TBD
+        Domain: <code>{{ idp.parameter('ghe.domain') }}</code>
     {% endif %}
 {% endmacro %}

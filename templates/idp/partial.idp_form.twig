@@ -44,17 +44,52 @@
 {% endblock %}
 
 {% block ghe_fields %}
-    {% import 'macros.twig' as macros %}
+    {% import 'macros.form.twig' as form_macros %}
 
     <li data-type-specific data-ghe>
-        {{ macros.alert('error', 'GitHub Enterprise not enabled.') }}
+        {% set has_error = form_macros.has_error(errors, 'ghe_client_id') ? ' is-error' : '' %}
+        <label for="ghe_client_id">Client ID</label>
+        <input class="text-input{{ has_error }}" type="text" name="ghe_client_id" id="ghe_client_id" maxlength="100" value="{{ form.ghe_client_id }}">
+        <small>Client ID provided by GitHub.</small>
+    </li>
+
+    <li data-type-specific data-ghe>
+        {% set has_error = form_macros.has_error(errors, 'ghe_client_secret') ? ' is-error' : '' %}
+        <label for="ghe_client_secret">Client Secret</label>
+        <input class="text-input{{ has_error }}" type="text" name="ghe_client_secret" id="ghe_client_secret" maxlength="100" value="{{ form.ghe_client_secret }}">
+        <small>Client Secret provided by GitHub.</small>
+    </li>
+
+    <li data-type-specific data-ghe>
+        {% set has_error = form_macros.has_error(errors, 'ghe_domain') ? ' is-error' : '' %}
+        <label for="ghe_domain">Domain</label>
+        <input class="text-input{{ has_error }}" type="text" name="ghe_domain" id="ghe_domain" maxlength="100" value="{{ form.ghe_domain }}">
+        <small>Location of the GitHub Enterprise installation. Expected syntax: <code>https://server.example.com</code></small>
     </li>
 {% endblock %}
 
 {% block gh_fields %}
-    {% import 'macros.twig' as macros %}
+    {% import 'macros.form.twig' as form_macros %}
 
     <li data-type-specific data-gh>
-        {{ macros.alert('error', 'GitHub.com not enabled.') }}
+        {% set has_error = form_macros.has_error(errors, 'gh_client_id') ? ' is-error' : '' %}
+        <label for="gh_client_id">Client ID</label>
+        <input class="text-input{{ has_error }}" type="text" name="gh_client_id" id="gh_client_id" maxlength="100" value="{{ form.gh_client_id }}">
+        <small>Client ID provided by GitHub.</small>
+
+    </li>
+
+    <li data-type-specific data-gh>
+        {% set has_error = form_macros.has_error(errors, 'gh_client_secret') ? ' is-error' : '' %}
+        <label for="gh_client_secret">Client Secret</label>
+        <input class="text-input{{ has_error }}" type="text" name="gh_client_secret" id="gh_client_secret" maxlength="100" value="{{ form.gh_client_secret }}">
+        <small>Client Secret provided by GitHub.</small>
+    </li>
+
+    <li data-type-specific data-gh>
+        {% set has_error = form_macros.has_error(errors, 'gh_api_domain') ? ' is-error' : '' %}
+        <label for="gh_api_domain">API Domain</label>
+        <input class="text-input{{ has_error }}" type="text" name="gh_api_domain" id="gh_api_domain" maxlength="100" value="{{ form.gh_api_domain }}">
+        <small>GitHub API. Expected url: <code>https://api.github.com</code></small>
     </li>
 {% endblock %}

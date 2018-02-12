@@ -37,7 +37,7 @@
         "predis/predis":            "~1.0",
         "psr/log":                  "*",
 
-        "hal/hal-core":             "dev-master",
+        "hal/hal-core":             "dev-add-github-idp",
 
         "ql/mcp-cache":             "~3.0.0",
         "ql/mcp-common":            "~1.0",
@@ -56,7 +56,10 @@
         "symfony/proxy-manager-bridge": "~3.3",
         "symfony/yaml":                 "~3.3",
 
-        "twig/twig": "~2.4"
+        "twig/twig": "~2.4",
+
+        "league/oauth2-client": "~2.3.0",
+        "league/oauth2-github": "~2.0.0"
     },
     "require-dev": {
         "symfony/process":              "~3.3",

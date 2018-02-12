@@ -11,6 +11,9 @@ use Hal\Core\Entity\User;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
 use Hal\UI\Validator\ValidatorErrorTrait;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use League\OAuth2\Client\Provider\AbstractProvider;
 
 class Auth
 {
@@ -24,12 +27,19 @@ class Auth
     private $adapters;
 
     /**
+     * @var OAuthProviderFactory
+     */
+    private $providerFactory;
+
+    /**
+     * @param OAuthProviderFactory $providerFactory
      * @param array $adapters
      */
-    public function __construct(array $adapters = [])
+    public function __construct(OAuthProviderFactory $providerFactory, array $adapters = [])
     {
-        $this->adapters = [];
+        $this->providerFactory = $providerFactory;
 
+        $this->adapters = [];
         foreach ($adapters as $type => $adapter) {
             $this->addAdapter($type, $adapter);
         }
@@ -62,12 +72,19 @@ class Auth
 
         $user = $data['username'] ?? '';
         $pass = $data['password'] ?? '';
+        $code = $data['code'] ?? '';
 
         if ($idp->type() === IdentityProviderEnum::TYPE_INTERNAL) {
             $user = $adapter->authenticate($idp, $user, $pass);
 
         } elseif ($idp->type() === IdentityProviderEnum::TYPE_LDAP) {
             $user = $adapter->authenticate($idp, $user, $pass);
+
+        } elseif ($idp->type() === IdentityProviderEnum::TYPE_GITHUB_ENTERPRISE) {
+            $user = $adapter->authenticate($idp, $code);
+
+        } elseif ($idp->type() === IdentityProviderEnum::TYPE_GITHUB) {
+            $user = $adapter->authenticate($idp, $code);
 
         } else {
             $this->addError(self::ERR_AUTH_MISCONFIGURED);
@@ -81,5 +98,25 @@ class Auth
         $this->importErrors($adapter->errors());
 
         return null;
+    }
+
+    /**
+     * @param UserIdentityProvider $idp
+     * @param array $data
+     *
+     * return string|null
+     */
+    public function authorize(UserIdentityProvider $idp, array $data = []): ?string
+    {
+        $provider = $this->providerFactory->getProvider($idp, $data) ?? null;
+
+        if (!$provider instanceof AbstractProvider) {
+            $this->addError(self::ERR_AUTH_MISCONFIGURED);
+            return null;
+        }
+
+        return $provider->authorize($data, function (string $uri) {
+            return $uri;
+        });
     }
 }
