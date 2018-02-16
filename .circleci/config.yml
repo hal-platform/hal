@@ -164,9 +164,16 @@ jobs:
             - run:
                 name: 'Run unit tests'
                 command: |
+                    phpdbg -qrr \
                     vendor/bin/phpunit
             - store_test_results:
                 path: '.phpunit/report'
+
+            - run:
+                name: 'Check test coverage threshold'
+                command: |
+                    coverage_threshold=${MINIMUM_TEST_COVERAGE_PERCENT-50}
+                    bin/check-coverage ${coverage_threshold}
 
     static_analysis:
         <<: *defaults
