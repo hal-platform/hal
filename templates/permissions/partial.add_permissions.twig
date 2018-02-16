@@ -39,7 +39,7 @@
 
                 <datalist id="users-datalist">
                     {% for u in users %}
-                        <option value="{{ u.id }}">{{ u.name }} ({{ u.provider.type }})</option>
+                        <option value="{{ u.id }}">{{ u.identities[0].providerUniqueID }} ({{ u.identities[0].provider.type }})</option>
                     {% endfor %}
                 </datalist>
             </li>

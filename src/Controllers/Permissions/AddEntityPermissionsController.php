@@ -43,6 +43,7 @@ class AddEntityPermissionsController implements ControllerInterface
     private const ERR_SELECT_A_USER = 'Please select at least one user.';
 
     private const ERR_INVALID_USER = 'Unknown user specified.';
+    private const ERR_AMBIGUOUS_USER = 'Ambiguous username provided. Multiple users found for username "%s".';
     private const ERR_USER_NOT_FOUND = 'User "%s" not found in database. Users must sign-in to Hal before permissions can be granted.';
     private const ERR_DUPE_PERM = 'User "%s" already has this permission.';
 
@@ -251,17 +252,28 @@ class AddEntityPermissionsController implements ControllerInterface
         $total = count($ids) + count($names);
         $verified = $this->findUsers($ids, $names);
 
-        $verifiedNames = array_map(function ($u) {
-            return $u->name();
-        }, $verified);
+        $verifiedNames = [];
 
-        if (count($verified) !== $total) {
+        foreach ($verified as $user) {
+            $name = $user->name();
+            if (isset($verifiedNames[$name])) {
+                $this->addError(sprintf(self::ERR_AMBIGUOUS_USER, $name));
+                continue;
+            }
+            $verifiedNames[$name] = $name;
+        }
+
+        if ($this->hasErrors()) {
+            return null;
+        }
+
+        if (count($verified) < $total) {
             $this->addError(self::ERR_INVALID_USER);
         }
 
         // only do specific checks on user names.
         foreach ($names as $u) {
-            if (!in_array($u, $verifiedNames)) {
+            if (!isset($verifiedNames[$u])) {
                 $this->addError(sprintf(self::ERR_USER_NOT_FOUND, $u));
             }
         }
@@ -342,7 +354,7 @@ class AddEntityPermissionsController implements ControllerInterface
             ->where(Criteria::expr()
                 ->in('id', $ids))
             ->orWhere(Criteria::expr()
-                ->in('providerUniqueID', $names));
+                ->in('name', $names));
 
         return $this->userRepo
             ->matching($criteria)

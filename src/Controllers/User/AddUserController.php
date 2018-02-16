@@ -57,7 +57,7 @@ HTML;
     /**
      * @var UserValidator
      */
-    private $validator;
+    private $userValidator;
 
     /**
      * @var UserIdentityValidator
@@ -72,14 +72,14 @@ HTML;
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param UserValidator $validator
-     * @param UserIdentityValidator $validator
+     * @param UserValidator $userValidator
+     * @param UserIdentityValidator $identityValidator
      * @param URI $uri
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        UserValidator $validator,
+        UserValidator $userValidator,
         UserIdentityValidator $identityValidator,
         URI $uri
     ) {
@@ -89,7 +89,7 @@ HTML;
         $this->idpRepo = $em->getRepository(UserIdentityProvider::class);
         $this->em = $em;
 
-        $this->validator = $validator;
+        $this->userValidator = $userValidator;
         $this->identityValidator = $identityValidator;
         $this->uri = $uri;
     }
@@ -109,7 +109,7 @@ HTML;
 
         return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
-            'errors' => array_merge($this->validator->errors(), $this->identityValidator->errors()),
+            'errors' => array_merge($this->userValidator->errors(), $this->identityValidator->errors()),
 
             'id_providers' => $this->idpRepo->findAll()
         ]);
@@ -131,7 +131,7 @@ HTML;
             return null;
         }
 
-        $user = $this->validator->isValid($data);
+        $user = $this->userValidator->isValid($data);
         $identity = $this->identityValidator->isValid($data);
 
         if (!$user || !$identity) {
@@ -149,7 +149,7 @@ HTML;
     }
 
     /**
-     * @param User $user
+     * @param UserIdentity $identity
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      *

@@ -78,7 +78,7 @@ class InternalAuth
      * @param UserIdentityProvider $idp
      * @param string $username
      *
-     * @return Identity|null
+     * @return UserIdentity|null
      */
     private function getIdentityData(UserIdentityProvider $idp, $username)
     {
