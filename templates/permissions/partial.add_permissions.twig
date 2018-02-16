@@ -39,7 +39,8 @@
 
                 <datalist id="users-datalist">
                     {% for u in users %}
-                        <option value="{{ u.id }}">{{ u.identities[0].providerUniqueID }} ({{ u.identities[0].provider.type }})</option>
+                        {% set user_identity = u.identities|first %}
+                        <option value="{{ u.id }}">{{ user_identity.providerUniqueID }} ({{ user_identity.provider.type }})</option>
                     {% endfor %}
                 </datalist>
             </li>
