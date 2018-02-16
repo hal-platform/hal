@@ -30,7 +30,7 @@ workflows:
 
     version: 2
 
-    backend_build:
+    pipeline:
         jobs:
             - fetch_code
             - verify_is_rebased
@@ -44,12 +44,8 @@ workflows:
             - linting:
                 requires: [ install_php_dependencies ]
 
-    frontend_build:
-        jobs:
-            - fetch_code
             - install_npm_dependencies:
                 requires: [ fetch_code ]
-
             - frontend_linting:
                 requires: [ install_npm_dependencies ]
             - frontend_build:
