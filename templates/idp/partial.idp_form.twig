@@ -10,14 +10,14 @@
     <li data-type-specific data-ldap>
         {% set has_error = form_macros.has_error(errors, 'ldap_host') ? ' is-error' : '' %}
         <label for="ldap_host">LDAP host or server</label>
-        <input class="text-input{{ has_error }}" type="text" name="ldap_host" id="ldap_host" maxlength="100" value="{{ form.ldap_host }}">
+        <input class="text-input{{ has_error }}" type="text" name="ldap_host" id="ldap_host" maxlength="100" value="{{ form.ldap_host }}" placeholder="server.example.com:389">
         <small>Default port is 389. Expected syntax: <code>server.example.com[:PORT_NUMBER]</code></small>
     </li>
 
     <li data-type-specific data-ldap>
         {% set has_error = form_macros.has_error(errors, 'ldap_domain') ? ' is-error' : '' %}
         <label for="ldap_domain">Domain</label>
-        <input class="text-input{{ has_error }}" type="text" name="ldap_domain" id="ldap_domain" maxlength="100" value="{{ form.ldap_domain }}">
+        <input class="text-input{{ has_error }}" type="text" name="ldap_domain" id="ldap_domain" maxlength="100" value="{{ form.ldap_domain }}" placeholder="Company\Division">
         <small>
             <b>Optional.</b> Specifying a domain such as <code>Company\Division</code> will result in user names such as <code>Company\Division\$username</code>.
         </small>
@@ -26,7 +26,7 @@
     <li data-type-specific data-ldap>
         {% set has_error = form_macros.has_error(errors, 'ldap_base_dn') ? ' is-error' : '' %}
         <label for="ldap_base_dn">Base DN</label>
-        <input class="text-input{{ has_error }}" type="text" name="ldap_base_dn" id="ldap_base_dn" maxlength="200" value="{{ form.ldap_base_dn }}">
+        <input class="text-input{{ has_error }}" type="text" name="ldap_base_dn" id="ldap_base_dn" maxlength="200" value="{{ form.ldap_base_dn }}" placeholder="dc=mycompany,dc=com">
         <small>
             Specify a root or base DN to limit the users allowed to authenticate with Hal such as <code>dc=mycompany,dc=com</code>.
         </small>
@@ -35,7 +35,7 @@
     <li data-type-specific data-ldap>
         {% set has_error = form_macros.has_error(errors, 'ldap_unique_id') ? ' is-error' : '' %}
         <label for="ldap_unique_id">Primary ID attribute</label>
-        <input class="text-input{{ has_error }}" type="text" name="ldap_unique_id" id="ldap_unique_id" maxlength="200" value="{{ form.ldap_unique_id }}">
+        <input class="text-input{{ has_error }}" type="text" name="ldap_unique_id" id="ldap_unique_id" maxlength="200" value="{{ form.ldap_unique_id }}" placeholder="SAMAccountName">
         <small>
             <b>Optional.</b> The unique attribute users will sign in with. By default <code>SAMAccountName</code> is used. If you would like to use another attribute such as email address provide the LDAP attribute name here.
         </small>
@@ -49,21 +49,21 @@
     <li data-type-specific data-ghe>
         {% set has_error = form_macros.has_error(errors, 'ghe_client_id') ? ' is-error' : '' %}
         <label for="ghe_client_id">Client ID</label>
-        <input class="text-input{{ has_error }}" type="text" name="ghe_client_id" id="ghe_client_id" maxlength="100" value="{{ form.ghe_client_id }}">
+        <input class="text-input{{ has_error }}" type="text" name="ghe_client_id" id="ghe_client_id" maxlength="100" value="{{ form.ghe_client_id }}" placeholder="121ace401de20d06f00d" autocomplete="off">
         <small>Client ID provided by GitHub.</small>
     </li>
 
     <li data-type-specific data-ghe>
         {% set has_error = form_macros.has_error(errors, 'ghe_client_secret') ? ' is-error' : '' %}
         <label for="ghe_client_secret">Client Secret</label>
-        <input class="text-input{{ has_error }}" type="text" name="ghe_client_secret" id="ghe_client_secret" maxlength="100" value="{{ form.ghe_client_secret }}">
+        <input class="text-input{{ has_error }}" type="text" name="ghe_client_secret" id="ghe_client_secret" maxlength="100" value="{{ form.ghe_client_secret }}" placeholder="0d06f00d04e110da17e00d06f00d04ell0da17e0" autocomplete="off">
         <small>Client Secret provided by GitHub.</small>
     </li>
 
     <li data-type-specific data-ghe>
         {% set has_error = form_macros.has_error(errors, 'ghe_domain') ? ' is-error' : '' %}
         <label for="ghe_domain">Domain</label>
-        <input class="text-input{{ has_error }}" type="text" name="ghe_domain" id="ghe_domain" maxlength="100" value="{{ form.ghe_domain }}">
+        <input class="text-input{{ has_error }}" type="text" name="ghe_domain" id="ghe_domain" maxlength="100" value="{{ form.ghe_domain }}" placeholder="https://server.example.com">
         <small>Location of the GitHub Enterprise installation. Expected syntax: <code>https://server.example.com</code></small>
     </li>
 {% endblock %}
@@ -74,7 +74,7 @@
     <li data-type-specific data-gh>
         {% set has_error = form_macros.has_error(errors, 'gh_client_id') ? ' is-error' : '' %}
         <label for="gh_client_id">Client ID</label>
-        <input class="text-input{{ has_error }}" type="text" name="gh_client_id" id="gh_client_id" maxlength="100" value="{{ form.gh_client_id }}">
+        <input class="text-input{{ has_error }}" type="text" name="gh_client_id" id="gh_client_id" maxlength="100" value="{{ form.gh_client_id }}" placeholder="121ace401de20d06f00d" autocomplete="off">
         <small>Client ID provided by GitHub.</small>
 
     </li>
@@ -82,14 +82,14 @@
     <li data-type-specific data-gh>
         {% set has_error = form_macros.has_error(errors, 'gh_client_secret') ? ' is-error' : '' %}
         <label for="gh_client_secret">Client Secret</label>
-        <input class="text-input{{ has_error }}" type="text" name="gh_client_secret" id="gh_client_secret" maxlength="100" value="{{ form.gh_client_secret }}">
+        <input class="text-input{{ has_error }}" type="text" name="gh_client_secret" id="gh_client_secret" maxlength="100" value="{{ form.gh_client_secret }}" placeholder="0d06f00d04e110da17e00d06f00d04ell0da17e0" autocomplete="off">
         <small>Client Secret provided by GitHub.</small>
     </li>
 
     <li data-type-specific data-gh>
         {% set has_error = form_macros.has_error(errors, 'gh_api_domain') ? ' is-error' : '' %}
         <label for="gh_api_domain">API Domain</label>
-        <input class="text-input{{ has_error }}" type="text" name="gh_api_domain" id="gh_api_domain" maxlength="100" value="{{ form.gh_api_domain }}">
+        <input class="text-input{{ has_error }}" type="text" name="gh_api_domain" id="gh_api_domain" maxlength="100" value="{{ form.gh_api_domain|default('https://api.github.com') }}" placeholder="https://api.github.com">
         <small>GitHub API. Expected url: <code>https://api.github.com</code></small>
     </li>
 {% endblock %}

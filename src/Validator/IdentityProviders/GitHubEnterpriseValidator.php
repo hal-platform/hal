@@ -24,7 +24,7 @@ class GitHubEnterpriseValidator implements IdentityProviderValidatorInterface
     public const ATTR_CLIENT_SECRET = 'ghe.client_secret';
     public const ATTR_DOMAIN = 'ghe.domain';
 
-    private const REGEX_CHARACTER_CLASS_DOMAIN = '[Hh][Tt]{2}[Pp]([Ss])?\:\/\/[a-zA-Z0-9]{1}[a-zA-Z0-9\.\-]{3,150}(\:[0-9]{1,5})?';
+    private const REGEX_CHARACTER_CLASS_DOMAIN = '[Hh][Tt]{2}[Pp]([Ss])?\:\/\/[a-zA-Z0-9]{1}[a-zA-Z0-9\.\-]{2,150}(\:[0-9]{1,5})?';
 
     private const ERR_INVALID_DOMAIN = 'Please enter a valid Github domain.';
 
