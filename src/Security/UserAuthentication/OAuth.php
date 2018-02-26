@@ -87,7 +87,7 @@ class OAuth
         }
 
         try {
-            $token = $provider->getAccessToken('authorization_code', [ 'code' => $code ]);
+            $token = $provider->getAccessToken('authorization_code', ['code' => $code]);
         } catch (Exception $e) {
             $this->addError(self::ERR_BAD_VERIFICATION_CODE);
             return null;
