@@ -98,12 +98,7 @@ class SignInCallbackHandler implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $providers = $this->idpRepo->findAll();
-        if (!$providers) {
-            return $this->withRedirectRoute($response, $this->uri, 'hal_bootstrap');
-        }
-
-        $selectedIDP = $this->getSelectedIDP($request, $providers);
+        $selectedIDP = $this->getSelectedIDP($request);
         if (!$selectedIDP instanceof UserIdentityProvider) {
             $this->withFlashError($request, self::ERR_NO_IDP_SELECTED);
             return $this->withRedirectRoute($response, $this->uri, 'signin');
@@ -142,16 +137,11 @@ class SignInCallbackHandler implements MiddlewareInterface
 
     /**
      * @param ServerRequestInterface $request
-     * @param array $providers
      *
      * @return UserIdentityProvider|null
      */
-    private function getSelectedIDP(ServerRequestInterface $request, array $providers)
+    private function getSelectedIDP(ServerRequestInterface $request)
     {
-        if (count($providers) === 1) {
-            return $providers[0];
-        }
-
         // first check if idp in query
         $selectedIDP = $request->getQueryParams()['idp'] ?? '';
 
@@ -160,12 +150,10 @@ class SignInCallbackHandler implements MiddlewareInterface
             $selectedIDP = $this->cookies->getCookie($request, self::IDP_COOKIE_NAME);
         }
 
-        foreach ($providers as $idp) {
-            if ($selectedIDP === $idp->id()) {
-                return $idp;
-            }
+        if (!$selectedIDP) {
+            return null;
         }
 
-        return null;
+        return $this->idpRepo->find($selectedIDP);
     }
 }
