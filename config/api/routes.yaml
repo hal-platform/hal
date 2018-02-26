@@ -6,13 +6,13 @@ parameters:
             stack: ['docs.api']
 
         api.index:
-            method: 'GET'
+            method: ['OPTIONS', 'GET']
             route: '/api'
-            stack: ['index.api']
+            stack: ['middleware.api_cross_origin', 'index.api']
 
         api:
             route: '/api'
-            stack: ['middleware.api_caching']
+            stack: ['middleware.api_cross_origin', 'middleware.api_caching']
             routes:
 
                 ########################################################################################################
@@ -20,17 +20,17 @@ parameters:
                 ########################################################################################################
 
                 api.queue:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/queue'
                     stack: ['queue.api']
 
                 api.queue.refresh:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/queue-refresh/{jobs:%r.api.queue%}'
                     stack: ['queue.refresh.api']
 
                 api.queue.history:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/queue/date/{date:%r.date%}'
                     stack: ['queue.history.api']
 
@@ -39,12 +39,12 @@ parameters:
                 ########################################################################################################
 
                 api.organizations:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/organizations'
                     stack: ['organizations.api']
 
                 api.organization:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/organizations/{organization:%r.guid%}'
                     stack: ['middleware.api_require_entity', 'organization.api']
 
@@ -53,11 +53,11 @@ parameters:
                 ########################################################################################################
 
                 api.applications:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/applications'
                     stack: ['applications.api']
                 api.applications.paged:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/applications/page/{page:%r.digit%}'
                     stack: ['applications.api']
 
@@ -67,12 +67,12 @@ parameters:
                     routes:
 
                         api.application:
-                            method: 'GET'
+                            method: ['OPTIONS', 'GET']
                             route: ''
                             stack: ['application.api']
 
                         api.targets:
-                            method: 'GET'
+                            method: ['OPTIONS', 'GET']
                             route: '/targets'
                             stack: ['targets.api']
 
@@ -80,20 +80,20 @@ parameters:
                         # It's nice to be able to use route groups to nest common url prefixes.
 
                         api.builds:
-                            method: 'GET'
+                            method: ['OPTIONS', 'GET']
                             route: '/builds'
                             stack: ['builds.api']
                         api.builds.history:
-                            method: 'GET'
+                            method: ['OPTIONS', 'GET']
                             route: '/builds/page/{page:%r.digit%}'
                             stack: ['builds.api']
 
                         api.releases:
-                            method: 'GET'
+                            method: ['OPTIONS', 'GET']
                             route: '/releases'
                             stack: ['releases.api']
                         api.releases.history:
-                            method: 'GET'
+                            method: ['OPTIONS', 'GET']
                             route: '/releases/page/{page:%r.digit%}'
                             stack: ['releases.api']
 
@@ -102,17 +102,17 @@ parameters:
                 ########################################################################################################
 
                 api.templates:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/templates'
                     stack: ['templates.api']
 
                 api.templates.paged:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/templates/page/{page:%r.digit%}'
                     stack: ['templates.api']
 
                 api.template:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/templates/{template:%r.guid%}'
                     stack: ['middleware.api_require_entity', 'template.api']
 
@@ -125,21 +125,21 @@ parameters:
                     stack: ['middleware.api_require_entity']
                     routes:
                         api.target:
-                            method: 'GET'
+                            method: ['OPTIONS', 'GET']
                             route: ''
                             stack: ['target.api']
 
                         api.target.history:
-                            method: 'GET'
+                            method: ['OPTIONS', 'GET']
                             route: '/releases'
                             stack: ['target.history.api']
                         api.target.history.paged:
-                            method: 'GET'
+                            method: ['OPTIONS', 'GET']
                             route: '/releases/page/{page:%r.digit%}'
                             stack: ['target.history.api']
 
                         api.target.current_release:
-                            method: 'GET'
+                            method: ['OPTIONS', 'GET']
                             route: '/current-release'
                             stack: ['target.current_release.api']
 
@@ -152,22 +152,22 @@ parameters:
                     stack: ['middleware.api_require_entity']
                     routes:
                         api.build:
-                            method: 'GET'
+                            method: ['OPTIONS', 'GET']
                             route: ''
                             stack: ['build.api']
 
                         api.build.events:
-                            method: 'GET'
+                            method: ['OPTIONS', 'GET']
                             route: '/events'
                             stack: ['build.events.api']
 
                 api.build.history:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/builds'
                     stack: ['builds.history.api']
 
                 api.build.history.paged:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/builds/page/{page:%r.digit%}'
                     stack: ['builds.history.api']
 
@@ -180,22 +180,22 @@ parameters:
                     stack: ['middleware.api_require_entity']
                     routes:
                         api.release:
-                            method: 'GET'
+                            method: ['OPTIONS', 'GET']
                             route: ''
                             stack: ['release.api']
 
                         api.release.events:
-                            method: 'GET'
+                            method: ['OPTIONS', 'GET']
                             route: '/events'
                             stack: ['release.events.api']
 
                 api.release.history:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/releases'
                     stack: ['middleware.api_require_entity', 'releases.history.api']
 
                 api.release.history.paged:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/releases/page/{page:%r.digit%}'
                     stack: ['middleware.api_require_entity', 'releases.history.api']
 
@@ -204,7 +204,7 @@ parameters:
                 ########################################################################################################
 
                 api.event:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/job-events/{event:%r.guid%}'
                     stack: ['middleware.api_require_entity', 'event.api']
 
@@ -213,12 +213,12 @@ parameters:
                 ########################################################################################################
 
                 api.environments:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/environments'
                     stack: ['environments.api']
 
                 api.environment:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/environments/{environment:%r.guid%}'
                     stack: ['middleware.api_require_entity', 'environment.api']
 
@@ -227,12 +227,12 @@ parameters:
                 ########################################################################################################
 
                 api.vcs_providers:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/vcs-providers'
                     stack: ['vcs_providers.api']
 
                 api.vcs_provider:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/vcs-providers/{system_vcs:%r.guid%}'
                     stack: ['middleware.api_require_entity', 'vcs_provider.api']
 
@@ -245,16 +245,16 @@ parameters:
                     stack: ['middleware.api_require_entity']
                     routes:
                         api.user:
-                            method: 'GET'
+                            method: ['OPTIONS', 'GET']
                             route: ''
                             stack: ['user.api']
 
                 api.users:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/users'
                     stack: ['users.api']
                 api.users.paged:
-                    method: 'GET'
+                    method: ['OPTIONS', 'GET']
                     route: '/users/page/{page:%r.digit%}'
                     stack: ['users.api']
 

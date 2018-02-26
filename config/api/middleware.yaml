@@ -6,3 +6,6 @@ services:
     middleware.api_require_entity:
         class: 'Hal\UI\Middleware\RequireEntityMiddleware'
         arguments: ['@doctrine.em', '@notFoundHandler']
+
+    middleware.api_cross_origin:
+        class: 'Hal\UI\Middleware\APICrossOriginMiddleware'
