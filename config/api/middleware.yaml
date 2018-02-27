@@ -9,3 +9,11 @@ services:
 
     middleware.api_cross_origin:
         class: 'Hal\UI\Middleware\APICrossOriginMiddleware'
+        arguments: ['@middleware.api_cross_origin.analyzer_settings', '@problem.renderer']
+
+    middleware.api_cross_origin.analyzer_settings:
+        class: 'Neomerx\Cors\Strategies\Settings'
+        calls:
+            - ['setRequestCredentialsSupported', [true]]
+            - ['setRequestAllowedHeaders', ['%api.cors.allowed_headers%']]
+            - ['setRequestAllowedOrigins', ['%api.cors.allowed_origins%']]

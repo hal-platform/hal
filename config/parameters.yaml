@@ -112,6 +112,13 @@ parameters:
         api.build.start: 10
         api.deploy: 20
 
+    api.cors.allowed_headers:
+        'Content-Type': true
+        'Authorization': true
+
+    api.cors.allowed_origins:
+        '*': true
+
     ############################################################################
     # cookie
     ############################################################################
