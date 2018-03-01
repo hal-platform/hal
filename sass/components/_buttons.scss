@@ -99,3 +99,13 @@ $btn-color-transparent: rgba(255, 255, 255, .1);
 .btn--destructive {
     @include btn-color($error-color);
 }
+
+// Button types
+.btn--green {
+    @include btn-color($green);
+}
+
+.btn--black {
+    @include btn-color(#000000);
+}
+

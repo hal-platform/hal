@@ -13,18 +13,20 @@ use Hal\Core\Entity\User;
 use Hal\Core\Entity\User\UserIdentity;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
+use Hal\UI\Security\UserAuthenticationInterface;
 use Hal\UI\Validator\ValidatorErrorTrait;
+use Psr\Http\Message\ServerRequestInterface;
 use function password_verify;
 
-class InternalAuth
+class InternalAuth implements UserAuthenticationInterface
 {
     use ValidatorErrorTrait;
 
     // todo move to UserIdentityProvider?
-    const PARAM_PW = 'internal.password';
+    private const PARAM_PW = 'internal.password';
 
-    const ERR_IDENTITY_NOT_FOUND = 'Invalid sign-in information. Please try again.';
-    const ERR_IDP_MISCONFIGURED = 'Internal Auth Identity Provider is misconfigured.';
+    private const ERR_IDENTITY_NOT_FOUND = 'Invalid sign-in information. Please try again.';
+    private const ERR_IDP_MISCONFIGURED = 'Internal Auth Identity Provider is misconfigured.';
 
     /**
      * @var EntityRepository
@@ -41,13 +43,16 @@ class InternalAuth
 
     /**
      * @param UserIdentityProvider $idp
-     * @param string $username
-     * @param string $password
+     * @param string ...$parameters
+     *              - string $username
+     *              - string $password
      *
      * @return User|null
      */
-    public function authenticate(UserIdentityProvider $idp, string $username, string $password): ?User
+    public function authenticate(UserIdentityProvider $idp, string ...$parameters): ?User
     {
+        [$username, $password] = $parameters;
+
         if (strlen($username) === 0 || strlen($password) === 0) {
             $this->addError(self::ERR_IDENTITY_NOT_FOUND);
             return null;
@@ -71,6 +76,26 @@ class InternalAuth
         }
 
         return $identity->user();
+    }
+
+    /**
+     * @param UserIdentityProvider $idp
+     * @param ServerRequestInterface $request
+     *
+     * @return array
+     */
+    public function getProviderData(UserIdentityProvider $idp, ServerRequestInterface $request): array
+    {
+        $form = $request->getParsedBody();
+
+        if ($idp->type() === IdentityProviderEnum::TYPE_INTERNAL) {
+            return [
+                'username' => $form['internal_username'] ?? '',
+                'password' => $form['internal_password'] ?? '',
+            ];
+        }
+
+        return [];
     }
 
     /**

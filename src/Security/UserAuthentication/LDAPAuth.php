@@ -14,14 +14,16 @@ use Hal\Core\Entity\User;
 use Hal\Core\Entity\User\UserIdentity;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
+use Hal\UI\Security\UserAuthenticationInterface;
 use Hal\UI\Utility\OptionTrait;
 use Hal\UI\Validator\IdentityProviders\LDAPValidator;
 use Hal\UI\Validator\ValidatorErrorTrait;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Ldap\Ldap;
 use Symfony\Component\Ldap\LdapInterface;
 use Symfony\Component\Ldap\Exception\LdapException;
 
-class LDAPAuth
+class LDAPAuth implements UserAuthenticationInterface
 {
     use OptionTrait;
     use ValidatorErrorTrait;
@@ -76,13 +78,16 @@ class LDAPAuth
 
     /**
      * @param UserIdentityProvider $idp
-     * @param string $username
-     * @param string $password
+     * @param string ...$parameters
+     *              - string $username
+     *              - string $password
      *
      * @return User|null
      */
-    public function authenticate(UserIdentityProvider $idp, string $username, string $password): ?User
+    public function authenticate(UserIdentityProvider $idp, string ...$parameters): ?User
     {
+        [$username, $password] = $parameters;
+
         if (strlen($username) === 0 || strlen($password) === 0) {
             $this->addError(self::ERR_IDENTITY_NOT_FOUND);
             return null;
@@ -116,6 +121,26 @@ class LDAPAuth
 
         $this->addError(self::ERR_IDENTITY_NOT_FOUND);
         return null;
+    }
+
+    /**
+     * @param UserIdentityProvider $idp
+     * @param ServerRequestInterface $request
+     *
+     * @return array
+     */
+    public function getProviderData(UserIdentityProvider $idp, ServerRequestInterface $request): array
+    {
+        $form = $request->getParsedBody();
+
+        if ($idp->type() === IdentityProviderEnum::TYPE_LDAP) {
+            return [
+                'username' => $form['ldap_username'] ?? '',
+                'password' => $form['ldap_password'] ?? '',
+            ];
+        }
+
+        return [];
     }
 
     /**

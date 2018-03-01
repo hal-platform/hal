@@ -50,20 +50,18 @@ services:
             - '@doctrine.em'
             - '@auth'
             - '@user_session.handler'
-            - '@csrf'
             - '@uri'
     signout.handler:
         class: 'Hal\UI\Controllers\Auth\SignOutHandler'
         arguments: ['@uri']
 
-    signin.callback.handler:
+    signin.oauth2_handler:
         class: 'Hal\UI\Controllers\Auth\SignInCallbackHandler'
         arguments:
             - '@doctrine.em'
             - '@auth'
             - '@user_session.handler'
             - '@cookie.handler'
-            - '@csrf'
             - '@uri'
 
     signin.setup.page:
@@ -346,7 +344,7 @@ services:
 
     encrypted.page:
         class: 'Hal\UI\Controllers\EncryptedConfiguration\EncryptedController'
-        arguments: ['@encrypted.twig', '@decrypter']
+        arguments: ['@encrypted.twig', '@encryption']
     encrypted.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['encrypted-configuration/encrypted_property.twig']]]
@@ -361,7 +359,7 @@ services:
         class: 'Hal\UI\Controllers\EncryptedConfiguration\AddEncryptedPropertyMiddleware'
         arguments:
             - '@doctrine.em'
-            - '@encrypter'
+            - '@encryption'
             - '@validator.encrypted_property'
             - '@uri'
 

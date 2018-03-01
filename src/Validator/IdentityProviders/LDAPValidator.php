@@ -9,14 +9,12 @@ namespace Hal\UI\Validator\IdentityProviders;
 
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
-use Hal\UI\Utility\OptionTrait;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;
 use Psr\Http\Message\ServerRequestInterface;
 
 class LDAPValidator implements IdentityProviderValidatorInterface
 {
-    use OptionTrait;
     use ValidatorErrorTrait;
     use ValidatorTrait;
 
@@ -68,8 +66,7 @@ class LDAPValidator implements IdentityProviderValidatorInterface
             ->withParameter(self::ATTR_HOST, $hostname)
             ->withParameter(self::ATTR_DOMAIN, $domain)
             ->withParameter(self::ATTR_BASE_DN, $baseDN)
-            ->withParameter(self::ATTR_UNIQUE_ID, $uniqueID)
-            ->withIsOAuth(false);
+            ->withParameter(self::ATTR_UNIQUE_ID, $uniqueID);
 
         return $provider;
     }

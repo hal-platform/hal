@@ -75,6 +75,9 @@ parameters:
     ldap.domain: '%env(HAL_LDAP_DOMAIN)%'
     ldap.base_dn: '%env(HAL_LDAP_BASE_DN)%'
 
+    github_auth.required_scopes: ['read:user', 'read:org', 'user:email']
+    github_auth.callback_route_name: 'signin.oauth2_callback'
+
     ############################################################################
     # cache
     ############################################################################

@@ -9,14 +9,12 @@ namespace Hal\UI\Validator\IdentityProviders;
 
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
-use Hal\UI\Utility\OptionTrait;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;
 use Psr\Http\Message\ServerRequestInterface;
 
 class InternalValidator implements IdentityProviderValidatorInterface
 {
-    use OptionTrait;
     use ValidatorErrorTrait;
     use ValidatorTrait;
 
@@ -29,8 +27,7 @@ class InternalValidator implements IdentityProviderValidatorInterface
     {
         $this->resetErrors();
 
-        return (new UserIdentityProvider())
-            ->withIsOAuth(false);
+        return (new UserIdentityProvider());
     }
 
     /**

@@ -44,10 +44,10 @@ parameters:
             route: '/signin-setup/{user:%r.guid%}/{setup_token:%r.guid%}'
             stack: ['middleware.require_entity', 'middleware.require_csrf', 'signin.setup.page']
 
-        signin.callback:
+        signin.oauth2_callback:
             method: 'GET'
-            route: '/signin-callback'
-            stack: ['signin.callback.handler', 'signin.page']
+            route: '/signin/oauth'
+            stack: ['signin.oauth2_handler', 'signin.page']
 
         ################################################################################################################
         # help

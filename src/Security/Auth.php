@@ -10,10 +10,9 @@ namespace Hal\UI\Security;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
+use Hal\UI\Security\UserAuthenticationInterface;
 use Hal\UI\Validator\ValidatorErrorTrait;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use League\OAuth2\Client\Provider\AbstractProvider;
 
 class Auth
 {
@@ -27,18 +26,10 @@ class Auth
     private $adapters;
 
     /**
-     * @var OAuthProviderFactory
-     */
-    private $providerFactory;
-
-    /**
-     * @param OAuthProviderFactory $providerFactory
      * @param array $adapters
      */
-    public function __construct(OAuthProviderFactory $providerFactory, array $adapters = [])
+    public function __construct(array $adapters = [])
     {
-        $this->providerFactory = $providerFactory;
-
         $this->adapters = [];
         foreach ($adapters as $type => $adapter) {
             $this->addAdapter($type, $adapter);
@@ -47,13 +38,36 @@ class Auth
 
     /**
      * @param string $type
-     * @param mixed $adapter
+     * @param UserAuthenticationInterface $adapter
      *
      * @return void
      */
-    public function addAdapter($type, $adapter): void
+    public function addAdapter($type, UserAuthenticationInterface $adapter): void
     {
         $this->adapters[$type] = $adapter;
+    }
+
+    /**
+     * @param UserIdentityProvider $idp
+     * @param ServerRequestInterface $request
+     *
+     * @return array|null
+     */
+    public function prepare(UserIdentityProvider $idp, ServerRequestInterface $request): ?array
+    {
+        $adapter = $this->adapters[$idp->type()] ?? null;
+        if (!$adapter) {
+            $this->addError(self::ERR_AUTH_MISCONFIGURED);
+            return null;
+        }
+
+        $data = $adapter->getProviderData($idp, $request);
+        if (!$data) {
+            $this->addError(self::ERR_AUTH_MISCONFIGURED);
+            return null;
+        }
+
+        return $data;
     }
 
     /**
@@ -70,9 +84,14 @@ class Auth
             return null;
         }
 
+        // internal
         $user = $data['username'] ?? '';
         $pass = $data['password'] ?? '';
+
+        // external
         $code = $data['code'] ?? '';
+        $state = $data['state'] ?? '';
+        $storedState = $data['stored_state'] ?? '';
 
         if ($idp->type() === IdentityProviderEnum::TYPE_INTERNAL) {
             $user = $adapter->authenticate($idp, $user, $pass);
@@ -81,10 +100,10 @@ class Auth
             $user = $adapter->authenticate($idp, $user, $pass);
 
         } elseif ($idp->type() === IdentityProviderEnum::TYPE_GITHUB_ENTERPRISE) {
-            $user = $adapter->authenticate($idp, $code);
+            $user = $adapter->authenticate($idp, $code, $state, $storedState);
 
         } elseif ($idp->type() === IdentityProviderEnum::TYPE_GITHUB) {
-            $user = $adapter->authenticate($idp, $code);
+            $user = $adapter->authenticate($idp, $code, $state, $storedState);
 
         } else {
             $this->addError(self::ERR_AUTH_MISCONFIGURED);
@@ -98,25 +117,5 @@ class Auth
         $this->importErrors($adapter->errors());
 
         return null;
-    }
-
-    /**
-     * @param UserIdentityProvider $idp
-     * @param array $data
-     *
-     * return string|null
-     */
-    public function authorize(UserIdentityProvider $idp, array $data = []): ?string
-    {
-        $provider = $this->providerFactory->getProvider($idp, $data) ?? null;
-
-        if (!$provider instanceof AbstractProvider) {
-            $this->addError(self::ERR_AUTH_MISCONFIGURED);
-            return null;
-        }
-
-        return $provider->authorize($data, function (string $uri) {
-            return $uri;
-        });
     }
 }

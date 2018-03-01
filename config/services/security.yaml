@@ -6,7 +6,6 @@ services:
     auth:
         class: 'Hal\UI\Security\Auth'
         arguments:
-            - '@service.oauth_provider.factory'
             -
                 ldap: '@auth.ldap'
                 internal: '@auth.internal'
@@ -24,17 +23,31 @@ services:
             - '%ldap.query_restriction%'
             - '%ldap.unique_attribute%'
 
-    auth.github_enterprise:
-        class: 'Hal\UI\Security\UserAuthentication\OAuth'
-        arguments:
-            - '@service.user_identity'
-            - '@service.oauth_provider.factory'
-
     auth.github:
-        class: 'Hal\UI\Security\UserAuthentication\OAuth'
+        class: 'Hal\UI\Security\UserAuthentication\GitHubAuth'
         arguments:
-            - '@service.user_identity'
-            - '@service.oauth_provider.factory'
+            - '@doctrine.em'
+            - '@auth.github.http_client'
+            - '@auth.github.oauth_callback_factory'
+            - '%github_auth.required_scopes%'
+
+    auth.github_enterprise:
+        class: 'Hal\UI\Security\UserAuthentication\GitHubEnterpriseAuth'
+        arguments:
+            - '@doctrine.em'
+            - '@auth.github.http_client'
+            - '@auth.github.oauth_callback_factory'
+            - '%github_auth.required_scopes%'
+
+    auth.github.http_client:
+        class: 'GuzzleHttp\Client'
+
+    auth.github.oauth_callback_factory:
+        class: 'Hal\UI\Security\UserAuthentication\OAuthCallbackFactory'
+        arguments:
+            - '@request'
+            - '@uri'
+            - '%github_auth.callback_route_name%'
 
     ####################################################################################################################
     # authorizations
@@ -82,9 +95,3 @@ services:
     encryption.factory:
         class: 'Hal\Core\Crypto\CryptoFilesystemFactory'
         arguments: ['%encrypter.secret.path%']
-
-    # dummy services - to not break pages not updated to core-3 yet
-    decrypter:
-        parent: 'encryption'
-    encrypter:
-        parent: 'encryption'

@@ -50,7 +50,13 @@
     <ul>
         {% for idp in id_providers %}
             <li class="mvm">
-                <a class="btn" href="{{ uriFor('signin', {}, {'idp': idp.id}) }}">Sign in with {{ idp.name }}</a>
+                {% if idp.type in ['gh', 'ghe'] %}
+                    <a class="btn btn--green" href="{{ uriFor('signin', {}, {'idp': idp.id}) }}">
+                        {{ macros.icon('github') }} Sign in with {{ idp.name }}
+                    </a>
+                {% else %}
+                    <a class="btn" href="{{ uriFor('signin', {}, {'idp': idp.id}) }}">Sign in with {{ idp.name }}</a>
+                {% endif %}
             </li>
         {% endfor %}
     </ul>
@@ -108,7 +114,9 @@
         <input type="hidden" name="idp" value="{{ selected_idp.id }}">
 
         <p>
-            <button type="submit" class="btn">Sign in</button>
+            <button type="submit" class="btn btn--green">
+                {{ macros.icon('github') }} Sign in with {{ selected_idp.name }}
+            </button>
             <a href="{{ uriFor('signin', {}, {'idp': 'remove'}) }}">Cancel</a>
         </p>
     </form>
@@ -120,7 +128,9 @@
         <input type="hidden" name="idp" value="{{ selected_idp.id }}">
 
         <p>
-            <button type="submit" class="btn">Sign in</button>
+            <button type="submit" class="btn btn--green">
+                {{ macros.icon('github') }} Sign in with {{ selected_idp.name }}
+            </button>
             <a href="{{ uriFor('signin', {}, {'idp': 'remove'}) }}">Cancel</a>
         </p>
     </form>

@@ -62,18 +62,12 @@ class UserIdentityValidator
     public function isValid(array $data): ?UserIdentity
     {
         $this->resetErrors();
+
         $providerID = $data['id_provider'] ?? '';
+        $username = $data['internal_username'] ?? '';
 
         $idp = null;
         if (!$providerID || !$idp = $this->idpRepo->find($providerID)) {
-            $this->addError(self::ERR_INVALID_IDP);
-        }
-
-        $username = '';
-        if ($idp->type() === 'internal') {
-            $username = $data['internal_username'] ?? '';
-            $this->validateInternalUsername($username);
-        } else {
             $this->addError(self::ERR_INVALID_IDP);
         }
 
@@ -81,6 +75,16 @@ class UserIdentityValidator
             return null;
         }
 
+        // Only internal allowed for now.
+        if ($idp->type() !== 'internal') {
+            $this->addError(self::ERR_INVALID_IDP);
+        }
+
+        if ($this->hasErrors()) {
+            return null;
+        }
+
+        $this->validateInternalUsername($username);
 
         if ($dupe = $this->identityRepo->findOneBy(['provider' => $idp, 'providerUniqueID' => $username])) {
             $this->addError(self::ERR_DUPE_USERNAME);
@@ -94,11 +98,7 @@ class UserIdentityValidator
             ->withProviderUniqueID($username)
             ->withProvider($idp);
 
-        if ($idp->type() === 'internal') {
-            return $this->resetIdentitySetup($identity);
-        } else {
-            return $identity;
-        }
+        return $this->resetIdentitySetup($identity);
     }
 
     /**

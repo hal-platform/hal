@@ -18,7 +18,6 @@ use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Security\Auth;
 use Hal\UI\Security\UserSessionHandler;
-use Hal\UI\Security\CSRFManager;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -36,11 +35,6 @@ class SignInHandler implements MiddlewareInterface
     private const ERR_DISABLED = 'Account disabled.';
 
     /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-
-    /**
      * @var EntityRepository
      */
     private $idpRepo;
@@ -56,11 +50,6 @@ class SignInHandler implements MiddlewareInterface
     private $userHandler;
 
     /**
-     * @var CSRFManager
-     */
-    private $csrf;
-
-    /**
      * @var URI
      */
     private $uri;
@@ -69,22 +58,18 @@ class SignInHandler implements MiddlewareInterface
      * @param EntityManagerInterface $em
      * @param Auth $auth
      * @param UserSessionHandler $userHandler
-     * @param CSRFManager $csrf
      * @param URI $uri
      */
     public function __construct(
         EntityManagerInterface $em,
         Auth $auth,
         UserSessionHandler $userHandler,
-        CSRFManager $csrf,
         URI $uri
     ) {
-        $this->em = $em;
         $this->idpRepo = $em->getRepository(UserIdentityProvider::class);
 
         $this->auth = $auth;
         $this->userHandler = $userHandler;
-        $this->csrf = $csrf;
         $this->uri = $uri;
     }
 
@@ -93,77 +78,40 @@ class SignInHandler implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if ($request->getMethod() !== 'POST') {
+        if (!$idp = $this->sanityCheck($request)) {
             return $next($request, $response);
         }
 
-        if (!$this->isCSRFValid($request)) {
-            return $next($request, $response);
-        }
-
-        $providerID = $request->getParsedBody()['idp'] ?? '';
-        if (!$providerID) {
-            return $next($request, $response);
-        }
-
-        $idp = $this->idpRepo->find($providerID);
-        if (!$idp instanceof UserIdentityProvider) {
-            return $next($request, $response);
-        }
-
-        $data = $this->getFormData($request, $idp);
-
-        if ($idp->isOAuth()) {
-            return $this->twoPhaseFlow($request, $response, $next, $idp, $data);
-        }
-
-        return $this->singlePhaseFlow($request, $response, $next, $idp, $data);
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param callable $next
-     * @param UserIdentityProvider $idp
-     * @param array $data
-     *
-     * @return ResponseInterface $response
-     */
-    private function twoPhaseFlow(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        callable $next,
-        UserIdentityProvider $idp,
-        $data
-    ) {
-        $authURL = $this->auth->authorize($idp, $data);
-
-        if (!$authURL) {
+        $data = $this->auth->prepare($idp, $request);
+        if (!$data) {
             $this->importErrors($this->auth->errors());
             return $next($this->withContext($request, ['errors' => $this->errors()]), $response);
         }
 
-        return $this->withRedirectAbsoluteURL($response, $authURL);
+        $externalAuthURL = $data['external'] ?? false;
+        if ($externalAuthURL) {
+            if ($data['state'] ?? false) {
+                $this->getSession($request)
+                    ->set('external-auth-state', $data['state']);
+            }
+
+            return $this->withRedirectAbsoluteURL($response, $externalAuthURL);
+        }
+
+        $user = $this->auth->authenticate($idp, $data);
+        return $this->attemptSignIn($user, $request, $response, $next);
     }
 
     /**
+     * @param User|null $user
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @param callable $next
-     * @param UserIdentityProvider $idp
-     * @param array $data
      *
-     * @return ResponseInterface $response
+     * @return ResponseInterface
      */
-    private function singlePhaseFlow(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        callable $next,
-        UserIdentityProvider $idp,
-        $data
-    ) {
-        $user = $this->auth->authenticate($idp, $data);
-
+    private function attemptSignIn(?User $user, ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    {
         if (!$user instanceof User) {
             $this->importErrors($this->auth->errors());
             return $next($this->withContext($request, ['errors' => $this->errors()]), $response);
@@ -189,44 +137,39 @@ class SignInHandler implements MiddlewareInterface
 
     /**
      * @param ServerRequestInterface $request
-     * @param UserIdentityProvider $idp
      *
-     * @return array
+     * @return UserIdentityProvider|null
      */
-    public function getFormData(ServerRequestInterface $request, UserIdentityProvider $idp): array
+    private function sanityCheck(ServerRequestInterface $request)
     {
-        $form = $request->getParsedBody();
-
-        if ($idp->type() === IdentityProviderEnum::TYPE_INTERNAL) {
-            return [
-                'username' => $form['internal_username'] ?? '',
-                'password' => $form['internal_password'] ?? '',
-            ];
+        if ($request->getMethod() !== 'POST') {
+            return null;
         }
 
-        if ($idp->type() === IdentityProviderEnum::TYPE_LDAP) {
-            return [
-                'username' => $form['ldap_username'] ?? '',
-                'password' => $form['ldap_password'] ?? '',
-            ];
+        if (!$this->isCSRFValid($request)) {
+            return null;
         }
 
-        if ($idp->type() === IdentityProviderEnum::TYPE_GITHUB_ENTERPRISE) {
-            return [
-                'redirect_uri' => $this->uri->absoluteURIFor($request->getUri(), 'signin.callback'),
-                'state' => $this->csrf->generateToken('oauth.ghe'), // @TODO: CONSTANT for token
-                'scope' => ['user', 'user:email']
-            ];
+        $idp = $this->getSelectedIDP($request);
+        if (!$idp instanceof UserIdentityProvider) {
+            return null;
         }
 
-        if ($idp->type() === IdentityProviderEnum::TYPE_GITHUB) {
-            return [
-                'redirect_uri' => $this->uri->absoluteURIFor($request->getUri(), 'signin.callback'),
-                'state' => $this->csrf->generateToken('oauth.gh'), // @TODO: CONSTANT for token
-                'scope' => ['user', 'user:email']
-            ];
+        return $idp;
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     *
+     * @return UserIdentityProvider|null
+     */
+    private function getSelectedIDP(ServerRequestInterface $request)
+    {
+        $providerID = $request->getParsedBody()['idp'] ?? '';
+        if (!$providerID) {
+            return null;
         }
 
-        return [];
+        return $this->idpRepo->find($providerID);
     }
 }

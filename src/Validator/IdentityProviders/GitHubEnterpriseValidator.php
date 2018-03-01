@@ -9,24 +9,25 @@ namespace Hal\UI\Validator\IdentityProviders;
 
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
-use Hal\UI\Utility\OptionTrait;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;
 use Psr\Http\Message\ServerRequestInterface;
 
 class GitHubEnterpriseValidator implements IdentityProviderValidatorInterface
 {
-    use OptionTrait;
     use ValidatorErrorTrait;
     use ValidatorTrait;
 
+    private const REGEX_CHARACTER_STRICT_WHITESPACE = '\f\n\r\t\v ';
+    private const REGEX_URL = '@^https?\:\/\/[[:ascii:]]+$@';
+
+    private const ERT_CHARACTERS_STRICT_WHITESPACE = '%s must not contain any whitespace.';
+
+    private const ERR_INVALID_URL = 'Base URL must be a URL including http:// or https://';
+
     public const ATTR_CLIENT_ID = 'ghe.client_id';
     public const ATTR_CLIENT_SECRET = 'ghe.client_secret';
-    public const ATTR_DOMAIN = 'ghe.domain';
-
-    private const REGEX_CHARACTER_CLASS_DOMAIN = '[Hh][Tt]{2}[Pp]([Ss])?\:\/\/[a-zA-Z0-9]{1}[a-zA-Z0-9\.\-]{2,150}(\:[0-9]{1,5})?';
-
-    private const ERR_INVALID_DOMAIN = 'Please enter a valid Github domain.';
+    public const ATTR_URL = 'ghe.url';
 
     /**
      * @param array $parameters
@@ -39,21 +40,25 @@ class GitHubEnterpriseValidator implements IdentityProviderValidatorInterface
 
         $clientID = trim($parameters['ghe_client_id'] ?? '');
         $clientSecret = trim($parameters['ghe_client_secret'] ?? '');
-        $domain = rtrim(trim($parameters['ghe_domain'] ?? ''), '/');
+        $baseURL = rtrim(trim($parameters['ghe_url'] ?? ''), '/');
 
         $this->validateClientID($clientID);
         $this->validateClientSecret($clientSecret);
-        $this->validateDomain($domain);
+        $this->validateURL($baseURL);
 
         if ($this->hasErrors()) {
             return null;
         }
 
+        // Set null on empty fields so they are removed from the parameters
+        $clientID = (strlen($clientID) > 0) ? $clientID : null;
+        $clientSecret = (strlen($clientSecret) > 0) ? $clientSecret : null;
+        $baseURL = (strlen($baseURL) > 0) ? $baseURL : null;
+
         $provider = (new UserIdentityProvider)
             ->withParameter(self::ATTR_CLIENT_ID, $clientID)
             ->withParameter(self::ATTR_CLIENT_SECRET, $clientSecret)
-            ->withParameter(self::ATTR_DOMAIN, $domain)
-            ->withIsOAuth(true);
+            ->withParameter(self::ATTR_URL, $baseURL);
 
         return $provider;
     }
@@ -70,20 +75,25 @@ class GitHubEnterpriseValidator implements IdentityProviderValidatorInterface
 
         $clientID = trim($parameters['ghe_client_id'] ?? '');
         $clientSecret = trim($parameters['ghe_client_secret'] ?? '');
-        $domain = rtrim(trim($parameters['ghe_domain'] ?? ''), '/');
+        $baseURL = rtrim(trim($parameters['ghe_url'] ?? ''), '/');
 
         $this->validateClientID($clientID);
         $this->validateClientSecret($clientSecret);
-        $this->validateDomain($domain);
+        $this->validateURL($baseURL);
 
         if ($this->hasErrors()) {
             return null;
         }
 
+        // Set null on empty fields so they are removed from the parameters
+        $clientID = (strlen($clientID) > 0) ? $clientID : null;
+        $clientSecret = (strlen($clientSecret) > 0) ? $clientSecret : null;
+        $baseURL = (strlen($baseURL) > 0) ? $baseURL : null;
+
         $provider
             ->withParameter(self::ATTR_CLIENT_ID, $clientID)
             ->withParameter(self::ATTR_CLIENT_SECRET, $clientSecret)
-            ->withParameter(self::ATTR_DOMAIN, $domain);
+            ->withParameter(self::ATTR_URL, $baseURL);
 
         return $provider;
     }
@@ -98,16 +108,18 @@ class GitHubEnterpriseValidator implements IdentityProviderValidatorInterface
     {
         $data = $request->getParsedBody();
 
+        $type = IdentityProviderEnum::TYPE_GITHUB_ENTERPRISE;
+
         if ($provider && $request->getMethod() !== 'POST') {
-            $data['ghe_client_id'] = $provider->parameter(self::ATTR_CLIENT_ID);
-            $data['ghe_client_secret'] = $provider->parameter(self::ATTR_CLIENT_SECRET);
-            $data['ghe_domain'] = $provider->parameter(self::ATTR_DOMAIN);
+            $data["${type}_client_id"] = $provider->parameter(self::ATTR_CLIENT_ID);
+            $data["${type}_client_secret"] = $provider->parameter(self::ATTR_CLIENT_SECRET);
+            $data["${type}_url"] = $provider->parameter(self::ATTR_URL);
         }
 
         return [
-            'ghe_client_id' => $data['ghe_client_id'],
-            'ghe_client_secret' => $data['ghe_client_secret'],
-            'ghe_domain' => $data['ghe_domain']
+            "${type}_client_id" => $data["${type}_client_id"] ?? '',
+            "${type}_client_secret" => $data["${type}_client_secret"] ?? '',
+            "${type}_url" => $data["${type}_url"] ?? ''
         ];
     }
 
@@ -122,6 +134,15 @@ class GitHubEnterpriseValidator implements IdentityProviderValidatorInterface
             $this->addRequiredError('Client ID', 'ghe_client_id');
             return;
         }
+
+        if (!$this->validateLength($clientID, 3, 100)) {
+            $this->addLengthError('Client ID', 3, 100, 'ghe_client_id');
+        }
+
+        if (!$this->validateCharacterBlacklist($clientID, self::REGEX_CHARACTER_STRICT_WHITESPACE)) {
+            $error = sprintf(self::ERT_CHARACTERS_STRICT_WHITESPACE, 'Client ID');
+            $this->addError($error, 'ghe_client_id');
+        }
     }
 
     /**
@@ -135,26 +156,35 @@ class GitHubEnterpriseValidator implements IdentityProviderValidatorInterface
             $this->addRequiredError('Client Secret', 'ghe_client_secret');
             return;
         }
+
+        if (!$this->validateLength($clientSecret, 3, 100)) {
+            $this->addLengthError('Client Secret', 3, 100, 'ghe_client_secret');
+        }
+
+        if (!$this->validateCharacterBlacklist($clientSecret, self::REGEX_CHARACTER_STRICT_WHITESPACE)) {
+            $error = sprintf(self::ERT_CHARACTERS_STRICT_WHITESPACE, 'Client Secret');
+            $this->addError($error, 'ghe_client_secret');
+        }
     }
 
     /**
-     * @param string $domain
+     * @param string $url
      *
      * @return void
      */
-    private function validateDomain($domain)
+    private function validateURL($url)
     {
-        if (!$this->validateIsRequired($domain) || !$this->validateSanityCheck($domain)) {
-            $this->addRequiredError('Domain', 'ghe_domain');
+        if (!$this->validateIsRequired($url) || !$this->validateSanityCheck($url)) {
+            $this->addRequiredError('GitHub Base URL', 'ghe_url');
             return;
         }
 
-        if (!$this->validateCharacterWhitelist($domain, self::REGEX_CHARACTER_CLASS_DOMAIN)) {
-            $this->addError(self::ERR_INVALID_DOMAIN, 'ghe_domain');
+        if (!$this->validateLength($url, 8, 100)) {
+            $this->addLengthError('GitHub Base URL', 8, 100, 'ghe_url');
         }
 
-        if (!$this->validateLength($domain, 8, 100)) {
-            $this->addLengthError('Domain', 8, 100, 'ghe_domain');
+        if (!$this->validateRegex($url, self::REGEX_URL)) {
+            $this->addError(self::ERR_INVALID_URL, 'ghe_url');
         }
     }
 }
