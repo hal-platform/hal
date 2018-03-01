@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "1f156ecf07323592e9691f9658ef3dee",
+    "content-hash": "65e51a78b98c0253343decc6ce184162",
     "packages": [
         {
             "name": "acclimate/container",
@@ -1070,16 +1070,16 @@
         },
         {
             "name": "hal/hal-core",
-            "version": "dev-add-github-idp",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hal-platform/hal-core.git",
-                "reference": "10de3b883ce91a6d3717e6c0ed623e0ede5af169"
+                "reference": "d7f5caf6699c276a03c6cc65516f53f7a6f441f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hal-platform/hal-core/zipball/10de3b883ce91a6d3717e6c0ed623e0ede5af169",
-                "reference": "10de3b883ce91a6d3717e6c0ed623e0ede5af169",
+                "url": "https://api.github.com/repos/hal-platform/hal-core/zipball/d7f5caf6699c276a03c6cc65516f53f7a6f441f1",
+                "reference": "d7f5caf6699c276a03c6cc65516f53f7a6f441f1",
                 "shasum": ""
             },
             "require": {
@@ -1132,7 +1132,7 @@
                 }
             ],
             "description": "Core domain entities and shared resources for Hal UI and Agent.",
-            "time": "2018-02-21 16:01:48"
+            "time": "2018-02-07 15:30:26"
         },
         {
             "name": "knplabs/github-api",

@@ -37,7 +37,7 @@
         "predis/predis":            "~1.0",
         "psr/log":                  "*",
 
-        "hal/hal-core":             "dev-add-github-idp",
+        "hal/hal-core":             "dev-master",
 
         "ql/mcp-cache":             "~3.0.0",
         "ql/mcp-common":            "~1.0",
