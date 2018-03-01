@@ -75,6 +75,14 @@
                 </li>
 
                 {{ block('internal_provider_form') }}
+
+                <li data-type-specific data-gh>
+                    {{ macros.alert('error', 'GitHub.com users cannot be added manually.') }}
+                </li>
+                <li data-type-specific data-ghe>
+                    {{ macros.alert('error', 'GitHub users cannot be added manually.') }}
+                </li>
+
             </ul>
 
         {% else %}

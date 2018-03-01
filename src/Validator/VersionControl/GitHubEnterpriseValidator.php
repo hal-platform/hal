@@ -37,7 +37,7 @@ class GitHubEnterpriseValidator implements VersionControlValidatorInterface
     {
         $this->resetErrors();
 
-        $baseURL = trim($parameters['ghe_url'] ?? '');
+        $baseURL = rtrim(trim($parameters['ghe_url'] ?? ''), '/');
         $token = trim($parameters['ghe_token'] ?? '');
 
         $this->validateURL($baseURL);
@@ -65,7 +65,7 @@ class GitHubEnterpriseValidator implements VersionControlValidatorInterface
     {
         $this->resetErrors();
 
-        $baseURL = trim($parameters['ghe_url'] ?? '');
+        $baseURL = rtrim(trim($parameters['ghe_url'] ?? ''), '/');
         $token = trim($parameters['ghe_token'] ?? '');
 
         $this->validateURL($baseURL);
@@ -118,8 +118,8 @@ class GitHubEnterpriseValidator implements VersionControlValidatorInterface
             return;
         }
 
-        if (!$this->validateLength($url, 3, 100)) {
-            $this->addLengthError('GitHub Base URL', 3, 100, 'ghe_url');
+        if (!$this->validateLength($url, 8, 100)) {
+            $this->addLengthError('GitHub Base URL', 8, 100, 'ghe_url');
         }
 
         if (!$this->validateRegex($url, self::REGEX_URL)) {
