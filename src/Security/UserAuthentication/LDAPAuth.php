@@ -14,9 +14,9 @@ use Hal\Core\Entity\User;
 use Hal\Core\Entity\User\UserIdentity;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
+use Hal\UI\Parameters;
 use Hal\UI\Security\UserAuthenticationInterface;
 use Hal\UI\Utility\OptionTrait;
-use Hal\UI\Validator\IdentityProviders\LDAPValidator;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Ldap\Ldap;
@@ -154,7 +154,7 @@ class LDAPAuth implements UserAuthenticationInterface
     private function retrieveIdentity(UserIdentityProvider $idp, LdapInterface $ldap, $username, $password)
     {
         $fqUsername = $username;
-        if ($domain = $idp->parameter(LDAPValidator::ATTR_DOMAIN)) {
+        if ($domain = $idp->parameter(Parameters::IDP_LDAP_DOMAIN)) {
             $fqUsername = $domain . '\\' . $fqUsername;
         }
 
@@ -166,8 +166,8 @@ class LDAPAuth implements UserAuthenticationInterface
             return null;
         }
 
-        $dn = $idp->parameter(LDAPValidator::ATTR_BASE_DN);
-        $attribute = $idp->parameter(LDAPValidator::ATTR_UNIQUE_ID) ?? $this->defaultUsernameAttribute;
+        $dn = $idp->parameter(Parameters::IDP_LDAP_BASE_DN);
+        $attribute = $idp->parameter(Parameters::IDP_LDAP_UNIQUE_ID) ?? $this->defaultUsernameAttribute;
 
         if (strlen($dn) === 0 || strlen($attribute) === 0) {
             return null;
@@ -242,8 +242,8 @@ class LDAPAuth implements UserAuthenticationInterface
 
         $identity = (new UserIdentity)
             ->withProviderUniqueID($data['id'])
-            ->withParameter('ldap.id', $data['id'])
-            ->withParameter('ldap.username', $data['username'])
+            ->withParameter(Parameters::ID_LDAP_ID, $data['id'])
+            ->withParameter(Parameters::ID_LDAP_USERNAME, $data['username'])
             ->withUser($user)
             ->withProvider($idp);
 
@@ -265,7 +265,7 @@ class LDAPAuth implements UserAuthenticationInterface
             return null;
         }
 
-        $host = $idp->parameter(LDAPValidator::ATTR_HOST);
+        $host = $idp->parameter(Parameters::IDP_LDAP_HOST);
 
         $hostname = strstr($host, ':', true);
         $port = strstr($host, ':', false);

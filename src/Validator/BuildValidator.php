@@ -14,6 +14,7 @@ use Hal\Core\Entity\Environment;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Type\JobStatusEnum;
+use Hal\UI\Parameters;
 use Hal\UI\Security\AuthorizationService;
 use Hal\UI\VersionControl\GitHub\GitHubResolver;
 use Hal\UI\VersionControl\VCS;
@@ -165,8 +166,8 @@ class BuildValidator
             return null;
         }
 
-        $owner = $application->parameter('gh.owner');
-        $repo = $application->parameter('gh.repo');
+        $owner = $application->parameter(Parameters::VC_GH_OWNER);
+        $repo = $application->parameter(Parameters::VC_GH_REPO);
 
         $resolved = $github->resolver()->resolve($owner, $repo, $reference);
 

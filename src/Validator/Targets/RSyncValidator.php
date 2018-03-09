@@ -9,6 +9,7 @@ namespace Hal\UI\Validator\Targets;
 
 use Hal\Core\Entity\Target;
 use Hal\Core\Type\TargetEnum;
+use Hal\UI\Parameters;
 use Hal\UI\Utility\OptionTrait;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;
@@ -57,8 +58,8 @@ class RSyncValidator implements TargetValidatorInterface
         $servers = (strlen($servers) > 0) ? $servers : null;
 
         $target = (new Target)
-            ->withParameter(Target::PARAM_REMOTE_PATH, $path)
-            ->withParameter('servers', $servers);
+            ->withParameter(Parameters::TARGET_RSYNC_REMOTE_PATH, $path)
+            ->withParameter(Parameters::TARGET_RSYNC_SERVERS, $servers);
 
         return $target;
     }
@@ -90,8 +91,8 @@ class RSyncValidator implements TargetValidatorInterface
         $servers = (strlen($servers) > 0) ? $servers : null;
 
         $target
-            ->withParameter(Target::PARAM_REMOTE_PATH, $path)
-            ->withParameter('servers', $servers);
+            ->withParameter(Parameters::TARGET_RSYNC_REMOTE_PATH, $path)
+            ->withParameter(Parameters::TARGET_RSYNC_SERVERS, $servers);
 
         return $target;
     }
@@ -106,8 +107,8 @@ class RSyncValidator implements TargetValidatorInterface
         $type = TargetEnum::TYPE_RSYNC;
 
         if ($target && $request->getMethod() !== 'POST') {
-            $data["${type}_path"] = $target->parameter(Target::PARAM_REMOTE_PATH);
-            $data["${type}_servers"] = $target->parameter('servers');
+            $data["${type}_path"] = $target->parameter(Parameters::TARGET_RSYNC_REMOTE_PATH);
+            $data["${type}_servers"] = $target->parameter(Parameters::TARGET_RSYNC_SERVERS);
         }
 
         return [

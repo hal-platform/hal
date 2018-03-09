@@ -9,6 +9,7 @@ namespace Hal\UI\Validator\IdentityProviders;
 
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
+use Hal\UI\Parameters;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;
 use Psr\Http\Message\ServerRequestInterface;
@@ -22,9 +23,6 @@ class GitHubValidator implements IdentityProviderValidatorInterface
     private const REGEX_URL = '@^https?\:\/\/[[:ascii:]]+$@';
 
     private const ERT_CHARACTERS_STRICT_WHITESPACE = '%s must not contain any whitespace.';
-
-    private const ATTR_CLIENT_ID = 'gh.client_id';
-    private const ATTR_CLIENT_SECRET = 'gh.client_secret';
 
     /**
      * @param array $parameters
@@ -50,8 +48,8 @@ class GitHubValidator implements IdentityProviderValidatorInterface
         $clientSecret = (strlen($clientSecret) > 0) ? $clientSecret : null;
 
         $provider = (new UserIdentityProvider)
-            ->withParameter(self::ATTR_CLIENT_ID, $clientID)
-            ->withParameter(self::ATTR_CLIENT_SECRET, $clientSecret);
+            ->withParameter(Parameters::IDP_GH_CLIENT_ID, $clientID)
+            ->withParameter(Parameters::IDP_GH_CLIENT_SECRET, $clientSecret);
 
         return $provider;
     }
@@ -81,8 +79,8 @@ class GitHubValidator implements IdentityProviderValidatorInterface
         $clientSecret = (strlen($clientSecret) > 0) ? $clientSecret : null;
 
         $provider
-            ->withParameter(self::ATTR_CLIENT_ID, $clientID)
-            ->withParameter(self::ATTR_CLIENT_SECRET, $clientSecret);
+            ->withParameter(Parameters::IDP_GH_CLIENT_ID, $clientID)
+            ->withParameter(Parameters::IDP_GH_CLIENT_SECRET, $clientSecret);
 
         return $provider;
     }
@@ -100,8 +98,8 @@ class GitHubValidator implements IdentityProviderValidatorInterface
         $type = IdentityProviderEnum::TYPE_GITHUB;
 
         if ($provider && $request->getMethod() !== 'POST') {
-            $data["${type}_client_id"] = $provider->parameter(self::ATTR_CLIENT_ID);
-            $data["${type}_client_secret"] = $provider->parameter(self::ATTR_CLIENT_SECRET);
+            $data["${type}_client_id"] = $provider->parameter(Parameters::IDP_GH_CLIENT_ID);
+            $data["${type}_client_secret"] = $provider->parameter(Parameters::IDP_GH_CLIENT_SECRET);
         }
 
         return [

@@ -16,6 +16,7 @@ use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\Parameters;
 use Hal\UI\Validator\UserValidator;
 use Hal\UI\Validator\UserIdentityValidator;
 use Psr\Http\Message\ResponseInterface;
@@ -164,7 +165,7 @@ HTML;
             'signin.setup',
             [
                 'user' => $user->id(),
-                'setup_token' => $identity->parameter('internal.setup_token')
+                'setup_token' => $identity->parameter(Parameters::ID_INTERNAL_SETUP_TOKEN)
             ]
         );
 

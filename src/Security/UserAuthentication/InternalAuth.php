@@ -13,6 +13,7 @@ use Hal\Core\Entity\User;
 use Hal\Core\Entity\User\UserIdentity;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
+use Hal\UI\Parameters;
 use Hal\UI\Security\UserAuthenticationInterface;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,9 +22,6 @@ use function password_verify;
 class InternalAuth implements UserAuthenticationInterface
 {
     use ValidatorErrorTrait;
-
-    // todo move to UserIdentityProvider?
-    private const PARAM_PW = 'internal.password';
 
     private const ERR_IDENTITY_NOT_FOUND = 'Invalid sign-in information. Please try again.';
     private const ERR_IDP_MISCONFIGURED = 'Internal Auth Identity Provider is misconfigured.';
@@ -63,7 +61,7 @@ class InternalAuth implements UserAuthenticationInterface
             return null;
         }
 
-        $hashed = $identity->parameter(self::PARAM_PW);
+        $hashed = $identity->parameter(Parameters::ID_INTERNAL_PASSWORD);
         if (strlen($hashed) === 0) {
             $this->addError(self::ERR_IDENTITY_NOT_FOUND);
             return null;

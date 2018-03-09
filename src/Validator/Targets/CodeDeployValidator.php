@@ -10,6 +10,7 @@ namespace Hal\UI\Validator\Targets;
 use Hal\Core\AWS\AWSAuthenticator;
 use Hal\Core\Entity\Target;
 use Hal\Core\Type\TargetEnum;
+use Hal\UI\Parameters;
 use Hal\UI\Utility\OptionTrait;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;
@@ -99,10 +100,10 @@ class CodeDeployValidator implements TargetValidatorInterface
         $region = (strlen($region) > 0) ? $region : null;
 
         $target
-            ->withParameter(Target::PARAM_APP, $name)
-            ->withParameter(Target::PARAM_GROUP, $group)
-            ->withParameter(Target::PARAM_CONFIG, $config)
-            ->withParameter('region', $region);
+            ->withParameter(Parameters::TARGET_CD_APP, $name)
+            ->withParameter(Parameters::TARGET_CD_GROUP, $group)
+            ->withParameter(Parameters::TARGET_CD_CONFIG, $config)
+            ->withParameter(Parameters::TARGET_REGION, $region);
 
         return $target;
     }
@@ -165,10 +166,10 @@ class CodeDeployValidator implements TargetValidatorInterface
         $region = (strlen($region) > 0) ? $region : null;
 
         $target
-            ->withParameter(Target::PARAM_APP, $name)
-            ->withParameter(Target::PARAM_GROUP, $group)
-            ->withParameter(Target::PARAM_CONFIG, $config)
-            ->withParameter('region', $region);
+            ->withParameter(Parameters::TARGET_CD_APP, $name)
+            ->withParameter(Parameters::TARGET_CD_GROUP, $group)
+            ->withParameter(Parameters::TARGET_CD_CONFIG, $config)
+            ->withParameter(Parameters::TARGET_REGION, $region);
 
         return $target;
     }
@@ -186,12 +187,12 @@ class CodeDeployValidator implements TargetValidatorInterface
         if ($target && $request->getMethod() !== 'POST') {
             $data['aws_region'] = $target->parameter('region');
 
-            $data["${type}_name"] = $target->parameter(Target::PARAM_APP);
-            $data["${type}_group"] = $target->parameter(Target::PARAM_GROUP);
-            $data["${type}_config"] = $target->parameter(Target::PARAM_CONFIG);
+            $data["${type}_name"] = $target->parameter(Parameters::TARGET_CD_APP);
+            $data["${type}_group"] = $target->parameter(Parameters::TARGET_CD_GROUP);
+            $data["${type}_config"] = $target->parameter(Parameters::TARGET_CD_CONFIG);
 
-            $data["${s3Type}_bucket"] = $target->parameter(Target::PARAM_BUCKET);
-            $data["${s3Type}_remote_path"] = $target->parameter(Target::PARAM_REMOTE_PATH);
+            $data["${s3Type}_bucket"] = $target->parameter(Parameters::TARGET_S3_BUCKET);
+            $data["${s3Type}_remote_path"] = $target->parameter(Parameters::TARGET_S3_REMOTE_PATH);
         }
 
         return [

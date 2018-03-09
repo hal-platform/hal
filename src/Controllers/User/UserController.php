@@ -10,6 +10,7 @@ namespace Hal\UI\Controllers\User;
 use Hal\Core\Entity\User;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\Parameters;
 use Hal\UI\Security\AuthorizationHydrator;
 use Hal\UI\Security\AuthorizationService;
 use Hal\UI\Security\UserAuthorizations;
@@ -114,7 +115,7 @@ class UserController implements ControllerInterface
     {
         $identity = $user->identities()->first();
 
-        $expiry = $identity->parameter('internal.setup_token_expiry');
+        $expiry = $identity->parameter(Parameters::ID_INTERNAL_SETUP_EXPIRY);
         if (!$expiry) {
             return false;
         }

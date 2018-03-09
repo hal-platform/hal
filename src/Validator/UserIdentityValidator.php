@@ -11,6 +11,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\User\UserIdentity;
 use Hal\Core\Entity\System\UserIdentityProvider;
+use Hal\Core\Type\IdentityProviderEnum;
+use Hal\UI\Parameters;
 use QL\MCP\Common\GUID;
 use QL\MCP\Common\Time\Clock;
 use Psr\Http\Message\ServerRequestInterface;
@@ -76,7 +78,7 @@ class UserIdentityValidator
         }
 
         // Only internal allowed for now.
-        if ($idp->type() !== 'internal') {
+        if ($idp->type() !== IdentityProviderEnum::TYPE_INTERNAL) {
             $this->addError(self::ERR_INVALID_IDP);
         }
 
@@ -121,7 +123,7 @@ class UserIdentityValidator
     {
         $this->resetErrors();
 
-        if ($identity->parameter('internal.password')) {
+        if ($identity->parameter(Parameters::ID_INTERNAL_PASSWORD)) {
             $this->addError(self::ERR_CANNOT_RESET, 'username');
             return null;
         }
@@ -133,8 +135,8 @@ class UserIdentityValidator
             ->format('Y-m-d\TH:i:s\Z', 'UTC');
 
         $identity
-            ->withParameter('internal.setup_token', $setupToken)
-            ->withParameter('internal.setup_token_expiry', $tokenExpiry);
+            ->withParameter(Parameters::ID_INTERNAL_SETUP_TOKEN, $setupToken)
+            ->withParameter(Parameters::ID_INTERNAL_SETUP_EXPIRY, $tokenExpiry);
 
         return $identity;
     }

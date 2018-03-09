@@ -10,6 +10,7 @@ namespace Hal\UI\Validator\Targets;
 use Hal\Core\AWS\AWSAuthenticator;
 use Hal\Core\Entity\Target;
 use Hal\Core\Type\TargetEnum;
+use Hal\UI\Parameters;
 use Hal\UI\Utility\OptionTrait;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;
@@ -83,11 +84,11 @@ class S3Validator implements TargetValidatorInterface
         $region = (strlen($region) > 0) ? $region : null;
 
         $target = (new Target)
-            ->withParameter(Target::PARAM_S3_METHOD, $method)
-            ->withParameter(Target::PARAM_LOCAL_PATH, $localPath)
-            ->withParameter(Target::PARAM_BUCKET, $s3Bucket)
-            ->withParameter(Target::PARAM_REMOTE_PATH, $s3Path)
-            ->withParameter('region', $region);
+            ->withParameter(Parameters::TARGET_S3_METHOD, $method)
+            ->withParameter(Parameters::TARGET_S3_BUCKET, $s3Bucket)
+            ->withParameter(Parameters::TARGET_S3_LOCAL_PATH, $localPath)
+            ->withParameter(Parameters::TARGET_S3_REMOTE_PATH, $s3Path)
+            ->withParameter(Parameters::TARGET_REGION, $region);
 
         return $target;
     }
@@ -143,11 +144,11 @@ class S3Validator implements TargetValidatorInterface
         $region = (strlen($region) > 0) ? $region : null;
 
         $target
-            ->withParameter(Target::PARAM_S3_METHOD, $method)
-            ->withParameter(Target::PARAM_LOCAL_PATH, $localPath)
-            ->withParameter(Target::PARAM_BUCKET, $s3Bucket)
-            ->withParameter(Target::PARAM_REMOTE_PATH, $s3Path)
-            ->withParameter('region', $region);
+            ->withParameter(Parameters::TARGET_S3_METHOD, $method)
+            ->withParameter(Parameters::TARGET_S3_BUCKET, $s3Bucket)
+            ->withParameter(Parameters::TARGET_S3_LOCAL_PATH, $localPath)
+            ->withParameter(Parameters::TARGET_S3_REMOTE_PATH, $s3Path)
+            ->withParameter(Parameters::TARGET_REGION, $region);
 
         return $target;
     }
@@ -162,13 +163,13 @@ class S3Validator implements TargetValidatorInterface
         $type = TargetEnum::TYPE_S3;
 
         if ($target && $request->getMethod() !== 'POST') {
-            $data['aws_region'] = $target->parameter('region');
+            $data['aws_region'] = $target->parameter(Parameters::TARGET_REGION);
 
-            $data["${type}_method"] = $target->parameter(Target::PARAM_S3_METHOD);
-            $data["${type}_local_path"] = $target->parameter(Target::PARAM_LOCAL_PATH);
+            $data["${type}_method"] = $target->parameter(Parameters::TARGET_S3_METHOD);
+            $data["${type}_local_path"] = $target->parameter(Parameters::TARGET_S3_LOCAL_PATH);
 
-            $data["${type}_bucket"] = $target->parameter(Target::PARAM_BUCKET);
-            $data["${type}_remote_path"] = $target->parameter(Target::PARAM_REMOTE_PATH);
+            $data["${type}_bucket"] = $target->parameter(Parameters::TARGET_S3_BUCKET);
+            $data["${type}_remote_path"] = $target->parameter(Parameters::TARGET_S3_REMOTE_PATH);
         }
 
         return [
@@ -220,7 +221,7 @@ class S3Validator implements TargetValidatorInterface
             return;
         }
 
-        if (!$this->validateIn($method, Target::S3_METHODS)) {
+        if (!$this->validateIn($method, Parameters::TARGET_S3_METHODS)) {
             $this->addError(self::ERR_INVALID_S3_METHOD, 's3_method');
         }
     }

@@ -8,6 +8,7 @@
 namespace Hal\UI\VersionControl;
 
 use Hal\Core\Entity\Application;
+use Hal\UI\Parameters;
 use Hal\UI\Service\GitHubService;
 use Hal\UI\VersionControl\VCS;
 
@@ -71,8 +72,8 @@ class BuildableRefs
         }
 
         $params = [
-            $application->parameter('gh.owner'),
-            $application->parameter('gh.repo')
+            $application->parameter(Parameters::VC_GH_OWNER),
+            $application->parameter(Parameters::VC_GH_REPO)
         ];
 
         return [

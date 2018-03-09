@@ -15,6 +15,7 @@ use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\Parameters;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -91,8 +92,8 @@ class SignInSetupController implements ControllerInterface
             return $response;
         }
 
-        $storedToken = $identity->parameter('internal.setup_token');
-        $expiry = $identity->parameter('internal.setup_token_expiry');
+        $storedToken = $identity->parameter(Parameters::ID_INTERNAL_SETUP_TOKEN);
+        $expiry = $identity->parameter(Parameters::ID_INTERNAL_SETUP_EXPIRY);
 
         if (!$expiry || !$storedToken || !$token) {
             return $this->byebye($request, $response);
@@ -163,9 +164,9 @@ class SignInSetupController implements ControllerInterface
         ]);
 
         $identity
-            ->withParameter('internal.setup_token', null)
-            ->withParameter('internal.setup_token_expiry', null)
-            ->withParameter('internal.password', $hashed);
+            ->withParameter(Parameters::ID_INTERNAL_SETUP_TOKEN, null)
+            ->withParameter(Parameters::ID_INTERNAL_SETUP_EXPIRY, null)
+            ->withParameter(Parameters::ID_INTERNAL_PASSWORD, $hashed);
 
         return $identity;
     }

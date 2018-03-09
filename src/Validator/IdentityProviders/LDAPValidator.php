@@ -9,6 +9,7 @@ namespace Hal\UI\Validator\IdentityProviders;
 
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
+use Hal\UI\Parameters;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;
 use Psr\Http\Message\ServerRequestInterface;
@@ -17,12 +18,6 @@ class LDAPValidator implements IdentityProviderValidatorInterface
 {
     use ValidatorErrorTrait;
     use ValidatorTrait;
-
-    // todo move to UserIdentityProvider?
-    public const ATTR_HOST = 'ldap.host';
-    public const ATTR_DOMAIN = 'ldap.domain';
-    public const ATTR_BASE_DN = 'ldap.base_dn';
-    public const ATTR_UNIQUE_ID = 'ldap.attr.unique_id';
 
     private const REGEX_CHARACTER_CLASS_HOST = '[a-zA-Z0-9]{1}[a-zA-Z0-9\.\-]{3,150}(\:[0-9]{1,5})?';
     private const REGEX_CHARACTER_CLASS_ASCII = '[:ascii:]+';
@@ -63,10 +58,10 @@ class LDAPValidator implements IdentityProviderValidatorInterface
         $uniqueID = (strlen($uniqueID) > 0) ? $uniqueID : null;
 
         $provider = (new UserIdentityProvider)
-            ->withParameter(self::ATTR_HOST, $hostname)
-            ->withParameter(self::ATTR_DOMAIN, $domain)
-            ->withParameter(self::ATTR_BASE_DN, $baseDN)
-            ->withParameter(self::ATTR_UNIQUE_ID, $uniqueID);
+            ->withParameter(Parameters::IDP_LDAP_HOST, $hostname)
+            ->withParameter(Parameters::IDP_LDAP_DOMAIN, $domain)
+            ->withParameter(Parameters::IDP_LDAP_BASE_DN, $baseDN)
+            ->withParameter(Parameters::IDP_LDAP_UNIQUE_ID, $uniqueID);
 
         return $provider;
     }
@@ -102,10 +97,10 @@ class LDAPValidator implements IdentityProviderValidatorInterface
         $uniqueID = (strlen($uniqueID) > 0) ? $uniqueID : null;
 
         $provider
-            ->withParameter(self::ATTR_HOST, $hostname)
-            ->withParameter(self::ATTR_DOMAIN, $domain)
-            ->withParameter(self::ATTR_BASE_DN, $baseDN)
-            ->withParameter(self::ATTR_UNIQUE_ID, $uniqueID);
+            ->withParameter(Parameters::IDP_LDAP_HOST, $hostname)
+            ->withParameter(Parameters::IDP_LDAP_DOMAIN, $domain)
+            ->withParameter(Parameters::IDP_LDAP_BASE_DN, $baseDN)
+            ->withParameter(Parameters::IDP_LDAP_UNIQUE_ID, $uniqueID);
 
         return $provider;
     }
@@ -123,10 +118,10 @@ class LDAPValidator implements IdentityProviderValidatorInterface
         $type = IdentityProviderEnum::TYPE_LDAP;
 
         if ($provider && $request->getMethod() !== 'POST') {
-            $data["${type}_host"] = $provider->parameter(self::ATTR_HOST);
-            $data["${type}_domain"] = $provider->parameter(self::ATTR_DOMAIN);
-            $data["${type}_base_dn"] = $provider->parameter(self::ATTR_BASE_DN);
-            $data["${type}_unique_id"] = $provider->parameter(self::ATTR_UNIQUE_ID);
+            $data["${type}_host"] = $provider->parameter(Parameters::IDP_LDAP_HOST);
+            $data["${type}_domain"] = $provider->parameter(Parameters::IDP_LDAP_DOMAIN);
+            $data["${type}_base_dn"] = $provider->parameter(Parameters::IDP_LDAP_BASE_DN);
+            $data["${type}_unique_id"] = $provider->parameter(Parameters::IDP_LDAP_UNIQUE_ID);
         }
 
         return [

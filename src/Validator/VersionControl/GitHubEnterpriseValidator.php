@@ -9,6 +9,7 @@ namespace Hal\UI\Validator\VersionControl;
 
 use Hal\Core\Entity\System\VersionControlProvider;
 use Hal\Core\Type\VCSProviderEnum;
+use Hal\UI\Parameters;
 use Hal\UI\Utility\OptionTrait;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;
@@ -26,9 +27,6 @@ class GitHubEnterpriseValidator implements VersionControlValidatorInterface
     private const ERT_CHARACTERS_STRICT_WHITESPACE = '%s must not contain any whitespace.';
 
     private const ERR_INVALID_URL = 'Base URL must be a URL including http:// or https://';
-
-    private const ATTR_URL = 'ghe.url';
-    private const ATTR_TOKEN = 'ghe.token';
 
     /**
      * @inheritDoc
@@ -52,8 +50,8 @@ class GitHubEnterpriseValidator implements VersionControlValidatorInterface
         $token = (strlen($token) > 0) ? $token : null;
 
         $provider = (new VersionControlProvider)
-            ->withParameter(self::ATTR_URL, $baseURL)
-            ->withParameter(self::ATTR_TOKEN, $token);
+            ->withParameter(Parameters::VCS_GHE_URL, $baseURL)
+            ->withParameter(Parameters::VCS_GHE_TOKEN, $token);
 
         return $provider;
     }
@@ -80,8 +78,8 @@ class GitHubEnterpriseValidator implements VersionControlValidatorInterface
         $token = (strlen($token) > 0) ? $token : null;
 
         $provider
-            ->withParameter(self::ATTR_URL, $baseURL)
-            ->withParameter(self::ATTR_TOKEN, $token);
+            ->withParameter(Parameters::VCS_GHE_URL, $baseURL)
+            ->withParameter(Parameters::VCS_GHE_TOKEN, $token);
 
         return $provider;
     }
@@ -96,8 +94,8 @@ class GitHubEnterpriseValidator implements VersionControlValidatorInterface
         $type = VCSProviderEnum::TYPE_GITHUB_ENTERPRISE;
 
         if ($provider && $request->getMethod() !== 'POST') {
-            $data["${type}_url"] = $provider->parameter(self::ATTR_URL);
-            $data["${type}_token"] = $provider->parameter(self::ATTR_TOKEN);
+            $data["${type}_url"] = $provider->parameter(Parameters::VCS_GHE_URL);
+            $data["${type}_token"] = $provider->parameter(Parameters::VCS_GHE_TOKEN);
         }
 
         return [

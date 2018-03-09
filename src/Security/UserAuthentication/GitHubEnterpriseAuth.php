@@ -11,15 +11,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\ClientInterface as GuzzleInterface;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
+use Hal\UI\Parameters;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Github as GitHubProvider;
 
 class GitHubEnterpriseAuth extends GitHubAuth
 {
-    private const PARAM_GHE_CLIENT_ID = 'ghe.client_id';
-    private const PARAM_GHE_CLIENT_SECRET = 'ghe.client_secret';
-    private const PARAM_GHE_DOMAIN = 'ghe.url';
-
     /**
      * @var GuzzleInterface
      */
@@ -65,9 +62,9 @@ class GitHubEnterpriseAuth extends GitHubAuth
      */
     protected function getClient(UserIdentityProvider $idp)
     {
-        $id = $idp->parameter(self::PARAM_GHE_CLIENT_ID);
-        $secret = $idp->parameter(self::PARAM_GHE_CLIENT_SECRET);
-        $domain = $idp->parameter(self::PARAM_GHE_DOMAIN);
+        $id = $idp->parameter(Parameters::IDP_GHE_CLIENT_ID);
+        $secret = $idp->parameter(Parameters::IDP_GHE_CLIENT_SECRET);
+        $domain = $idp->parameter(Parameters::IDP_GHE_URL);
 
         $data = [
             'clientId' => $id,

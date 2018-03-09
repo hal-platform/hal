@@ -17,6 +17,7 @@ use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\Parameters;
 use Hal\UI\Validator\ApplicationValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -177,9 +178,9 @@ class EditApplicationController implements ControllerInterface
 
         $originalOrganizationID = $application->organization() ? $application->organization()->id() : '';
         $originalVCSID = $application->provider() ? $application->provider()->id() : '';
-        $originalGHOwner = $application->parameter('gh.owner');
-        $originalGHRepo = $application->parameter('gh.repo');
-        $originalGitLink = $application->parameter('git.link');
+        $originalGHOwner = $application->parameter(Parameters::VC_GH_OWNER);
+        $originalGHRepo = $application->parameter(Parameters::VC_GH_REPO);
+        $originalGitLink = $application->parameter(Parameters::VC_GIT_URL);
 
         $form = [
             'name' => $isPost ? $name : $application->name(),

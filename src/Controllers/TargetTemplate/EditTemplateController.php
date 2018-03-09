@@ -17,6 +17,7 @@ use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Validator\TargetTemplateValidator;
+use Hal\UI\Parameters;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -94,7 +95,7 @@ class EditTemplateController implements ControllerInterface
 
             'deployment_types' => TargetEnum::options(),
             'aws_regions' => AWSAuthenticator::$awsRegions,
-            's3_methods' => Target::S3_METHODS
+            's3_methods' => Parameters::TARGET_S3_METHODS
         ]);
     }
 
@@ -139,7 +140,7 @@ class EditTemplateController implements ControllerInterface
             // $data['credential'] = $target->credential() ? $target->credential()->id() : '';
 
             $data['name'] = $template->name();
-            $data['script_context'] = $template->parameter(Target::PARAM_CONTEXT);
+            $data['script_context'] = $template->parameter(Parameters::TARGET_CONTEXT);
         }
 
         $type = $template->type();

@@ -23,6 +23,7 @@ use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\Parameters;
 use Hal\UI\Validator\EnvironmentValidator;
 use Hal\UI\Validator\IdentityValidator;
 use Hal\UI\Validator\UserIdentityProviderValidator;
@@ -255,10 +256,9 @@ class HalBootstrapController implements ControllerInterface
         }
 
         $adminIdentity
-            ->withParameter('internal.setup_token', null)
-            ->withParameter('internal.setup_token_expiry', null)
-            ->withParameter('internal.setup_token', null)
-            ->withParameter('internal.password', $hashed)
+            ->withParameter(Parameters::ID_INTERNAL_SETUP_TOKEN, null)
+            ->withParameter(Parameters::ID_INTERNAL_SETUP_EXPIRY, null)
+            ->withParameter(Parameters::ID_INTERNAL_PASSWORD, $hashed)
             ->withUser($adminUser);
 
         // make user admin

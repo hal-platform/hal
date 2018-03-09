@@ -10,6 +10,7 @@ namespace Hal\UI\Validator\Targets;
 use Hal\Core\AWS\AWSAuthenticator;
 use Hal\Core\Entity\Target;
 use Hal\Core\Type\TargetEnum;
+use Hal\UI\Parameters;
 use Hal\UI\Utility\OptionTrait;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;
@@ -93,9 +94,9 @@ class ElasticBeanstalkValidator implements TargetValidatorInterface
         $region = (strlen($region) > 0) ? $region : null;
 
         $target
-            ->withParameter(Target::PARAM_APP, $name)
-            ->withParameter(Target::PARAM_ENV, $environment)
-            ->withParameter('region', $region);
+            ->withParameter(Parameters::TARGET_EB_APP, $name)
+            ->withParameter(Parameters::TARGET_EB_ENV, $environment)
+            ->withParameter(Parameters::TARGET_REGION, $region);
 
         return $target;
     }
@@ -152,9 +153,9 @@ class ElasticBeanstalkValidator implements TargetValidatorInterface
         $region = (strlen($region) > 0) ? $region : null;
 
         $target
-            ->withParameter(Target::PARAM_APP, $name)
-            ->withParameter(Target::PARAM_ENV, $environment)
-            ->withParameter('region', $region);
+            ->withParameter(Parameters::TARGET_EB_APP, $name)
+            ->withParameter(Parameters::TARGET_EB_ENV, $environment)
+            ->withParameter(Parameters::TARGET_REGION, $region);
 
         return $target;
     }
@@ -170,13 +171,13 @@ class ElasticBeanstalkValidator implements TargetValidatorInterface
         $s3Type = TargetEnum::TYPE_S3;
 
         if ($target && $request->getMethod() !== 'POST') {
-            $data['aws_region'] = $target->parameter('region');
+            $data['aws_region'] = $target->parameter(Parameters::TARGET_REGION);
 
-            $data["${type}_name"] = $target->parameter(Target::PARAM_APP);
-            $data["${type}_environment"] = $target->parameter(Target::PARAM_ENV);
+            $data["${type}_name"] = $target->parameter(Parameters::TARGET_EB_APP);
+            $data["${type}_environment"] = $target->parameter(Parameters::TARGET_EB_ENV);
 
-            $data["${s3Type}_bucket"] = $target->parameter(Target::PARAM_BUCKET);
-            $data["${s3Type}_remote_path"] = $target->parameter(Target::PARAM_REMOTE_PATH);
+            $data["${s3Type}_bucket"] = $target->parameter(Parameters::TARGET_S3_BUCKET);
+            $data["${s3Type}_remote_path"] = $target->parameter(Parameters::TARGET_S3_REMOTE_PATH);
         }
 
         return [

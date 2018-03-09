@@ -9,6 +9,7 @@ namespace Hal\UI\Validator\IdentityProviders;
 
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Type\IdentityProviderEnum;
+use Hal\UI\Parameters;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;
 use Psr\Http\Message\ServerRequestInterface;
@@ -24,10 +25,6 @@ class GitHubEnterpriseValidator implements IdentityProviderValidatorInterface
     private const ERT_CHARACTERS_STRICT_WHITESPACE = '%s must not contain any whitespace.';
 
     private const ERR_INVALID_URL = 'Base URL must be a URL including http:// or https://';
-
-    public const ATTR_CLIENT_ID = 'ghe.client_id';
-    public const ATTR_CLIENT_SECRET = 'ghe.client_secret';
-    public const ATTR_URL = 'ghe.url';
 
     /**
      * @param array $parameters
@@ -56,9 +53,9 @@ class GitHubEnterpriseValidator implements IdentityProviderValidatorInterface
         $baseURL = (strlen($baseURL) > 0) ? $baseURL : null;
 
         $provider = (new UserIdentityProvider)
-            ->withParameter(self::ATTR_CLIENT_ID, $clientID)
-            ->withParameter(self::ATTR_CLIENT_SECRET, $clientSecret)
-            ->withParameter(self::ATTR_URL, $baseURL);
+            ->withParameter(Parameters::IDP_GHE_CLIENT_ID, $clientID)
+            ->withParameter(Parameters::IDP_GHE_CLIENT_SECRET, $clientSecret)
+            ->withParameter(Parameters::IDP_GHE_URL, $baseURL);
 
         return $provider;
     }
@@ -91,9 +88,9 @@ class GitHubEnterpriseValidator implements IdentityProviderValidatorInterface
         $baseURL = (strlen($baseURL) > 0) ? $baseURL : null;
 
         $provider
-            ->withParameter(self::ATTR_CLIENT_ID, $clientID)
-            ->withParameter(self::ATTR_CLIENT_SECRET, $clientSecret)
-            ->withParameter(self::ATTR_URL, $baseURL);
+            ->withParameter(Parameters::IDP_GHE_CLIENT_ID, $clientID)
+            ->withParameter(Parameters::IDP_GHE_CLIENT_SECRET, $clientSecret)
+            ->withParameter(Parameters::IDP_GHE_URL, $baseURL);
 
         return $provider;
     }
@@ -111,9 +108,9 @@ class GitHubEnterpriseValidator implements IdentityProviderValidatorInterface
         $type = IdentityProviderEnum::TYPE_GITHUB_ENTERPRISE;
 
         if ($provider && $request->getMethod() !== 'POST') {
-            $data["${type}_client_id"] = $provider->parameter(self::ATTR_CLIENT_ID);
-            $data["${type}_client_secret"] = $provider->parameter(self::ATTR_CLIENT_SECRET);
-            $data["${type}_url"] = $provider->parameter(self::ATTR_URL);
+            $data["${type}_client_id"] = $provider->parameter(Parameters::IDP_GHE_CLIENT_ID);
+            $data["${type}_client_secret"] = $provider->parameter(Parameters::IDP_GHE_CLIENT_SECRET);
+            $data["${type}_url"] = $provider->parameter(Parameters::IDP_GHE_URL);
         }
 
         return [

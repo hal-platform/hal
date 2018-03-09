@@ -14,6 +14,7 @@ use Hal\Core\Entity\Application\GitHubApplication;
 use Hal\Core\Entity\Organization;
 use Hal\Core\Entity\System\VersionControlProvider;
 use Hal\Core\Type\VCSProviderEnum;
+use Hal\UI\Parameters;
 use Hal\UI\Service\GitHubService;
 use Hal\UI\VersionControl\VCS;
 
@@ -171,8 +172,8 @@ class ApplicationValidator
         $gitLink = $parameters['git_link'] ?? '';
 
         if ($provider->type() === VCSProviderEnum::TYPE_GITHUB_ENTERPRISE) {
-            $baseURL = $provider->parameter('ghe.url');
-            $token = $provider->parameter('ghe.token');
+            $baseURL = $provider->parameter(Parameters::VCS_GHE_URL);
+            $token = $provider->parameter(Parameters::VCS_GHE_TOKEN);
 
             // ideally we shouldn't need this
             if (!$baseURL || !$token) {
@@ -181,7 +182,7 @@ class ApplicationValidator
             }
 
         } elseif ($provider->type() === VCSProviderEnum::TYPE_GITHUB) {
-            $token = $provider->parameter('gh.token');
+            $token = $provider->parameter(Parameters::VCS_GH_TOKEN);
 
             // ideally we shouldn't need this
             if (!$token) {
@@ -209,8 +210,8 @@ class ApplicationValidator
         }
 
         $application
-            ->withParameter('gh.owner', $ghOwner)
-            ->withParameter('gh.repo', $ghRepo);
+            ->withParameter(Parameters::VC_GH_OWNER, $ghOwner)
+            ->withParameter(Parameters::VC_GH_REPO, $ghRepo);
 
         // $application->parameter('git.link');
 

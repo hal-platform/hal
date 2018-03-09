@@ -10,6 +10,7 @@ namespace Hal\UI\VersionControl\VCS;
 use Github\ResultPager;
 use Hal\Core\Entity\System\VersionControlProvider;
 use Hal\Core\VersionControl\VCS\GitHubEnterpriseVCS as BaseGitHubEnterpriseVCS;
+use Hal\UI\Parameters;
 use Hal\UI\Service\GitHubService;
 use Hal\UI\VersionControl\GitHub\GitHubResolver;
 use Hal\UI\VersionControl\GitHub\GitHubURLBuilder;
@@ -17,9 +18,6 @@ use Hal\UI\VersionControl\GitHub\GitHubURLBuilder;
 // @todo - this needs to be merged and combined into the hal-core version
 class GitHubEnterpriseVCS extends BaseGitHubEnterpriseVCS
 {
-    // todo move to VCSProviderEnum?
-    const PARAM_URL = 'ghe.url';
-
     /**
      * @param VersionControlProvider $vcs
      *
@@ -32,7 +30,7 @@ class GitHubEnterpriseVCS extends BaseGitHubEnterpriseVCS
             return null;
         }
 
-        $baseURL = $vcs->parameter(self::PARAM_URL);
+        $baseURL = $vcs->parameter(Parameters::VCS_GHE_URL);
 
         $resolver = new GitHubResolver($client);
         $pager = new ResultPager($client);

@@ -14,6 +14,7 @@ use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\User\UserIdentity;
 use Hal\Core\Type\IdentityProviderEnum;
+use Hal\UI\Parameters;
 use Hal\UI\Security\UserAuthenticationInterface;
 use Hal\UI\Service\UserIdentityService;
 use Hal\UI\Utility\OptionTrait;
@@ -36,9 +37,6 @@ class GitHubAuth implements UserAuthenticationInterface
     public const DEFAULT_FLAGS = self::AUTO_CREATE_USER;
 
     private const SECRET_BYTES = 32;
-
-    private const PARAM_GH_CLIENT_ID = 'gh.client_id';
-    private const PARAM_GH_CLIENT_SECRET = 'gh.client_secret';
 
     private const ERR_INVALID_STATE = 'An error occurred when verifying GitHub OAuth response. Please try again.';
     private const ERR_IDENTITY_NOT_FOUND = 'Invalid sign-in information. Please try again.';
@@ -218,8 +216,8 @@ class GitHubAuth implements UserAuthenticationInterface
 
         $identity = (new UserIdentity)
             ->withProviderUniqueID($id)
-            ->withParameter('gh.id', $id)
-            ->withParameter('gh.username', $username)
+            ->withParameter(Parameters::ID_GH_ID, $id)
+            ->withParameter(Parameters::ID_GH_USERNAME, $username)
             ->withUser($user)
             ->withProvider($idp);
 
@@ -266,8 +264,8 @@ class GitHubAuth implements UserAuthenticationInterface
      */
     protected function getClient(UserIdentityProvider $idp)
     {
-        $id = $idp->parameter(self::PARAM_GH_CLIENT_ID);
-        $secret = $idp->parameter(self::PARAM_GH_CLIENT_SECRET);
+        $id = $idp->parameter(Parameters::IDP_GH_CLIENT_ID);
+        $secret = $idp->parameter(Parameters::IDP_GH_CLIENT_SECRET);
 
         $data = [
             'clientId' => $id,

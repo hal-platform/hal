@@ -11,6 +11,7 @@ use Exception;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Type\VCSProviderEnum;
+use Hal\UI\Parameters;
 use Hal\UI\VersionControl\VCS;
 use QL\MCP\Cache\CachingTrait;
 use Twig\TwigFilter;
@@ -90,12 +91,12 @@ class GitHubExtension extends AbstractExtension
             if (in_array($provider->type(), $githubs)) {
                 $github = $this->vcs->authenticate($application->provider());
                 return $github->url()->githubRepoURL(
-                    $application->parameter('gh.owner'),
-                    $application->parameter('gh.repo')
+                    $application->parameter(Parameters::VC_GH_OWNER),
+                    $application->parameter(Parameters::VC_GH_REPO)
                 );
 
             } elseif ($provider === VCSProviderEnum::TYPE_GITHUB) {
-                return $application->parameter('git.link');
+                return $application->parameter(Parameters::VC_GIT_URL);
             }
         }
 
@@ -123,8 +124,8 @@ class GitHubExtension extends AbstractExtension
 
                 $ref = $github->resolver()->resolveRefType($reference);
                 return $github->url()->githubRefURL(
-                    $application->parameter('gh.owner'),
-                    $application->parameter('gh.repo'),
+                    $application->parameter(Parameters::VC_GH_OWNER),
+                    $application->parameter(Parameters::VC_GH_REPO),
                     ...$ref
                 );
 
@@ -154,8 +155,8 @@ class GitHubExtension extends AbstractExtension
             if (in_array($provider->type(), $githubs)) {
                 return sprintf(
                     '%s/%s',
-                    $application->parameter('gh.owner'),
-                    $application->parameter('gh.repo')
+                    $application->parameter(Parameters::VC_GH_OWNER),
+                    $application->parameter(Parameters::VC_GH_REPO)
                 );
 
             } elseif ($provider->type() === VCSProviderEnum::TYPE_GIT) {
@@ -197,8 +198,8 @@ class GitHubExtension extends AbstractExtension
         }
 
         $resolved = $github->resolver()->resolve(
-            $application->parameter('gh.owner'),
-            $application->parameter('gh.repo'),
+            $application->parameter(Parameters::VC_GH_OWNER),
+            $application->parameter(Parameters::VC_GH_REPO),
             $build->reference()
         );
 

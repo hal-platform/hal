@@ -11,6 +11,7 @@ use Hal\Core\Type\TargetEnum;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResourceNormalizerInterface;
+use Hal\UI\Parameters;
 use Hal\Core\Entity\Target;
 
 class TargetNormalizer implements ResourceNormalizerInterface
@@ -87,36 +88,36 @@ class TargetNormalizer implements ResourceNormalizerInterface
         switch ($type) {
             case TargetEnum::TYPE_S3:
                 return [
-                    's3_method' => $target->parameter(Target::PARAM_S3_METHOD),
-                    'bucket' => $target->parameter(Target::PARAM_BUCKET),
-                    'source' => $target->parameter(Target::PARAM_LOCAL_PATH),
-                    'path' => $target->parameter(Target::PARAM_REMOTE_PATH),
+                    's3_method' => $target->parameter(Parameters::TARGET_S3_METHOD),
+                    'bucket' => $target->parameter(Parameters::TARGET_S3_BUCKET),
+                    'source' => $target->parameter(Parameters::TARGET_S3_LOCAL_PATH),
+                    'path' => $target->parameter(Parameters::TARGET_S3_REMOTE_PATH),
                 ];
 
             case TargetEnum::TYPE_EB:
                 return [
-                    'bucket' => $target->parameter(Target::PARAM_BUCKET),
-                    'source' => $target->parameter(Target::PARAM_LOCAL_PATH),
-                    'path' => $target->parameter(Target::PARAM_REMOTE_PATH),
-                    'application' => $target->parameter(Target::PARAM_APP),
-                    'environment' => $target->parameter(Target::PARAM_ENV),
+                    'bucket' => $target->parameter(Parameters::TARGET_S3_BUCKET),
+                    'source' => $target->parameter(Parameters::TARGET_S3_LOCAL_PATH),
+                    'path' => $target->parameter(Parameters::TARGET_S3_REMOTE_PATH),
+                    'application' => $target->parameter(Parameters::TARGET_EB_APP),
+                    'environment' => $target->parameter(Parameters::TARGET_EB_ENV),
                 ];
 
             case TargetEnum::TYPE_CD:
                 return [
-                    'bucket' => $target->parameter(Target::PARAM_BUCKET),
-                    'source' => $target->parameter(Target::PARAM_LOCAL_PATH),
-                    'path' => $target->parameter(Target::PARAM_REMOTE_PATH),
-                    'application' => $target->parameter(Target::PARAM_APP),
-                    'group' => $target->parameter(Target::PARAM_GROUP),
-                    'configuration' => $target->parameter(Target::PARAM_CONFIG),
+                    'bucket' => $target->parameter(Parameters::TARGET_S3_BUCKET),
+                    'source' => $target->parameter(Parameters::TARGET_S3_LOCAL_PATH),
+                    'path' => $target->parameter(Parameters::TARGET_S3_REMOTE_PATH),
+                    'application' => $target->parameter(Parameters::TARGET_CD_APP),
+                    'group' => $target->parameter(Parameters::TARGET_CD_GROUP),
+                    'configuration' => $target->parameter(Parameters::TARGET_CD_CONFIG),
                 ];
 
             case TargetEnum::TYPE_RSYNC:
-                return ['path' => $target->parameter(Target::PARAM_REMOTE_PATH)];
+                return ['path' => $target->parameter(Parameters::TARGET_RSYNC_REMOTE_PATH)];
 
             case TargetEnum::TYPE_SCRIPT:
-                return ['context' => $target->parameter(TARGET::PARAM_CONTEXT)];
+                return ['context' => $target->parameter(Parameters::TARGET_CONTEXT)];
 
             default:
                 return [];

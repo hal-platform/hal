@@ -14,6 +14,7 @@ use Hal\Core\Entity\Credential;
 use Hal\Core\Entity\Environment;
 use Hal\Core\Entity\Target;
 use Hal\Core\Entity\TargetTemplate;
+use Hal\UI\Parameters;
 use Hal\UI\Validator\Targets\TargetValidatorInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -152,7 +153,7 @@ class TargetValidator
             ->withURL($url)
             ->withCredential($credential)
 
-            ->withParameter(Target::PARAM_CONTEXT, $context);
+            ->withParameter(Parameters::TARGET_CONTEXT, $context);
 
         return $target;
     }
@@ -239,7 +240,7 @@ class TargetValidator
             ->withURL($url)
             ->withCredential($credential)
 
-            ->withParameter(Target::PARAM_CONTEXT, $context);
+            ->withParameter(Parameters::TARGET_CONTEXT, $context);
 
         return $target;
     }
@@ -266,7 +267,7 @@ class TargetValidator
 
             $data['name'] = $target->name();
             $data['url'] = $target->url();
-            $data['script_context'] = $target->parameter(Target::PARAM_CONTEXT);
+            $data['script_context'] = $target->parameter(Parameters::TARGET_CONTEXT);
         }
 
         $form = [
