@@ -59,9 +59,17 @@ class Parameters
     public const ID_INTERNAL_SETUP_TOKEN = 'internal.setup_token';
     public const ID_INTERNAL_SETUP_EXPIRY = 'internal.setup_token_expiry';
 
-    // version control
+    public const ID_GH_ID = 'gh.id';
+    public const ID_GH_USERNAME = 'gh.username';
+
+    // version control systems
+    public const VCS_GH_TOKEN = 'gh.token';
+
     public const VCS_GHE_TOKEN = 'ghe.token';
     public const VCS_GHE_URL = 'ghe.url';
+
+    // version control
+    public const VC_GIT_URL = 'git.link';
 
     public const VC_GH_OWNER = 'gh.owner';
     public const VC_GH_REPO = 'gh.repo';
