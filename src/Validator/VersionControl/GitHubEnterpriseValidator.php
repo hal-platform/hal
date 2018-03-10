@@ -8,8 +8,8 @@
 namespace Hal\UI\Validator\VersionControl;
 
 use Hal\Core\Entity\System\VersionControlProvider;
+use Hal\Core\Parameters;
 use Hal\Core\Type\VCSProviderEnum;
-use Hal\UI\Parameters;
 use Hal\UI\Utility\OptionTrait;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;

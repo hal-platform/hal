@@ -8,9 +8,9 @@
 namespace Hal\UI\Controllers\User;
 
 use Hal\Core\Entity\User;
+use Hal\Core\Parameters;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Parameters;
 use Hal\UI\Security\AuthorizationHydrator;
 use Hal\UI\Security\AuthorizationService;
 use Hal\UI\Security\UserAuthorizations;

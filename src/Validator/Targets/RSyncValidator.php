@@ -8,8 +8,8 @@
 namespace Hal\UI\Validator\Targets;
 
 use Hal\Core\Entity\Target;
+use Hal\Core\Parameters;
 use Hal\Core\Type\TargetEnum;
-use Hal\UI\Parameters;
 use Hal\UI\Utility\OptionTrait;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;

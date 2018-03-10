@@ -8,8 +8,8 @@
 namespace Hal\UI\Validator\IdentityProviders;
 
 use Hal\Core\Entity\System\UserIdentityProvider;
+use Hal\Core\Parameters;
 use Hal\Core\Type\IdentityProviderEnum;
-use Hal\UI\Parameters;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Hal\UI\Validator\ValidatorTrait;
 use Psr\Http\Message\ServerRequestInterface;

@@ -8,7 +8,7 @@
 namespace Hal\UI\VersionControl;
 
 use Hal\Core\Entity\Application;
-use Hal\UI\Parameters;
+use Hal\Core\Parameters;
 use Hal\UI\Service\GitHubService;
 use Hal\UI\VersionControl\VCS;
 

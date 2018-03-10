@@ -10,8 +10,8 @@ namespace Hal\UI\Security\UserAuthentication;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\ClientInterface as GuzzleInterface;
 use Hal\Core\Entity\System\UserIdentityProvider;
+use Hal\Core\Parameters;
 use Hal\Core\Type\IdentityProviderEnum;
-use Hal\UI\Parameters;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Github as GitHubProvider;
 

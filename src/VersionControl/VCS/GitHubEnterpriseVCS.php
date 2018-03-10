@@ -9,8 +9,8 @@ namespace Hal\UI\VersionControl\VCS;
 
 use Github\ResultPager;
 use Hal\Core\Entity\System\VersionControlProvider;
+use Hal\Core\Parameters;
 use Hal\Core\VersionControl\VCS\GitHubEnterpriseVCS as BaseGitHubEnterpriseVCS;
-use Hal\UI\Parameters;
 use Hal\UI\Service\GitHubService;
 use Hal\UI\VersionControl\GitHub\GitHubResolver;
 use Hal\UI\VersionControl\GitHub\GitHubURLBuilder;

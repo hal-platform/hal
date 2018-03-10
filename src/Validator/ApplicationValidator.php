@@ -13,8 +13,8 @@ use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Application\GitHubApplication;
 use Hal\Core\Entity\Organization;
 use Hal\Core\Entity\System\VersionControlProvider;
+use Hal\Core\Parameters;
 use Hal\Core\Type\VCSProviderEnum;
-use Hal\UI\Parameters;
 use Hal\UI\Service\GitHubService;
 use Hal\UI\VersionControl\VCS;
 

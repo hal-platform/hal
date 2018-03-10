@@ -15,6 +15,7 @@ use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Credential;
 use Hal\Core\Entity\Target;
 use Hal\Core\Entity\TargetTemplate;
+use Hal\Core\Parameters;
 use Hal\Core\Type\TargetEnum;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -68,7 +69,7 @@ class EditTargetController implements ControllerInterface
 
             'deployment_types' => TargetEnum::options(),
             'aws_regions' => AWSAuthenticator::$awsRegions,
-            's3_methods' => Target::S3_METHODS
+            's3_methods' => Parameters::TARGET_S3_METHODS
         ]);
     }
 }

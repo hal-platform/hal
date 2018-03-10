@@ -12,6 +12,7 @@ use Hal\Core\AWS\AWSAuthenticator;
 use Hal\Core\Entity\Environment;
 use Hal\Core\Entity\Target;
 use Hal\Core\Entity\TargetTemplate;
+use Hal\Core\Parameters;
 use Hal\Core\Type\TargetEnum;
 use Hal\Core\Repository\EnvironmentRepository;
 use Hal\UI\Controllers\CSRFTrait;
@@ -107,7 +108,7 @@ class AddTemplateController implements ControllerInterface
 
             'deployment_types' => TargetEnum::options(),
             'aws_regions' => AWSAuthenticator::$awsRegions,
-            's3_methods' => Target::S3_METHODS
+            's3_methods' => Parameters::TARGET_S3_METHODS
         ]);
     }
 
