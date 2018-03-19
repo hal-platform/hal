@@ -52,7 +52,7 @@ class CodeDeployValidator implements TargetValidatorInterface
         $region = $parameters['aws_region'] ?? '';
 
         $name = trim($parameters['cd_name'] ?? '');
-        $group = trim($parameters['cd_environment'] ?? '');
+        $group = trim($parameters['cd_group'] ?? '');
         $config = trim($parameters['cd_config'] ?? '');
 
         $s3Parameters = [
@@ -118,7 +118,7 @@ class CodeDeployValidator implements TargetValidatorInterface
         $region = $parameters['aws_region'] ?? '';
 
         $name = trim($parameters['cd_name'] ?? '');
-        $group = trim($parameters['cd_environment'] ?? '');
+        $group = trim($parameters['cd_group'] ?? '');
         $config = trim($parameters['cd_config'] ?? '');
 
         $s3Parameters = [
