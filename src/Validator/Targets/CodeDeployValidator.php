@@ -137,7 +137,7 @@ class CodeDeployValidator implements TargetValidatorInterface
             return null;
         }
 
-        $target = $this->s3Validator->isValid($s3Parameters);
+        $target = $this->s3Validator->isEditValid($target, $s3Parameters);
         if (!$target) {
             $this->importErrors($this->s3Validator->errors());
             return null;
