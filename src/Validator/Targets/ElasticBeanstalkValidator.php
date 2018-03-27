@@ -129,7 +129,7 @@ class ElasticBeanstalkValidator implements TargetValidatorInterface
             return null;
         }
 
-        $target = $this->s3Validator->isEditValid($s3Parameters);
+        $target = $this->s3Validator->isEditValid($target, $s3Parameters);
         if (!$target) {
             $this->importErrors($this->s3Validator->errors());
             return null;
