@@ -24,7 +24,12 @@ persist_workspace: &persist_workspace
 enterprise_setup: &enterprise_setup
     run:
         name: 'Prepare Enterprise Setup'
-        command: 'curl -sLk "https://git/pages/circleci/prepare-environment/prepare.sh" | bash -'
+        command: |
+            if [ "${OPEN_SOURCE}" == "1" ] ; then
+                echo "Detected open source repo. Skipping step."
+            else
+                curl -sLk "https://git/pages/circleci/prepare-environment/prepare.sh" | bash -
+            fi
 
 workflows:
 
@@ -33,7 +38,6 @@ workflows:
     pipeline:
         jobs:
             - fetch_code
-            - verify_is_rebased
             - install_php_dependencies:
                 requires: [ fetch_code ]
 
@@ -42,6 +46,8 @@ workflows:
             - static_analysis:
                 requires: [ install_php_dependencies ]
             - linting:
+                requires: [ install_php_dependencies ]
+            - security_tests:
                 requires: [ install_php_dependencies ]
 
             - install_npm_dependencies:
@@ -57,60 +63,6 @@ jobs:
         steps:
             - checkout
             - *persist_workspace
-
-    verify_is_rebased:
-        <<: *defaults
-        steps:
-            - *enterprise_setup
-            - run:
-                name: 'Verify pull request is up to date'
-                command: |
-                    if [ -z "${CIRCLE_PULL_REQUEST}" ] ; then
-                        echo "Not a pull request. Skipping git history comparison check."
-                        exit 0
-                    fi
-
-                    git_repo="hal/hal-3"
-                    web_prefix="://git"
-                    api_prefix="://git/api/v3/repos"
-                    api_pr_url="${CIRCLE_PULL_REQUEST/${web_prefix}/${api_prefix}}"
-                    api_pr_url="${api_pr_url/pull\//pulls/}"
-
-                    # install jq
-                    curl -sSL \
-                        -o "/usr/bin/jq" \
-                        "https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64" \
-                        && chmod +x "/usr/bin/jq"
-
-                    # get pr info from github
-                    curl -sSL \
-                        -o "github_pr.json" \
-                        "${api_pr_url}"
-
-                    base_commit=$(jq -r ".base.sha" "github_pr.json")
-                    head_commit="${CIRCLE_SHA1}"
-
-                    # get comparison status from github
-                    api_compare_url="https://git/api/v3/repos/${git_repo}/compare/${base_commit}...${head_commit}"
-                    curl -sSL \
-                        -o "github_compare.json" \
-                        "${api_compare_url}"
-
-                    comparison_status=$(jq -r ".status" "github_compare.json")
-
-                    echo "Comparison URL: ${api_compare_url}"
-                    echo "Status: ${comparison_status}"
-                    echo "Ahead By: $(jq -r ".ahead_by" "github_compare.json")"
-                    echo "Behind By: $(jq -r ".behind_by" "github_compare.json")"
-                    echo "Total Commits: $(jq -r ".total_commits" "github_compare.json")"
-
-                    if [ "${comparison_status}" != "ahead" ] ; then
-                        echo
-                        echo "Pull request must be rebased. It is behind BASE."
-                        exit 1
-                    fi
-
-                    echo "Pull request is up to date."
 
     install_php_dependencies:
         <<: *defaults
@@ -194,6 +146,25 @@ jobs:
             - run:
                 name: 'Run code formatting check'
                 command: 'vendor/bin/phpcs -n --colors src'
+
+    security_tests:
+        <<: *frontend_defaults
+        steps:
+            - *attach_workspace
+
+            - run:
+                name: 'Install Snyk CLI'
+                command: 'yarn global add snyk'
+
+            - run:
+                name: 'Run snyk'
+                command: |
+                    if [ "${OPEN_SOURCE}" == "1" ] ; then
+                       $(yarn global bin)/snyk test
+                       $(yarn global bin)/snyk monitor
+                    else
+                        echo "Detected private repo. Skipping step."
+                    fi
 
     frontend_linting:
         <<: *frontend_defaults
