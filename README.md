@@ -1,51 +1,36 @@
-# Hal Deployment Platform
+[![CircleCI](https://img.shields.io/circleci/project/github/hal-platform/hal.svg?label=circleci)](https://circleci.com/gh/hal-platform/hal)
+[![Latest Version](https://img.shields.io/packagist/vpre/hal/hal.svg?label=latest)](https://packagist.org/packages/hal/hal)
+[![Latest Stable Version](https://img.shields.io/packagist/v/hal/hal.svg?label=stable)](https://packagist.org/packages/hal/hal)
+[![GitHub License](https://img.shields.io/github/license/hal-platform/hal.svg)](https://packagist.org/packages/hal/hal)
+![GitHub Language](https://img.shields.io/github/languages/top/hal-platform/hal.svg)
+![GitHub Activity](https://img.shields.io/github/last-commit/hal-platform/hal.svg)
 
-- [Development Setup](#development-setup)
-- [Server Requirements](#server-requirements)
+# Hal Deployment Platform - Web UI/API
 
-## Development Setup
+Hal development is supported by [Quicken Loans](https://github.com/quickenloans).
 
-1. Clone the project.
+> **Please Note: This codebase is under heavy development!**
+>
+> We are hard at work on Hal 3.0 which improves the stability and long-term architecture of Hal.
 
-2. Set up database.
-    > Hal uses a MySQL or Postgres database backend. Ensure one of these is installed and
-    > update the `database.*` properties in your config with connection details.
-    >
-    > Schema and migrations are handled by `hal-core` package. You will need to separately clone `hal-core` and run the phinx migrations.
+Hal is a **configuration and deployment management platform** for private datacenters, AWS, and more.
 
-3. Set up a web server (such as NGINX).
-    > Set up your vhost to point to `../public/index.php` and `../public` as your doc root.
+It contains a Web UI/API and agent for running jobs and long-running tasks.
+**This repository is for the Web UI/API.**
 
-4. Run `bin/install` to install PHP and Node dependencies.
+Table of Contents:
+- [Usage](#usage)
+- [Running on a server (for production use)](#running-on-a-server-for-production-use)
+- [Running locally (for development)](#running-locally-for-development)
 
-5. Copy `config/.env.dev.dist` to `config/.env`
-    > Run `bin/normalize-configuration` to do this automatically.
+## Usage
 
-6. Update `config/.env` with any specific details for your local dev environment.
-7. Run `yarn run build`.
-    > Runs frontend (css, js) code build process and compilation to optimize assets.
+TBD
 
-## Server Requirements
+## Running on a server (for production use)
 
-Hal requires the following server environment:
+TBD. We'll build out this section once Hal 3.0 is closer to release.
 
-- **NGINX/FPM**
-- **MySQL or Postgres database**
-- **Redis server for caching**
-- **PHP 7.1+**
-    - The following extensions must be installed:
-    - `ext-apc`
-    - `ext-curl`
-    - `ext-json`
-    - `ext-intl`
-    - `ext-ldap`
-    - `ext-libsodium`
-    - `ext-mbstring`
-    - `ext-openssl`
-    - `ext-PDO`
-    - `ext-pcntl`
-    - `ext-pdo_mysql`
-    - `ext-pdo_sqlite`
-    - `ext-SimpleXML`
-    - `ext-xmlwriter`
-    - `ext-zip`
+## Running locally (for development)
+
+TBD. We'll build out this section once Hal 3.0 is closer to release.
