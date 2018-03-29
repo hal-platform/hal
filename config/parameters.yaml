@@ -132,11 +132,14 @@ parameters:
     cookie.preferences.ttl: '5 years'
 
     ############################################################################
-    # encryption
+    # credentials / encryption
     ############################################################################
     encrypter.secret.path: '%env(HAL_CRYPTO_SECRETPATH)%'
     encrypter.publickey: '%env(HAL_CRYPTO_PUBLICKEY)%'
     encrypter.encryptedkey: '%env(HAL_CRYPTO_PRIVATEKEY)%'
+
+    aws.use_host_credentials: '%env(HAL_AWS_CREDENTIALS_USE_HOST)%'
+    aws.host_credentials_path: '%env(HAL_AWS_HOST_CREDENTIALS_PATH)%'
 
     ############################################################################
     # authentication
