@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "65e51a78b98c0253343decc6ce184162",
+    "content-hash": "cd5a64309aeb2b86903a7cedabeada44",
     "packages": [
         {
             "name": "acclimate/container",
@@ -2457,32 +2457,30 @@
         },
         {
             "name": "ql/mcp-common",
-            "version": "1.1.1",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/quickenloans-mcp/mcp-common.git",
-                "reference": "30ee24d5174d87c0cbd4ab4bec50c213464e66ea"
+                "reference": "ddd5a2428244150d5e53315606e35612fe6d0029"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/quickenloans-mcp/mcp-common/zipball/30ee24d5174d87c0cbd4ab4bec50c213464e66ea",
-                "reference": "30ee24d5174d87c0cbd4ab4bec50c213464e66ea",
+                "url": "https://api.github.com/repos/quickenloans-mcp/mcp-common/zipball/ddd5a2428244150d5e53315606e35612fe6d0029",
+                "reference": "ddd5a2428244150d5e53315606e35612fe6d0029",
                 "shasum": ""
             },
             "require": {
-                "php": "~5.6 || ~7.0"
+                "php": "~7.0"
             },
             "require-dev": {
-                "paragonie/random_compat": "~1.1",
-                "phpunit/php-invoker": "*",
-                "phpunit/phpunit": "~4.5",
+                "overtrue/phplint": "~1.0",
+                "phpstan/phpstan": "~0.9",
+                "phpunit/phpunit": "~6.2",
                 "psr/log": "*",
+                "squizlabs/php_codesniffer": "~3.0",
                 "symfony/config": "~2.8",
                 "symfony/dependency-injection": "~2.8",
                 "symfony/yaml": "~2.8"
-            },
-            "suggest": {
-                "paragonie/random_compat": "~1.1 or PHP7 are required for GUID and OpaqueProperty"
             },
             "type": "library",
             "autoload": {
@@ -2496,16 +2494,8 @@
             ],
             "authors": [
                 {
-                    "name": "Matt Nagi",
-                    "email": "mattnagi@quickenloans.com"
-                },
-                {
                     "name": "Steve Kluck",
-                    "email": "stevekluck@quickenloans.com"
-                },
-                {
-                    "name": "Matt Colf",
-                    "email": "mattcolf@quickenloans.com"
+                    "email": "steve@kluck.engineering"
                 }
             ],
             "description": "Common library for Quicken Loans PHP projects",
@@ -2513,35 +2503,38 @@
                 "mcp",
                 "quickenloans"
             ],
-            "time": "2017-03-14T11:56:30+00:00"
+            "time": "2018-03-29T00:51:09+00:00"
         },
         {
             "name": "ql/mcp-logger",
-            "version": "3.0.0",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/quickenloans-mcp/mcp-logger.git",
-                "reference": "915df9161eaab48042ea7246a866d9abd6d434d3"
+                "reference": "1f23bf38132dda89f4c00db40876eb94dfed9775"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/quickenloans-mcp/mcp-logger/zipball/915df9161eaab48042ea7246a866d9abd6d434d3",
-                "reference": "915df9161eaab48042ea7246a866d9abd6d434d3",
+                "url": "https://api.github.com/repos/quickenloans-mcp/mcp-logger/zipball/1f23bf38132dda89f4c00db40876eb94dfed9775",
+                "reference": "1f23bf38132dda89f4c00db40876eb94dfed9775",
                 "shasum": ""
             },
             "require": {
-                "paragonie/random_compat": "^1.1",
-                "php": "~5.6 || ~7.0",
+                "php": "~7.0",
+                "psr/http-message": "~1.0",
                 "psr/log": "*",
                 "ql/mcp-common": "^1.1.0"
             },
             "require-dev": {
-                "guzzlehttp/guzzle": "~5.0.0",
+                "guzzlehttp/guzzle": "~5.3.1",
                 "mockery/mockery": "~0.9",
-                "phpunit/phpunit": "~5.6",
-                "symfony/config": "~3.1",
-                "symfony/dependency-injection": "~3.1",
-                "symfony/yaml": "~3.1"
+                "overtrue/phplint": "~1.0",
+                "phpstan/phpstan": "~0.9",
+                "phpunit/phpunit": "~6.2",
+                "squizlabs/php_codesniffer": "~3.0",
+                "symfony/config": "~3.3",
+                "symfony/dependency-injection": "~3.3",
+                "symfony/yaml": "~3.3"
             },
             "suggest": {
                 "guzzlehttp/guzzle": "Required when using the Guzzle logger service."
@@ -2558,10 +2551,6 @@
             ],
             "authors": [
                 {
-                    "name": "Matt Colf",
-                    "email": "mattcolf@quickenloans.com"
-                },
-                {
                     "name": "Steve Kluck",
                     "email": "steve@kluck.engineering"
                 }
@@ -2571,7 +2560,7 @@
                 "mcp",
                 "quickenloans"
             ],
-            "time": "2016-11-21T13:42:33+00:00"
+            "time": "2018-03-29T01:19:13+00:00"
         },
         {
             "name": "ql/mcp-panthor",

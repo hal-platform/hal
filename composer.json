@@ -40,8 +40,8 @@
         "hal/hal-core":             "dev-master",
 
         "ql/mcp-cache":             "~3.0.0",
-        "ql/mcp-common":            "~1.0",
-        "ql/mcp-logger":            "~3.0.0",
+        "ql/mcp-common":            "~1.2",
+        "ql/mcp-logger":            "~3.1",
         "ql/mcp-panthor":           "~3.2.0",
 
         "slim/slim":                "~3.7",
