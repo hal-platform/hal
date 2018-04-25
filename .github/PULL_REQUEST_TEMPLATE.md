@@ -1,42 +1,44 @@
 ## Author Responsibilities
 
-#### Overview of changes:
+<!---
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃     REPLACE ALL BLOCKQUOTES WITH YOUR TEXT     ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+-->
 
-> **Review your own code first and make comments if appropriate.** Include a summary of the changes that you made. 
-> Highlight any sections or parts that you are unsure about. 
+#### Overview of changes
+
+> **Review your own code first and make comments if appropriate.**  
+> - Include a summary of the changes that you made.
+> - Highlight any sections or parts that you are unsure about.
+> - Make note of any architectural changes we can make to improve, or compromises you have made while developing this change.
+
+|               | Changes
+| ------------- | -------
+| Config        |
+| Hal Core      |
+| Hal Agent     |
 
 
-|               | Changes        |
-| ------------- |:--------------:|
-| Config        |                |
-| Hal Core      |                |
-| Hal Agent     |                |
+#### Testing
 
+> Note how you tested your code. What failure states were checked?
 
-#### Testing:
-
-> Note how you tested your code. What unhappy paths were checked?
-
-#### UI Changes:
+#### UI Changes
 
 > Include screenshots for any UI changes
 
-
-
 ## Reviewer Responsibilities
 
-#### Overview of review:
+> - Mentioned at least one thing you like about the changes/code.
+> - Make note any architectural changes you would make as well as any larger changes that can be refactor opportunities for the future.
 
 ```
-- [ ] Was able to run this code on dev environment
-- [ ] Confirm change adheres to contributing guidelines
-- [ ] Understood every line of code
-- [ ] Checked all edge cases
-- [ ] Tried breaking the app (testing happy/bad paths)
+- [ ] I was able to run this code in my dev environment
+- [ ] I have confirmed the changes adhere to our the guidelines defined in [CONTRIBUTING.md]
+- [ ] I understand every line of code
+- [ ] I have checked edge cases
+- [ ] I tried breaking the code and testing its boundaries
+
+Copy/paste the previous list and use for your review message
 ```
-
-
-### Reviewer notes
-
-> Mentioned at least one thing you like about the changes/code. 
-> Also note any architectural changes you would make as well as any larger changes that can be refactor opportunities for the future?
