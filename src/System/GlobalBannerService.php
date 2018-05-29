@@ -10,8 +10,8 @@ namespace Hal\UI\System;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\System\SystemSetting;
-use QL\MCP\Cache\CachingTrait;
-use QL\MCP\Common\Time\Clock;
+use Hal\Core\Utility\CachingTrait;
+use QL\MCP\Common\Clock;
 use QL\Panthor\Utility\JSON;
 
 class GlobalBannerService

@@ -7,20 +7,23 @@
 
 namespace Hal\Bootstrap;
 
-use QL\Panthor\Bootstrap\DI;
+use Hal\Core\DI;
 use Hal\UI\CachedContainer;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-$root = realpath(__DIR__ . '/../');
+$root = __DIR__ . '/..';
 require_once "${root}/vendor/autoload.php";
 
-if (!ini_get('date.timezone')) {
-    ini_set('date.timezone', 'UTC');
+$dotenv = new Dotenv;
+
+if (file_exists("${root}/config/.env.default")) {
+    $dotenv->load("${root}/config/.env.default");
 }
 
-$dotenv = new Dotenv;
-$dotenv->load("${root}/config/.env");
+if (file_exists("${root}/config/.env")) {
+    $dotenv->load("${root}/config/.env");
+}
 
 $file = "${root}/src/CachedContainer.php";
 $class = CachedContainer::class;
@@ -29,7 +32,7 @@ $options = [
     'file' => $file
 ];
 
-return DI::getDI($root, $options);
+return DI::getDI([$root . '/config'], $options);
 
 # .07s - .11s - Using cached container
 # .17s - .22s - Using containerbuilder (not cached)

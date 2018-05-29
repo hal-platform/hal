@@ -130,7 +130,7 @@ function checkReleaseStatus($elem, updater) {
     });
 }
 
-function updateRelease($elem, data) {
+function updateRelease(data, $elem) {
     let $container = $elem.closest('ul');
 
     $elem.text($elem.data('status'));

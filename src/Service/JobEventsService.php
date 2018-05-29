@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityRepository;
 use Predis\Client as Predis;
 use Hal\Core\Entity\Job;
 use Hal\Core\Entity\Job\JobEvent;
-use QL\MCP\Common\Time\Clock;
+use QL\MCP\Common\Clock;
 use QL\MCP\Common\Time\TimePoint;
 use QL\Panthor\Utility\JSON;
 

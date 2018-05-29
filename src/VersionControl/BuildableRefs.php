@@ -9,8 +9,8 @@ namespace Hal\UI\VersionControl;
 
 use Hal\Core\Entity\Application;
 use Hal\Core\Parameters;
+use Hal\Core\VersionControl\VCS;
 use Hal\UI\Service\GitHubService;
-use Hal\UI\VersionControl\VCS;
 
 class BuildableRefs
 {

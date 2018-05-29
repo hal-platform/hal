@@ -13,8 +13,8 @@ use Hal\Core\Entity\User\UserIdentity;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Parameters;
 use Hal\Core\Type\IdentityProviderEnum;
+use QL\MCP\Common\Clock;
 use QL\MCP\Common\GUID;
-use QL\MCP\Common\Time\Clock;
 use Psr\Http\Message\ServerRequestInterface;
 
 class UserIdentityValidator

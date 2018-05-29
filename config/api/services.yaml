@@ -3,11 +3,14 @@ services:
     api.cache:
         class: 'QL\MCP\Cache\CacheInterface'
         factory: ['@service_container', 'get']
-        arguments: ['cache.%cache.type.api%']
+        arguments:
+            - 'cache.%cache.type.api%'
 
     api.response_formatter:
         class: 'Hal\UI\API\ResponseFormatter'
-        arguments: ['@api.normalizer', '@uri']
+        arguments:
+            - '@api.normalizer'
+            - '@uri'
         calls:
             - ['setCache', ['@api.cache']]
             - ['setCacheTimes', ['%api.cachetimes%']]
@@ -35,7 +38,7 @@ services:
     api_normalizer.build:
         class: 'Hal\UI\API\Normalizer\BuildNormalizer'
         arguments:
-            - '@vcs'
+            - '@Hal\Core\VersionControl\VCS'
             - '@api_normalizer.environment'
 
     api_normalizer.target:
@@ -55,22 +58,27 @@ services:
 
     api_normalizer.application:
         class: 'Hal\UI\API\Normalizer\ApplicationNormalizer'
-        arguments: ['@vcs']
+        arguments:
+            - '@Hal\Core\VersionControl\VCS'
 
     api_normalizer.template:
         class: 'Hal\UI\API\Normalizer\TemplateNormalizer'
-        arguments: ['@doctrine.em']
+        arguments:
+            - '@Doctrine\ORM\EntityManagerInterface'
 
     api_normalizer.timepoint:
         class: 'Hal\UI\API\Normalizer\TimePointNormalizer'
 
     api_normalizer.user:
         class: 'Hal\UI\API\Normalizer\UserNormalizer'
-        arguments: ['@service.authorization']
+        arguments:
+            - '@Hal\UI\Security\AuthorizationService'
 
     api_normalizer.vcs_provider:
         class: 'Hal\UI\API\Normalizer\VersionControlProviderNormalizer'
 
     api_normalizer.hyperlink:
         class: 'Hal\UI\API\Normalizer\HyperlinkNormalizer'
-        arguments: ['@uri', '@request']
+        arguments:
+            - '@uri'
+            - '@request'

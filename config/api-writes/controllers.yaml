@@ -1,9 +1,10 @@
 services:
 
     build.start.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Build\StartBuildController'
         arguments:
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.build'
             - '@validator.release'
             - '@api.response_formatter'
@@ -11,9 +12,10 @@ services:
             - '@problem.renderer'
 
     deploy.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Release\DeployController'
         arguments:
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.release'
             - '@api.response_formatter'
             - '@problem.renderer'

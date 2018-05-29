@@ -9,7 +9,6 @@ namespace Hal\UI\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\MCP\Common\IPv4Address;
 use QL\MCP\Logger\MessageInterface;
 use QL\MCP\Logger\MessageFactoryInterface;
 use QL\Panthor\MiddlewareInterface;
@@ -22,8 +21,6 @@ use QL\Panthor\MiddlewareInterface;
  * - serverIP
  * - requestMethod
  * - requestURL
- * - context
- *     - referrer
  * - userAgent
  * - userIP
  *
@@ -69,28 +66,21 @@ class LoggerGlobalMiddleware implements MiddlewareInterface
         // server
         $this->factory->setDefaultProperty(MessageInterface::SERVER_HOSTNAME, gethostname());
 
-        if ($serverIP = IPv4Address::create($this->getServerIP($request))) {
+        if ($serverIP = $this->getServerIP($request)) {
             $this->factory->setDefaultProperty(MessageInterface::SERVER_IP, $serverIP);
         }
 
         // request
         $this->factory->setDefaultProperty(MessageInterface::REQUEST_METHOD, $request->getMethod());
-
         $this->factory->setDefaultProperty(MessageInterface::REQUEST_URL, (string) $request->getUri());
 
         // client
-        if ($referer = $this->getFirstHeader($request, 'referer')) {
-            $this->factory->setDefaultProperty('referrer', $referer);
-        }
-
         if ($agent = $this->getFirstHeader($request, 'user-agent')) {
             $this->factory->setDefaultProperty(MessageInterface::USER_AGENT, $agent);
         }
 
         if ($userIP = $this->getClientIP($request)) {
-            if ($userIP = IPv4Address::create(reset($userIP))) {
-                $this->factory->setDefaultProperty(MessageInterface::USER_IP, $userIP);
-            }
+            $this->factory->setDefaultProperty(MessageInterface::USER_IP, reset($userIP));
         }
 
         return $next($request, $response);

@@ -18,7 +18,7 @@ use Hal\UI\Controllers\APITrait;
 use Hal\UI\Service\JobQueueService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\MCP\Common\Time\Clock;
+use QL\MCP\Common\Clock;
 use QL\MCP\Common\Time\TimePoint;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\HTTPProblem\ProblemRendererInterface;

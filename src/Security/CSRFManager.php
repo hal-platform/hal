@@ -7,7 +7,7 @@
 
 namespace Hal\UI\Security;
 
-use QL\MCP\Common\Time\Clock;
+use QL\MCP\Common\Clock;
 use function random_bytes;
 
 class CSRFManager

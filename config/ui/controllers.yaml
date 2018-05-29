@@ -1,6 +1,7 @@
 services:
 
     static.controller:
+        public: true
         class: 'Hal\UI\Controllers\StaticController'
 
     ############################################################################
@@ -22,10 +23,11 @@ services:
     ############################################################################
 
     home.page:
+        public: true
         class: 'Hal\UI\Controllers\HomeController'
         arguments:
             - '@home.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
     home.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['home.twig']]]
@@ -35,72 +37,50 @@ services:
     ####################################################################################################################
 
     signin.page:
+        public: true
         class: 'Hal\UI\Controllers\Auth\SignInController'
         arguments:
             - '@signin.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@cookie.handler'
             - '@uri'
     signin.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['auth/signin.twig']]]
     signin.middleware:
+        public: true
         class: 'Hal\UI\Controllers\Auth\SignInHandler'
         arguments:
-            - '@doctrine.em'
-            - '@auth'
-            - '@user_session.handler'
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@Hal\UI\Security\Auth'
+            - '@Hal\UI\Security\UserSessionHandler'
             - '@uri'
     signout.handler:
+        public: true
         class: 'Hal\UI\Controllers\Auth\SignOutHandler'
         arguments: ['@uri']
 
     signin.oauth2_handler:
+        public: true
         class: 'Hal\UI\Controllers\Auth\SignInCallbackHandler'
         arguments:
-            - '@doctrine.em'
-            - '@auth'
-            - '@user_session.handler'
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@Hal\UI\Security\Auth'
+            - '@Hal\UI\Security\UserSessionHandler'
             - '@cookie.handler'
             - '@uri'
 
     signin.setup.page:
+        public: true
         class: 'Hal\UI\Controllers\Auth\SignInSetupController'
         arguments:
             - '@signin.setup.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@clock'
             - '@uri'
     signin.setup.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['auth/signin_setup.twig']]]
-
-    ####################################################################################################################
-    # GITHUB OAUTH CONTROLLERS
-    ####################################################################################################################
-
-    # github.authorization.page:
-    #     class: 'Hal\UI\Controllers\OAuth\GithubCallbackController'
-    #     arguments:
-    #         - '@github.authorization.twig'
-    #         - '@doctrine.em'
-    #         - '@github.oauth'
-    #         - '@uri'
-    # github.authorization.twig:
-    #     parent: 'twig.template'
-    #     calls: [['setTemplate', ['user/github.token.error.twig']]]
-
-    # github.authorization.remove.page:
-    #     class: 'Hal\UI\Controllers\User\RemoveGithubTokenController'
-    #     arguments:
-    #         - '@github.authorization.remove.twig'
-    #         - '@doctrine.em'
-    #         - '@github.oauth'
-    #         - '@uri'
-    # github.authorization.remove.twig:
-    #     parent: 'twig.template'
-    #     calls: [['setTemplate', ['user/github.token.remove.twig']]]
-
 
     ####################################################################################################################
     # help
@@ -152,28 +132,33 @@ services:
     ####################################################################################################################
 
     user.page:
+        public: true
         class: 'Hal\UI\Controllers\User\UserController'
         arguments:
             - '@user.twig'
-            - '@service.authorization'
-            - '@service.authorization_hydrator'
+            - '@Hal\UI\Security\AuthorizationService'
+            - '@Hal\UI\Security\AuthorizationHydrator'
             - '@clock'
     user.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['user/user.twig']]]
 
     users.page:
+        public: true
         class: 'Hal\UI\Controllers\User\UsersController'
-        arguments: ['@users.twig', '@doctrine.em']
+        arguments:
+            - '@users.twig'
+            - '@Doctrine\ORM\EntityManagerInterface'
     users.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['user/users.twig']]]
 
     user.add.page:
+        public: true
         class: 'Hal\UI\Controllers\User\AddUserController'
         arguments:
             - '@user.add.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.user'
             - '@validator.user_identity'
             - '@uri'
@@ -181,36 +166,42 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['user/add_user.twig']]]
 
-
     user.edit.page:
+        public: true
         class: 'Hal\UI\Controllers\User\EditUserController'
         arguments:
             - '@user.edit.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.user'
             - '@uri'
     user.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['user/edit_user.twig']]]
 
-
     user.disable.handler:
+        public: true
         class: 'Hal\UI\Controllers\User\DisableUserHandler'
-        arguments: ['@doctrine.em', '@uri']
+        arguments:
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@uri'
     user.regenerate_setup.handler:
+        public: true
         class: 'Hal\UI\Controllers\User\RegenerateSetupTokenHandler'
         arguments:
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.user_identity'
             - '@uri'
 
     user.settings.page:
+        public: true
         class: 'Hal\UI\Controllers\User\SettingsController'
-        arguments: ['@user.settings.twig']
+        arguments:
+            - '@user.settings.twig'
     user.settings.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['user/settings.twig']]]
     user.settings.middleware:
+        public: true
         class: 'Hal\UI\Controllers\User\SettingsMiddleware'
         arguments:
             - '@cookie.handler'
@@ -218,42 +209,51 @@ services:
             - '%cookie.preferences.ttl%'
 
     user.token.add.handler:
+        public: true
         class: 'Hal\UI\Controllers\User\Token\AddTokenHandler'
-        arguments: ['@doctrine.em', '@uri']
+        arguments:
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@uri'
     user.token.remove.handler:
+        public: true
         class: 'Hal\UI\Controllers\User\Token\RemoveTokenHandler'
-        arguments: ['@doctrine.em', '@uri']
+        arguments:
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@uri'
 
     ####################################################################################################################
     # organizations
     ####################################################################################################################
 
     organization.page:
+        public: true
         class: 'Hal\UI\Controllers\Organization\OrganizationController'
         arguments:
             - '@organization.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
     organization.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['organization/organization.twig']]]
 
     organization.add.page:
+        public: true
         class: 'Hal\UI\Controllers\Organization\AddOrganizationController'
         arguments:
             - '@organization.add.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.organization'
-            - '@service.authorization'
+            - '@Hal\UI\Security\AuthorizationService'
             - '@uri'
     organization.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['organization/add_organization.twig']]]
 
     organization.edit.page:
+        public: true
         class: 'Hal\UI\Controllers\Organization\EditOrganizationController'
         arguments:
             - '@organization.edit.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.organization'
             - '@uri'
     organization.edit.twig:
@@ -261,10 +261,11 @@ services:
         calls: [['setTemplate', ['organization/edit_organization.twig']]]
 
     organization.remove.handler:
+        public: true
         class: 'Hal\UI\Controllers\Organization\RemoveOrganizationHandler'
         arguments:
-            - '@doctrine.em'
-            - '@service.authorization'
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@Hal\UI\Security\AuthorizationService'
             - '@uri'
 
     ####################################################################################################################
@@ -272,52 +273,62 @@ services:
     ####################################################################################################################
 
     applications.page:
+        public: true
         class: 'Hal\UI\Controllers\Application\ApplicationsController'
-        arguments: ['@applications.twig', '@doctrine.em']
+        arguments:
+            - '@applications.twig'
+            - '@Doctrine\ORM\EntityManagerInterface'
     applications.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['application/applications.twig']]]
 
     application.page:
+        public: true
         class: 'Hal\UI\Controllers\Application\ApplicationController'
-        arguments: ['@application.twig', '@doctrine.em']
+        arguments:
+            - '@application.twig'
+            - '@Doctrine\ORM\EntityManagerInterface'
     application.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['application/application.twig']]]
 
     application.dashboard.page:
+        public: true
         class: 'Hal\UI\Controllers\Application\ApplicationDashboardController'
         arguments:
             - '@application.dashboard.twig'
-            - '@doctrine.em'
-            - '@sticky.environment'
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@Hal\UI\Service\StickyEnvironmentService'
     application.dashboard.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['application/dashboard.twig']]]
     application.dashboard.sticky_env.middleware:
+        public: true
         class: 'Hal\UI\Controllers\Application\DashboardStickyEnvironmentMiddleware'
         arguments:
-            - '@doctrine.em'
-            - '@sticky.environment'
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@Hal\UI\Service\StickyEnvironmentService'
             - '@uri'
 
     application.add.page:
+        public: true
         class: 'Hal\UI\Controllers\Application\AddApplicationController'
         arguments:
             - '@application.add.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.application'
-            - '@service.authorization'
+            - '@Hal\UI\Security\AuthorizationService'
             - '@uri'
     application.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['application/add_application.twig']]]
 
     application.edit.page:
+        public: true
         class: 'Hal\UI\Controllers\Application\EditApplicationController'
         arguments:
             - '@application.edit.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.application'
             - '@uri'
     application.edit.twig:
@@ -325,10 +336,11 @@ services:
         calls: [['setTemplate', ['application/edit_application.twig']]]
 
     application.remove.handler:
+        public: true
         class: 'Hal\UI\Controllers\Application\RemoveApplicationHandler'
         arguments:
-            - '@doctrine.em'
-            - '@service.authorization'
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@Hal\UI\Security\AuthorizationService'
             - '@uri'
 
     ####################################################################################################################
@@ -336,42 +348,52 @@ services:
     ####################################################################################################################
 
     encrypted.configuration.page:
+        public: true
         class: 'Hal\UI\Controllers\EncryptedConfiguration\EncryptedConfigurationController'
-        arguments: ['@encrypted.configuration.twig', '@doctrine.em']
+        arguments:
+            - '@encrypted.configuration.twig'
+            - '@Doctrine\ORM\EntityManagerInterface'
     encrypted.configuration.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['encrypted-configuration/encrypted_configuration.twig']]]
 
     encrypted.page:
+        public: true
         class: 'Hal\UI\Controllers\EncryptedConfiguration\EncryptedController'
-        arguments: ['@encrypted.twig', '@encryption']
+        arguments: ['@encrypted.twig', '@Hal\Core\Crypto\Encryption']
     encrypted.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['encrypted-configuration/encrypted_property.twig']]]
 
     encrypted.add.page:
+        public: true
         class: 'Hal\UI\Controllers\EncryptedConfiguration\AddEncryptedPropertyController'
-        arguments: ['@encrypted.add.twig', '@doctrine.em']
+        arguments: ['@encrypted.add.twig', '@Doctrine\ORM\EntityManagerInterface']
     encrypted.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['encrypted-configuration/add_encrypted.twig']]]
     encrypted.add.middleware:
+        public: true
         class: 'Hal\UI\Controllers\EncryptedConfiguration\AddEncryptedPropertyMiddleware'
         arguments:
-            - '@doctrine.em'
-            - '@encryption'
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@Hal\Core\Crypto\Encryption'
             - '@validator.encrypted_property'
             - '@uri'
 
     encrypted.remove.handler:
+        public: true
         class: 'Hal\UI\Controllers\EncryptedConfiguration\RemoveEncryptedPropertyHandler'
-        arguments: ['@doctrine.em', '@uri']
+        arguments:
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@uri'
 
     ####################################################################################################################
     # applications - targets
     ####################################################################################################################
 
     target.page:
+        public: true
         class: 'Hal\UI\Controllers\Target\TargetController'
         arguments: ['@target.twig']
     target.twig:
@@ -379,65 +401,74 @@ services:
         calls: [['setTemplate', ['target/target.twig']]]
 
     targets.page:
+        public: true
         class: 'Hal\UI\Controllers\Target\TargetsController'
-        arguments: ['@targets.twig', '@doctrine.em']
+        arguments: ['@targets.twig', '@Doctrine\ORM\EntityManagerInterface']
     targets.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['target/targets.twig']]]
 
     target.add.page:
+        public: true
         class: 'Hal\UI\Controllers\Target\AddTargetController'
-        arguments: ['@target.add.twig', '@doctrine.em']
+        arguments: ['@target.add.twig', '@Doctrine\ORM\EntityManagerInterface']
     target.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['target/add_target.twig']]]
     target.add.middleware:
+        public: true
         class: 'Hal\UI\Controllers\Target\AddTargetMiddleware'
         arguments:
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.target'
             - '@uri'
 
     target.edit.page:
+        public: true
         class: 'Hal\UI\Controllers\Target\EditTargetController'
-        arguments: ['@target.edit.twig', '@doctrine.em']
+        arguments: ['@target.edit.twig', '@Doctrine\ORM\EntityManagerInterface']
     target.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['target/edit_target.twig']]]
     target.edit.middleware:
+        public: true
         class: 'Hal\UI\Controllers\Target\EditTargetMiddleware'
         arguments:
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.target'
             - '@uri'
 
     target.remove.handler:
+        public: true
         class: 'Hal\UI\Controllers\Target\RemoveTargetHandler'
-        arguments: ['@doctrine.em', '@uri']
+        arguments: ['@Doctrine\ORM\EntityManagerInterface', '@uri']
 
     ####################################################################################################################
     # target templates
     ####################################################################################################################
 
     templates.page:
+        public: true
         class: 'Hal\UI\Controllers\TargetTemplate\TemplatesController'
-        arguments: ['@templates.twig', '@doctrine.em']
+        arguments: ['@templates.twig', '@Doctrine\ORM\EntityManagerInterface']
     templates.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['target-template/templates.twig']]]
 
     template.page:
+        public: true
         class: 'Hal\UI\Controllers\TargetTemplate\TemplateController'
-        arguments: ['@template.twig', '@doctrine.em']
+        arguments: ['@template.twig', '@Doctrine\ORM\EntityManagerInterface']
     template.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['target-template/template.twig']]]
 
     template.add.page:
+        public: true
         class: 'Hal\UI\Controllers\TargetTemplate\AddTemplateController'
         arguments:
             - '@template.add.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.template'
             - '@uri'
     template.add.twig:
@@ -445,10 +476,11 @@ services:
         calls: [['setTemplate', ['target-template/add_template.twig']]]
 
     template.edit.page:
+        public: true
         class: 'Hal\UI\Controllers\TargetTemplate\EditTemplateController'
         arguments:
             - '@template.edit.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.template'
             - '@uri'
     template.edit.twig:
@@ -456,25 +488,28 @@ services:
         calls: [['setTemplate', ['target-template/edit_template.twig']]]
 
     template.remove.handler:
+        public: true
         class: 'Hal\UI\Controllers\TargetTemplate\RemoveTemplateHandler'
-        arguments: ['@doctrine.em', '@uri']
+        arguments: ['@Doctrine\ORM\EntityManagerInterface', '@uri']
 
     ################################################################################################################
     # queue
     ################################################################################################################
 
     queue.page:
+        public: true
         class: 'Hal\UI\Controllers\Queue\QueueController'
-        arguments: ['@queue.twig', '@doctrine.em']
+        arguments: ['@queue.twig', '@Doctrine\ORM\EntityManagerInterface']
     queue.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['queue/queue.twig']]]
 
     queue.history.page:
+        public: true
         class: 'Hal\UI\Controllers\Queue\QueueHistoryController'
         arguments:
             - '@queue.history.twig'
-            - '@job_queue'
+            - '@Hal\UI\Service\JobQueueService'
             - '@clock'
             - '%date.timezone%'
     queue.history.twig:
@@ -482,15 +517,17 @@ services:
         calls: [['setTemplate', ['queue/queue_history.twig']]]
 
     builds.history.page:
+        public: true
         class: 'Hal\UI\Controllers\Queue\BuildsHistoryController'
-        arguments: ['@builds.history.twig', '@doctrine.em']
+        arguments: ['@builds.history.twig', '@Doctrine\ORM\EntityManagerInterface']
     builds.history.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['queue/builds_history.twig']]]
 
     releases.history.page:
+        public: true
         class: 'Hal\UI\Controllers\Queue\ReleasesHistoryController'
-        arguments: ['@releases.history.twig', '@doctrine.em']
+        arguments: ['@releases.history.twig', '@Doctrine\ORM\EntityManagerInterface']
     releases.history.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['queue/releases_history.twig']]]
@@ -500,40 +537,46 @@ services:
     ####################################################################################################################
 
     builds.page:
+        public: true
         class: 'Hal\UI\Controllers\Build\BuildsController'
-        arguments: ['@builds.twig', '@doctrine.em']
+        arguments:
+            - '@builds.twig'
+            - '@Doctrine\ORM\EntityManagerInterface'
     builds.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['build/builds.twig']]]
 
     build.page:
+        public: true
         class: 'Hal\UI\Controllers\Build\BuildController'
         arguments:
             - '@build.twig'
-            - '@service.event_logs'
-            - '@doctrine.em'
+            - '@Hal\UI\Service\JobEventsService'
+            - '@Doctrine\ORM\EntityManagerInterface'
     build.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['build/build.twig']]]
 
     build.start.page:
+        public: true
         class: 'Hal\UI\Controllers\Build\StartBuildController'
         arguments:
             - '@build.start.twig'
-            - '@doctrine.em'
-            - '@vcs.buildable'
-            - '@sticky.environment'
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@Hal\UI\VersionControl\BuildableRefs'
+            - '@Hal\UI\Service\StickyEnvironmentService'
     build.start.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['build/start_build.twig']]]
     build.start.middleware:
+        public: true
         class: 'Hal\UI\Controllers\Build\StartBuildMiddleware'
         arguments:
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.build'
             - '@validator.release'
             - '@validator.meta'
-            - '@sticky.environment'
+            - '@Hal\UI\Service\StickyEnvironmentService'
             - '@uri'
 
     ####################################################################################################################
@@ -541,46 +584,53 @@ services:
     ####################################################################################################################
 
     releases.page:
+        public: true
         class: 'Hal\UI\Controllers\Release\ReleasesController'
-        arguments: ['@releases.twig', '@doctrine.em']
+        arguments:
+            - '@releases.twig'
+            - '@Doctrine\ORM\EntityManagerInterface'
     releases.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['release/releases.twig']]]
 
     release.page:
+        public: true
         class: 'Hal\UI\Controllers\Release\ReleaseController'
         arguments:
             - '@release.twig'
-            - '@service.event_logs'
-            - '@doctrine.em'
+            - '@Hal\UI\Service\JobEventsService'
+            - '@Doctrine\ORM\EntityManagerInterface'
     release.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['release/release.twig']]]
 
     release.start.page:
+        public: true
         class: 'Hal\UI\Controllers\Release\StartReleaseController'
         arguments:
             - '@release.start.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@uri'
     release.start.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['release/start_release.twig']]]
 
     deploy.middleware:
+        public: true
         class: 'Hal\UI\Controllers\Release\DeployMiddleware'
         arguments:
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.release'
             - '@validator.meta'
-            - '@sticky.environment'
+            - '@Hal\UI\Service\StickyEnvironmentService'
             - '@uri'
 
     release.rollback.page:
+        public: true
         class: 'Hal\UI\Controllers\Release\RollbackController'
         arguments:
             - '@release.rollback.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
     release.rollback.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['release/rollback_release.twig']]]
@@ -590,10 +640,11 @@ services:
     ################################################################################################################
 
     hal_bootstrap.page:
+        public: true
         class: 'Hal\UI\Controllers\Admin\HalBootstrapController'
         arguments:
             - '@hal_bootstrap.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.environment'
             - '@validator.vcs'
             - '@validator.idp'
@@ -605,6 +656,7 @@ services:
         calls: [['setTemplate', ['admin/hal_bootstrap.twig']]]
 
     admin.dashboard.page:
+        public: true
         class: 'Hal\UI\Controllers\Admin\DashboardController'
         arguments:
             - '@admin.dashboard.twig'
@@ -613,43 +665,50 @@ services:
         calls: [['setTemplate', ['admin/admin_dashboard.twig']]]
 
     admin.audit_history.page:
+        public: true
         class: 'Hal\UI\Controllers\Admin\AuditHistoryController'
-        arguments: ['@admin.audit_history.twig', '@doctrine.em']
+        arguments:
+            - '@admin.audit_history.twig'
+            - '@Doctrine\ORM\EntityManagerInterface'
     admin.audit_history.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/audit_history.twig']]]
 
     admin.cache_management.page:
+        public: true
         class: 'Hal\UI\Controllers\Admin\CacheManagementController'
         arguments:
             - '@admin.cache_management.twig'
-            - '@redis'
+            - '@Predis\Client'
             - '%root%'
             - '%cache.delimiter%'
     admin.cache_management.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/cache_management.twig']]]
     admin.cache_management.handler:
+        public: true
         class: 'Hal\UI\Controllers\Admin\CacheManagementHandler'
         arguments:
-            - '@redis'
+            - '@Predis\Client'
             - '%cache.delimiter%'
 
     admin.global_banner.page:
+        public: true
         class: 'Hal\UI\Controllers\Admin\GlobalBannerController'
         arguments:
             - '@admin.global_banner.twig'
-            - '@banner'
+            - '@Hal\UI\System\GlobalBannerService'
             - '@uri'
     admin.global_banner.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/global_banner.twig']]]
 
     admin.system_dashboard.page:
+        public: true
         class: 'Hal\UI\Controllers\Admin\SystemDashboardController'
         arguments:
             - '@admin.system_dashboard.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@json'
             - '@clock'
             - '%cookie.encryption.secret%'
@@ -665,25 +724,32 @@ services:
     ####################################################################################################################
 
     environments.page:
+        public: true
         class: 'Hal\UI\Controllers\Admin\Environment\EnvironmentsController'
-        arguments: ['@environments.twig', '@doctrine.em']
+        arguments:
+            - '@environments.twig'
+            - '@Doctrine\ORM\EntityManagerInterface'
 
     environments.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['environment/environments.twig']]]
 
     environment.page:
+        public: true
         class: 'Hal\UI\Controllers\Admin\Environment\EnvironmentController'
-        arguments: ['@environment.twig', '@doctrine.em']
+        arguments:
+            - '@environment.twig'
+            - '@Doctrine\ORM\EntityManagerInterface'
     environment.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['environment/environment.twig']]]
 
     environment.add.page:
+        public: true
         class: 'Hal\UI\Controllers\Admin\Environment\AddEnvironmentController'
         arguments:
             - '@environment.add.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.environment'
             - '@uri'
     environment.add.twig:
@@ -691,10 +757,11 @@ services:
         calls: [['setTemplate', ['environment/add_environment.twig']]]
 
     environment.edit.page:
+        public: true
         class: 'Hal\UI\Controllers\Admin\Environment\EditEnvironmentController'
         arguments:
             - '@environment.edit.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.environment'
             - '@uri'
     environment.edit.twig:
@@ -702,27 +769,32 @@ services:
         calls: [['setTemplate', ['environment/edit_environment.twig']]]
 
     environment.remove.handler:
+        public: true
         class: 'Hal\UI\Controllers\Admin\Environment\RemoveEnvironmentHandler'
-        arguments: ['@doctrine.em', '@uri']
+        arguments:
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@uri'
 
     ################################################################################################################
     # admin - idp
     ################################################################################################################
 
     id_providers.page:
+        public: true
         class: 'Hal\UI\Controllers\Admin\IDP\IdentityProvidersController'
         arguments:
             - '@id_providers.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
     id_providers.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['idp/id_providers.twig']]]
 
     id_providers.add.page:
+        public: true
         class: 'Hal\UI\Controllers\Admin\IDP\AddIdentityProviderController'
         arguments:
             - '@id_providers.add.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.idp'
             - '@uri'
     id_providers.add.twig:
@@ -730,17 +802,22 @@ services:
         calls: [['setTemplate', ['idp/add_idp.twig']]]
 
     id_provider.page:
+        public: true
         class: 'Hal\UI\Controllers\Admin\IDP\IdentityProviderController'
-        arguments: ['@id_provider.twig', '@doctrine.em']
+        arguments:
+            - '@id_provider.twig'
+            - '@Doctrine\ORM\EntityManagerInterface'
+
     id_provider.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['idp/id_provider.twig']]]
 
     id_provider.edit.page:
+        public: true
         class: 'Hal\UI\Controllers\Admin\IDP\EditIdentityProviderController'
         arguments:
             - '@id_provider.edit.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.idp'
             - '@uri'
     id_provider.edit.twig:
@@ -748,27 +825,32 @@ services:
         calls: [['setTemplate', ['idp/edit_idp.twig']]]
 
     id_provider.remove.handler:
+        public: true
         class: 'Hal\UI\Controllers\Admin\IDP\RemoveIdentityProviderHandler'
-        arguments: ['@doctrine.em', '@uri']
+        arguments:
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@uri'
 
     ################################################################################################################
     # admin - vcs
     ################################################################################################################
 
     vcs_providers.page:
+        public: true
         class: 'Hal\UI\Controllers\Admin\VCS\VersionControlProvidersController'
         arguments:
             - '@vcs_providers.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
     vcs_providers.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['vcs/vcs_providers.twig']]]
 
     vcs_providers.add.page:
+        public: true
         class: 'Hal\UI\Controllers\Admin\VCS\AddVersionControlController'
         arguments:
             - '@vcs_providers.add.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.vcs'
             - '@uri'
     vcs_providers.add.twig:
@@ -776,17 +858,21 @@ services:
         calls: [['setTemplate', ['vcs/add_vcs.twig']]]
 
     vcs_provider.page:
+        public: true
         class: 'Hal\UI\Controllers\Admin\VCS\VersionControlController'
-        arguments: ['@vcs_provider.twig', '@doctrine.em']
+        arguments:
+            - '@vcs_provider.twig'
+            - '@Doctrine\ORM\EntityManagerInterface'
     vcs_provider.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['vcs/vcs_provider.twig']]]
 
     vcs_provider.edit.page:
+        public: true
         class: 'Hal\UI\Controllers\Admin\VCS\EditVersionControlController'
         arguments:
             - '@vcs_provider.edit.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.vcs'
             - '@uri'
     vcs_provider.edit.twig:
@@ -794,35 +880,43 @@ services:
         calls: [['setTemplate', ['vcs/edit_vcs.twig']]]
 
     vcs_provider.remove.handler:
+        public: true
         class: 'Hal\UI\Controllers\Admin\VCS\RemoveVersionControlHandler'
-        arguments: ['@doctrine.em', '@uri']
+        arguments:
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@uri'
 
     ####################################################################################################################
     # admin - credentials
     ####################################################################################################################
 
     credentials.page:
+        public: true
         class: 'Hal\UI\Controllers\Credentials\CredentialsController'
-        arguments: ['@credentials.twig', '@doctrine.em']
+        arguments:
+            - '@credentials.twig'
+            - '@Doctrine\ORM\EntityManagerInterface'
     credentials.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['credentials/credentials.twig']]]
 
     credential.page:
+        public: true
         class: 'Hal\UI\Controllers\Credentials\CredentialController'
         arguments:
             - '@credential.twig'
-            - '@doctrine.em'
-            - '@encryption'
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@Hal\Core\Crypto\Encryption'
     credential.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['credentials/credential.twig']]]
 
     credential.add.page:
+        public: true
         class: 'Hal\UI\Controllers\Credentials\AddCredentialController'
         arguments:
             - '@credential.add.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.credential'
             - '@uri'
     credential.add.twig:
@@ -830,64 +924,72 @@ services:
         calls: [['setTemplate', ['credentials/add_credential.twig']]]
 
     credential.edit.page:
+        public: true
         class: 'Hal\UI\Controllers\Credentials\EditCredentialController'
         arguments:
             - '@credential.edit.twig'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@validator.credential'
-            - '@encryption'
+            - '@Hal\Core\Crypto\Encryption'
             - '@uri'
     credential.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['credentials/edit_credential.twig']]]
 
     credential.remove.handler:
+        public: true
         class: 'Hal\UI\Controllers\Credentials\RemoveCredentialHandler'
-        arguments: ['@doctrine.em', '@uri']
+        arguments:
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@uri'
 
     ####################################################################################################################
     # permissions
     ####################################################################################################################
 
     application_permissions_add.page:
+        public: true
         class: 'Hal\UI\Controllers\Permissions\AddEntityPermissionsController'
         arguments:
             - '@application_permissions_add.twig'
-            - '@doctrine.em'
-            - '@service.authorization'
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@Hal\UI\Security\AuthorizationService'
             - '@uri'
     application_permissions_add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['permissions/add_application_permissions.twig']]]
 
     application_permissions_remove.page:
+        public: true
         class: 'Hal\UI\Controllers\Permissions\RemoveEntityPermissionsController'
         arguments:
             - '@application_permissions_remove.twig'
-            - '@doctrine.em'
-            - '@service.authorization'
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@Hal\UI\Security\AuthorizationService'
             - '@uri'
     application_permissions_remove.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['permissions/remove_application_permissions.twig']]]
 
     organization_permissions_add.page:
+        public: true
         class: 'Hal\UI\Controllers\Permissions\AddEntityPermissionsController'
         arguments:
             - '@organization_permissions_add.twig'
-            - '@doctrine.em'
-            - '@service.authorization'
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@Hal\UI\Security\AuthorizationService'
             - '@uri'
     organization_permissions_add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['permissions/add_organization_permissions.twig']]]
 
     organization_permissions_remove.page:
+        public: true
         class: 'Hal\UI\Controllers\Permissions\RemoveEntityPermissionsController'
         arguments:
             - '@organization_permissions_remove.twig'
-            - '@doctrine.em'
-            - '@service.authorization'
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@Hal\UI\Security\AuthorizationService'
             - '@uri'
     organization_permissions_remove.twig:
         parent: 'twig.template'
@@ -898,31 +1000,34 @@ services:
     ####################################################################################################################
 
     admin.permissions.page:
+        public: true
         class: 'Hal\UI\Controllers\Permissions\PermissionsController'
-        arguments: ['@admin.permissions.twig', '@doctrine.em']
+        arguments: ['@admin.permissions.twig', '@Doctrine\ORM\EntityManagerInterface']
     admin.permissions.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['permissions/permissions.twig']]]
 
     user_permissions.add.page:
+        public: true
         class: 'Hal\UI\Controllers\Permissions\AddPermissionsController'
         arguments:
             - '@user_permissions.add.twig'
             - '@validator.permissions'
-            - '@service.authorization'
-            - '@service.authorization_hydrator'
+            - '@Hal\UI\Security\AuthorizationService'
+            - '@Hal\UI\Security\AuthorizationHydrator'
             - '@uri'
     user_permissions.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['permissions/add_permission.twig']]]
 
     user_permissions.remove.page:
+        public: true
         class: 'Hal\UI\Controllers\Permissions\RemovePermissionsController'
         arguments:
             - '@user_permissions.remove.twig'
-            - '@doctrine.em'
-            - '@service.authorization'
-            - '@service.authorization_hydrator'
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@Hal\UI\Security\AuthorizationService'
+            - '@Hal\UI\Security\AuthorizationHydrator'
             - '@uri'
     user_permissions.remove.twig:
         parent: 'twig.template'

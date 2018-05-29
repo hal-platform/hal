@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\User\UserPermission;
 use Hal\Core\Type\UserPermissionEnum;
-use QL\MCP\Cache\CachingTrait;
+use Hal\Core\Utility\CachingTrait;
 use QL\Panthor\Utility\JSON;
 
 class AuthorizationService

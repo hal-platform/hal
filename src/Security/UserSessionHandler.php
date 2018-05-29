@@ -14,7 +14,7 @@ use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\MCP\Common\GUID;
-use QL\MCP\Common\Time\Clock;
+use QL\MCP\Common\Clock;
 use QL\Panthor\Session\SessionInterface;
 
 class UserSessionHandler

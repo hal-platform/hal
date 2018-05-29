@@ -13,7 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Job;
 use Hal\Core\Type\JobStatusEnum;
-use QL\MCP\Common\Time\Clock;
+use QL\MCP\Common\Clock;
 use QL\MCP\Common\Time\TimePoint;
 
 class JobQueueService

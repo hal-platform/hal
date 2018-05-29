@@ -15,8 +15,6 @@ use Hal\UI\Security\CSRFManager;
 use Hal\UI\Security\UserSessionHandler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\MCP\Logger\MessageFactoryInterface;
-use QL\MCP\Logger\MessageInterface;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Session\SessionInterface;
 use QL\Panthor\Utility\URI;
@@ -33,6 +31,7 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
     use TemplatedControllerTrait;
 
     public const CSRF_ATTRIBUTE = 'csrf';
+    public const SIGNIN_ROUTE = 'signin';
 
     /**
      * @var UserSessionHandler
@@ -48,11 +47,6 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
      * @var URI
      */
     private $uri;
-
-    /**
-     * @var MessageFactoryInterface|null
-     */
-    private $factory;
 
     /**
      * @param UserSessionHandler $userHandler
@@ -85,12 +79,7 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
         // Only if a user ID session exists and is invalid
         if (!$request) {
             $session->clear();
-            return $this->withRedirectRoute($response, $this->uri, 'signin');
-        }
-
-        // Attach user details to logger if user session is present.
-        if ($user = $this->getUser($request)) {
-            $this->attachUserToLogger($user);
+            return $this->withRedirectRoute($response, $this->uri, self::SIGNIN_ROUTE);
         }
 
         $response = $next($request, $response);
@@ -99,29 +88,5 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
         $session->set(self::CSRF_ATTRIBUTE, $this->csrf->getCSRFs());
 
         return $response;
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return void
-     */
-    private function attachUserToLogger(User $user)
-    {
-        if (!$this->factory) {
-            return;
-        }
-
-        $this->factory->setDefaultProperty(MessageInterface::USER_NAME, $user->name());
-    }
-
-    /**
-     * @param MessageFactoryInterface $factory
-     *
-     * @return void
-     */
-    public function setLoggerMessageFactory(MessageFactoryInterface $factory)
-    {
-        $this->factory = $factory;
     }
 }

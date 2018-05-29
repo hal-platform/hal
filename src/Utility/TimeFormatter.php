@@ -8,7 +8,7 @@
 namespace Hal\UI\Utility;
 
 use DateTime;
-use QL\MCP\Common\Time\Clock;
+use QL\MCP\Common\Clock;
 use QL\MCP\Common\Time\TimePoint;
 
 class TimeFormatter

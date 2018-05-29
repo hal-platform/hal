@@ -1,4 +1,6 @@
 services:
     rate_limiter:
         class: 'Hal\UI\Service\APIRateLimitService'
-        arguments: ['@redis', '%api.ratelimits%']
+        arguments:
+            - '@Predis\Client'
+            - '%api.ratelimits%'

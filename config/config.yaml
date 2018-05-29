@@ -1,24 +1,14 @@
 imports:
-    - resource: 'vendor/*.yaml'
+    - resource: '../vendor/ql/mcp-logger/config/config.php'
+    - resource: '../vendor/hal/hal-core/config/config.php'
     - resource: '../vendor/ql/mcp-panthor/configuration/*.yml'
-    - resource: '../vendor/hal/hal-core/config/*.yaml'
     - resource: 'services/*.yaml'
+    - resource: 'services/*.php'
 
-    - resource: 'services.yaml'
+    - resource: 'services.php'
     - resource: 'parameters.yaml'
 
     - resource: 'ui/*.yaml'
     - resource: 'api/*.yaml'
     - resource: 'api-internal/*.yaml'
     - resource: 'api-writes/*.yaml'
-
-################################################################################
-# general configuration
-################################################################################
-
-parameters:
-    # ▼▼▼▼ TODO TODO - remove these
-    hal.agents:
-        - 'localhost'
-        - 'skluckmbp'
-    # ▲▲▲▲ TODO TODO - remove these

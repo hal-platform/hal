@@ -2,24 +2,23 @@ parameters:
     ############################################################################
     # application
     ############################################################################
-    application.id: '200947'
+    application.id: 'halui'
     application.title: 'Hal'
-    application.environment: '%env(ENVIRONMENT)%'
+    application.environment: '%env(string:ENVIRONMENT)%'
 
-    application.major.version: '%env(HAL_APPLICATION_VERSION_MAJOR)%'
-    application.minor.version: '%env(HAL_APPLICATION_VERSION_MINOR)%'
-    application.version: '%application.major.version%.%application.minor.version%'
-
-    application.sha: '%env(HAL_APPLICATION_SHA)%'
+    application.version: '%env(string:HAL_VERSION)%'
+    application.sha: '%env(string:HAL_APPLICATION_SHA)%'
 
     hal.pushfile.path: '%root%/.hal9000.push.yml'
 
     ############################################################################
     # general
     ############################################################################
-    root: '%env(PANTHOR_APPROOT)%'
-    base_url: '%env(HAL_BASEURL)%'
-    administrator_email: '%env(HAL_ADMIN_EMAIL)%'
+    root: '%env(string:HAL_ROOT)%'
+    base_url: '%env(string:HAL_BASEURL)%'
+    administrator_email: '%env(string:HAL_ADMIN_EMAIL)%'
+
+    date.timezone: '%env(string:HAL_TIMEZONE)%'
 
     # Route condition regexes
     r.alphanum: '[A-Za-z0-9]+'
@@ -28,27 +27,25 @@ parameters:
     r.date: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
     r.api.queue: '[A-Za-z0-9\+\-\.]+'
 
-    unique.alphabet: '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
-    unique.size: 4
-    date.timezone: '%env(HAL_TIMEZONE)%'
-
-    gravatar.fallback: 'skluck.github.io/hal/halprofile_100.jpg'
+    gravatar.fallback: 'hal.computer/img/hal-profile-200.jpg'
 
     ############################################################################
     # panthor
     ############################################################################
-    debug: '%env(HAL_DEBUG_ON)%'
+    debug: '%env(bool:HAL_DEBUG_ON)%'
+    slim.settings.display_errors: '%env(bool:HAL_DEBUG_ON)%'
+
     routes.cached: 'config/routes.cached.php'
-    routes.cache_disabled: '%env(HAL_ROUTES_DISABLE_CACHE_ON)%'
+    routes.cache_disabled: '%env(bool:HAL_ROUTES_DISABLE_CACHE_ON)%'
     global_middleware:
-        - 'slim.global_middleware.logger'
-        - 'slim.global_middleware.template_context'
+        - 'Hal\UI\Middleware\LoggerGlobalMiddleware'
+        - 'Hal\UI\Middleware\TemplateContextGlobalMiddleware'
         - 'panthor.middleware.encrypted_cookies'
-        - 'slim.global_middleware.flash'
-        - 'slim.global_middleware.session'
-        - 'slim.global_middleware.user_session'
-        - 'slim.global_middleware.srs_business'
-        - 'slim.global_middleware.global_banner'
+        - 'Hal\UI\Middleware\FlashGlobalMiddleware'
+        - 'QL\Panthor\Middleware\SessionMiddleware'
+        - 'Hal\UI\Middleware\UserSessionGlobalMiddleware'
+        - 'Hal\UI\Middleware\SrsBusinessGlobalMiddleware'
+        - 'Hal\UI\Middleware\SystemSettingsGlobalMiddleware'
 
     error_handling.html_template: 'error.twig'
 
@@ -56,6 +53,9 @@ parameters:
     # logging
     ############################################################################
     error_handling.log_stacktrace: '%env(HAL_LOG_STACKTRACES_ON)%'
+    mcp_logger.default_properties:
+        applicationID: '%application.id%'
+        serverEnvironment: '%application.environment%'
 
     ############################################################################
     # doctrine
@@ -65,7 +65,7 @@ parameters:
     ############################################################################
     # twig
     ############################################################################
-    twig.debug: '%env(HAL_DEBUG_TWIG_ON)%'
+    twig.debug: '%env(bool:HAL_DEBUG_TWIG_ON)%'
 
     ############################################################################
     # auth
@@ -92,8 +92,7 @@ parameters:
     cache.server.ttl: 300
     cache.stats.ttl: 900
     cache.page.ttl: 300
-    cache.github.default.ttl: 60
-    cache.github.short.ttl: 20
+    cache.github.default_ttl: 60
 
     cache.delimiter: '.'
 
@@ -134,11 +133,9 @@ parameters:
     ############################################################################
     # credentials / encryption
     ############################################################################
-    encrypter.secret.path: '%env(HAL_CRYPTO_SECRETPATH)%'
-    encrypter.publickey: '%env(HAL_CRYPTO_PUBLICKEY)%'
-    encrypter.encryptedkey: '%env(HAL_CRYPTO_PRIVATEKEY)%'
+    encryption.secret_path: '%env(HAL_CRYPTO_SECRETPATH)%'
 
-    aws.use_host_credentials: '%env(HAL_AWS_CREDENTIALS_USE_HOST)%'
+    aws.use_host_credentials: '%env(bool:HAL_AWS_CREDENTIALS_USE_HOST)%'
     aws.host_credentials_path: '%env(HAL_AWS_HOST_CREDENTIALS_PATH)%'
 
     ############################################################################

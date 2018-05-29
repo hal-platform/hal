@@ -1,0 +1,37 @@
+services:
+    twig.extension.hal:
+        class: 'Hal\UI\Twig\HalExtension'
+        arguments:
+            - '@Hal\UI\Utility\TimeFormatter'
+            - '%gravatar.fallback%'
+
+    twig.extension.github:
+        class: 'Hal\UI\Twig\GitHubExtension'
+        arguments:
+            - '@Hal\Core\VersionControl\VCS'
+        calls:
+            - ['setCache', ['@vcs.cache']]
+
+    twig.extension.security:
+        class: 'Hal\UI\Twig\SecurityExtension'
+        arguments:
+            - '@Hal\UI\Security\CSRFManager'
+
+    # Twig Environment
+    twig.environment:
+        parent: 'panthor.twig.environment'
+        calls:
+            - ['addExtension', ['@twig.extension.hal']]
+            - ['addExtension', ['@twig.extension.github']]
+            - ['addExtension', ['@twig.extension.security']]
+            - ['addGlobal', ['application_title', '%application.title%']]
+            - ['addGlobal', ['application_environment', '%application.environment%']]
+            - ['addGlobal', ['application_sha', '%application.sha%']]
+            - ['addGlobal', ['application_version', '%application.version%']]
+            - ['addGlobal', ['hal_administrators_email', '%administrator_email%']]
+
+
+    # Helpers
+    'Hal\UI\Utility\TimeFormatter':
+        - '@clock'
+        - '%date.timezone%'

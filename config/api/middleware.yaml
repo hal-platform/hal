@@ -1,15 +1,23 @@
 services:
     middleware.api_caching:
+        public: true
         class: 'Hal\UI\Middleware\APICachingMiddleware'
-        arguments: ['@api.response_formatter']
+        arguments:
+            - '@api.response_formatter'
 
     middleware.api_require_entity:
+        public: true
         class: 'Hal\UI\Middleware\RequireEntityMiddleware'
-        arguments: ['@doctrine.em', '@notFoundHandler']
+        arguments:
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@notFoundHandler'
 
     middleware.api_cross_origin:
+        public: true
         class: 'Hal\UI\Middleware\APICrossOriginMiddleware'
-        arguments: ['@middleware.api_cross_origin.analyzer_settings', '@problem.renderer']
+        arguments:
+            - '@middleware.api_cross_origin.analyzer_settings'
+            - '@problem.renderer'
 
     middleware.api_cross_origin.analyzer_settings:
         class: 'Neomerx\Cors\Strategies\Settings'

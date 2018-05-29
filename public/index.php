@@ -2,15 +2,12 @@
 
 namespace Hal\Bootstrap;
 
-define('MAINTENANCE', false);
+use QL\Panthor\Bootstrap\GlobalMiddlewareLoader;
+use QL\Panthor\Bootstrap\RouteLoader;
+
 define('HAL_APP_START', microtime(true));
 
 $root = realpath(__DIR__ . '/..');
-
-if (MAINTENANCE) {
-    // require $root . '/templates/maintenance.html';
-    exit;
-}
 
 if (!$container = @include "${root}/config/bootstrap.php") {
     http_response_code(500);
@@ -31,12 +28,12 @@ ini_set('display_errors', 0);
 $app = $container->get('slim');
 
 // Load routes onto Slim
-$routes = $container->get('slim.router.loader');
+$routes = $container->get(RouteLoader::class);
 $routes($app);
 
 // Add global middleware to Slim
 $container
-    ->get('slim.global_middleware')
+    ->get(GlobalMiddlewareLoader::class)
     ->attach($app);
 
 // Attach Slim to exception handler for error rendering

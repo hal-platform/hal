@@ -1,49 +1,53 @@
 services:
-
-    ####################################################################################################################
-    # VALIDATORS
-    ####################################################################################################################
-
     validator.organization:
         class: 'Hal\UI\Validator\OrganizationValidator'
-        arguments: ['@doctrine.em']
+        arguments:
+            - '@Doctrine\ORM\EntityManagerInterface'
 
     validator.environment:
         class: 'Hal\UI\Validator\EnvironmentValidator'
-        arguments: ['@doctrine.em']
+        arguments:
+            - '@Doctrine\ORM\EntityManagerInterface'
 
     validator.application:
         class: 'Hal\UI\Validator\ApplicationValidator'
-        arguments: ['@doctrine.em', '@vcs']
+        arguments:
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@Hal\Core\VersionControl\VCS'
 
     validator.credential:
         class: 'Hal\UI\Validator\CredentialValidator'
-        arguments: ['@doctrine.em', '@encryption']
+        arguments:
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@Hal\Core\Crypto\Encryption'
 
     validator.encrypted_property:
         class: 'Hal\UI\Validator\EncryptedPropertyValidator'
-        arguments: ['@doctrine.em', '@encryption']
+        arguments:
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@Hal\Core\Crypto\Encryption'
 
     validator.permissions:
         class: 'Hal\UI\Validator\PermissionsValidator'
-        arguments: ['@doctrine.em']
+        arguments:
+            - '@Doctrine\ORM\EntityManagerInterface'
 
     validator.build:
         class: 'Hal\UI\Validator\BuildValidator'
         arguments:
-            - '@doctrine.em'
-            - '@vcs'
-            - '@service.authorization'
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@Hal\Core\VersionControl\VCS'
+            - '@Hal\UI\Security\AuthorizationService'
     validator.release:
         class: 'Hal\UI\Validator\ReleaseValidator'
         arguments:
-            - '@doctrine.em'
-            - '@service.authorization'
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@Hal\UI\Security\AuthorizationService'
 
     validator.target:
         class: 'Hal\UI\Validator\TargetValidator'
         arguments:
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             -
                 cd: '@validator.target.cd'
                 eb: '@validator.target.eb'
@@ -53,11 +57,13 @@ services:
 
     validator.target.cd:
         class: 'Hal\UI\Validator\Targets\CodeDeployValidator'
-        arguments: ['@validator.target.s3']
+        arguments:
+            - '@validator.target.s3'
 
     validator.target.eb:
         class: 'Hal\UI\Validator\Targets\ElasticBeanstalkValidator'
-        arguments: ['@validator.target.s3']
+        arguments:
+            - '@validator.target.s3'
 
     validator.target.rsync:
         class: 'Hal\UI\Validator\Targets\RSyncValidator'
@@ -76,7 +82,7 @@ services:
     validator.template:
         class: 'Hal\UI\Validator\TargetTemplateValidator'
         arguments:
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             -
                 cd: '@validator.template.cd'
                 eb: '@validator.template.eb'
@@ -86,13 +92,15 @@ services:
 
     validator.template.cd:
         class: 'Hal\UI\Validator\Targets\CodeDeployValidator'
-        arguments: ['@validator.template.s3']
+        arguments:
+            - '@validator.template.s3'
         calls:
             - ['withFlag', ['ALLOW_OPTIONAL']]
 
     validator.template.eb:
         class: 'Hal\UI\Validator\Targets\ElasticBeanstalkValidator'
-        arguments: ['@validator.template.s3']
+        arguments:
+            - '@validator.template.s3'
         calls:
             - ['withFlag', ['ALLOW_OPTIONAL']]
 
@@ -115,18 +123,21 @@ services:
 
     validator.user:
         class: 'Hal\UI\Validator\UserValidator'
-        arguments: ['@doctrine.em']
+        arguments:
+            - '@Doctrine\ORM\EntityManagerInterface'
 
     validator.user_identity:
         class: 'Hal\UI\Validator\UserIdentityValidator'
-        arguments: ['@doctrine.em', '@clock']
+        arguments:
+            - '@Doctrine\ORM\EntityManagerInterface'
+            - '@clock'
 
     ####################################################################################################################
 
     validator.vcs:
         class: 'Hal\UI\Validator\VersionControlProviderValidator'
         arguments:
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             -
                 ghe: '@validator.vcs.ghe'
 
@@ -138,7 +149,7 @@ services:
     validator.idp:
         class: 'Hal\UI\Validator\UserIdentityProviderValidator'
         arguments:
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             -
                 gh: '@validator.idp.gh'
                 ghe: '@validator.idp.ghe'
@@ -156,39 +167,3 @@ services:
 
     validator.idp.internal:
         class: 'Hal\UI\Validator\IdentityProviders\InternalValidator'
-
-    ####################################################################################################################
-    # TWIG TEMPLATING
-    ####################################################################################################################
-
-    twig.extension.hal:
-        class: 'Hal\UI\Twig\HalExtension'
-        arguments:
-            - '@utility.time.formatter'
-            - '%gravatar.fallback%'
-
-    twig.extension.github:
-        class: 'Hal\UI\Twig\GitHubExtension'
-        arguments: ['@vcs']
-        calls:
-            - ['setCache', ['@twig.extension.github.cache']]
-
-    twig.extension.security:
-        class: 'Hal\UI\Twig\SecurityExtension'
-        arguments: ['@csrf']
-
-    twig.extension.github.cache:
-        parent: 'cache.memory'
-
-    # Twig Environment
-    twig.environment:
-        parent: 'panthor.twig.environment'
-        calls:
-            - ['addExtension', ['@twig.extension.hal']]
-            - ['addExtension', ['@twig.extension.github']]
-            - ['addExtension', ['@twig.extension.security']]
-            - ['addGlobal', ['application_title', '%application.title%']]
-            - ['addGlobal', ['application_environment', '%application.environment%']]
-            - ['addGlobal', ['application_sha', '%application.sha%']]
-            - ['addGlobal', ['application_version', '%application.version%']]
-            - ['addGlobal', ['hal_administrators_email', '%administrator_email%']]

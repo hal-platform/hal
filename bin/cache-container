@@ -3,7 +3,7 @@
 
 namespace Hal\Bin;
 
-use QL\Panthor\Bootstrap\DI;
+use Hal\Core\DI;
 use Hal\UI\CachedContainer;
 
 $root = realpath(__DIR__ . '/../');
@@ -21,13 +21,20 @@ if (!$autoloader = @include "${root}/vendor/autoload.php") {
     exit(1);
 }
 
-$container = DI::buildDI($root, false);
+$container = DI::buildDI([$root . '/config'], false);
 if (!$cached = DI::cacheDI($container, $options)) {
     echo "An error occured while attempting to cache the DI Container.\n";
     exit(1);
 }
 
 file_put_contents($file, $cached);
+
+// Verify class was created
+require $file;
+if (!class_exists($class)) {
+    echo "An error occured while attempting to cache the DI Container.\n";
+    exit(1);
+}
 
 echo <<<OUTPUT
 Dumping DI Container cache:

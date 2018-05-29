@@ -1,42 +1,49 @@
 services:
     index.api:
+        public: true
         class: 'Hal\UI\Controllers\API\IndexController'
-        arguments: ['@api.response_formatter']
+        arguments:
+            - '@api.response_formatter'
 
     docs.api:
+        public: true
         class: 'Hal\UI\Controllers\API\DocsRedirectController'
-        arguments: ['@uri']
+        arguments:
+            - '@uri'
 
     ####################################################################################################################
     # QUEUE CONTROLLERS
     ####################################################################################################################
 
     queue.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Queue\QueueController'
         arguments:
             - '@api.response_formatter'
             - '@api_normalizer.build'
             - '@api_normalizer.release'
-            - '@job_queue'
+            - '@Hal\UI\Service\JobQueueService'
             - '@problem.renderer'
             - '@clock'
 
     queue.refresh.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Queue\QueueRefreshController'
         arguments:
             - '@api.response_formatter'
             - '@api_normalizer.build'
             - '@api_normalizer.release'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@problem.renderer'
 
     queue.history.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Queue\QueueHistoryController'
         arguments:
             - '@api.response_formatter'
             - '@api_normalizer.build'
             - '@api_normalizer.release'
-            - '@job_queue'
+            - '@Hal\UI\Service\JobQueueService'
             - '@clock'
             - '%date.timezone%'
 
@@ -45,14 +52,18 @@ services:
     ####################################################################################################################
 
     organization.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Organization\OrganizationController'
-        arguments: ['@api.response_formatter', '@api_normalizer.organization']
+        arguments:
+            - '@api.response_formatter'
+            - '@api_normalizer.organization'
 
     organizations.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Organization\OrganizationsController'
         arguments:
             - '@api.response_formatter'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@api_normalizer.organization'
 
     ####################################################################################################################
@@ -60,14 +71,18 @@ services:
     ####################################################################################################################
 
     application.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Application\ApplicationController'
-        arguments: ['@api.response_formatter', '@api_normalizer.application']
+        arguments:
+            - '@api.response_formatter'
+            - '@api_normalizer.application'
 
     applications.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Application\ApplicationsController'
         arguments:
             - '@api.response_formatter'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@problem.renderer'
 
     ####################################################################################################################
@@ -75,36 +90,48 @@ services:
     ####################################################################################################################
 
     templates.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Template\TemplatesController'
         arguments:
             - '@api.response_formatter'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@problem.renderer'
 
     template.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Template\TemplateController'
-        arguments: ['@api.response_formatter', '@api_normalizer.template']
+        arguments:
+            - '@api.response_formatter'
+            - '@api_normalizer.template'
 
     ####################################################################################################################
     # TARGET CONTROLLERS
     ####################################################################################################################
 
     target.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Target\TargetController'
-        arguments: ['@api.response_formatter', '@api_normalizer.target']
+        arguments:
+            - '@api.response_formatter'
+            - '@api_normalizer.target'
 
     targets.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Target\TargetsController'
-        arguments: ['@api.response_formatter', '@doctrine.em']
+        arguments:
+            - '@api.response_formatter'
+            - '@Doctrine\ORM\EntityManagerInterface'
 
     target.history.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Target\HistoryController'
         arguments:
             - '@api.response_formatter'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@problem.renderer'
 
     target.current_release.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Target\CurrentReleaseController'
         arguments:
             - '@api.response_formatter'
@@ -116,25 +143,33 @@ services:
     ####################################################################################################################
 
     build.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Build\BuildController'
-        arguments: ['@api.response_formatter', '@api_normalizer.build']
+        arguments:
+            - '@api.response_formatter'
+            - '@api_normalizer.build'
 
     build.events.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Build\EventsController'
-        arguments: ['@api.response_formatter', '@service.event_logs']
+        arguments:
+            - '@api.response_formatter'
+            - '@Hal\UI\Service\JobEventsService'
 
     builds.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Build\BuildsController'
         arguments:
             - '@api.response_formatter'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@problem.renderer'
 
     builds.history.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Queue\BuildsHistoryController'
         arguments:
             - '@api.response_formatter'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@problem.renderer'
 
     ####################################################################################################################
@@ -142,25 +177,33 @@ services:
     ####################################################################################################################
 
     release.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Release\ReleaseController'
-        arguments: ['@api.response_formatter', '@api_normalizer.release']
+        arguments:
+            - '@api.response_formatter'
+            - '@api_normalizer.release'
 
     release.events.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Release\EventsController'
-        arguments: ['@api.response_formatter', '@service.event_logs']
+        arguments:
+            - '@api.response_formatter'
+            - '@Hal\UI\Service\JobEventsService'
 
     releases.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Release\ReleasesController'
         arguments:
             - '@api.response_formatter'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@problem.renderer'
 
     releases.history.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Queue\ReleasesHistoryController'
         arguments:
             - '@api.response_formatter'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@problem.renderer'
 
     ####################################################################################################################
@@ -168,49 +211,64 @@ services:
     ####################################################################################################################
 
     event.api:
+        public: true
         class: 'Hal\UI\Controllers\API\EventController'
-        arguments: ['@api.response_formatter', '@api_normalizer.event']
+        arguments:
+            - '@api.response_formatter'
+            - '@api_normalizer.event'
 
     ####################################################################################################################
     # ENVIRONMENTS CONTROLLERS
     ####################################################################################################################
 
     environments.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Environment\EnvironmentsController'
         arguments:
             - '@api.response_formatter'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@api_normalizer.environment'
 
     environment.api:
+        public: true
         class: 'Hal\UI\Controllers\API\Environment\EnvironmentController'
-        arguments: ['@api.response_formatter', '@api_normalizer.environment']
+        arguments:
+            - '@api.response_formatter'
+            - '@api_normalizer.environment'
 
     ####################################################################################################################
     # VERSION CONTROL PROVIDER CONTROLLERS
     ####################################################################################################################
 
     vcs_providers.api:
+        public: true
         class: 'Hal\UI\Controllers\API\VersionControl\VersionControlProvidersController'
         arguments:
             - '@api.response_formatter'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@problem.renderer'
 
     vcs_provider.api:
+        public: true
         class: 'Hal\UI\Controllers\API\VersionControl\VersionControlProviderController'
-        arguments: ['@api.response_formatter', '@api_normalizer.vcs_provider']
+        arguments:
+            - '@api.response_formatter'
+            - '@api_normalizer.vcs_provider'
 
     ####################################################################################################################
     # USER CONTROLLERS
     ####################################################################################################################
 
     user.api:
+        public: true
         class: 'Hal\UI\Controllers\API\User\UserController'
-        arguments: ['@api.response_formatter', '@api_normalizer.user']
+        arguments:
+            - '@api.response_formatter'
+            - '@api_normalizer.user'
     users.api:
+        public: true
         class: 'Hal\UI\Controllers\API\User\UsersController'
         arguments:
             - '@api.response_formatter'
-            - '@doctrine.em'
+            - '@Doctrine\ORM\EntityManagerInterface'
             - '@problem.renderer'

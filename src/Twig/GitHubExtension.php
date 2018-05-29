@@ -12,11 +12,11 @@ use Hal\Core\Entity\Application;
 use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Parameters;
 use Hal\Core\Type\VCSProviderEnum;
-use Hal\UI\VersionControl\VCS;
-use QL\MCP\Cache\CachingTrait;
+use Hal\Core\Utility\CachingTrait;
+use Hal\Core\VersionControl\VCS;
+use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
-use Twig\Extension\AbstractExtension;
 
 class GitHubExtension extends AbstractExtension
 {
