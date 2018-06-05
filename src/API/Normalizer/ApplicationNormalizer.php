@@ -8,22 +8,23 @@
 namespace Hal\UI\API\Normalizer;
 
 use Hal\Core\Entity\Application;
+use Hal\Core\Parameters;
+use Hal\Core\VersionControl\VCSFactory;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResourceNormalizerInterface;
-use Hal\UI\VersionControl\VCS;
 
 class ApplicationNormalizer implements ResourceNormalizerInterface
 {
     /**
-     * @var VCS
+     * @var VCSFactory
      */
     private $vcs;
 
     /**
-     * @param VCS $vcs
+     * @param VCSFactory $vcs
      */
-    public function __construct(VCS $vcs)
+    public function __construct(VCSFactory $vcs)
     {
         $this->vcs = $vcs;
     }
@@ -87,14 +88,14 @@ class ApplicationNormalizer implements ResourceNormalizerInterface
                 ['application.dashboard', ['application' => $application->id()]],
                 sprintf('%s Status', $application->name()),
                 'text/html'
-            ),
-            'github_page' => new Hyperlink(
-                'https://github.example.com',
-                // $this->vcs->authenticate($provider)->url()->githubRepoURL($application->gitHub()->owner(), $application->gitHub()->repository()),
-                '',
-                'text/html'
             )
         ];
+
+        if ($hyperlink = $this->getVCSURL($application)) {
+            $links += [
+                'github_page' => $hyperlink
+            ];
+        }
 
         $resource = new HypermediaResource($data, $links, [
             'organization' => $application->organization(),
@@ -104,5 +105,30 @@ class ApplicationNormalizer implements ResourceNormalizerInterface
         $resource->withEmbedded($embed);
 
         return $resource;
+    }
+
+    /**
+     * @param Application $application
+     *
+     * @return Hyperlink|null
+     */
+    private function getVCSURL(Application $application)
+    {
+        $url = '';
+
+        if ($provider = $application->provider()) {
+            if ($client = $this->vcs->authenticate($provider)) {
+                $url = $client->urlForRepository(
+                    $application->parameter(Parameters::VC_GH_OWNER),
+                    $application->parameter(Parameters::VC_GH_REPO)
+                );
+            }
+        }
+
+        if (!$url) {
+            return null;
+        }
+
+        return new Hyperlink($url, '', 'text/html');
     }
 }

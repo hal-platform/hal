@@ -7,23 +7,25 @@
 
 namespace Hal\UI\API\Normalizer;
 
+use Hal\Core\Entity\Application;
 use Hal\Core\Entity\JobType\Build;
+use Hal\Core\Parameters;
+use Hal\Core\VersionControl\VCSFactory;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResourceNormalizerInterface;
-use Hal\UI\VersionControl\VCS;
 
 class BuildNormalizer implements ResourceNormalizerInterface
 {
     /**
-     * @var VCS
+     * @var VCSFactory
      */
     private $vcs;
 
     /**
-     * @param VCS $vcs
+     * @param VCSFactory $vcs
      */
-    public function __construct(VCS $vcs)
+    public function __construct(VCSFactory $vcs)
     {
         $this->vcs = $vcs;
     }
@@ -110,20 +112,20 @@ class BuildNormalizer implements ResourceNormalizerInterface
                 ['build', ['build' => $build->id()]],
                 '',
                 'text/html'
-            ),
-            'github_reference_page' => new Hyperlink(
-                'https://github.example.com',
-                // $this->vcs->authenticate($provider)->url()->githubReferenceURL($ghOwner, $ghRepo, $build->reference()),
-                '',
-                'text/html'
-            ),
-            'github_commit_page' => new Hyperlink(
-                'https://github.example.com',
-                // $this->vcs->authenticate($provider)->url()->githubCommitURL($ghOwner, $ghRepo, $build->commit()),
-                '',
-                'text/html'
             )
         ];
+
+        if ($hyperlink = $this->getReferenceURL($build->application(), $build->reference())) {
+            $pages += [
+                'github_page' => $hyperlink
+            ];
+        }
+
+        if ($hyperlink = $this->getReferenceURL($build->application(), $build->commit())) {
+            $pages += [
+                'github_commit_page' => $hyperlink
+            ];
+        }
 
         if ($build->isSuccess()) {
             $pages += [
@@ -136,5 +138,32 @@ class BuildNormalizer implements ResourceNormalizerInterface
         }
 
         return $links + $pages;
+    }
+
+    /**
+     * @param Application $application
+     * @param string $reference
+     *
+     * @return Hyperlink|null
+     */
+    private function getReferenceURL(Application $application, string $reference)
+    {
+        $url = '';
+
+        if ($provider = $application->provider()) {
+            if ($client = $this->vcs->authenticate($provider)) {
+                $url = $client->urlForReference(
+                    $application->parameter(Parameters::VC_GH_OWNER),
+                    $application->parameter(Parameters::VC_GH_REPO),
+                    $reference
+                );
+            }
+        }
+
+        if (!$url) {
+            return null;
+        }
+
+        return new Hyperlink($url, '', 'text/html');
     }
 }
