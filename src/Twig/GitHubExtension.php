@@ -13,7 +13,7 @@ use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Parameters;
 use Hal\Core\Type\VCSProviderEnum;
 use Hal\Core\Utility\CachingTrait;
-use Hal\Core\VersionControl\VCS;
+use Hal\Core\VersionControl\VCSFactory;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -23,14 +23,14 @@ class GitHubExtension extends AbstractExtension
     use CachingTrait;
 
     /**
-     * @var VCS
+     * @var VCSFactory
      */
     private $vcs;
 
     /**
-     * @param VCS $vcs
+     * @param VCSFactory $vcs
      */
-    public function __construct(VCS $vcs)
+    public function __construct(VCSFactory $vcs)
     {
         $this->vcs = $vcs;
     }
@@ -84,19 +84,12 @@ class GitHubExtension extends AbstractExtension
             return '';
         }
 
-        $provider = $application->provider();
-        $githubs = [VCSProviderEnum::TYPE_GITHUB, VCSProviderEnum::TYPE_GITHUB_ENTERPRISE];
-
-        if ($provider) {
-            if (in_array($provider->type(), $githubs)) {
-                $github = $this->vcs->authenticate($application->provider());
-                return $github->url()->githubRepoURL(
+        if ($provider = $application->provider()) {
+            if ($client = $this->vcs->authenticate($provider)) {
+                return $client->urlForRepository(
                     $application->parameter(Parameters::VC_GH_OWNER),
                     $application->parameter(Parameters::VC_GH_REPO)
                 );
-
-            } elseif ($provider === VCSProviderEnum::TYPE_GITHUB) {
-                return $application->parameter(Parameters::VC_GIT_URL);
             }
         }
 
@@ -115,22 +108,13 @@ class GitHubExtension extends AbstractExtension
             return '';
         }
 
-        $provider = $application->provider();
-        $githubs = [VCSProviderEnum::TYPE_GITHUB, VCSProviderEnum::TYPE_GITHUB_ENTERPRISE];
-
-        if ($provider) {
-            if (in_array($provider->type(), $githubs)) {
-                $github = $this->vcs->authenticate($application->provider());
-
-                $ref = $github->resolver()->resolveRefType($reference);
-                return $github->url()->githubRefURL(
+        if ($provider = $application->provider()) {
+            if ($client = $this->vcs->authenticate($provider)) {
+                return $client->urlForReference(
                     $application->parameter(Parameters::VC_GH_OWNER),
                     $application->parameter(Parameters::VC_GH_REPO),
-                    ...$ref
+                    $reference
                 );
-
-            } elseif ($provider === VCSProviderEnum::TYPE_GIT) {
-                return '#';
             }
         }
 
@@ -148,10 +132,9 @@ class GitHubExtension extends AbstractExtension
             return '';
         }
 
-        $provider = $application->provider();
         $githubs = [VCSProviderEnum::TYPE_GITHUB, VCSProviderEnum::TYPE_GITHUB_ENTERPRISE];
 
-        if ($provider) {
+        if ($provider = $application->provider()) {
             if (in_array($provider->type(), $githubs)) {
                 return sprintf(
                     '%s/%s',
@@ -191,13 +174,17 @@ class GitHubExtension extends AbstractExtension
             return $latest;
         }
 
-        $github = $this->vcs->authenticate($application->provider());
-        if (!$github) {
+        if (!$provider = $application->provider()) {
             $this->setToCache($key, false, 15);
             return false;
         }
 
-        $resolved = $github->resolver()->resolve(
+        if (!$client = $this->vcs->authenticate($provider)) {
+            $this->setToCache($key, false, 15);
+            return false;
+        }
+
+        $resolved = $client->resolveRef(
             $application->parameter(Parameters::VC_GH_OWNER),
             $application->parameter(Parameters::VC_GH_REPO),
             $build->reference()
@@ -227,14 +214,9 @@ class GitHubExtension extends AbstractExtension
             return ['branch', $reference];
         }
 
-        $provider = $application->provider();
-        $githubs = [VCSProviderEnum::TYPE_GITHUB, VCSProviderEnum::TYPE_GITHUB_ENTERPRISE];
-
-        if ($provider) {
-            if (in_array($provider->type(), $githubs)) {
-                $github = $this->vcs->authenticate($provider);
-
-                return $github->resolver()->resolveRefType($reference);
+        if ($provider = $application->provider()) {
+            if ($client = $this->vcs->authenticate($provider)) {
+                return $client->resolveRefType($reference);
             }
         }
 

@@ -1071,12 +1071,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/hal-platform/hal-core.git",
-                "reference": "d696ff8b8f0b7c591de54ad21ffd99bdaf046eb5"
+                "reference": "17854cdffffee0ff8abcc04c0c6d68359919fe21"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hal-platform/hal-core/zipball/d696ff8b8f0b7c591de54ad21ffd99bdaf046eb5",
-                "reference": "d696ff8b8f0b7c591de54ad21ffd99bdaf046eb5",
+                "url": "https://api.github.com/repos/hal-platform/hal-core/zipball/17854cdffffee0ff8abcc04c0c6d68359919fe21",
+                "reference": "17854cdffffee0ff8abcc04c0c6d68359919fe21",
                 "shasum": ""
             },
             "require": {
@@ -1131,7 +1131,7 @@
                 }
             ],
             "description": "Core domain entities and shared resources for Hal UI and Agent.",
-            "time": "2018-05-29T02:17:40+00:00"
+            "time": "2018-06-05T02:50:10+00:00"
         },
         {
             "name": "knplabs/github-api",

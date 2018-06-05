@@ -16,8 +16,7 @@ use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Parameters;
 use Hal\Core\Type\JobStatusEnum;
 use Hal\UI\Security\AuthorizationService;
-use Hal\UI\VersionControl\GitHub\GitHubResolver;
-use Hal\UI\VersionControl\VCS;
+use Hal\Core\VersionControl\VCSFactory;
 use QL\MCP\Common\GUID;
 
 class BuildValidator
@@ -25,9 +24,11 @@ class BuildValidator
     use ValidatorErrorTrait;
     use ValidatorTrait;
 
-    const ERR_NO_PERMISSION = 'You do not have permission to create a build for this application.';
-    const ERR_UNKNOWN_REF = 'You must select a valid git reference.';
-    const ERR_UNKNOWN_ENV = 'You must select a valid environment.';
+    private const ERR_NO_PERMISSION = 'You do not have permission to create a build for this application.';
+    private const ERR_UNKNOWN_REF = 'You must select a valid git reference.';
+    private const ERR_UNKNOWN_ENV = 'You must select a valid environment.';
+
+    private const REGEX_COMMIT = '#^[0-9a-f]{40}$#';
 
     /**
      * Valid entries:
@@ -39,7 +40,7 @@ class BuildValidator
      * - pull request 500
      * - pull request #500
      */
-    const REGEX_PULL = '/^(?:pull|pr|pull request)(?: )?(?:#)?([\d]+)$/i';
+    private const REGEX_PULL = '/^(?:pull|pr|pull request)(?: )?(?:#)?([\d]+)$/i';
 
     /**
      * @var EntityRepository
@@ -48,7 +49,7 @@ class BuildValidator
     private $buildRepo;
 
     /**
-     * @var VCS
+     * @var VCSFactory
      */
     private $vcs;
 
@@ -59,12 +60,12 @@ class BuildValidator
 
     /**
      * @param EntityManagerInterface $em
-     * @param VCS $vcs
+     * @param VCSFactory $vcs
      * @param AuthorizationService $authorizationService
      */
     public function __construct(
         EntityManagerInterface $em,
-        VCS $vcs,
+        VCSFactory $vcs,
         AuthorizationService $authorizationService
     ) {
         $this->buildRepo = $em->getRepository(Build::class);
@@ -161,15 +162,15 @@ class BuildValidator
             return null;
         }
 
-        $github = $this->vcs->authenticate($provider);
-        if (!$github) {
+        $client = $this->vcs->authenticate($provider);
+        if (!$client) {
             return null;
         }
 
         $owner = $application->parameter(Parameters::VC_GH_OWNER);
         $repo = $application->parameter(Parameters::VC_GH_REPO);
 
-        $resolved = $github->resolver()->resolve($owner, $repo, $reference);
+        $resolved = $client->resolveRef($owner, $repo, $reference);
 
         return $resolved;
     }
@@ -188,7 +189,7 @@ class BuildValidator
         }
 
         // search query is commit sha
-        if (preg_match(GitHubResolver::REGEX_COMMIT, $search) === 1) {
+        if (preg_match(self::REGEX_COMMIT, $search) === 1) {
             return $search;
         }
 

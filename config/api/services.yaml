@@ -38,7 +38,7 @@ services:
     api_normalizer.build:
         class: 'Hal\UI\API\Normalizer\BuildNormalizer'
         arguments:
-            - '@Hal\Core\VersionControl\VCS'
+            - '@Hal\Core\VersionControl\VCSFactory'
             - '@api_normalizer.environment'
 
     api_normalizer.target:
@@ -59,7 +59,7 @@ services:
     api_normalizer.application:
         class: 'Hal\UI\API\Normalizer\ApplicationNormalizer'
         arguments:
-            - '@Hal\Core\VersionControl\VCS'
+            - '@Hal\Core\VersionControl\VCSFactory'
 
     api_normalizer.template:
         class: 'Hal\UI\API\Normalizer\TemplateNormalizer'

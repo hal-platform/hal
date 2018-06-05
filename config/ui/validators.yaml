@@ -13,7 +13,7 @@ services:
         class: 'Hal\UI\Validator\ApplicationValidator'
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@Hal\Core\VersionControl\VCS'
+            - '@Hal\Core\VersionControl\VCSFactory'
 
     validator.credential:
         class: 'Hal\UI\Validator\CredentialValidator'
@@ -36,7 +36,7 @@ services:
         class: 'Hal\UI\Validator\BuildValidator'
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@Hal\Core\VersionControl\VCS'
+            - '@Hal\Core\VersionControl\VCSFactory'
             - '@Hal\UI\Security\AuthorizationService'
     validator.release:
         class: 'Hal\UI\Validator\ReleaseValidator'

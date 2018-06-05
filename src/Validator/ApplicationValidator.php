@@ -15,8 +15,8 @@ use Hal\Core\Entity\Organization;
 use Hal\Core\Entity\System\VersionControlProvider;
 use Hal\Core\Parameters;
 use Hal\Core\Type\VCSProviderEnum;
-use Hal\UI\Service\GitHubService;
-use Hal\UI\VersionControl\VCS;
+use Hal\Core\VersionControl\VCSClientInterface;
+use Hal\Core\VersionControl\VCSFactory;
 
 class ApplicationValidator
 {
@@ -44,15 +44,15 @@ class ApplicationValidator
     private $vcsRepo;
 
     /**
-     * @var VCS
+     * @var VCSFactory
      */
     private $vcs;
 
     /**
      * @param EntityManagerInterface $em
-     * @param VCS $vcs
+     * @param VCSFactory $vcs
      */
-    public function __construct(EntityManagerInterface $em, VCS $vcs)
+    public function __construct(EntityManagerInterface $em, VCSFactory $vcs)
     {
         $this->applicationRepo = $em->getRepository(Application::class);
         $this->organizationRepo = $em->getRepository(Organization::class);
@@ -199,12 +199,12 @@ class ApplicationValidator
             return null;
         }
 
-        $github = $this->vcs->authenticate($provider);
-        if (!$github) {
+        $client = $this->vcs->authenticate($provider);
+        if (!$client) {
             return null;
         }
 
-        $isValid = $this->validateGithubRepo($github, $ghOwner, $ghRepo);
+        $isValid = $this->validateGithubRepo($client, $ghOwner, $ghRepo);
         if (!$isValid) {
             return null;
         }
@@ -281,13 +281,13 @@ class ApplicationValidator
     // }
 
     /**
-     * @param GitHubService $github
+     * @param VCSClientInterface $client
      * @param string $owner
      * @param string $repo
      *
      * @return bool
      */
-    private function validateGithubRepo(GitHubService $github, $owner, $repo)
+    private function validateGithubRepo(VCSClientInterface $client, $owner, $repo)
     {
         if (!$this->validateCharacterWhitelist($owner, self::REGEX_CHARACTER_CLASS_GITHUB)) {
             $this->addError(self::ERR_GITHUB_CHARACTERS, 'gh_owner');
@@ -297,7 +297,7 @@ class ApplicationValidator
             $this->addError(self::ERR_GITHUB_CHARACTERS, 'gh_repo');
         }
 
-        if (!$github->repository($owner, $repo)) {
+        if (!$client->repository($owner, $repo)) {
             $this->addError(self::ERR_GITHUB_INVALID_REPO, 'gh_owner');
             return false;
         }
