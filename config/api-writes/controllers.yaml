@@ -5,8 +5,8 @@ services:
         class: 'Hal\UI\Controllers\API\Build\StartBuildController'
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.build'
-            - '@validator.release'
+            - '@Hal\UI\Validator\BuildValidator'
+            - '@Hal\UI\Validator\ReleaseValidator'
             - '@api.response_formatter'
             - '@api_normalizer.build'
             - '@problem.renderer'
@@ -16,6 +16,6 @@ services:
         class: 'Hal\UI\Controllers\API\Release\DeployController'
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.release'
+            - '@Hal\UI\Validator\ReleaseValidator'
             - '@api.response_formatter'
             - '@problem.renderer'

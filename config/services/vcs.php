@@ -22,15 +22,16 @@ return function (ContainerConfigurator $container) {
         ->set('vcs.cache_type', 'memory')
         ->set('vcs.github_cache.namespace', 'github')
         ->set('vcs.github_cache.namespace_delimiter', '.')
+        ->set('vcs.factory_adapters', [
+            'gh' => ref(GitHubAdapter::class),
+            'ghe' => ref(GitHubEnterpriseAdapter::Class)
+        ])
     ;
 
     // Main clients
     $s
         ->set(VCSFactory::class)
-            ->arg('$adapters', [
-                'gh' => ref(GitHubAdapter::class),
-                'ghe' => ref(GitHubEnterpriseAdapter::Class)
-            ])
+            ->arg('$adapters', '%vcs.factory_adapters%')
 
         ->set(GitHubAdapter::class)
             ->arg('$httpClientBuilder', ref('github.http_builder'))
@@ -78,6 +79,6 @@ return function (ContainerConfigurator $container) {
     // UI Only
     $s
         ->set(BuildableRefs::class)
-        ->arg('$vcs', ref(VCSFactory::class))
+            ->autowire()
     ;
 };

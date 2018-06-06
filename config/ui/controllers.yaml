@@ -159,8 +159,8 @@ services:
         arguments:
             - '@user.add.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.user'
-            - '@validator.user_identity'
+            - '@Hal\UI\Validator\UserValidator'
+            - '@Hal\UI\Validator\UserIdentityValidator'
             - '@uri'
     user.add.twig:
         parent: 'twig.template'
@@ -172,7 +172,7 @@ services:
         arguments:
             - '@user.edit.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.user'
+            - '@Hal\UI\Validator\UserValidator'
             - '@uri'
     user.edit.twig:
         parent: 'twig.template'
@@ -189,7 +189,7 @@ services:
         class: 'Hal\UI\Controllers\User\RegenerateSetupTokenHandler'
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.user_identity'
+            - '@Hal\UI\Validator\UserIdentityValidator'
             - '@uri'
 
     user.settings.page:
@@ -241,7 +241,7 @@ services:
         arguments:
             - '@organization.add.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.organization'
+            - '@Hal\UI\Validator\OrganizationValidator'
             - '@Hal\UI\Security\AuthorizationService'
             - '@uri'
     organization.add.twig:
@@ -254,7 +254,7 @@ services:
         arguments:
             - '@organization.edit.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.organization'
+            - '@Hal\UI\Validator\OrganizationValidator'
             - '@uri'
     organization.edit.twig:
         parent: 'twig.template'
@@ -316,7 +316,7 @@ services:
         arguments:
             - '@application.add.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.application'
+            - '@Hal\UI\Validator\ApplicationValidator'
             - '@Hal\UI\Security\AuthorizationService'
             - '@uri'
     application.add.twig:
@@ -329,7 +329,7 @@ services:
         arguments:
             - '@application.edit.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.application'
+            - '@Hal\UI\Validator\ApplicationValidator'
             - '@uri'
     application.edit.twig:
         parent: 'twig.template'
@@ -378,7 +378,7 @@ services:
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\Core\Crypto\Encryption'
-            - '@validator.encrypted_property'
+            - '@Hal\UI\Validator\EncryptedPropertyValidator'
             - '@uri'
 
     encrypted.remove.handler:
@@ -420,7 +420,7 @@ services:
         class: 'Hal\UI\Controllers\Target\AddTargetMiddleware'
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.target'
+            - '@Hal\UI\Validator\TargetValidator'
             - '@uri'
 
     target.edit.page:
@@ -435,7 +435,7 @@ services:
         class: 'Hal\UI\Controllers\Target\EditTargetMiddleware'
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.target'
+            - '@Hal\UI\Validator\TargetValidator'
             - '@uri'
 
     target.remove.handler:
@@ -469,7 +469,7 @@ services:
         arguments:
             - '@template.add.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.template'
+            - '@Hal\UI\Validator\TargetTemplateValidator'
             - '@uri'
     template.add.twig:
         parent: 'twig.template'
@@ -481,7 +481,7 @@ services:
         arguments:
             - '@template.edit.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.template'
+            - '@Hal\UI\Validator\TargetTemplateValidator'
             - '@uri'
     template.edit.twig:
         parent: 'twig.template'
@@ -573,9 +573,9 @@ services:
         class: 'Hal\UI\Controllers\Build\StartBuildMiddleware'
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.build'
-            - '@validator.release'
-            - '@validator.meta'
+            - '@Hal\UI\Validator\BuildValidator'
+            - '@Hal\UI\Validator\ReleaseValidator'
+            - '@Hal\UI\Validator\MetaValidator'
             - '@Hal\UI\Service\StickyEnvironmentService'
             - '@uri'
 
@@ -620,8 +620,8 @@ services:
         class: 'Hal\UI\Controllers\Release\DeployMiddleware'
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.release'
-            - '@validator.meta'
+            - '@Hal\UI\Validator\ReleaseValidator'
+            - '@Hal\UI\Validator\MetaValidator'
             - '@Hal\UI\Service\StickyEnvironmentService'
             - '@uri'
 
@@ -645,11 +645,11 @@ services:
         arguments:
             - '@hal_bootstrap.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.environment'
-            - '@validator.vcs'
-            - '@validator.idp'
-            - '@validator.user_identity'
-            - '@validator.user'
+            - '@Hal\UI\Validator\EnvironmentValidator'
+            - '@Hal\UI\Validator\VersionControlProviderValidator'
+            - '@Hal\UI\Validator\UserIdentityProviderValidator'
+            - '@Hal\UI\Validator\UserIdentityValidator'
+            - '@Hal\UI\Validator\UserValidator'
             - '@uri'
     hal_bootstrap.twig:
         parent: 'twig.template'
@@ -750,7 +750,7 @@ services:
         arguments:
             - '@environment.add.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.environment'
+            - '@Hal\UI\Validator\EnvironmentValidator'
             - '@uri'
     environment.add.twig:
         parent: 'twig.template'
@@ -762,7 +762,7 @@ services:
         arguments:
             - '@environment.edit.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.environment'
+            - '@Hal\UI\Validator\EnvironmentValidator'
             - '@uri'
     environment.edit.twig:
         parent: 'twig.template'
@@ -795,7 +795,7 @@ services:
         arguments:
             - '@id_providers.add.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.idp'
+            - '@Hal\UI\Validator\UserIdentityProviderValidator'
             - '@uri'
     id_providers.add.twig:
         parent: 'twig.template'
@@ -818,7 +818,7 @@ services:
         arguments:
             - '@id_provider.edit.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.idp'
+            - '@Hal\UI\Validator\UserIdentityProviderValidator'
             - '@uri'
     id_provider.edit.twig:
         parent: 'twig.template'
@@ -851,7 +851,7 @@ services:
         arguments:
             - '@vcs_providers.add.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.vcs'
+            - '@Hal\UI\Validator\VersionControlProviderValidator'
             - '@uri'
     vcs_providers.add.twig:
         parent: 'twig.template'
@@ -873,7 +873,7 @@ services:
         arguments:
             - '@vcs_provider.edit.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.vcs'
+            - '@Hal\UI\Validator\VersionControlProviderValidator'
             - '@uri'
     vcs_provider.edit.twig:
         parent: 'twig.template'
@@ -917,7 +917,7 @@ services:
         arguments:
             - '@credential.add.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.credential'
+            - '@Hal\UI\Validator\CredentialValidator'
             - '@uri'
     credential.add.twig:
         parent: 'twig.template'
@@ -929,7 +929,7 @@ services:
         arguments:
             - '@credential.edit.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@validator.credential'
+            - '@Hal\UI\Validator\CredentialValidator'
             - '@Hal\Core\Crypto\Encryption'
             - '@uri'
     credential.edit.twig:
@@ -1012,7 +1012,7 @@ services:
         class: 'Hal\UI\Controllers\Permissions\AddPermissionsController'
         arguments:
             - '@user_permissions.add.twig'
-            - '@validator.permissions'
+            - '@Hal\UI\Validator\PermissionsValidator'
             - '@Hal\UI\Security\AuthorizationService'
             - '@Hal\UI\Security\AuthorizationHydrator'
             - '@uri'

@@ -16,6 +16,9 @@ use Hal\UI\Security\UserAuthentication\InternalAuth;
 use Hal\UI\Security\UserAuthentication\LDAPAuth;
 use Hal\UI\Security\UserAuthentication\OAuthCallbackFactory;
 use Hal\UI\Security\UserSessionHandler;
+use QL\MCP\Common\Clock;
+use QL\Panthor\Utility\JSON;
+use QL\Panthor\Utility\URI;
 
 return function (ContainerConfigurator $container) {
     $s = $container->services();
@@ -38,7 +41,7 @@ return function (ContainerConfigurator $container) {
 
         // Auth methods
         ->set(InternalAuth::class)
-            ->arg('$em', ref(EntityManagerInterface::class))
+            ->autowire()
 
         ->set(LDAPAuth::class)
             ->arg('$em', ref(EntityManagerInterface::class))
@@ -64,31 +67,28 @@ return function (ContainerConfigurator $container) {
 
         ->set(OAuthCallbackFactory::class)
             ->arg('$baseRequest', ref('request'))
-            ->arg('$uri', ref('uri'))
+            ->arg('$uri', ref(URI::class))
             ->arg('$routeName', '%github_auth.callback_route_name%')
     ;
 
     $s
         // Authorizations
         ->set(AuthorizationService::class)
-            ->arg('$em', ref(EntityManagerInterface::class))
-            ->arg('$json', ref('json'))
+            ->autowire()
             ->call('setCache', [ref('cache')])
             ->call('setCacheTTL', ['%cache.permissions.ttl%'])
 
         ->set(AuthorizationHydrator::class)
-            ->arg('$em', ref(EntityManagerInterface::class))
+            ->autowire()
     ;
 
     $s
         // Forms
         ->set(CSRFManager::class)
-            ->arg('$clock', ref('clock'))
+            ->autowire()
 
         ->set(UserSessionHandler::class)
-            ->arg('$em', ref(EntityManagerInterface::class))
-            ->arg('$authorizationService', ref(AuthorizationService::class))
-            ->arg('$clock', ref('clock'))
+            ->autowire()
     ;
 
     // Encryption

@@ -4,7 +4,7 @@ parameters:
 
         api_internal:
             route: '/api/internal'
-            stack: ['middleware.signed_in']
+            stack: ['m.signed_in']
 
             routes:
 

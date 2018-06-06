@@ -8,6 +8,9 @@ use Hal\UI\Service\JobQueueService;
 use Hal\UI\Service\StickyEnvironmentService;
 use Hal\UI\System\GlobalBannerService;
 use Predis\Client;
+use QL\MCP\Common\Clock;
+use QL\Panthor\Utility\JSON;
+use QL\Panthor\Utility\URI;
 
 return function (ContainerConfigurator $container) {
     $s = $container->services();
@@ -21,9 +24,7 @@ return function (ContainerConfigurator $container) {
 
     $s
         ->set(GlobalBannerService::class)
-            ->arg('$em', ref(EntityManagerInterface::class))
-            ->arg('$clock', ref('clock'))
-            ->arg('$json', ref('json'))
+            ->autowire()
 
         ->set(StickyEnvironmentService::class)
             ->arg('$cookies', ref('cookie.handler'))
@@ -31,13 +32,15 @@ return function (ContainerConfigurator $container) {
             ->arg('$preferencesExpiry', '%cookie.preferences.ttl%')
 
         ->set(JobEventsService::class)
-            ->arg('$em', ref(EntityManagerInterface::class))
-            ->arg('$predis', ref(Client::class))
-            ->arg('$json', ref('json'))
-            ->arg('$clock', ref('clock'))
+            ->autowire()
 
         ->set(JobQueueService::class)
-            ->arg('$em', ref(EntityManagerInterface::class))
-            ->arg('$clock', ref('clock'))
+            ->autowire()
+    ;
+
+    $s
+        ->alias(Clock::class, 'clock')
+        ->alias(JSON::class, 'json')
+        ->alias(URI::class, 'uri')
     ;
 };

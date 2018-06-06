@@ -9,6 +9,7 @@ imports:
     - resource: 'parameters.yaml'
 
     - resource: 'ui/*.yaml'
+    - resource: 'ui/*.php'
     - resource: 'api/*.yaml'
     - resource: 'api-internal/*.yaml'
     - resource: 'api-writes/*.yaml'

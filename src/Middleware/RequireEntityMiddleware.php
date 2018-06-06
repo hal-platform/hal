@@ -43,7 +43,7 @@ class RequireEntityMiddleware implements MiddlewareInterface
     /**
      * Map of known entities from their route parameter name to FQCN.
      */
-    const KNOWN_ENTITIES = [
+    public const KNOWN_ENTITIES = [
         'application' => Application::class,
         'credential' => Credential::class,
         'encrypted' => EncryptedProperty::class,

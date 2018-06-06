@@ -50,14 +50,12 @@ return function (ContainerConfigurator $container) {
             ->arg('$options', '%middleware.session_options%')
 
         ->set(UserSessionGlobalMiddleware::class)
-            ->arg('$userHandler', ref(UserSessionHandler::class))
-            ->arg('$csrf', ref(CSRFManager::class))
-            ->arg('$uri', ref('uri'))
+            ->autowire()
 
         ->set(SrsBusinessGlobalMiddleware::class)
             ->arg('$cookies', ref('cookie.handler'))
 
         ->set(SystemSettingsGlobalMiddleware::class)
-            ->arg('$bannerService', ref(GlobalBannerService::class))
+            ->autowire()
     ;
 };
