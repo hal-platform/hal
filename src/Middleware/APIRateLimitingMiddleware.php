@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2016 Quicken Loans Inc.
+ * @copyright (c) 2018 Steve Kluck
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -8,13 +8,13 @@
 namespace Hal\UI\Middleware;
 
 use Hal\Core\Entity\User;
+use Hal\UI\API\APIRateLimiter;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\SessionTrait;
-use Hal\UI\Service\APIRateLimitService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\HTTPProblem\ProblemRendererInterface;
+use QL\Panthor\MiddlewareInterface;
 use Slim\Route;
 
 class APIRateLimitingMiddleware implements MiddlewareInterface
@@ -30,15 +30,15 @@ class APIRateLimitingMiddleware implements MiddlewareInterface
     private $problemRenderer;
 
     /**
-     * @var APIRateLimitService
+     * @var APIRateLimiter
      */
     private $rateLimiter;
 
     /**
      * @param ProblemRendererInterface $problemRenderer
-     * @param APIRateLimitService $rateLimiter
+     * @param APIRateLimiter $rateLimiter
      */
-    public function __construct(ProblemRendererInterface $problemRenderer, APIRateLimitService $rateLimiter)
+    public function __construct(ProblemRendererInterface $problemRenderer, APIRateLimiter $rateLimiter)
     {
         $this->problemRenderer = $problemRenderer;
         $this->rateLimiter = $rateLimiter;

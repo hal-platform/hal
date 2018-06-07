@@ -2,7 +2,6 @@ imports:
     - resource: '../vendor/ql/mcp-logger/config/config.php'
     - resource: '../vendor/hal/hal-core/config/config.php'
     - resource: '../vendor/ql/mcp-panthor/configuration/*.yml'
-    - resource: 'services/*.yaml'
     - resource: 'services/*.php'
 
     - resource: 'services.php'
@@ -11,5 +10,7 @@ imports:
     - resource: 'ui/*.yaml'
     - resource: 'ui/*.php'
     - resource: 'api/*.yaml'
+    - resource: 'api/*.php'
     - resource: 'api-internal/*.yaml'
     - resource: 'api-writes/*.yaml'
+    - resource: 'api-writes/*.php'

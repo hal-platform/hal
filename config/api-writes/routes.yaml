@@ -4,13 +4,13 @@ parameters:
 
         api_writes:
             route: '/api'
-            stack: ['middleware.api_cross_origin', 'middleware.api_writes_token', 'middleware.api_writes_rate_limiter']
+            stack: ['m.api_rw.cors', 'm.api.require_auth', 'm.api_rw.rate_limiter']
             routes:
                 api.build.start:
                     method: ['OPTIONS', 'POST']
                     route: '/applications/{application:%r.guid%}/build'
-                    stack: ['middleware.api_writes_require_entity', 'build.start.api']
+                    stack: ['m.api_rw.require_entity', 'build.start.api']
                 api.deploy:
                     method: ['OPTIONS', 'POST']
                     route: '/builds/{build:%r.guid%}/deploy'
-                    stack: ['middleware.api_writes_require_entity', 'deploy.api']
+                    stack: ['m.api_rw.require_entity', 'deploy.api']

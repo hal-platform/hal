@@ -1,11 +1,11 @@
 <?php
 /**
- * @copyright (c) 2016 Quicken Loans Inc.
+ * @copyright (c) 2018 Steve Kluck
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Service;
+namespace Hal\UI\API;
 
 use Hal\Core\Entity\User;
 use Predis\Client as Predis;
@@ -21,9 +21,9 @@ use Predis\Client as Predis;
  *
  * Rate limits are PER USER x ROUTE.
  */
-class APIRateLimitService
+class APIRateLimiter
 {
-    private const RATE_LIMIT_KEY = 'api:rate-limit:%s.%s';
+    private const RATE_LIMIT_KEY = 'api.rate_limit.%s_%s';
 
     private const DEFAULT_RATE_LIMIT_TIME = 120;
 

@@ -7,9 +7,9 @@ services:
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\BuildValidator'
             - '@Hal\UI\Validator\ReleaseValidator'
-            - '@api.response_formatter'
-            - '@api_normalizer.build'
-            - '@problem.renderer'
+            - '@Hal\UI\API\ResponseFormatter'
+            - '@Hal\UI\API\Normalizer\BuildNormalizer'
+            - '@QL\Panthor\HTTPProblem\ProblemRendererInterface'
 
     deploy.api:
         public: true
@@ -17,5 +17,5 @@ services:
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\ReleaseValidator'
-            - '@api.response_formatter'
-            - '@problem.renderer'
+            - '@Hal\UI\API\ResponseFormatter'
+            - '@QL\Panthor\HTTPProblem\ProblemRendererInterface'

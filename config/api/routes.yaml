@@ -2,17 +2,17 @@ parameters:
     routes.api:
 
         api.docs:
-            route: '/docs/api'
+            route: '/api/docs'
             stack: ['docs.api']
 
         api.index:
             method: ['OPTIONS', 'GET']
             route: '/api'
-            stack: ['middleware.api_cross_origin', 'index.api']
+            stack: ['m.api.cors', 'index.api']
 
         api:
             route: '/api'
-            stack: ['middleware.api_cross_origin', 'middleware.api_caching']
+            stack: ['m.api.cors', 'm.api.caching']
             routes:
 
                 ########################################################################################################
@@ -46,7 +46,7 @@ parameters:
                 api.organization:
                     method: ['OPTIONS', 'GET']
                     route: '/organizations/{organization:%r.guid%}'
-                    stack: ['middleware.api_require_entity', 'organization.api']
+                    stack: ['m.api.require_entity', 'organization.api']
 
                 ########################################################################################################
                 # applications
@@ -63,7 +63,7 @@ parameters:
 
                 api.application.management:
                     route: '/applications/{application:%r.guid%}'
-                    stack: ['middleware.api_require_entity']
+                    stack: ['m.api.require_entity']
                     routes:
 
                         api.application:
@@ -114,7 +114,7 @@ parameters:
                 api.template:
                     method: ['OPTIONS', 'GET']
                     route: '/templates/{template:%r.guid%}'
-                    stack: ['middleware.api_require_entity', 'template.api']
+                    stack: ['m.api.require_entity', 'template.api']
 
                 ########################################################################################################
                 # deployment targets
@@ -122,7 +122,7 @@ parameters:
 
                 api.target.management:
                     route: '/targets/{target:%r.guid%}'
-                    stack: ['middleware.api_require_entity']
+                    stack: ['m.api.require_entity']
                     routes:
                         api.target:
                             method: ['OPTIONS', 'GET']
@@ -149,7 +149,7 @@ parameters:
 
                 api.build.management:
                     route: '/builds/{build:%r.guid%}'
-                    stack: ['middleware.api_require_entity']
+                    stack: ['m.api.require_entity']
                     routes:
                         api.build:
                             method: ['OPTIONS', 'GET']
@@ -177,7 +177,7 @@ parameters:
 
                 api.releases.management:
                     route: '/releases/{release:%r.guid%}'
-                    stack: ['middleware.api_require_entity']
+                    stack: ['m.api.require_entity']
                     routes:
                         api.release:
                             method: ['OPTIONS', 'GET']
@@ -192,12 +192,12 @@ parameters:
                 api.release.history:
                     method: ['OPTIONS', 'GET']
                     route: '/releases'
-                    stack: ['middleware.api_require_entity', 'releases.history.api']
+                    stack: ['m.api.require_entity', 'releases.history.api']
 
                 api.release.history.paged:
                     method: ['OPTIONS', 'GET']
                     route: '/releases/page/{page:%r.digit%}'
-                    stack: ['middleware.api_require_entity', 'releases.history.api']
+                    stack: ['m.api.require_entity', 'releases.history.api']
 
                 ########################################################################################################
                 # job events
@@ -206,7 +206,7 @@ parameters:
                 api.event:
                     method: ['OPTIONS', 'GET']
                     route: '/job-events/{event:%r.guid%}'
-                    stack: ['middleware.api_require_entity', 'event.api']
+                    stack: ['m.api.require_entity', 'event.api']
 
                 ########################################################################################################
                 # environments
@@ -220,7 +220,7 @@ parameters:
                 api.environment:
                     method: ['OPTIONS', 'GET']
                     route: '/environments/{environment:%r.guid%}'
-                    stack: ['middleware.api_require_entity', 'environment.api']
+                    stack: ['m.api.require_entity', 'environment.api']
 
                 ########################################################################################################
                 # version control providers
@@ -234,7 +234,7 @@ parameters:
                 api.vcs_provider:
                     method: ['OPTIONS', 'GET']
                     route: '/vcs-providers/{system_vcs:%r.guid%}'
-                    stack: ['middleware.api_require_entity', 'vcs_provider.api']
+                    stack: ['m.api.require_entity', 'vcs_provider.api']
 
                 ########################################################################################################
                 # users
@@ -242,7 +242,7 @@ parameters:
 
                 api.user.management:
                     route: '/users/{user:%r.guid%}'
-                    stack: ['middleware.api_require_entity']
+                    stack: ['m.api.require_entity']
                     routes:
                         api.user:
                             method: ['OPTIONS', 'GET']

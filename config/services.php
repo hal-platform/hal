@@ -2,15 +2,14 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Hal\UI\Service\JobEventsService;
 use Hal\UI\Service\JobQueueService;
 use Hal\UI\Service\StickyEnvironmentService;
 use Hal\UI\System\GlobalBannerService;
-use Predis\Client;
 use QL\MCP\Common\Clock;
 use QL\Panthor\Utility\JSON;
 use QL\Panthor\Utility\URI;
+use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 
 return function (ContainerConfigurator $container) {
     $s = $container->services();
@@ -42,5 +41,6 @@ return function (ContainerConfigurator $container) {
         ->alias(Clock::class, 'clock')
         ->alias(JSON::class, 'json')
         ->alias(URI::class, 'uri')
+        ->alias(ProblemRendererInterface::class, 'problem.renderer')
     ;
 };
