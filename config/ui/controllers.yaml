@@ -20,18 +20,6 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['error.denied.twig']]]
 
-    ############################################################################
-
-    home.page:
-        public: true
-        class: 'Hal\UI\Controllers\HomeController'
-        arguments:
-            - '@home.twig'
-            - '@Doctrine\ORM\EntityManagerInterface'
-    home.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['home.twig']]]
-
     ####################################################################################################################
     # sign in / authentication
     ####################################################################################################################

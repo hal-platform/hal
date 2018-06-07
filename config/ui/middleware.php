@@ -61,18 +61,11 @@ return function (ContainerConfigurator $container) {
             ->public();
     }
 
-    $s = $container->services();
-
     $s
-        ->defaults()
-            ->bind('$environment', ref('twig.environment'))
-            ->bind('$context', ref('twig.context'))
-            ->autowire()
-
         ('middleware.permission_denied_template', LazyTwig::class)
             ->arg('$template', 'error.denied.twig')
 
         ('middleware.remove_entity_template', LazyTwig::class)
-            ->arg('$environment', ref('twig.environment'))
+            ->arg('$template', 'delete.confirm.twig')
     ;
 };

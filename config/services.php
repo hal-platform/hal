@@ -7,9 +7,11 @@ use Hal\UI\Service\JobQueueService;
 use Hal\UI\Service\StickyEnvironmentService;
 use Hal\UI\System\GlobalBannerService;
 use QL\MCP\Common\Clock;
+use QL\Panthor\HTTPProblem\ProblemRendererInterface;
+use QL\Panthor\Twig\Context;
 use QL\Panthor\Utility\JSON;
 use QL\Panthor\Utility\URI;
-use QL\Panthor\HTTPProblem\ProblemRendererInterface;
+use Twig\Environment;
 
 return function (ContainerConfigurator $container) {
     $s = $container->services();
@@ -36,10 +38,14 @@ return function (ContainerConfigurator $container) {
         ->alias('errorHandler',      'panthor.handler.errorHandler')->public()
     ;
 
+    // Panthor services
     $s
         ->alias(Clock::class, 'clock')
         ->alias(JSON::class, 'json')
         ->alias(URI::class, 'uri')
         ->alias(ProblemRendererInterface::class, 'problem.renderer')
+
+        ->alias(Environment::class, ref('twig.environment'))
+        ->alias(Context::class, ref('twig.context'))
     ;
 };
