@@ -9,8 +9,10 @@ imports:
 
     - resource: 'ui/*.yaml'
     - resource: 'ui/*.php'
-    - resource: 'api/*.yaml'
     - resource: 'api/*.php'
-    - resource: 'api-internal/*.yaml'
-    - resource: 'api-writes/*.yaml'
+    - resource: 'api-internal/*.php'
     - resource: 'api-writes/*.php'
+
+    - resource: 'api/routes.yaml'
+    - resource: 'api-writes/routes.yaml'
+    - resource: 'api-internal/routes.yaml'

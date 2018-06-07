@@ -18,29 +18,27 @@ return function (ContainerConfigurator $container) {
     $s = $container->services();
 
     $s
-        ->set(SignedInMiddleware::class)
+        ->defaults()
             ->autowire()
-        ->set(AdminMiddleware::class)
-            ->arg('$template', ref('middleware.permission_denied_template'))
-            ->autowire()
-        ->set(SuperMiddleware::class)
-            ->arg('$template', ref('middleware.permission_denied_template'))
-            ->autowire()
-        ->set(OwnerMiddleware::class)
-            ->arg('$template', ref('middleware.permission_denied_template'))
-            ->autowire()
-        ->set(AdminOrSelfMiddleware::class)
-            ->arg('$template', ref('middleware.permission_denied_template'))
-            ->autowire()
+    ;
 
-        ->set(CSRFMiddleware::class)
-            ->autowire()
+    $s
+        (SignedInMiddleware::class)
+        (AdminMiddleware::class)
+            ->arg('$template', ref('middleware.permission_denied_template'))
+        (SuperMiddleware::class)
+            ->arg('$template', ref('middleware.permission_denied_template'))
+        (OwnerMiddleware::class)
+            ->arg('$template', ref('middleware.permission_denied_template'))
+        (AdminOrSelfMiddleware::class)
+            ->arg('$template', ref('middleware.permission_denied_template'))
 
-        ->set(RequireEntityMiddleware::class)
+        (CSRFMiddleware::class)
+
+        (RequireEntityMiddleware::class)
             ->arg('$notFound', ref('notFoundHandler'))
-            ->autowire()
 
-        ->set(NestedEntityMiddleware::class)
+        (NestedEntityMiddleware::class)
             ->arg('$notFound', ref('notFoundHandler'))
     ;
 
@@ -57,7 +55,7 @@ return function (ContainerConfigurator $container) {
     ;
 
     foreach (array_keys(RequireEntityMiddleware::KNOWN_ENTITIES) as $entity) {
-        $s->set("m.confirm_remove.${entity}", RemovalConfirmationMiddleware::class)
+        $s("m.confirm_remove.${entity}", RemovalConfirmationMiddleware::class)
             ->arg('$template', ref('middleware.remove_entity_template'))
             ->arg('$removeEntityType', $entity)
             ->public();
@@ -69,13 +67,12 @@ return function (ContainerConfigurator $container) {
         ->defaults()
             ->bind('$environment', ref('twig.environment'))
             ->bind('$context', ref('twig.context'))
+            ->autowire()
 
-        ->set('middleware.permission_denied_template', LazyTwig::class)
+        ('middleware.permission_denied_template', LazyTwig::class)
             ->arg('$template', 'error.denied.twig')
-            ->autowire()
 
-        ->set('middleware.remove_entity_template', LazyTwig::class)
+        ('middleware.remove_entity_template', LazyTwig::class)
             ->arg('$environment', ref('twig.environment'))
-            ->autowire()
     ;
 };

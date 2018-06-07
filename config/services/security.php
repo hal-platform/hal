@@ -25,13 +25,18 @@ return function (ContainerConfigurator $container) {
     $p = $container->parameters();
 
     $p
-        ->set('logger.error_handling.logging_levels', [
+        ('logger.error_handling.logging_levels', [
             'error' => 'critical'
         ])
     ;
 
     $s
-        ->set(Auth::class)
+        ->defaults()
+            ->autowire()
+    ;
+
+    $s
+        (Auth::class)
             ->arg('$adapters', [
                 'internal' =>   ref(InternalAuth::class),
                 'ldap' =>       ref(LDAPAuth::class),
@@ -40,64 +45,52 @@ return function (ContainerConfigurator $container) {
             ])
 
         // Auth methods
-        ->set(InternalAuth::class)
-            ->autowire()
+        (InternalAuth::class)
 
-        ->set(LDAPAuth::class)
-            ->arg('$em', ref(EntityManagerInterface::class))
+        (LDAPAuth::class)
             ->arg('$queryRestriction', '%ldap.query_restriction%')
             ->arg('$defaultUsernameAttribute', '%ldap.unique_attribute%')
 
-        ->set(GitHubAuth::class)
-            ->arg('$em', ref(EntityManagerInterface::class))
+        (GitHubAuth::class)
             ->arg('$guzzle', ref('auth.github.http_client'))
-            ->arg('$callbackFactory', ref(OAuthCallbackFactory::class))
             ->arg('$requiredScopes', '%github_auth.required_scopes%')
 
-        ->set(GitHubEnterpriseAuth::class)
-            ->arg('$em', ref(EntityManagerInterface::class))
+        (GitHubEnterpriseAuth::class)
             ->arg('$guzzle', ref('auth.github.http_client'))
-            ->arg('$callbackFactory', ref(OAuthCallbackFactory::class))
             ->arg('$requiredScopes', '%github_auth.required_scopes%')
     ;
 
     $s
         // Helpers
-        ->set('auth.github.http_client', Client::class)
+        ('auth.github.http_client', Client::class)
 
-        ->set(OAuthCallbackFactory::class)
+        (OAuthCallbackFactory::class)
             ->arg('$baseRequest', ref('request'))
-            ->arg('$uri', ref(URI::class))
             ->arg('$routeName', '%github_auth.callback_route_name%')
     ;
 
     $s
         // Authorizations
-        ->set(AuthorizationService::class)
-            ->autowire()
+        (AuthorizationService::class)
             ->call('setCache', [ref('cache')])
             ->call('setCacheTTL', ['%cache.permissions.ttl%'])
 
-        ->set(AuthorizationHydrator::class)
-            ->autowire()
+        (AuthorizationHydrator::class)
     ;
 
     $s
         // Forms
-        ->set(CSRFManager::class)
-            ->autowire()
-
-        ->set(UserSessionHandler::class)
-            ->autowire()
+        (CSRFManager::class)
+        (UserSessionHandler::class)
     ;
 
     // Encryption
     $s
-        ->set(Encryption::class)
+        (Encryption::class)
             ->factory([ref(CryptoFilesystemFactory::class), 'getCrypto'])
             ->lazy()
 
-        ->set(CryptoFilesystemFactory::class)
+        (CryptoFilesystemFactory::class)
             ->arg('$keyPath', '%encryption.secret_path%')
     ;
 };

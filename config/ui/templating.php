@@ -12,20 +12,29 @@ return function (ContainerConfigurator $container) {
     $s = $container->services();
 
     $s
-        ->set(HalExtension::class)
-            ->arg('$gravatarFallbackImageURL', '%gravatar.fallback%')
-            ->autowire()
-
-        ->set(GitHubExtension::class)
-            ->autowire()
-            ->call('setCache', [ref('vcs.cache')])
-
-        ->set(SecurityExtension::class)
+        ->defaults()
             ->autowire()
     ;
 
     $s
-        ->set('twig.environment', Environment::class)
+        (HalExtension::class)
+            ->arg('$gravatarFallbackImageURL', '%gravatar.fallback%')
+
+        (GitHubExtension::class)
+            ->call('setCache', [ref('vcs.cache')])
+
+        (SecurityExtension::class)
+    ;
+
+    $s
+        (TimeFormatter::class)
+            ->arg('$timezone', '%date.timezone%')
+    ;
+
+    $s = $container->services();
+
+    $s
+        ('twig.environment', Environment::class)
             ->parent(ref('panthor.twig.environment'))
             ->call('addExtension', [ref(HalExtension::class)])
             ->call('addExtension', [ref(GitHubExtension::class)])
@@ -35,12 +44,6 @@ return function (ContainerConfigurator $container) {
             ->call('addGlobal', ['application_sha', '%application.sha%'])
             ->call('addGlobal', ['application_version', '%application.version%'])
             ->call('addGlobal', ['hal_administrators_email', '%administrator_email%'])
-    ;
-
-    $s
-        ->set(TimeFormatter::class)
-            ->arg('$timezone', '%date.timezone%')
-            ->autowire()
     ;
 };
 

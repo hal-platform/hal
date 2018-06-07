@@ -20,42 +20,42 @@ return function (ContainerConfigurator $container) {
     $p = $container->parameters();
 
     $p
-        ->set('middleware.session_options', [
+        ('middleware.session_options', [
             'lifetime' => '%session.lifetime%'
         ])
     ;
 
     $s
-        ->set(GlobalMiddlewareLoader::class)
+        (GlobalMiddlewareLoader::class)
             ->arg('$di', ref('service_container'))
             ->arg('$middleware', '%global_middleware%')
 
-        ->set(RouteLoader::class)
+        (RouteLoader::class)
             ->parent('panthor.router.loader')
             ->call('addRoutes', ['%routes.api%'])
             ->call('addRoutes', ['%routes.api_internal%'])
             ->call('addRoutes', ['%routes.api_writes%'])
 
-        ->set(LoggerGlobalMiddleware::class)
+        (LoggerGlobalMiddleware::class)
             ->arg('$factory', ref('mcp_logger_factory'))
 
-        ->set(TemplateContextGlobalMiddleware::class)
+        (TemplateContextGlobalMiddleware::class)
             ->arg('$context', ref('twig.context'))
 
-        ->set(FlashGlobalMiddleware::class)
+        (FlashGlobalMiddleware::class)
             ->arg('$handler', ref('cookie.handler'))
 
-        ->set(SessionMiddleware::class)
+        (SessionMiddleware::class)
             ->arg('$handler', ref('cookie.handler'))
             ->arg('$options', '%middleware.session_options%')
 
-        ->set(UserSessionGlobalMiddleware::class)
+        (UserSessionGlobalMiddleware::class)
             ->autowire()
 
-        ->set(SrsBusinessGlobalMiddleware::class)
+        (SrsBusinessGlobalMiddleware::class)
             ->arg('$cookies', ref('cookie.handler'))
 
-        ->set(SystemSettingsGlobalMiddleware::class)
+        (SystemSettingsGlobalMiddleware::class)
             ->autowire()
     ;
 };

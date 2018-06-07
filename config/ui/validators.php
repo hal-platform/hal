@@ -33,24 +33,24 @@ return function (ContainerConfigurator $container) {
     $p = $container->parameters();
 
     $p
-        ->set('validator_types.target', [
+        ('validator_types.target', [
             'cd' => ref(CodeDeployValidator::class),
             'eb' => ref(ElasticBeanstalkValidator::class),
             'rsync' => ref(RSyncValidator::class),
             's3' => ref(S3Validator::class),
             'script' => ref(ScriptValidator::class),
         ])
-        ->set('validator_types.target_template', [
+        ('validator_types.target_template', [
             'cd' => ref('validator.target_tempate.cd'),
             'eb' => ref('validator.target_tempate.eb'),
             'rsync' => ref('validator.target_tempate.rsync'),
             's3' => ref('validator.target_tempate.s3'),
             'script' => ref('validator.target_tempate.script'),
         ])
-        ->set('validator_types.vcs', [
+        ('validator_types.vcs', [
             'ghe' => ref(GitHubEnterpriseValidator::class),
         ])
-        ->set('validator_types.idp', [
+        ('validator_types.idp', [
             'gh' => ref(IDPGitHubValidator::class),
             'ghe' => ref(IDPGitHubEnterpriseValidator::class),
             'ldap' => ref(LDAPValidator::class),
@@ -59,88 +59,63 @@ return function (ContainerConfigurator $container) {
     ;
 
     $s
-        ->set(OrganizationValidator::class)
-            ->autowire()
-        ->set(EnvironmentValidator::class)
-            ->autowire()
-        ->set(ApplicationValidator::class)
-            ->autowire()
-        ->set(CredentialValidator::class)
-            ->autowire()
-        ->set(EncryptedPropertyValidator::class)
-            ->autowire()
-        ->set(PermissionsValidator::class)
-            ->autowire()
-        ->set(BuildValidator::class)
-            ->autowire()
-        ->set(ReleaseValidator::class)
-            ->autowire()
-        ->set(MetaValidator::class)
-            ->autowire()
-        ->set(UserValidator::class)
-            ->autowire()
-        ->set(UserIdentityValidator::class)
+        ->defaults()
             ->autowire()
     ;
 
     $s
-        ->set(TargetValidator::class)
+        (OrganizationValidator::class)
+        (EnvironmentValidator::class)
+        (ApplicationValidator::class)
+        (CredentialValidator::class)
+        (EncryptedPropertyValidator::class)
+        (PermissionsValidator::class)
+        (BuildValidator::class)
+        (ReleaseValidator::class)
+        (MetaValidator::class)
+        (UserValidator::class)
+        (UserIdentityValidator::class)
+    ;
+
+    $s
+        (TargetValidator::class)
             ->arg('$typeValidators', '%validator_types.target%')
-            ->autowire()
-        ->set(CodeDeployValidator::class)
-            ->autowire()
-        ->set(ElasticBeanstalkValidator::class)
-            ->autowire()
-        ->set(RSyncValidator::class)
-            ->autowire()
-        ->set(S3Validator::class)
-            ->autowire()
-        ->set(ScriptValidator::class)
-            ->autowire()
+        (CodeDeployValidator::class)
+        (ElasticBeanstalkValidator::class)
+        (RSyncValidator::class)
+        (S3Validator::class)
+        (ScriptValidator::class)
     ;
 
     $s
-        ->set(TargetTemplateValidator::class)
+        (TargetTemplateValidator::class)
             ->arg('$typeValidators', '%validator_types.target_template%')
-            ->autowire()
-        ->set('validator.target_tempate.cd', CodeDeployValidator::class)
+        ('validator.target_tempate.cd', CodeDeployValidator::class)
             ->arg('$s3validator', ref('validator.target_tempate.s3'))
             ->call('withFlag', ['ALLOW_OPTIONAL'])
-            ->autowire()
-        ->set('validator.target_tempate.eb', ElasticBeanstalkValidator::class)
+        ('validator.target_tempate.eb', ElasticBeanstalkValidator::class)
             ->arg('$s3validator', ref('validator.target_tempate.s3'))
             ->call('withFlag', ['ALLOW_OPTIONAL'])
-            ->autowire()
-        ->set('validator.target_tempate.rsync', RSyncValidator::class)
+        ('validator.target_tempate.rsync', RSyncValidator::class)
             ->call('withFlag', ['ALLOW_OPTIONAL'])
-            ->autowire()
-        ->set('validator.target_tempate.s3', S3Validator::class)
+        ('validator.target_tempate.s3', S3Validator::class)
             ->call('withFlag', ['ALLOW_OPTIONAL'])
-            ->autowire()
-        ->set('validator.target_tempate.rsync', ScriptValidator::class)
+        ('validator.target_tempate.rsync', ScriptValidator::class)
             ->call('withFlag', ['ALLOW_OPTIONAL'])
-            ->autowire()
     ;
 
     $s
-        ->set(VersionControlProviderValidator::class)
+        (VersionControlProviderValidator::class)
             ->arg('$typeValidators', '%validator_types.vcs%')
-            ->autowire()
-        ->set(GitHubEnterpriseValidator::class)
-            ->autowire()
+        (GitHubEnterpriseValidator::class)
     ;
 
     $s
-        ->set(UserIdentityProviderValidator::class)
+        (UserIdentityProviderValidator::class)
             ->arg('$typeValidators', '%validator_types.idp%')
-            ->autowire()
-        ->set(IDPGitHubValidator::class)
-            ->autowire()
-        ->set(IDPGitHubEnterpriseValidator::class)
-            ->autowire()
-        ->set(LDAPValidator::class)
-            ->autowire()
-        ->set(InternalValidator::class)
-            ->autowire()
+        (IDPGitHubValidator::class)
+        (IDPGitHubEnterpriseValidator::class)
+        (LDAPValidator::class)
+        (InternalValidator::class)
     ;
 };

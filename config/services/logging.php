@@ -11,17 +11,17 @@ return function (ContainerConfigurator $container) {
     $p = $container->parameters();
 
     $p
-        ->set('logger.error_handling.logging_levels', [
+        ('logger.error_handling.logging_levels', [
             'error' => 'critical'
         ])
     ;
 
     $s
-        ->set(LoggerInterface::class, Logger::class)
+        (LoggerInterface::class, Logger::class)
             ->parent(ref('mcp_logger'))
             ->public()
 
-        ->set('content_handler', LoggingContentHandler::class)
+        ('content_handler', LoggingContentHandler::class)
             ->arg('$handler', ref('panthor.content_handler'))
             ->arg('$logger', ref(LoggerInterface::class))
             ->arg('$configuration', '%logger.error_handling.logging_levels%')

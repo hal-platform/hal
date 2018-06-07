@@ -4,21 +4,21 @@ parameters:
 
         api_internal:
             route: '/api/internal'
-            stack: ['m.signed_in']
+            stack: ['m.iapi.signed_in']
 
             routes:
 
                 # Note: this endpoint is also available for direct form posts
                 api_internal.favorite_applications:
                     route: '/settings/favorite-applications/{application:%r.guid%}'
-                    stack: ['middleware.api_require_entity']
+                    stack: ['m.iapi.require_entity']
 
                     routes:
-                        api_internal.settings.favorite_applications.add:
+                        settings.fav_apps.add.iapi:
                             method: 'PUT'
                             route: ''
-                            stack: ['api_internal.settings.favorite_applications.add']
-                        api_internal.settings.favorite_applications.remove:
+                            stack: ['settings.fav_apps.add.iapi']
+                        settings.fav_apps.remove.iapi:
                             method: 'DELETE'
                             route: ''
-                            stack: ['api_internal.settings.favorite_applications.remove']
+                            stack: ['settings.fav_apps.remove.iapi']

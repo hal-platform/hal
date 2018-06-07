@@ -15,26 +15,26 @@ return function (ContainerConfigurator $container) {
     $p = $container->parameters();
 
     $p
-        ->set('aws.sdk_version', 'latest')
+        ('aws.sdk_version', 'latest')
     ;
 
     $s
-        ->set(Sdk::class)
+        (Sdk::class)
             ->arg('$args', [
                 'version' => '%aws.sdk_version%'
             ])
 
-        ->set(AwsCredentialProvider::class)
+        (AwsCredentialProvider::class)
             ->factory([AwsCredentialProvider::class, 'ini'])
             ->arg('$profile', null)
             ->arg('$filename', '%aws.host_credentials_path%')
 
-        ->set(AWSAuthenticator::class)
+        (AWSAuthenticator::class)
             ->arg('$logger', ref(LoggerInterface::class))
             ->arg('$provider', ref(CredentialProvider::class))
             ->arg('$aws', ref(Sdk::class))
 
-        ->set(CredentialProvider::class)
+        (CredentialProvider::class)
             ->arg('$logger', ref(LoggerInterface::class))
             ->arg('$encryption', ref(Encryption::class))
             ->arg('$em', ref(EntityManagerInterface::class))

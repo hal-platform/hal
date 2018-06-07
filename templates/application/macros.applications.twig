@@ -11,7 +11,7 @@
         <td>
             {% if application.id in current_user.setting('favorite_applications') %}
                 <form method="post"
-                      action="{{ uriFor('api_internal.settings.favorite_applications.remove', {'application': application.id}) }}"
+                      action="{{ uriFor('settings.fav_apps.remove.iapi', {'application': application.id}) }}"
                       data-app-id="{{ application.id }}"
                       class="form--inline js-fav">
                     <label class="fav-added">
@@ -23,7 +23,7 @@
                 </form>
             {% else %}
                 <form method="post"
-                      action="{{ uriFor('api_internal.settings.favorite_applications.add', {'application': application.id}) }}"
+                      action="{{ uriFor('settings.fav_apps.add.iapi', {'application': application.id}) }}"
                       data-app-id="{{ application.id }}"
                       class="form--inline js-fav">
                     <label class="fav-normal">

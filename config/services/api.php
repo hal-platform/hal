@@ -37,66 +37,58 @@ return function (ContainerConfigurator $container) {
     $p = $container->parameters();
 
     $p
-        ->set('api.normalizers', [
+        ('api.normalizers', [
             Application::class => ref(ApplicationNormalizer::class),
+            Build::class => ref(BuildNormalizer::class),
             Environment::class => ref(EnvironmentNormalizer::class),
             Hyperlink::class => ref(HyperlinkNormalizer::class),
+            JobEvent::class => ref(EventNormalizer::class),
             Organization::class => ref(OrganizationNormalizer::class),
+            Release::class => ref(ReleaseNormalizer::class),
             Target::class => ref(TargetNormalizer::class),
             TargetTemplate::class => ref(TemplateNormalizer::class),
             TimePoint::class => ref(TimePointNormalizer::class),
             User::class => ref(UserNormalizer::class),
-
-            Build::class => ref(BuildNormalizer::class),
-            JobEvent::class => ref(EventNormalizer::class),
-            Release::class => ref(ReleaseNormalizer::class),
             VersionControlProvider::class => ref(VersionControlProviderNormalizer::class),
         ])
     ;
 
     $s
-        ->set('api.cache', CacheInterface::class)
+        ('api.cache', CacheInterface::class)
             ->factory([ref('service_container'), 'get'])
             ->arg('$id', 'cache.%cache.type.api%')
 
-        ->set(ResponseFormatter::class)
-            ->autowire()
+        (ResponseFormatter::class)
             ->call('setCache', [ref('api.cache')])
             ->call('setCacheTimes', ['%api.cachetimes%'])
+            ->autowire()
 
-        ->set(APIRateLimiter::class)
+        (APIRateLimiter::class)
             ->arg('$rateLimitTimes', '%api.ratelimits%')
             ->autowire()
+
+        (NormalizerInterface::class, Normalizer::class)
+            ->arg('$normalizers', '%api.normalizers%')
     ;
 
-    $s
-        ->set(NormalizerInterface::class, Normalizer::class)
-            ->arg('$normalizers', '%api.normalizers%')
+    $s = $container->services();
 
-        ->set(ApplicationNormalizer::class)
+    $s
+        ->defaults()
             ->autowire()
-        ->set(EnvironmentNormalizer::class)
-            ->autowire()
-        ->set(HyperlinkNormalizer::class)
+
+        (ApplicationNormalizer::class)
+        (EnvironmentNormalizer::class)
+        (HyperlinkNormalizer::class)
             ->arg('$baseRequest', ref('request'))
-            ->autowire()
-        ->set(OrganizationNormalizer::class)
-            ->autowire()
-        ->set(TargetNormalizer::class)
-            ->autowire()
-        ->set(TemplateNormalizer::class)
-            ->autowire()
-        ->set(TimePointNormalizer::class)
-            ->autowire()
-        ->set(UserNormalizer::class)
-            ->autowire()
-        ->set(BuildNormalizer::class)
-            ->autowire()
-        ->set(EventNormalizer::class)
-            ->autowire()
-        ->set(ReleaseNormalizer::class)
-            ->autowire()
-        ->set(VersionControlProviderNormalizer::class)
-            ->autowire()
+        (OrganizationNormalizer::class)
+        (TargetNormalizer::class)
+        (TemplateNormalizer::class)
+        (TimePointNormalizer::class)
+        (UserNormalizer::class)
+        (BuildNormalizer::class)
+        (EventNormalizer::class)
+        (ReleaseNormalizer::class)
+        (VersionControlProviderNormalizer::class)
     ;
 };

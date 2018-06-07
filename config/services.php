@@ -15,26 +15,25 @@ return function (ContainerConfigurator $container) {
     $s = $container->services();
 
     $s
-        ->alias('notFoundHandler',   'panthor.handler.notFoundHandler')->public()
-        ->alias('notAllowedHandler', 'panthor.handler.notAllowedHandler')->public()
-        ->alias('phpErrorHandler',   'panthor.handler.phpErrorHandler')->public()
-        ->alias('errorHandler',      'panthor.handler.errorHandler')->public()
+        ->defaults()
+            ->autowire()
     ;
 
     $s
         ->set(GlobalBannerService::class)
-            ->autowire()
-
         ->set(StickyEnvironmentService::class)
             ->arg('$cookies', ref('cookie.handler'))
             ->arg('$json', ref('json'))
             ->arg('$preferencesExpiry', '%cookie.preferences.ttl%')
-
         ->set(JobEventsService::class)
-            ->autowire()
-
         ->set(JobQueueService::class)
-            ->autowire()
+    ;
+
+    $s
+        ->alias('notFoundHandler',   'panthor.handler.notFoundHandler')->public()
+        ->alias('notAllowedHandler', 'panthor.handler.notAllowedHandler')->public()
+        ->alias('phpErrorHandler',   'panthor.handler.phpErrorHandler')->public()
+        ->alias('errorHandler',      'panthor.handler.errorHandler')->public()
     ;
 
     $s
