@@ -27,9 +27,9 @@ class AuthorizationService
     private $em;
 
     /**
-     * @var EntityRepository
+     * @var EntityRepository|null
      */
-    private $userPermissionsRepository;
+    private $permissionRepo;
 
     /**
      * @var JSON
@@ -43,8 +43,6 @@ class AuthorizationService
     public function __construct(EntityManagerInterface $em, JSON $json)
     {
         $this->em = $em;
-        $this->userPermissionsRepository = $em->getRepository(UserPermission::class);
-
         $this->json = $json;
     }
 
@@ -66,7 +64,7 @@ class AuthorizationService
             }
         }
 
-        $permissions = $this->userPermissionsRepository->findBy(['user' => $user]);
+        $permissions = $this->permissionRepo()->findBy(['user' => $user]);
         $authorizations = $this->parseAuthorizations($permissions);
 
         $this->setToCache($key, $this->json->encode($authorizations));
@@ -158,5 +156,17 @@ class AuthorizationService
     private function cacheKey(User $user)
     {
         return sprintf(self::CACHE_PERM, $user->id());
+    }
+
+    /**
+     * @return EntityRepository
+     */
+    private function permissionRepo()
+    {
+        if (!$this->permissionRepo) {
+            $this->permissionRepo = $this->em->getRepository(UserPermission::class);
+        }
+
+        return $this->permissionRepo;
     }
 }

@@ -31,7 +31,7 @@ class GlobalBannerService
     private $em;
 
     /**
-     * @var EntityRepository
+     * @var EntityRepository|null
      */
     private $settingRepo;
 
@@ -53,7 +53,6 @@ class GlobalBannerService
     public function __construct(EntityManagerInterface $em, Clock $clock, JSON $json)
     {
         $this->em = $em;
-        $this->settingRepo = $em->getRepository(SystemSetting::class);
 
         $this->clock = $clock;
         $this->json = $json;
@@ -92,7 +91,7 @@ class GlobalBannerService
             return false;
         }
 
-        $setting = $this->settingRepo->findOneBy(['name' => self::NAME_NOTIFICATION]);
+        $setting = $this->settingRepo()->findOneBy(['name' => self::NAME_NOTIFICATION]);
         if ($setting instanceof SystemSetting) {
             return ($setting->value() === '1');
         }
@@ -105,7 +104,7 @@ class GlobalBannerService
      */
     public function loadBannerDetails()
     {
-        $message = $this->settingRepo->findOneBy(['name' => self::NAME_BANNER]);
+        $message = $this->settingRepo()->findOneBy(['name' => self::NAME_BANNER]);
         if (!$message instanceof SystemSetting) {
             return $this->messagePayload('', 0);
         }
@@ -125,7 +124,7 @@ class GlobalBannerService
     public function saveBanner($message, int $ttl = 0)
     {
 
-        $setting = $this->settingRepo->findOneBy(['name' => self::NAME_BANNER]);
+        $setting = $this->settingRepo()->findOneBy(['name' => self::NAME_BANNER]);
         if (!$setting instanceof SystemSetting) {
             $setting = new SystemSetting;
         }
@@ -150,7 +149,7 @@ class GlobalBannerService
      */
     public function clearBanner()
     {
-        $setting = $this->settingRepo->findOneBy(['name' => self::NAME_BANNER]);
+        $setting = $this->settingRepo()->findOneBy(['name' => self::NAME_BANNER]);
         if ($setting instanceof SystemSetting) {
             $this->em->remove($setting);
             $this->em->flush();
@@ -165,7 +164,7 @@ class GlobalBannerService
      */
     public function enableUpdateNotification()
     {
-        $setting = $this->settingRepo->findOneBy(['name' => self::NAME_NOTIFICATION]);
+        $setting = $this->settingRepo()->findOneBy(['name' => self::NAME_NOTIFICATION]);
         if (!$setting instanceof SystemSetting) {
             $setting = new SystemSetting;
         }
@@ -186,7 +185,7 @@ class GlobalBannerService
      */
     public function disableUpdateNotification()
     {
-        if ($setting = $this->settingRepo->findOneBy(['name' => self::NAME_NOTIFICATION])) {
+        if ($setting = $this->settingRepo()->findOneBy(['name' => self::NAME_NOTIFICATION])) {
             $this->em->remove($setting);
             $this->em->flush();
         }
@@ -258,5 +257,17 @@ class GlobalBannerService
             'expiry' => $expiry,
             'ttl' => $ttl
         ];
+    }
+
+    /**
+     * @return EntityRepository
+     */
+    private function settingRepo()
+    {
+        if (!$this->settingRepo) {
+            $this->settingRepo = $this->em->getRepository(SystemSetting::class);
+        }
+
+        return $this->settingRepo;
     }
 }

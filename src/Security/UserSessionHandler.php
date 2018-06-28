@@ -30,7 +30,12 @@ class UserSessionHandler
     public const REQUEST_AUTHORIZATIONS_ATTRIBUTE = 'current_authorizations';
 
     /**
-     * @var EntityRepository
+     * @var EntityManagerInterface
+     */
+    private $em;
+
+    /**
+     * @var EntityRepository|null
      */
     private $userRepo;
 
@@ -54,7 +59,7 @@ class UserSessionHandler
         AuthorizationService $authorizationService,
         Clock $clock
     ) {
-        $this->userRepo = $em->getRepository(User::class);
+        $this->em = $em;
 
         $this->authorizationService = $authorizationService;
         $this->clock = $clock;
@@ -122,7 +127,7 @@ class UserSessionHandler
             return $request;
         }
 
-        $user = $this->userRepo->find($userID);
+        $user = $this->userRepo()->find($userID);
 
         if (!$user instanceof User || $user->isDisabled()) {
             return null;
@@ -195,5 +200,17 @@ class UserSessionHandler
             ->withAttribute(self::REQUEST_AUTHORIZATIONS_ATTRIBUTE, $authorizations);
 
         return $request;
+    }
+
+    /**
+     * @return EntityRepository
+     */
+    private function userRepo()
+    {
+        if (!$this->userRepo) {
+            $this->userRepo = $this->em->getRepository(User::class);
+        }
+
+        return $this->userRepo;
     }
 }

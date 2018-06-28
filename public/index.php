@@ -28,18 +28,13 @@ ini_set('display_errors', 0);
 $app = $container->get('slim');
 
 // Load routes onto Slim
-$routes = $container->get(RouteLoader::class);
-$routes($app);
+$container->get(RouteLoader::class)($app);
 
 // Add global middleware to Slim
-$container
-    ->get(GlobalMiddlewareLoader::class)
-    ->attach($app);
+$container->get(GlobalMiddlewareLoader::class)($app);
 
 // Attach Slim to exception handler for error rendering
-$container
-    ->get('exception.handler')
-    ->attachSlim($app);
+$container->get('exception.handler')->attachSlim($app);
 
 $app->run();
 
