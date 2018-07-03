@@ -34,8 +34,10 @@ return function (ContainerConfigurator $container) {
     $s = $container->services();
 
     $s
-        ('twig.environment', Environment::class)
-            ->parent(ref('panthor.twig.environment'))
+        (Environment::class)
+            ->arg('$loader', ref('twig.loader'))
+            ->configurator([ref('panthor.twig.configurator'), 'configure'])
+            ->call('addExtension', [ref('panthor.twig.extension')])
             ->call('addExtension', [ref(HalExtension::class)])
             ->call('addExtension', [ref(GitHubExtension::class)])
             ->call('addExtension', [ref(SecurityExtension::class)])

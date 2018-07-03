@@ -18,7 +18,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Session\SessionInterface;
 use QL\Panthor\Utility\URI;
-use function random_bytes;
 
 /**
  * - Ensure a session cookie is present and load session details in the request and template context if so.

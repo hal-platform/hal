@@ -34,24 +34,6 @@ use QL\MCP\Common\Time\TimePoint;
 
 return function (ContainerConfigurator $container) {
     $s = $container->services();
-    $p = $container->parameters();
-
-    $p
-        ('api.normalizers', [
-            Application::class => ref(ApplicationNormalizer::class),
-            Build::class => ref(BuildNormalizer::class),
-            Environment::class => ref(EnvironmentNormalizer::class),
-            Hyperlink::class => ref(HyperlinkNormalizer::class),
-            JobEvent::class => ref(EventNormalizer::class),
-            Organization::class => ref(OrganizationNormalizer::class),
-            Release::class => ref(ReleaseNormalizer::class),
-            Target::class => ref(TargetNormalizer::class),
-            TargetTemplate::class => ref(TemplateNormalizer::class),
-            TimePoint::class => ref(TimePointNormalizer::class),
-            User::class => ref(UserNormalizer::class),
-            VersionControlProvider::class => ref(VersionControlProviderNormalizer::class),
-        ])
-    ;
 
     $s
         ('api.cache', CacheInterface::class)
@@ -68,7 +50,20 @@ return function (ContainerConfigurator $container) {
             ->autowire()
 
         (NormalizerInterface::class, Normalizer::class)
-            ->arg('$normalizers', '%api.normalizers%')
+            ->arg('$normalizers', [
+                Application::class => ref(ApplicationNormalizer::class),
+                Build::class => ref(BuildNormalizer::class),
+                Environment::class => ref(EnvironmentNormalizer::class),
+                Hyperlink::class => ref(HyperlinkNormalizer::class),
+                JobEvent::class => ref(EventNormalizer::class),
+                Organization::class => ref(OrganizationNormalizer::class),
+                Release::class => ref(ReleaseNormalizer::class),
+                Target::class => ref(TargetNormalizer::class),
+                TargetTemplate::class => ref(TemplateNormalizer::class),
+                TimePoint::class => ref(TimePointNormalizer::class),
+                User::class => ref(UserNormalizer::class),
+                VersionControlProvider::class => ref(VersionControlProviderNormalizer::class),
+            ])
     ;
 
     $s = $container->services();

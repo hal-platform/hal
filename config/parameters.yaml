@@ -18,8 +18,6 @@ parameters:
     base_url: '%env(string:HAL_BASEURL)%'
     administrator_email: '%env(string:HAL_ADMIN_EMAIL)%'
 
-    date.timezone: '%env(string:HAL_TIMEZONE)%'
-
     # Route condition regexes
     r.alphanum: '[A-Za-z0-9]+'
     r.digit: '[0-9]+'
@@ -32,15 +30,15 @@ parameters:
     ############################################################################
     # panthor
     ############################################################################
-    debug: '%env(bool:HAL_DEBUG_ON)%'
-    slim.settings.display_errors: '%env(bool:HAL_DEBUG_ON)%'
+    # debug: '%env(bool:HAL_DEBUG_ON)%'
+    # slim.settings.display_errors: '%env(bool:HAL_DEBUG_ON)%'
 
-    routes.cached: 'config/routes.cached.php'
-    routes.cache_disabled: '%env(bool:HAL_ROUTES_DISABLE_CACHE_ON)%'
+    # routes.cached: 'config/routes.cached.php'
+    # routes.cache_disabled: '%env(bool:HAL_ROUTES_DISABLE_CACHE_ON)%'
     global_middleware:
         - 'Hal\UI\Middleware\LoggerGlobalMiddleware'
         - 'Hal\UI\Middleware\TemplateContextGlobalMiddleware'
-        - 'panthor.middleware.encrypted_cookies'
+        - 'QL\Panthor\Middleware\EncryptedCookiesMiddleware'
         - 'Hal\UI\Middleware\FlashGlobalMiddleware'
         - 'QL\Panthor\Middleware\SessionMiddleware'
         - 'Hal\UI\Middleware\UserSessionGlobalMiddleware'
@@ -65,7 +63,7 @@ parameters:
     ############################################################################
     # twig
     ############################################################################
-    twig.debug: '%env(bool:HAL_DEBUG_TWIG_ON)%'
+    # twig.debug: '%env(bool:HAL_DEBUG_TWIG_ON)%'
 
     ############################################################################
     # auth
@@ -124,11 +122,15 @@ parameters:
     ############################################################################
     # cookie
     ############################################################################
-    session.lifetime: '+1 day'
-    session.encryption.secret: '%env(HAL_COOKIE_SECRET)%'
-
-    cookie.encryption.secret: '%env(HAL_SESSION_SECRET)%'
-    cookie.preferences.ttl: '5 years'
+    session.lifetime: '+5 days'
+    cookie.settings.lifetime: '+5 years'
+    cookie.preferences.ttl: '+1 year'
+    cookie.settings:
+        expires: '%cookie.settings.lifetime%'
+        path: '/'
+        domain: ''
+        secure: '%cookie.settings.secure%'
+        httpOnly: '%cookie.settings.http_only%'
 
     ############################################################################
     # credentials / encryption

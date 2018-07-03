@@ -21,8 +21,9 @@ return function (ContainerConfigurator $container) {
             ->parent(ref('mcp_logger'))
             ->public()
 
-        ('content_handler', LoggingContentHandler::class)
-            ->arg('$handler', ref('panthor.content_handler'))
+        (LoggingContentHandler::class)
+            ->decorate('content_handler')
+            ->arg('$handler', ref(LoggingContentHandler::class . '.inner'))
             ->arg('$logger', ref(LoggerInterface::class))
             ->arg('$configuration', '%logger.error_handling.logging_levels%')
     ;

@@ -41,12 +41,10 @@ return function (ContainerConfigurator $container) {
     $s
         ('signin.page', \Hal\UI\Controllers\Auth\SignInController::class)
             ->arg('$template', twig('auth/signin.twig'))
-            ->arg('$cookies', ref('cookie.handler'))
 
         ('signin.middleware',      \Hal\UI\Controllers\Auth\SignInHandler::class)
         ('signout.handler',        \Hal\UI\Controllers\Auth\SignOutHandler::class)
         ('signout.oauth2_handler', \Hal\UI\Controllers\Auth\SignInCallbackHandler::class)
-            ->arg('$cookies', ref('cookie.handler'))
 
         ('signin.setup.page', \Hal\UI\Controllers\Auth\SignInSetupController::class)
             ->arg('$template', twig('auth/signin_setup.twig'))

@@ -4,19 +4,17 @@ namespace Hal\Bootstrap;
 
 use QL\Panthor\Bootstrap\GlobalMiddlewareLoader;
 use QL\Panthor\Bootstrap\RouteLoader;
+use QL\Panthor\ErrorHandling\ErrorHandler;
+use QL\Panthor\ErrorHandling\ExceptionHandler;
 
 define('HAL_APP_START', microtime(true));
 
 $root = realpath(__DIR__ . '/..');
 
-if (!$container = @include "${root}/config/bootstrap.php") {
-    http_response_code(500);
-    echo "Boom goes the dynamite.\n";
-    exit;
-};
+$container = require "${root}/config/bootstrap.php";
 
 // Error handling
-$handler = $container->get('error.handler');
+$handler = $container->get(ErrorHandler::class);
 $handler->register();
 $handler->registerShutdown();
 
@@ -34,7 +32,7 @@ $container->get(RouteLoader::class)($app);
 $container->get(GlobalMiddlewareLoader::class)($app);
 
 // Attach Slim to exception handler for error rendering
-$container->get('exception.handler')->attachSlim($app);
+$container->get(ExceptionHandler::class)->attachSlim($app);
 
 $app->run();
 

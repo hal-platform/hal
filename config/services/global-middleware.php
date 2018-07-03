@@ -26,12 +26,13 @@ return function (ContainerConfigurator $container) {
     ;
 
     $s
-        (GlobalMiddlewareLoader::class)
-            ->arg('$di', ref('service_container'))
-            ->arg('$middleware', '%global_middleware%')
+        ->defaults()
+            ->autowire()
+    ;
 
+    $s
         (RouteLoader::class)
-            ->parent('panthor.router.loader')
+            ->arg('$routes', '%routes%')
             ->call('addRoutes', ['%routes.api%'])
             ->call('addRoutes', ['%routes.api_internal%'])
             ->call('addRoutes', ['%routes.api_writes%'])
@@ -40,22 +41,12 @@ return function (ContainerConfigurator $container) {
             ->arg('$factory', ref('mcp_logger_factory'))
 
         (TemplateContextGlobalMiddleware::class)
-            ->arg('$context', ref('twig.context'))
-
         (FlashGlobalMiddleware::class)
-            ->arg('$handler', ref('cookie.handler'))
-
         (SessionMiddleware::class)
-            ->arg('$handler', ref('cookie.handler'))
             ->arg('$options', '%middleware.session_options%')
 
         (UserSessionGlobalMiddleware::class)
-            ->autowire()
-
         (SrsBusinessGlobalMiddleware::class)
-            ->arg('$cookies', ref('cookie.handler'))
-
         (SystemSettingsGlobalMiddleware::class)
-            ->autowire()
     ;
 };

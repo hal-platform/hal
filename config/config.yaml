@@ -1,7 +1,8 @@
 imports:
     - resource: '../vendor/ql/mcp-logger/config/config.php'
     - resource: '../vendor/hal/hal-core/config/config.php'
-    - resource: '../vendor/ql/mcp-panthor/configuration/*.yml'
+    - resource: '../vendor/ql/mcp-panthor/config/slim.php'
+    - resource: '../vendor/ql/mcp-panthor/config/panthor.php'
     - resource: 'services/*.php'
 
     - resource: 'services.php'

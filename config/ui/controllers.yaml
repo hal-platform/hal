@@ -11,7 +11,7 @@ services:
             - '@user.twig'
             - '@Hal\UI\Security\AuthorizationService'
             - '@Hal\UI\Security\AuthorizationHydrator'
-            - '@clock'
+            - '@QL\MCP\Common\Clock'
     user.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['user/user.twig']]]
@@ -34,7 +34,7 @@ services:
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\UserValidator'
             - '@Hal\UI\Validator\UserIdentityValidator'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     user.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['user/add_user.twig']]]
@@ -46,7 +46,7 @@ services:
             - '@user.edit.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\UserValidator'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     user.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['user/edit_user.twig']]]
@@ -56,14 +56,14 @@ services:
         class: 'Hal\UI\Controllers\User\DisableUserHandler'
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     user.regenerate_setup.handler:
         public: true
         class: 'Hal\UI\Controllers\User\RegenerateSetupTokenHandler'
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\UserIdentityValidator'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
 
     user.settings.page:
         public: true
@@ -77,8 +77,8 @@ services:
         public: true
         class: 'Hal\UI\Controllers\User\SettingsMiddleware'
         arguments:
-            - '@cookie.handler'
-            - '@uri'
+            - '@QL\Panthor\HTTP\CookieHandler'
+            - '@QL\Panthor\Utility\URI'
             - '%cookie.preferences.ttl%'
 
     user.token.add.handler:
@@ -86,13 +86,13 @@ services:
         class: 'Hal\UI\Controllers\User\Token\AddTokenHandler'
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     user.token.remove.handler:
         public: true
         class: 'Hal\UI\Controllers\User\Token\RemoveTokenHandler'
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
 
     ####################################################################################################################
     # organizations
@@ -116,7 +116,7 @@ services:
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\OrganizationValidator'
             - '@Hal\UI\Security\AuthorizationService'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     organization.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['organization/add_organization.twig']]]
@@ -128,7 +128,7 @@ services:
             - '@organization.edit.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\OrganizationValidator'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     organization.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['organization/edit_organization.twig']]]
@@ -139,7 +139,7 @@ services:
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Security\AuthorizationService'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
 
     ####################################################################################################################
     # applications
@@ -181,7 +181,7 @@ services:
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Service\StickyEnvironmentService'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
 
     application.add.page:
         public: true
@@ -191,7 +191,7 @@ services:
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\ApplicationValidator'
             - '@Hal\UI\Security\AuthorizationService'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     application.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['application/add_application.twig']]]
@@ -203,7 +203,7 @@ services:
             - '@application.edit.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\ApplicationValidator'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     application.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['application/edit_application.twig']]]
@@ -214,7 +214,7 @@ services:
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Security\AuthorizationService'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
 
     ####################################################################################################################
     # applications - encrypted configuration
@@ -252,14 +252,14 @@ services:
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\Core\Crypto\Encryption'
             - '@Hal\UI\Validator\EncryptedPropertyValidator'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
 
     encrypted.remove.handler:
         public: true
         class: 'Hal\UI\Controllers\EncryptedConfiguration\RemoveEncryptedPropertyHandler'
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
 
     ####################################################################################################################
     # applications - targets
@@ -294,7 +294,7 @@ services:
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\TargetValidator'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
 
     target.edit.page:
         public: true
@@ -309,12 +309,12 @@ services:
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\TargetValidator'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
 
     target.remove.handler:
         public: true
         class: 'Hal\UI\Controllers\Target\RemoveTargetHandler'
-        arguments: ['@Doctrine\ORM\EntityManagerInterface', '@uri']
+        arguments: ['@Doctrine\ORM\EntityManagerInterface', '@QL\Panthor\Utility\URI']
 
     ####################################################################################################################
     # target templates
@@ -343,7 +343,7 @@ services:
             - '@template.add.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\TargetTemplateValidator'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     template.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['target-template/add_template.twig']]]
@@ -355,7 +355,7 @@ services:
             - '@template.edit.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\TargetTemplateValidator'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     template.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['target-template/edit_template.twig']]]
@@ -363,7 +363,7 @@ services:
     template.remove.handler:
         public: true
         class: 'Hal\UI\Controllers\TargetTemplate\RemoveTemplateHandler'
-        arguments: ['@Doctrine\ORM\EntityManagerInterface', '@uri']
+        arguments: ['@Doctrine\ORM\EntityManagerInterface', '@QL\Panthor\Utility\URI']
 
     ################################################################################################################
     # queue
@@ -383,7 +383,7 @@ services:
         arguments:
             - '@queue.history.twig'
             - '@Hal\UI\Service\JobQueueService'
-            - '@clock'
+            - '@QL\MCP\Common\Clock'
             - '%date.timezone%'
     queue.history.twig:
         parent: 'twig.template'
@@ -450,7 +450,7 @@ services:
             - '@Hal\UI\Validator\ReleaseValidator'
             - '@Hal\UI\Validator\MetaValidator'
             - '@Hal\UI\Service\StickyEnvironmentService'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
 
     ####################################################################################################################
     # releases
@@ -483,7 +483,7 @@ services:
         arguments:
             - '@release.start.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     release.start.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['release/start_release.twig']]]
@@ -496,7 +496,7 @@ services:
             - '@Hal\UI\Validator\ReleaseValidator'
             - '@Hal\UI\Validator\MetaValidator'
             - '@Hal\UI\Service\StickyEnvironmentService'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
 
     release.rollback.page:
         public: true
@@ -523,7 +523,7 @@ services:
             - '@Hal\UI\Validator\UserIdentityProviderValidator'
             - '@Hal\UI\Validator\UserIdentityValidator'
             - '@Hal\UI\Validator\UserValidator'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     hal_bootstrap.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/hal_bootstrap.twig']]]
@@ -571,7 +571,7 @@ services:
         arguments:
             - '@admin.global_banner.twig'
             - '@Hal\UI\System\GlobalBannerService'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     admin.global_banner.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/global_banner.twig']]]
@@ -581,12 +581,6 @@ services:
         class: 'Hal\UI\Controllers\Admin\SystemDashboardController'
         arguments:
             - '@admin.system_dashboard.twig'
-            - '@Doctrine\ORM\EntityManagerInterface'
-            - '@json'
-            - '@clock'
-            - '%cookie.encryption.secret%'
-            - '%session.encryption.secret%'
-            - '%hal.pushfile.path%'
 
     admin.system_dashboard.twig:
         parent: 'twig.template'
@@ -624,7 +618,7 @@ services:
             - '@environment.add.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\EnvironmentValidator'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     environment.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['environment/add_environment.twig']]]
@@ -636,7 +630,7 @@ services:
             - '@environment.edit.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\EnvironmentValidator'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     environment.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['environment/edit_environment.twig']]]
@@ -646,7 +640,7 @@ services:
         class: 'Hal\UI\Controllers\Admin\Environment\RemoveEnvironmentHandler'
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
 
     ################################################################################################################
     # admin - idp
@@ -669,7 +663,7 @@ services:
             - '@id_providers.add.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\UserIdentityProviderValidator'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     id_providers.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['idp/add_idp.twig']]]
@@ -692,7 +686,7 @@ services:
             - '@id_provider.edit.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\UserIdentityProviderValidator'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     id_provider.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['idp/edit_idp.twig']]]
@@ -702,7 +696,7 @@ services:
         class: 'Hal\UI\Controllers\Admin\IDP\RemoveIdentityProviderHandler'
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
 
     ################################################################################################################
     # admin - vcs
@@ -725,7 +719,7 @@ services:
             - '@vcs_providers.add.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\VersionControlProviderValidator'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     vcs_providers.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['vcs/add_vcs.twig']]]
@@ -747,7 +741,7 @@ services:
             - '@vcs_provider.edit.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\VersionControlProviderValidator'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     vcs_provider.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['vcs/edit_vcs.twig']]]
@@ -757,7 +751,7 @@ services:
         class: 'Hal\UI\Controllers\Admin\VCS\RemoveVersionControlHandler'
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
 
     ####################################################################################################################
     # admin - credentials
@@ -791,7 +785,7 @@ services:
             - '@credential.add.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\CredentialValidator'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     credential.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['credentials/add_credential.twig']]]
@@ -804,7 +798,7 @@ services:
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Validator\CredentialValidator'
             - '@Hal\Core\Crypto\Encryption'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     credential.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['credentials/edit_credential.twig']]]
@@ -814,7 +808,7 @@ services:
         class: 'Hal\UI\Controllers\Credentials\RemoveCredentialHandler'
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
 
     ####################################################################################################################
     # permissions
@@ -827,7 +821,7 @@ services:
             - '@application_permissions_add.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Security\AuthorizationService'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     application_permissions_add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['permissions/add_application_permissions.twig']]]
@@ -839,7 +833,7 @@ services:
             - '@application_permissions_remove.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Security\AuthorizationService'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     application_permissions_remove.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['permissions/remove_application_permissions.twig']]]
@@ -851,7 +845,7 @@ services:
             - '@organization_permissions_add.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Security\AuthorizationService'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     organization_permissions_add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['permissions/add_organization_permissions.twig']]]
@@ -863,7 +857,7 @@ services:
             - '@organization_permissions_remove.twig'
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Security\AuthorizationService'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     organization_permissions_remove.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['permissions/remove_organization_permissions.twig']]]
@@ -888,7 +882,7 @@ services:
             - '@Hal\UI\Validator\PermissionsValidator'
             - '@Hal\UI\Security\AuthorizationService'
             - '@Hal\UI\Security\AuthorizationHydrator'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     user_permissions.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['permissions/add_permission.twig']]]
@@ -901,7 +895,7 @@ services:
             - '@Doctrine\ORM\EntityManagerInterface'
             - '@Hal\UI\Security\AuthorizationService'
             - '@Hal\UI\Security\AuthorizationHydrator'
-            - '@uri'
+            - '@QL\Panthor\Utility\URI'
     user_permissions.remove.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['permissions/remove_permission.twig']]]
