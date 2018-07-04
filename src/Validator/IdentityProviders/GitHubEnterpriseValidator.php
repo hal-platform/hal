@@ -116,7 +116,7 @@ class GitHubEnterpriseValidator implements IdentityProviderValidatorInterface
         return [
             "${type}_client_id" => $data["${type}_client_id"] ?? '',
             "${type}_client_secret" => $data["${type}_client_secret"] ?? '',
-            "${type}_url" => $data["${type}_url"] ?? ''
+            "${type}_url" => $data["${type}_url"] ?? '',
         ];
     }
 

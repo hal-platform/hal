@@ -108,7 +108,7 @@ class LDAPAuth implements UserAuthenticationInterface
 
         $identity = $this->identityRepo->findOneBy([
             'provider' => $idp,
-            'providerUniqueID' => $data['id']
+            'providerUniqueID' => $data['id'],
         ]);
 
         if ($identity instanceof UserIdentity) {
@@ -176,7 +176,7 @@ class LDAPAuth implements UserAuthenticationInterface
         $query = $this->buildLDAPQuery($ldap, $attribute, $username);
         $attributes = [
             'id' => self::USER_ID,
-            'username' => $attribute
+            'username' => $attribute,
         ];
 
         $data = $this->getIdentityData($ldap, $dn, $query, $attributes);
@@ -196,7 +196,7 @@ class LDAPAuth implements UserAuthenticationInterface
     {
         try {
             $query = $ldap->query($baseDN, $query, [
-                'filter' => array_values($attributes)
+                'filter' => array_values($attributes),
             ]);
         } catch (Exception $ex) {
             // Symfony suppresses errors, but our error handler does not properly ignore suppressed errors.
@@ -314,7 +314,7 @@ class LDAPAuth implements UserAuthenticationInterface
     {
         $options = [
             'host' => $host,
-            'port' => $port
+            'port' => $port,
         ];
 
         try {

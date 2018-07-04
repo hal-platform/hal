@@ -71,11 +71,11 @@ class GitHubEnterpriseAuth extends GitHubAuth
             'clientSecret' => $secret,
             'redirectUri' => $this->callbackFactory->getFullCallbackURL(),
 
-            'domain' => $domain
+            'domain' => $domain,
         ];
 
         $provider = new GitHubProvider($data, [
-            'httpClient' => $this->guzzle
+            'httpClient' => $this->guzzle,
         ]);
 
         return $provider;

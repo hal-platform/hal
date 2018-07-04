@@ -66,12 +66,12 @@ class CacheManagementHandler implements MiddlewareInterface
         if ($msg) {
             $request = $this->withContext($request, [
                 'clear_result' => 'success',
-                'clear_message' => $msg
+                'clear_message' => $msg,
             ]);
         } else {
             $request = $this->withContext($request, [
                 'clear_result' => 'error',
-                'clear_message' => self::ERR_INVALID
+                'clear_message' => self::ERR_INVALID,
             ]);
         }
 

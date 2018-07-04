@@ -20,7 +20,6 @@ class GitHubValidator implements IdentityProviderValidatorInterface
     use ValidatorTrait;
 
     private const REGEX_CHARACTER_STRICT_WHITESPACE = '\f\n\r\t\v ';
-    private const REGEX_URL = '@^https?\:\/\/[[:ascii:]]+$@';
 
     private const ERT_CHARACTERS_STRICT_WHITESPACE = '%s must not contain any whitespace.';
 
@@ -104,7 +103,7 @@ class GitHubValidator implements IdentityProviderValidatorInterface
 
         return [
             "${type}_client_id" => $data["${type}_client_id"] ?? '',
-            "${type}_client_secret" => $data["${type}_client_secret"] ?? ''
+            "${type}_client_secret" => $data["${type}_client_secret"] ?? '',
         ];
     }
 

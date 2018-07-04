@@ -67,11 +67,13 @@ class BuildsController implements ControllerInterface
         $application = $request->getAttribute(Application::class);
 
         $page = $this->getCurrentPage($request);
+        $pageSize = SharedStaticConfiguration::LARGE_PAGE_SIZE;
+
         if ($page === null) {
             return $this->withProblem($this->problem, $response, 404, self::ERR_PAGE);
         }
 
-        $pagination = $this->buildRepo->getByApplication($application, SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1));
+        $pagination = $this->buildRepo->getByApplication($application, $pageSize, ($page - 1));
         $total = count($pagination);
 
         $builds = [];
@@ -79,16 +81,16 @@ class BuildsController implements ControllerInterface
             $builds[] = $build;
         }
 
-        $links = $this->buildPaginationLinks('api.builds.history', $page, $total, SharedStaticConfiguration::LARGE_PAGE_SIZE, ['application' => $application->id()]);
+        $links = $this->buildPaginationLinks('api.builds.history', $page, $total, $pageSize, ['application' => $application->id()]);
 
         $data = [
             'count' => count($builds),
             'total' => $total,
-            'page' => $page
+            'page' => $page,
         ];
 
         $resource = new HypermediaResource($data, $links, [
-            'builds' => $builds
+            'builds' => $builds,
         ]);
 
         $status = (count($builds) > 0) ? 200 : 404;

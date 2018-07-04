@@ -39,7 +39,7 @@ class EnvironmentController implements ControllerInterface
         $environment = $request->getAttribute(Environment::class);
 
         return $this->withTemplate($request, $response, $this->template, [
-            'environment' => $environment
+            'environment' => $environment,
         ]);
     }
 }

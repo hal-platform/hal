@@ -54,7 +54,7 @@ class TemplateController implements ControllerInterface
 
         return $this->withTemplate($request, $response, $this->template, [
             'template' => $template,
-            'targets' => $targets
+            'targets' => $targets,
         ]);
     }
 

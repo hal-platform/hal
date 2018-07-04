@@ -57,7 +57,7 @@ class AuditHistoryController implements ControllerInterface
             'page' => $page,
             'last' => $last,
 
-            'events' => $events
+            'events' => $events,
         ]);
     }
 }

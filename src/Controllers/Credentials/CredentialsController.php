@@ -51,7 +51,7 @@ class CredentialsController implements ControllerInterface
         $credentials = $this->credentialsRepo->findBy([], ['isInternal' => 'ASC', 'name' => 'ASC']);
 
         return $this->withTemplate($request, $response, $this->template, [
-            'credentials' => $credentials
+            'credentials' => $credentials,
         ]);
     }
 }

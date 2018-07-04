@@ -98,15 +98,15 @@ class QueueRefreshController implements ControllerInterface
         $jobs = $this->retrieveJobs($identifiers);
 
         $data = [
-            'count' => count($jobs)
+            'count' => count($jobs),
         ];
 
         $links = [
-            'self' => new Hyperlink(['api.queue.refresh', ['jobs' => implode('+', $identifiers)]])
+            'self' => new Hyperlink(['api.queue.refresh', ['jobs' => implode('+', $identifiers)]]),
         ];
 
         $resource = new HypermediaResource($data, $links, [
-            'jobs' => $this->formatQueue($jobs)
+            'jobs' => $this->formatQueue($jobs),
         ]);
 
         $resource->withEmbedded(['jobs']);

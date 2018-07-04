@@ -60,20 +60,20 @@ class TargetNormalizer implements ResourceNormalizerInterface
             'name' => $target->name(),
             'url' => $target->url(),
             'type' => $target->type(),
-            'parameters' => $this->fillParameters($target)
+            'parameters' => $this->fillParameters($target),
         ];
 
         $links = [
             'self' => $this->link($target),
 
             'releases' => new Hyperlink(['api.target.history', ['target' => $target->id()]]),
-            'current_release' => new Hyperlink(['api.target.current_release', ['target' => $target->id()]])
+            'current_release' => new Hyperlink(['api.target.current_release', ['target' => $target->id()]]),
         ];
 
         $resource = new HypermediaResource($data, $links, [
             'application' => $target->application(),
             'environment' => $target->environment(),
-            'template' => $target->template()
+            'template' => $target->template(),
         ]);
 
         $resource->withEmbedded($embed);

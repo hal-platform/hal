@@ -130,7 +130,7 @@ class TimeFormatter
             return $time->format('M j, g:i A', $this->timezone);
 
         // // 8 hrs - 72 hrs
-        } else if ($hours > 8) {
+        } elseif ($hours > 8) {
             if ($time->format('l', 'UTC') === $from->format('l', 'UTC')) {
                 return $time->format('g:i A', $this->timezone);
             } else {
@@ -138,23 +138,23 @@ class TimeFormatter
             }
 
         // // 4 hrs - 8 hrs
-        } else if ($hours > 4) {
+        } elseif ($hours > 4) {
             return sprintf('%d hr ago', $hours);
 
         // // 1 hr - 4 hr
-        } else if ($hours > 1) {
+        } elseif ($hours > 1) {
             return sprintf('%d hr, %d min ago', $hours, $minutes);
 
         // 10 min - 1 hr
-        } else if ($minutes > 10) {
+        } elseif ($minutes > 10) {
             return sprintf('%d min ago', $minutes);
 
         // 1 min - 10 min
-        } else if ($minutes > 1) {
+        } elseif ($minutes > 1) {
             return sprintf('%d min, %d sec ago', $minutes, $seconds);
 
         // 0 - 1 min
-        } else if ($seconds > 0) {
+        } elseif ($seconds > 0) {
             return sprintf('%d sec ago', $seconds);
         }
 

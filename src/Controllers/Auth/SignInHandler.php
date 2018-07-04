@@ -165,11 +165,12 @@ class SignInHandler implements MiddlewareInterface
      */
     private function getSelectedIDP(ServerRequestInterface $request)
     {
-        $providerID = $request->getParsedBody()['idp'] ?? '';
-        if (!$providerID) {
+        $selectedIDP = $request->getParsedBody()['idp'] ?? '';
+        if (!$selectedIDP) {
             return null;
         }
 
-        return $this->idpRepo->find($providerID);
+        $idp = $this->idpRepo->find($selectedIDP);
+        return ($idp instanceof UserIdentityProvider) ? $idp : null;
     }
 }

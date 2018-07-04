@@ -10,23 +10,9 @@ namespace Hal\UI\Controllers\API;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
-use QL\Panthor\Utility\URI;
 
 class DocsRedirectController implements ControllerInterface
 {
-    /**
-     * @var URI
-     */
-    private $uri;
-
-    /**
-     * @param URI $uri
-     */
-    public function __construct(URI $uri)
-    {
-        $this->uri = $uri;
-    }
-
     /**
      * @inheritDoc
      */

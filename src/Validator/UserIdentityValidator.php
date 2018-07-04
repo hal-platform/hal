@@ -24,7 +24,6 @@ class UserIdentityValidator
 
     public const SETUP_EXPIRY = '+8 hours';
 
-    private const REGEX_CHARACTER_CLASS_USERNAME = 'a-zA-Z0-9_\.\-';
     private const REGEX_CHARACTER_WHITESPACE_SPACE = '\f\n\r\t\v ';
 
     private const ERR_USERNAME_CHARACTERS = 'Username must contain no spaces or special characters.';

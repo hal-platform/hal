@@ -98,7 +98,7 @@ class EditCredentialController implements ControllerInterface
             'form' => $form,
             'errors' => $this->credentialValidator->errors(),
 
-            'credential_options' => CredentialEnum::options()
+            'credential_options' => CredentialEnum::options(),
         ]);
     }
 
@@ -169,7 +169,7 @@ class EditCredentialController implements ControllerInterface
             'privatekey_path' => $isPost ? $path : $original['privatekey_path'],
             'privatekey_file' => $isPost ? $file : $original['privatekey_file'],
 
-            'is_internal' => $isPost ? $isInternal : $credential->isInternal()
+            'is_internal' => $isPost ? $isInternal : $credential->isInternal(),
         ];
 
         return $form;

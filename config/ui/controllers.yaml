@@ -250,7 +250,6 @@ services:
         class: 'Hal\UI\Controllers\EncryptedConfiguration\AddEncryptedPropertyMiddleware'
         arguments:
             - '@Doctrine\ORM\EntityManagerInterface'
-            - '@Hal\Core\Crypto\Encryption'
             - '@Hal\UI\Validator\EncryptedPropertyValidator'
             - '@QL\Panthor\Utility\URI'
 

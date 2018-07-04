@@ -284,7 +284,7 @@ class UserAuthorizations implements JsonSerializable
     public function jsonSerialize()
     {
         $json = [
-            'tiers' => $this->tiers
+            'tiers' => $this->tiers,
         ];
 
         return $json;

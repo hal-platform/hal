@@ -47,7 +47,7 @@ class JobQueueService
     {
         $runningStatuses = [
             JobStatusEnum::TYPE_PENDING,
-            JobStatusEnum::TYPE_RUNNING
+            JobStatusEnum::TYPE_RUNNING,
         ];
 
         $criteria = $this->getCriteria($runningStatuses);
@@ -68,7 +68,7 @@ class JobQueueService
 
         $runningStatuses = [
             JobStatusEnum::TYPE_PENDING,
-            JobStatusEnum::TYPE_RUNNING
+            JobStatusEnum::TYPE_RUNNING,
         ];
 
         $criteria = $this->getCriteria($runningStatuses, $before);
@@ -137,7 +137,7 @@ class JobQueueService
      * @param TimePoint|null $before
      * @param TimePoint|null $after
      *
-     * @return array
+     * @return Criteria
      */
     private function getCriteria(array $statuses = [], TimePoint $before = null, TimePoint $after = null)
     {

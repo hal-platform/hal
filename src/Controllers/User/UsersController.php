@@ -59,7 +59,7 @@ class UsersController implements ControllerInterface
             'page' => $page,
             'last' => $last,
 
-            'users' => $users
+            'users' => $users,
         ]);
     }
 }

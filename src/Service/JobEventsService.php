@@ -122,7 +122,7 @@ class JobEventsService
             'stage' => '',
             'status' => '',
             'order' => 0,
-            'message' => ''
+            'message' => '',
         ], $data);
 
         if ($timepoint = $this->clock->fromString($data['created'])) {

@@ -43,7 +43,6 @@ class EditApplicationController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $applicationRepo;
     private $organizationRepo;
     private $vcsRepo;
 
@@ -76,7 +75,6 @@ class EditApplicationController implements ControllerInterface
     ) {
         $this->template = $template;
 
-        $this->applicationRepo = $em->getRepository(Application::class);
         $this->organizationRepo = $em->getRepository(Organization::class);
         $this->vcsRepo = $em->getRepository(VersionControlProvider::class);
         $this->em = $em;
@@ -107,7 +105,7 @@ class EditApplicationController implements ControllerInterface
 
             'application' => $application,
             'organizations' => $this->getOrganizations(),
-            'vcs' => $this->vcsRepo->findAll()
+            'vcs' => $this->vcsRepo->findAll(),
         ]);
     }
 

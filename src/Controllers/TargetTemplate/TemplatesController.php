@@ -52,7 +52,7 @@ class TemplatesController implements ControllerInterface
         $templates = $this->templateRepo->getGroupedTemplates();
 
         return $this->withTemplate($request, $response, $this->template, [
-            'sorted_templates' => $templates
+            'sorted_templates' => $templates,
         ]);
     }
 }

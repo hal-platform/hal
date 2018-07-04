@@ -57,7 +57,7 @@ class APICrossOriginMiddleware implements MiddlewareInterface
         $this->corsSettings->setServerOrigin([
             'scheme' => $uri->getScheme(),
             'host' => $uri->getHost(),
-            'port' => $uri->getPort()
+            'port' => $uri->getPort(),
         ]);
 
         $analyzer = Analyzer::instance($this->corsSettings);

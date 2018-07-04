@@ -70,17 +70,17 @@ class TargetsController implements ControllerInterface
         usort($targets, $this->targetSorter());
 
         $data = [
-            'count' => count($targets)
+            'count' => count($targets),
         ];
 
         $links = [
             'application' => new Hyperlink([
-                'api.application', ['application' => $application->id()]
-            ])
+                'api.application', ['application' => $application->id()],
+            ]),
         ];
 
         $resource = new HypermediaResource($data, $links, [
-            'targets' => $targets
+            'targets' => $targets,
         ]);
 
         $body = $this->formatter->buildHypermediaResponse($request, $resource);

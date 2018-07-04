@@ -80,11 +80,11 @@ class UsersController implements ControllerInterface
         $data = [
             'count' => count($users),
             'total' => $total,
-            'page' => $page
+            'page' => $page,
         ];
 
         $resource = new HypermediaResource($data, $links, [
-            'users' => $users
+            'users' => $users,
         ]);
 
         $status = (count($users) > 0) ? 200 : 404;

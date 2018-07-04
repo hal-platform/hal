@@ -46,7 +46,7 @@ class GitHubExtension extends AbstractExtension
             new TwigFunction('vcs_url', [$this, 'formatVCSLink']),
             new TwigFunction('vcs_text', [$this, 'formatVCSText']),
 
-            new TwigFunction('is_vcs_ref_current', [$this, 'isVCSRefCurrent'])
+            new TwigFunction('is_vcs_ref_current', [$this, 'isVCSRefCurrent']),
         ];
     }
 
@@ -57,7 +57,7 @@ class GitHubExtension extends AbstractExtension
     {
         return [
             new TwigFilter('vcsref', [$this, 'resolveVCSReference']),
-            new TwigFilter('commit', [$this, 'formatVCSCommit'])
+            new TwigFilter('commit', [$this, 'formatVCSCommit']),
         ];
     }
 

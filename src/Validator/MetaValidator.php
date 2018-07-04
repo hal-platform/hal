@@ -93,7 +93,7 @@ class MetaValidator
         }
 
         if ($this->hasErrors()) {
-            return null;
+            return;
         }
 
         if (!$this->validateRegex($name, self::VALID_NAME_REGEX)) {

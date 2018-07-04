@@ -96,7 +96,7 @@ class SignInCallbackHandler implements MiddlewareInterface
         $data = [
             'code' => $query['code'] ?? '',
             'state' => $query['state'] ?? '',
-            'stored_state' => $session->get('external-auth-state') ?: ''
+            'stored_state' => $session->get('external-auth-state') ?: '',
         ];
 
         $user = $this->auth->authenticate($idp, $data);
@@ -153,6 +153,7 @@ class SignInCallbackHandler implements MiddlewareInterface
             return null;
         }
 
-        return $this->idpRepo->find($selectedIDP);
+        $idp = $this->idpRepo->find($selectedIDP);
+        return ($idp instanceof UserIdentityProvider) ? $idp : null;
     }
 }

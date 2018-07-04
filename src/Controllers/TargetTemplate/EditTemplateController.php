@@ -95,7 +95,7 @@ class EditTemplateController implements ControllerInterface
 
             'deployment_types' => TargetEnum::options(),
             'aws_regions' => AWSAuthenticator::$awsRegions,
-            's3_methods' => Parameters::TARGET_S3_METHODS
+            's3_methods' => Parameters::TARGET_S3_METHODS,
         ]);
     }
 
@@ -151,7 +151,7 @@ class EditTemplateController implements ControllerInterface
             'name' => $data['name'] ?? '',
 
             'script_context' => $data['script_context'] ?? '',
-            'credential' => $data['credential'] ?? ''
+            'credential' => $data['credential'] ?? '',
         ];
 
         return $form + $this->validator->getTemplateFormData($request, $type, $template);

@@ -62,7 +62,7 @@ class RemovalConfirmationMiddleware implements MiddlewareInterface
     {
         $context = [
             'entities' => [],
-            'remove' => []
+            'remove' => [],
         ];
 
         // Cycle through all possible uri entities and add them to the template context.
@@ -75,7 +75,7 @@ class RemovalConfirmationMiddleware implements MiddlewareInterface
                     $context['remove'] = [
                         'param' => $this->removeEntityType,
                         'class' => $attributeName,
-                        'entity' => $request->getAttribute($attributeName)
+                        'entity' => $request->getAttribute($attributeName),
                     ];
                 }
             }

@@ -12,7 +12,6 @@ use JsonSerializable;
 class Hyperlink
 {
     /**
-     *
      * Href can be of the following format:
      *
      *  - 'http://full/url/to/some/resource',
@@ -76,7 +75,7 @@ class Hyperlink
     public function jsonSerialize()
     {
         $data = [
-            'href' => $this->href
+            'href' => $this->href,
         ];
 
         if ($title = $this->title()) {

@@ -278,7 +278,7 @@ class TargetValidator
             'url' => $data['url'] ?? '',
 
             'script_context' => $data['script_context'] ?? '',
-            'credential' => $data['credential'] ?? ''
+            'credential' => $data['credential'] ?? '',
         ];
 
         if (!isset($this->typeValidators[$type])) {
@@ -367,7 +367,7 @@ class TargetValidator
         }
 
         if ($this->hasErrors()) {
-            return null;
+            return '';
         }
 
         if (filter_var($url, FILTER_VALIDATE_URL) === false) {

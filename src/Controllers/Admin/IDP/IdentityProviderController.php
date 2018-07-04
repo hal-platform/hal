@@ -50,7 +50,7 @@ class IdentityProviderController implements ControllerInterface
 
         return $this->withTemplate($request, $response, $this->template, [
             'idp' => $idp,
-            'can_remove' => $this->canIDPBeRemoved($idp)
+            'can_remove' => $this->canIDPBeRemoved($idp),
         ]);
     }
 

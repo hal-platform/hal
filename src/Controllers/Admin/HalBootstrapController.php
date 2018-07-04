@@ -50,7 +50,7 @@ class HalBootstrapController implements ControllerInterface
 
     // private const ERR_ENVIRONMENTS = 'An error occurred when adding default environments.';
     // private const ERR_VCS = 'An error occurred when adding default version control system.';
-    private const ERR_IDP = 'An error occurred when adding default identity provider.';
+    // private const ERR_IDP = 'An error occurred when adding default identity provider.';
     private const ERR_ADMIN_USER = 'An error occurred when adding administrator user.';
 
     /**
@@ -67,7 +67,6 @@ class HalBootstrapController implements ControllerInterface
      * @var EntityRepository
      */
     private $idpRepo;
-    private $settingRepo;
 
     /**
      * @var EnvironmentValidator
@@ -129,7 +128,6 @@ class HalBootstrapController implements ControllerInterface
         $this->userValidator = $userValidator;
         $this->uri = $uri;
 
-        $this->settingRepo = $em->getRepository(SystemSetting::class);
         $this->idpRepo = $em->getRepository(UserIdentityProvider::class);
 
         $this->resetErrors();
@@ -156,7 +154,7 @@ class HalBootstrapController implements ControllerInterface
         }
 
         return $this->withTemplate($request, $response, $this->template, [
-            'errors' => $this->errors
+            'errors' => $this->errors,
         ]);
     }
 
@@ -216,7 +214,7 @@ class HalBootstrapController implements ControllerInterface
     private function addIdentityProvider(): ?UserIdentityProvider
     {
         $idp = $this->idpValidator->isValid(IdentityProviderEnum::TYPE_INTERNAL, [
-            'name' => 'Internal Auth'
+            'name' => 'Internal Auth',
         ]);
 
         if (!$idp) {
@@ -242,12 +240,12 @@ class HalBootstrapController implements ControllerInterface
         ]);
 
         $adminUser = $this->userValidator->isValid([
-            'name' => $username
+            'name' => $username,
         ]);
 
         $adminIdentity = $this->identityValidator->isValid([
             'internal_username' => $username,
-            'id_provider' => $idp->id()
+            'id_provider' => $idp->id(),
         ]);
 
         if (!$adminUser || !$adminIdentity) {
@@ -282,7 +280,7 @@ class HalBootstrapController implements ControllerInterface
         $vcs = $this->vcsValidator->isValid(VCSProviderEnum::TYPE_GITHUB_ENTERPRISE, [
             'name' => 'GitHub Enterprise',
             'ghe_url' => $gheURL,
-            'ghe_token' => $gheToken
+            'ghe_token' => $gheToken,
         ]);
 
         if (!$vcs) {

@@ -72,7 +72,7 @@ trait PaginationTrait
     }
 
     /**
-     * @param string $pagedRouteName
+     * @param string $routeName
      * @param int $current
      * @param int $total
      * @param int $pageMax

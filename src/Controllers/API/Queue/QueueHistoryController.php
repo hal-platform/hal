@@ -18,15 +18,12 @@ use Hal\UI\Controllers\APITrait;
 use Hal\UI\Service\JobQueueService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\MCP\Common\Clock;
 use QL\MCP\Common\Time\TimePoint;
 use QL\Panthor\ControllerInterface;
 
 class QueueHistoryController implements ControllerInterface
 {
     use APITrait;
-
-    private const ERR_MALFORMED_DATE = 'Malformed Datetime! Dates must be ISO8601 UTC.';
 
     /**
      * @var ResponseFormatter
@@ -49,11 +46,6 @@ class QueueHistoryController implements ControllerInterface
     private $queue;
 
     /**
-     * @var Clock
-     */
-    private $clock;
-
-    /**
      * @var string
      */
     private $timezone;
@@ -61,7 +53,6 @@ class QueueHistoryController implements ControllerInterface
     /**
      * @param ResponseFormatter $formatter
      * @param JobQueueService $queue
-     * @param Clock $clock
      * @param string $timezone
      */
     public function __construct(
@@ -69,7 +60,6 @@ class QueueHistoryController implements ControllerInterface
         BuildNormalizer $buildNormalizer,
         ReleaseNormalizer $releaseNormalizer,
         JobQueueService $queue,
-        Clock $clock,
         $timezone
     ) {
         $this->formatter = $formatter;
@@ -77,7 +67,6 @@ class QueueHistoryController implements ControllerInterface
         $this->releaseNormalizer = $releaseNormalizer;
 
         $this->queue = $queue;
-        $this->clock = $clock;
         $this->timezone = $timezone;
     }
 
@@ -95,13 +84,13 @@ class QueueHistoryController implements ControllerInterface
         $jobs = $this->queue->getHistory($from, $to);
 
         $data = [
-            'count' => count($jobs)
+            'count' => count($jobs),
         ];
 
         $links = [];
 
         $resource = new HypermediaResource($data, $links, [
-            'jobs' => $this->formatQueue($jobs)
+            'jobs' => $this->formatQueue($jobs),
         ]);
 
         $resource->withEmbedded(['jobs']);

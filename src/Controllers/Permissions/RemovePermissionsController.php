@@ -108,7 +108,7 @@ class RemovePermissionsController implements ControllerInterface
             'user_authorizations' => $selectedUserAuthorizations,
             'user_permissions' => $selectedUserPerms,
 
-            'permission' => $permission
+            'permission' => $permission,
         ]);
     }
 

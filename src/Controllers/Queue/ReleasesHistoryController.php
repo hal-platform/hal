@@ -57,7 +57,7 @@ class ReleasesHistoryController implements ControllerInterface
             'page' => $page,
             'last' => $last,
 
-            'releases' => $releases
+            'releases' => $releases,
         ]);
     }
 }

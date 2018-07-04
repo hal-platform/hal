@@ -20,7 +20,7 @@ class Flash
         self::INFO,
         self::ERROR,
         self::SUCCESS,
-        self::WARNING
+        self::WARNING,
     ];
 
     private const ERRT_FLASH = 'Invalid flash type "%s" specified.';
@@ -101,7 +101,7 @@ class Flash
         $this->messages[] = [
             'type' => $type,
             'message' => $message,
-            'details' => $details
+            'details' => $details,
         ];
 
         return $this;

@@ -80,11 +80,11 @@ class BuildsHistoryController implements ControllerInterface
         $data = [
             'count' => count($builds),
             'total' => $total,
-            'page' => $page
+            'page' => $page,
         ];
 
         $resource = new HypermediaResource($data, $links, [
-            'builds' => $builds
+            'builds' => $builds,
         ]);
 
         $status = (count($builds) > 0) ? 200 : 404;

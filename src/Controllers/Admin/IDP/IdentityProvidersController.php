@@ -47,7 +47,7 @@ class IdentityProvidersController implements ControllerInterface
     {
         return $this->withTemplate($request, $response, $this->template, [
             'id_providers' => $this->idpRepo->findAll(),
-            'user_counts' => $this->idpRepo->getUserCounts()
+            'user_counts' => $this->idpRepo->getUserCounts(),
         ]);
     }
 }

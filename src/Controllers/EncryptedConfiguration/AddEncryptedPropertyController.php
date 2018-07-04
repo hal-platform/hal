@@ -51,13 +51,13 @@ class AddEncryptedPropertyController implements ControllerInterface
         $form = [
             'environment' => $request->getParsedBody()['environment'] ?? '',
             'name' => $request->getParsedBody()['name'] ?? '',
-            'decrypted' => $request->getParsedBody()['decrypted'] ?? ''
+            'decrypted' => $request->getParsedBody()['decrypted'] ?? '',
         ];
 
         return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
             'application' => $application,
-            'environments' => $this->envRepo->getAllEnvironmentsSorted()
+            'environments' => $this->envRepo->getAllEnvironmentsSorted(),
         ]);
     }
 }

@@ -30,10 +30,6 @@ class PermissionsValidator
     private const ERR_ORGANIZATION_NOT_FOUND = 'Organization not found.';
     private const ERR_APPLICATION_AND_ORGANIZATION = 'Please select only an organization or application.';
 
-    private const ERR_CANNOT_REMOVE_SUPER = 'You are not allowed to remove super admins.';
-    private const ERR_LAST_ADMIN = 'There must be at least one admin left.';
-    private const ERR_LAST_SUPER = 'There must be at least one super admin left.';
-
     /**
      * @var EntityRepository
      */
@@ -54,8 +50,8 @@ class PermissionsValidator
      * @param UserAuthorizations $userAuthorizations
      * @param UserAuthorizations $selectedAuthorizations
      * @param User $selectedUser
-     * @param null $applicationID
-     * @param null $organizationID
+     * @param string|null $applicationID
+     * @param string|null $organizationID
      *
      * @return UserPermission|null
      */

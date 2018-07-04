@@ -62,7 +62,7 @@ class RequireEntityMiddleware implements MiddlewareInterface
         'user_token' => UserToken::class,
 
         'system_idp' => UserIdentityProvider::class,
-        'system_vcs' => VersionControlProvider::class
+        'system_vcs' => VersionControlProvider::class,
     ];
 
     /**

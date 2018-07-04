@@ -11,7 +11,6 @@ use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Service\JobQueueService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\MCP\Common\Clock;
 use QL\MCP\Common\Time\TimePoint;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -31,11 +30,6 @@ class QueueHistoryController implements ControllerInterface
     private $queue;
 
     /**
-     * @var Clock
-     */
-    private $clock;
-
-    /**
      * @var string
      */
     private $timezone;
@@ -43,19 +37,16 @@ class QueueHistoryController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param JobQueueService $queue
-     * @param Clock $clock
      * @param string $timezone
      */
     public function __construct(
         TemplateInterface $template,
         JobQueueService $queue,
-        Clock $clock,
         $timezone
     ) {
         $this->template = $template;
         $this->queue = $queue;
 
-        $this->clock = $clock;
         $this->timezone = $timezone;
     }
 
@@ -75,7 +66,7 @@ class QueueHistoryController implements ControllerInterface
         return $this->withTemplate($request, $response, $this->template, [
             'is_today' => $isToday,
             'selected_date' => $from,
-            'pending' => $this->queue->getHistory($from, $to)
+            'pending' => $this->queue->getHistory($from, $to),
         ]);
     }
 }

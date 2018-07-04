@@ -205,7 +205,7 @@ class UserIdentityProviderValidator
         }
 
         if ($this->hasErrors()) {
-            return null;
+            return;
         }
 
         if (!$this->validateCharacterBlacklist($name, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {

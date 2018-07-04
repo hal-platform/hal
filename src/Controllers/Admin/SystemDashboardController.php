@@ -24,13 +24,9 @@ class SystemDashboardController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param string $encryptionKey
-     * @param string $sessionEncryptionKey
-     * @param string $halDeploymentFile
      */
-    public function __construct(
-        TemplateInterface $template,
-    ) {
+    public function __construct(TemplateInterface $template)
+    {
         $this->template = $template;
     }
 
@@ -39,9 +35,6 @@ class SystemDashboardController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        # get hal push file if possible.
-        $deploymentFile = file_exists($this->halDeploymentFile) ? file_get_contents($this->halDeploymentFile) : '';
-
         return $this->withTemplate($request, $response, $this->template, [
             'server_name' => gethostname(),
         ]);

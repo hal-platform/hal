@@ -49,12 +49,12 @@ class EventsController implements ControllerInterface
         $events = $this->logService->getEvents($release);
 
         $data = [
-            'count' => count($events)
+            'count' => count($events),
         ];
 
         $resource = new HypermediaResource($data, [], [
             'push' => $release,
-            'events' => $events
+            'events' => $events,
         ]);
 
         if ($this->isEmbedded($request)) {

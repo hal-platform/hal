@@ -121,7 +121,7 @@ class SignInSetupController implements ControllerInterface
             'form' => $form,
             'errors' => $this->errors(),
 
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
@@ -186,7 +186,7 @@ class SignInSetupController implements ControllerInterface
         }
 
         if ($this->hasErrors()) {
-            return null;
+            return;
         }
 
         if (!$this->validateLength($password, 3, 200)) {

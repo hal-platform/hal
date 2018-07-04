@@ -114,12 +114,12 @@ class DeployController implements ControllerInterface
         $this->em->flush();
 
         $data = [
-            'count' => count($releases)
+            'count' => count($releases),
         ];
 
         $resource = new HypermediaResource($data, [], [
             'build' => $build,
-            'releases' => $releases
+            'releases' => $releases,
         ]);
 
         $resource->withEmbedded(['build', 'releases']);

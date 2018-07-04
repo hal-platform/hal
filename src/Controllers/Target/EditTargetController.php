@@ -69,7 +69,7 @@ class EditTargetController implements ControllerInterface
 
             'deployment_types' => TargetEnum::options(),
             'aws_regions' => AWSAuthenticator::$awsRegions,
-            's3_methods' => Parameters::TARGET_S3_METHODS
+            's3_methods' => Parameters::TARGET_S3_METHODS,
         ]);
     }
 }

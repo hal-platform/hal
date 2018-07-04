@@ -45,7 +45,7 @@ class SystemSettingsGlobalMiddleware implements MiddlewareInterface
 
         $context = [
             GlobalBannerService::NAME_NOTIFICATION => $notificationEnabled,
-            GlobalBannerService::NAME_BANNER => $banner
+            GlobalBannerService::NAME_BANNER => $banner,
         ];
 
         // attach to request

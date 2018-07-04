@@ -11,7 +11,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Target;
 use Hal\Core\Entity\Environment;
-use Hal\Core\Repository\EnvironmentRepository;
 use Hal\Core\Utility\SortingTrait;
 use Hal\Core\Repository\TargetRepository;
 use Hal\UI\Controllers\TemplatedControllerTrait;
@@ -36,18 +35,12 @@ class TargetsController implements ControllerInterface
     private $targetRepo;
 
     /**
-     * @var EnvironmentRepository
-     */
-    private $environmentRepo;
-
-    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      */
     public function __construct(TemplateInterface $template, EntityManagerInterface $em)
     {
         $this->template = $template;
-        $this->environmentRepo = $em->getRepository(Environment::class);
         $this->targetRepo = $em->getRepository(Target::class);
     }
 
@@ -61,7 +54,7 @@ class TargetsController implements ControllerInterface
         return $this->withTemplate($request, $response, $this->template, [
             'application' => $application,
 
-            'sorted_targets' => $this->targetRepo->getGroupedTargets($application)
+            'sorted_targets' => $this->targetRepo->getGroupedTargets($application),
         ]);
     }
 }

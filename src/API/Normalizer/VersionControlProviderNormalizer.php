@@ -61,7 +61,7 @@ class VersionControlProviderNormalizer implements ResourceNormalizerInterface
         ];
 
         $links = [
-            'self' => $this->link($vcs)
+            'self' => $this->link($vcs),
         ];
 
         $resource = new HypermediaResource($data, $links);

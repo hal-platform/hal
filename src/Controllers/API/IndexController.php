@@ -47,7 +47,7 @@ class IndexController implements ControllerInterface
             'users' => new Hyperlink('api.users'),
             'queue' => new Hyperlink('api.queue'),
 
-            'documentation' => new Hyperlink('api.docs', '', 'text/html')
+            'documentation' => new Hyperlink('api.docs', '', 'text/html'),
         ];
 
         $resource = new HypermediaResource([], $links);

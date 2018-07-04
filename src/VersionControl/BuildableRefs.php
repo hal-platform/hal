@@ -40,7 +40,7 @@ class BuildableRefs
                 'gh_branches' => [],
                 'gh_tags' => [],
                 'gh_pr_open' => [],
-                'gh_pr_closed' => []
+                'gh_pr_closed' => [],
             ];
         }
 
@@ -56,7 +56,7 @@ class BuildableRefs
             'gh_branches' => $branches,
             'gh_tags' => $tags,
             'gh_pr_open' => $open,
-            'gh_pr_closed' => $closed
+            'gh_pr_closed' => $closed,
         ];
     }
 
@@ -81,8 +81,8 @@ class BuildableRefs
             'client' => $client,
             'params' => [
                 $application->parameter(Parameters::VC_GH_OWNER),
-                $application->parameter(Parameters::VC_GH_REPO)
-            ]
+                $application->parameter(Parameters::VC_GH_REPO),
+            ],
         ];
     }
 }

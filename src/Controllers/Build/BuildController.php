@@ -82,7 +82,7 @@ class BuildController implements ControllerInterface
             'meta' => $metadata,
 
             'scheduled' => $scheduledActions,
-            'releases' => $releases
+            'releases' => $releases,
         ]);
     }
 

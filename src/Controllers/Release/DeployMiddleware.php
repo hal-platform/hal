@@ -226,7 +226,7 @@ class DeployMiddleware implements MiddlewareInterface
             'targets' => $data['targets'] ?? [],
 
             'metadata_names' => $data['metadata_names'] ?? [],
-            'metadata_values' => $data['metadata_values'] ?? []
+            'metadata_values' => $data['metadata_values'] ?? [],
         ];
 
         return $form;

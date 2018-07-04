@@ -82,11 +82,11 @@ class ApplicationsController implements ControllerInterface
         $data = [
             'count' => count($applications),
             'total' => $total,
-            'page' => $page
+            'page' => $page,
         ];
 
         $resource = new HypermediaResource($data, $links, [
-            'applications' => $applications
+            'applications' => $applications,
         ]);
 
         $status = (count($applications) > 0) ? 200 : 404;

@@ -63,16 +63,17 @@ class BuildsController implements ControllerInterface
         $searchFilter = $request->getQueryParams()['search'] ?? '';
 
         $page = $this->getCurrentPage($request);
+        $pageSize = SharedStaticConfiguration::LARGE_PAGE_SIZE;
 
         if ($environment = $this->getEnvironmentFromSearchFilter($searchFilter)) {
             $sanitizedSearchFilter = trim(preg_replace(self::REGEX_ENV, '', $searchFilter, 1));
 
-            $builds = $this->buildRepo->getByApplicationForEnvironment($application, $environment, SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1), $sanitizedSearchFilter);
+            $builds = $this->buildRepo->getByApplicationForEnvironment($application, $environment, $pageSize, ($page - 1), $sanitizedSearchFilter);
         } else {
-            $builds = $this->buildRepo->getByApplication($application, SharedStaticConfiguration::LARGE_PAGE_SIZE, ($page - 1), $searchFilter);
+            $builds = $this->buildRepo->getByApplication($application, $pageSize, ($page - 1), $searchFilter);
         }
 
-        $last = $this->getLastPage($builds, SharedStaticConfiguration::LARGE_PAGE_SIZE);
+        $last = $this->getLastPage($builds, $pageSize);
 
         return $this->withTemplate($request, $response, $this->template, [
             'page' => $page,
@@ -80,23 +81,26 @@ class BuildsController implements ControllerInterface
 
             'application' => $application,
             'builds' => $builds,
-            'search_filter' => $searchFilter
+            'search_filter' => $searchFilter,
         ]);
     }
 
     /**
      * @param string $search
      *
-     * @return Environment|null|false
+     * @return Environment|null
      */
     private function getEnvironmentFromSearchFilter($search)
     {
         if (preg_match(self::REGEX_ENV, $search, $matches) === 1) {
             $name = strtolower(array_pop($matches));
 
-            return $this->environmentRepo->findOneBy(['name' => $name]);
+            $env = $this->environmentRepo->findOneBy(['name' => $name]);
+            if ($env instanceof Environment) {
+                return $env;
+            }
         }
 
-        return false;
+        return null;
     }
 }

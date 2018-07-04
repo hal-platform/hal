@@ -70,7 +70,7 @@ class CredentialController implements ControllerInterface
 
             'targets' => $targets,
             'decrypted' => $decrypted,
-            'is_decryption_error' => ($decrypted === null)
+            'is_decryption_error' => ($decrypted === null),
         ]);
     }
 

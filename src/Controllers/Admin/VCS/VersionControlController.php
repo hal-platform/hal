@@ -50,7 +50,7 @@ class VersionControlController implements ControllerInterface
 
         return $this->withTemplate($request, $response, $this->template, [
             'vcs' => $vcs,
-            'can_remove' => $this->canVCSBeRemoved($vcs)
+            'can_remove' => $this->canVCSBeRemoved($vcs),
         ]);
     }
 

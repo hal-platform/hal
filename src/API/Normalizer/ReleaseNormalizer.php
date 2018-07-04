@@ -59,7 +59,7 @@ class ReleaseNormalizer implements ResourceNormalizerInterface
 
             'created' => $release->created(),
             'start' => $release->start(),
-            'end' => $release->end()
+            'end' => $release->end(),
         ];
 
         $links = [
@@ -68,8 +68,8 @@ class ReleaseNormalizer implements ResourceNormalizerInterface
             'page' => new Hyperlink(
                 ['api.release', ['release' => $release->id()]],
                 '',
-                'text/html'
-            )
+                'text/html',
+            ),
         ];
 
         $resource = new HypermediaResource($data, $links, [

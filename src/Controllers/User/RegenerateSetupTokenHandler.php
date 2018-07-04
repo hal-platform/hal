@@ -111,7 +111,7 @@ HTML;
             'signin.setup',
             [
                 'user' => $user->id(),
-                'setup_token' => $identity->parameter(Parameters::ID_INTERNAL_SETUP_TOKEN)
+                'setup_token' => $identity->parameter(Parameters::ID_INTERNAL_SETUP_TOKEN),
             ]
         );
 

@@ -78,13 +78,13 @@ class BuildNormalizer implements ResourceNormalizerInterface
             'end' => $build->end(),
 
             'reference' => $build->reference(),
-            'commit' => $build->commit()
+            'commit' => $build->commit(),
         ];
 
         $resource = new HypermediaResource($data, $this->buildLinks($build), [
             'user' => $build->user(),
             'application' => $build->application(),
-            'environment' => $build->environment()
+            'environment' => $build->environment(),
         ]);
 
         $resource->withEmbedded($embed);
@@ -111,19 +111,19 @@ class BuildNormalizer implements ResourceNormalizerInterface
             'page' => new Hyperlink(
                 ['build', ['build' => $build->id()]],
                 '',
-                'text/html'
-            )
+                'text/html',
+            ),
         ];
 
         if ($hyperlink = $this->getReferenceURL($build->application(), $build->reference())) {
             $pages += [
-                'github_page' => $hyperlink
+                'github_page' => $hyperlink,
             ];
         }
 
         if ($hyperlink = $this->getReferenceURL($build->application(), $build->commit())) {
             $pages += [
-                'github_commit_page' => $hyperlink
+                'github_commit_page' => $hyperlink,
             ];
         }
 
@@ -132,8 +132,8 @@ class BuildNormalizer implements ResourceNormalizerInterface
                 'start_release_page' => new Hyperlink(
                     ['release.start', ['build' => $build->id()]],
                     '',
-                    'text/html'
-                )
+                    'text/html',
+                ),
             ];
         }
 

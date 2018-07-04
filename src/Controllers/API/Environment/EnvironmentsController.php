@@ -49,11 +49,11 @@ class EnvironmentsController implements ControllerInterface
         $environments = $this->envRepo->findBy([], ['id' => 'ASC']);
 
         $data = [
-            'count' => count($environments)
+            'count' => count($environments),
         ];
 
         $resource = new HypermediaResource($data, [], [
-            'environments' => $environments
+            'environments' => $environments,
         ]);
 
         $status = (count($environments) > 0) ? 200 : 404;

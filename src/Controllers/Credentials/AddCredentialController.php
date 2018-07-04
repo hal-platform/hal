@@ -84,7 +84,7 @@ class AddCredentialController implements ControllerInterface
             'form' => $form,
             'errors' => $this->credentialValidator->errors(),
 
-            'credential_options' => CredentialEnum::options()
+            'credential_options' => CredentialEnum::options(),
         ]);
     }
 
@@ -135,7 +135,7 @@ class AddCredentialController implements ControllerInterface
             'privatekey_path' => $request->getParsedBody()['privatekey_path'] ?? '',
             'privatekey_file' => $request->getParsedBody()['privatekey_file'] ?? '',
 
-            'is_internal' => $request->getParsedBody()['is_internal'] ?? ''
+            'is_internal' => $request->getParsedBody()['is_internal'] ?? '',
         ];
 
         return $form;

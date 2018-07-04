@@ -47,7 +47,7 @@ class VersionControlProvidersController implements ControllerInterface
     {
         return $this->withTemplate($request, $response, $this->template, [
             'vcs_providers' => $this->vcsRepo->findAll(),
-            'application_counts' => $this->vcsRepo->getApplicationCounts()
+            'application_counts' => $this->vcsRepo->getApplicationCounts(),
         ]);
     }
 }

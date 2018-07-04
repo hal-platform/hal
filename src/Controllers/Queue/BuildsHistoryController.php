@@ -58,7 +58,7 @@ class BuildsHistoryController implements ControllerInterface
             'page' => $page,
             'last' => $last,
 
-            'builds' => $builds
+            'builds' => $builds,
         ]);
     }
 }

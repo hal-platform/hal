@@ -80,12 +80,12 @@ class UserNormalizer implements ResourceNormalizerInterface
                 'member' => $authorizations->isMember(),
                 'owner' => $authorizations->isOwner(),
                 'admin' => $authorizations->isAdmin(),
-                'super' => $authorizations->isSuper()
-            ]
+                'super' => $authorizations->isSuper(),
+            ],
         ];
 
         $links = [
-            'self' => $this->link($user)
+            'self' => $this->link($user),
         ];
 
         $resource = new HypermediaResource($data, $links);

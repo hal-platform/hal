@@ -56,11 +56,11 @@ class EnvironmentNormalizer implements NormalizerInterface
         $data = [
             'id' => $environment->id(),
             'name' => $environment->name(),
-            'is_production' => $environment->isProduction()
+            'is_production' => $environment->isProduction(),
         ];
 
         $links = [
-            'self' => $this->link($environment)
+            'self' => $this->link($environment),
         ];
 
         $resource = new HypermediaResource($data, $links);

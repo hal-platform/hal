@@ -8,6 +8,7 @@
 namespace Hal\UI\Controllers\Release;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Environment;
 use Hal\Core\Entity\JobType\Release;
@@ -73,24 +74,8 @@ class ReleasesController implements ControllerInterface
 
             'application' => $application,
             'releases' => $releases,
-            'search_filter' => $searchFilter
+            'search_filter' => $searchFilter,
         ]);
-    }
-
-    /**
-     * @param string $search
-     *
-     * @return Environment|null|false
-     */
-    private function getEnvironmentFromSearchFilter($search)
-    {
-        if (preg_match(self::REGEX_ENV, $search, $matches) === 1) {
-            $name = strtolower(array_pop($matches));
-
-            return $this->environmentRepo->findOneBy(['name' => $name]);
-        }
-
-        return false;
     }
 
     /**
@@ -98,7 +83,7 @@ class ReleasesController implements ControllerInterface
      * @param int $pageOffset
      * @param string $searchFilter
      *
-     * @return array
+     * @return Paginator
      */
     private function getReleases(Application $application, $pageOffset, $searchFilter)
     {
@@ -120,5 +105,24 @@ class ReleasesController implements ControllerInterface
             $pageOffset,
             $sanitizedSearchFilter
         );
+    }
+
+    /**
+     * @param string $search
+     *
+     * @return Environment|null
+     */
+    private function getEnvironmentFromSearchFilter($search)
+    {
+        if (preg_match(self::REGEX_ENV, $search, $matches) === 1) {
+            $name = strtolower(array_pop($matches));
+
+            $env = $this->environmentRepo->findOneBy(['name' => $name]);
+            if ($env instanceof Environment) {
+                return $env;
+            }
+        }
+
+        return null;
     }
 }

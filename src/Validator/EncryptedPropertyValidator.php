@@ -84,7 +84,7 @@ class EncryptedPropertyValidator
         $prop = $this->encryptedPropertyRepo->findOneBy([
             'name' => $name,
             'application' => $application,
-            'environment' => $environment
+            'environment' => $environment,
         ]);
 
         if ($prop) {

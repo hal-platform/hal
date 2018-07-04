@@ -17,7 +17,6 @@ class EnvironmentValidator
     use ValidatorTrait;
 
     private const REGEX_CHARACTER_CLASS_NAME = '0-9a-z_.-';
-    private const REGEX_CHARACTER_WHITESPACE = '\f\n\r\t\v';
     private const ERR_NAME_CHARACTERS = 'Name must contain only alphanumeric characters with periods (.), underscore (_), and dashes (-)';
     private const ERR_DUPE_NAME = 'An environment with this name already exists';
 

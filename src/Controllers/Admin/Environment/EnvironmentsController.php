@@ -46,7 +46,7 @@ class EnvironmentsController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         return $this->withTemplate($request, $response, $this->template, [
-            'envs' => $this->envRepo->getAllEnvironmentsSorted()
+            'envs' => $this->envRepo->getAllEnvironmentsSorted(),
         ]);
     }
 }

@@ -148,13 +148,13 @@ class ApplicationDashboardController implements ControllerInterface
     {
         $searchBy = $selectedEnvironment ? [$selectedEnvironment, null] : [null];
         $sortBy = [
-            'created' => 'DESC'
+            'created' => 'DESC',
         ];
 
         $builds = $this->buildRepository->findBy(
             [
                 'application' => $application,
-                'environment' => $searchBy
+                'environment' => $searchBy,
             ],
             $sortBy,
             SharedStaticConfiguration::SMALL_PAGE_SIZE

@@ -49,11 +49,11 @@ class OrganizationsController implements ControllerInterface
         $organizations = $this->organizationRepository->findBy([], ['id' => 'ASC']);
 
         $data = [
-            'count' => count($organizations)
+            'count' => count($organizations),
         ];
 
         $resource = new HypermediaResource($data, [], [
-            'organizations' => $organizations
+            'organizations' => $organizations,
         ]);
 
         $status = (count($organizations) > 0) ? 200 : 404;

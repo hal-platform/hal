@@ -234,7 +234,7 @@ class GlobalBannerService
             'expiry' => $expiry,
             'ttl' => $ttl,
 
-            'is_expired' => $expired
+            'is_expired' => $expired,
         ];
     }
 
@@ -255,7 +255,7 @@ class GlobalBannerService
         return [
             'message' => $message,
             'expiry' => $expiry,
-            'ttl' => $ttl
+            'ttl' => $ttl,
         ];
     }
 

@@ -130,7 +130,7 @@ HTML;
         }
 
         $env = $this->environmentRepo->find($selected);
-        if ($env) {
+        if ($env instanceof Environment) {
             return $env;
         }
 

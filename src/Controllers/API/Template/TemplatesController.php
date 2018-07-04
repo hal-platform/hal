@@ -80,11 +80,11 @@ class TemplatesController implements ControllerInterface
         $data = [
             'count' => count($templates),
             'total' => $total,
-            'page' => $page
+            'page' => $page,
         ];
 
         $resource = new HypermediaResource($data, $links, [
-            'templates' => $templates
+            'templates' => $templates,
         ]);
 
         $status = (count($templates) > 0) ? 200 : 404;

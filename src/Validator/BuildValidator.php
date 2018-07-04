@@ -46,7 +46,6 @@ class BuildValidator
      * @var EntityRepository
      */
     private $environmentRepo;
-    private $buildRepo;
 
     /**
      * @var VCSFactory
@@ -68,7 +67,6 @@ class BuildValidator
         VCSFactory $vcs,
         AuthorizationService $authorizationService
     ) {
-        $this->buildRepo = $em->getRepository(Build::class);
         $this->environmentRepo = $em->getRepository(Environment::class);
 
         $this->vcs = $vcs;
@@ -214,14 +212,17 @@ class BuildValidator
 
         $isGUID = GUID::createFromHex($environment);
 
-        if ($isGUID && $env = $this->environmentRepo->find($environment)) {
-            return $env;
+        if ($isGUID) {
+            $env = $this->environmentRepo->find($environment);
+            return ($env instanceof Environment) ? $env : null;
         }
 
-        if ($env = $this->environmentRepo->findOneBy(['name' => $environment])) {
+        $env = $this->environmentRepo->findOneBy(['name' => $environment]);
+        if ($env instanceof Environment) {
             return $env;
         }
 
         $this->addError(self::ERR_UNKNOWN_ENV, 'environment');
+        return null;
     }
 }

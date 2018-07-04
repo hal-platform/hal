@@ -101,7 +101,7 @@ class StartReleaseController implements ControllerInterface
 
             'environments' => $environments,
             'targets' => $targets,
-            'deployable_targets' => $deployableTargets
+            'deployable_targets' => $deployableTargets,
         ]);
     }
 

@@ -58,11 +58,11 @@ class OrganizationNormalizer implements ResourceNormalizerInterface
 
         $data = [
             'id' => $organization->id(),
-            'name' => $organization->name()
+            'name' => $organization->name(),
         ];
 
         $links = [
-            'self' => $this->link($organization)
+            'self' => $this->link($organization),
         ];
 
         $resource = new HypermediaResource($data, $links);

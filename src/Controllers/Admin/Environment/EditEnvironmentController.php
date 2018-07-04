@@ -86,7 +86,7 @@ class EditEnvironmentController implements ControllerInterface
             'form' => $form,
             'errors' => $this->validator->errors(),
 
-            'environment' => $environment
+            'environment' => $environment,
         ]);
     }
 

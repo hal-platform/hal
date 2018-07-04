@@ -51,7 +51,7 @@ class AddEntityPermissionsController implements ControllerInterface
 
     private const AVAILABLE_PERMISSION_TYPES = [
         UserPermissionEnum::TYPE_MEMBER,
-        UserPermissionEnum::TYPE_OWNER
+        UserPermissionEnum::TYPE_OWNER,
     ];
 
     /**
@@ -143,7 +143,7 @@ class AddEntityPermissionsController implements ControllerInterface
             'users' => $this->userRepo->findBy(['isDisabled' => false], ['name' => 'ASC']),
 
             'form' => $form,
-            'errors' => $this->errors()
+            'errors' => $this->errors(),
         ]);
     }
 
@@ -383,7 +383,7 @@ class AddEntityPermissionsController implements ControllerInterface
 
         $form = [
             'users' => $users,
-            'type' => $data['type'] ?? ''
+            'type' => $data['type'] ?? '',
         ];
 
         return $form;

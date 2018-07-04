@@ -83,7 +83,7 @@ class UserController implements ControllerInterface
             'can_disable' => $this->canDisableUser($authorizations, $currentUser),
             'is_setup_token_expired' => $this->isSetupTokenExpired($user),
 
-            'tokens' => $user->tokens()->toArray()
+            'tokens' => $user->tokens()->toArray(),
         ]);
     }
 

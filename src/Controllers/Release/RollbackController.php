@@ -64,7 +64,7 @@ class RollbackController implements ControllerInterface
 
             'application' => $application,
             'target' => $target,
-            'releases' => $releases
+            'releases' => $releases,
         ]);
     }
 }

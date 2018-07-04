@@ -43,7 +43,7 @@ class SettingsController implements ControllerInterface
             'user' => $currentUser,
 
             'tokens' => $currentUser->tokens()->toArray(),
-            'is_token_owner' => true
+            'is_token_owner' => true,
         ]);
     }
 }

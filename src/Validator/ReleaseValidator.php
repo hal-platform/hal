@@ -139,7 +139,7 @@ class ReleaseValidator
                 ->withParameters([
                     'entity' => 'Release',
                     'condition' => 'success',
-                    'target_id' => $target->id()
+                    'target_id' => $target->id(),
                 ]);
 
             $processes[] = $process;

@@ -59,7 +59,7 @@ class HomeController implements ControllerInterface
 
         return $this->withTemplate($request, $response, $this->template, [
             'favorites' => $this->findFavorites($user),
-            'pending' => $this->findPendingJobs()
+            'pending' => $this->findPendingJobs(),
         ]);
     }
 
@@ -70,11 +70,11 @@ class HomeController implements ControllerInterface
     {
         return $this->jobRepo->findBy(
             [
-                'status' => [JobStatusEnum::TYPE_PENDING, JobStatusEnum::TYPE_RUNNING]
+                'status' => [JobStatusEnum::TYPE_PENDING, JobStatusEnum::TYPE_RUNNING],
             ],
             [
-                'created' => 'DESC'
-            ]
+                'created' => 'DESC',
+            ],
         );
     }
 

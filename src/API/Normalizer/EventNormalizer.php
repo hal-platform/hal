@@ -62,7 +62,7 @@ class EventNormalizer implements ResourceNormalizerInterface
             'message' => $event->message(),
             'status' => $event->status(),
             'created' => $event->created(),
-            'data' => '**DATA**'
+            'data' => '**DATA**',
         ];
 
         if (in_array('data', $embed)) {
@@ -70,11 +70,11 @@ class EventNormalizer implements ResourceNormalizerInterface
         }
 
         $links = [
-            'self' => $this->link($event)
+            'self' => $this->link($event),
         ];
 
         $resource = new HypermediaResource($data, $links, [
-            'job' => $event->job()
+            'job' => $event->job(),
         ]);
 
         $resource->withEmbedded($embed);

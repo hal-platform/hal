@@ -84,11 +84,11 @@ class HistoryController implements ControllerInterface
         $data = [
             'count' => count($releases),
             'total' => $total,
-            'page' => $page
+            'page' => $page,
         ];
 
         $resource = new HypermediaResource($data, $links, [
-            'releases' => $releases
+            'releases' => $releases,
         ]);
 
         $status = (count($releases) > 0) ? 200 : 404;

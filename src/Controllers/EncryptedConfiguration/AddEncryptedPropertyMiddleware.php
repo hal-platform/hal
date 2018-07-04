@@ -39,17 +39,6 @@ class AddEncryptedPropertyMiddleware implements MiddlewareInterface
     private $em;
 
     /**
-     * @var EntityRepository
-     */
-    private $encryptedRepo;
-    private $envRepo;
-
-    /**
-     * @var Encryption
-     */
-    private $encrypter;
-
-    /**
      * @var EncryptedPropertyValidator
      */
     private $validator;
@@ -67,15 +56,11 @@ class AddEncryptedPropertyMiddleware implements MiddlewareInterface
      */
     public function __construct(
         EntityManagerInterface $em,
-        Encryption $encrypter,
         EncryptedPropertyValidator $validator,
         URI $uri
     ) {
         $this->em = $em;
-        $this->encryptedRepo = $em->getRepository(EncryptedProperty::class);
-        $this->envRepo = $em->getRepository(Environment::class);
 
-        $this->encrypter = $encrypter;
         $this->validator = $validator;
         $this->uri = $uri;
     }
@@ -98,7 +83,7 @@ class AddEncryptedPropertyMiddleware implements MiddlewareInterface
         $form = [
             'environment' => $request->getParsedBody()['environment'] ?? '',
             'name' => $request->getParsedBody()['name'] ?? '',
-            'decrypted' => $request->getParsedBody()['decrypted'] ?? ''
+            'decrypted' => $request->getParsedBody()['decrypted'] ?? '',
         ];
 
         $encrypted = $this->validator->isValid($application, ...array_values($form));

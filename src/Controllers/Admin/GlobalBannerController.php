@@ -70,7 +70,7 @@ class GlobalBannerController implements ControllerInterface
 
         return $this->withTemplate($request, $response, $this->template, [
             'setting' => $this->bannerService->loadBannerDetails(),
-            'update_notification' => $this->bannerService->isUpdateNotificationEnabled()
+            'update_notification' => $this->bannerService->isUpdateNotificationEnabled(),
         ]);
     }
 

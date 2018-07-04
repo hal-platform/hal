@@ -67,7 +67,7 @@ class ApplicationsController implements ControllerInterface
         return $this->withTemplate($request, $response, $this->template, [
             'favorites' => $favorites,
             'applications' => $grouped,
-            'organizations' => $organizations
+            'organizations' => $organizations,
         ]);
     }
 
@@ -101,7 +101,7 @@ class ApplicationsController implements ControllerInterface
         $favorites = [];
         foreach ($groupApps as $applications) {
             foreach ($applications as $application) {
-                if ($saved[$application->id()] ?? false) {
+                if (isset($saved[$application->id()]) ?: false) {
                     $favorites[] = $application;
                 }
             }

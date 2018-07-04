@@ -82,7 +82,7 @@ class SignInController implements ControllerInterface
         return $this->withTemplate($request, $response, $this->template, [
             'id_providers' => $providers,
 
-            'selected_idp' => $selectedIDP
+            'selected_idp' => $selectedIDP,
         ]);
     }
 

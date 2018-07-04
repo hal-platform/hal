@@ -88,7 +88,7 @@ class EditOrganizationController implements ControllerInterface
             'form' => $form,
             'errors' => $this->orgValidator->errors(),
 
-            'organization' => $organization
+            'organization' => $organization,
         ]);
     }
 

@@ -56,6 +56,7 @@ class ResponseFormatter
      * Add configuration for caching endpoints (in seconds)
      *
      * @param array $cacheTimes
+     *
      * @return void
      */
     public function setCacheTimes(array $cacheTimes)

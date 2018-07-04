@@ -15,13 +15,12 @@ use Hal\UI\Controllers\APITrait;
 use Hal\UI\Security\UserSessionHandler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\MCP\Logger\MessageFactoryInterface;
-use QL\MCP\Logger\MessageInterface;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 
 /**
  * Possible error codes for oauth token failure:
+ *
  * @see https://tools.ietf.org/html/rfc6749#section-5.2
  */
 class TokenMiddleware implements MiddlewareInterface
@@ -49,11 +48,6 @@ class TokenMiddleware implements MiddlewareInterface
      * @var ProblemRendererInterface
      */
     private $renderer;
-
-    /**
-     * @var MessageFactoryInterface|null
-     */
-    private $factory;
 
     /**
      * @param EntityManagerInterface $em
@@ -87,8 +81,6 @@ class TokenMiddleware implements MiddlewareInterface
         if (!$request) {
             return $this->withProblem($this->renderer, $response, 403, sprintf(self::ERR_UNAVAILABLE, $user->name()));
         }
-
-        $this->attachUserToLogger($user);
 
         return $next($request, $response);
     }
@@ -128,30 +120,5 @@ class TokenMiddleware implements MiddlewareInterface
         }
 
         return $token->user();
-    }
-
-    /**
-     * @param MessageFactoryInterface $factory
-     *
-     * @return void
-     */
-    public function setLoggerMessageFactory(MessageFactoryInterface $factory)
-    {
-        $this->factory = $factory;
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return void
-     */
-    private function attachUserToLogger(User $user)
-    {
-        if (!$this->factory) {
-            return;
-        }
-
-        $name = sprintf('Token: %s', $user->name());
-        $this->factory->setDefaultProperty(MessageInterface::USER_NAME, $name);
     }
 }

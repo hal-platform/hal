@@ -123,11 +123,11 @@ class QueueController implements ControllerInterface
         }
 
         $data = [
-            'count' => count($jobs)
+            'count' => count($jobs),
         ];
 
         $resource = new HypermediaResource($data, $links, [
-            'jobs' => $this->formatQueue($jobs)
+            'jobs' => $this->formatQueue($jobs),
         ]);
 
         $resource->withEmbedded(['jobs']);

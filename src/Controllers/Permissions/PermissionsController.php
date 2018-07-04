@@ -86,7 +86,7 @@ class PermissionsController implements ControllerInterface
             if (!isset($users[$id])) {
                 $users[$id] = [
                     'user' => $perm->user(),
-                    'permissions' => []
+                    'permissions' => [],
                 ];
             }
 

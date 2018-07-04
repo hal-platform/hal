@@ -24,7 +24,7 @@ trait TemplatedControllerTrait
      * Even if no context was previously added, Context WILL ALWAYS be available at "template_context"
      * after this method is run.
      *
-     * @param ResponseInterface $response
+     * @param ServerRequestInterface $request
      * @param array $context
      *
      * @return ServerRequestInterface

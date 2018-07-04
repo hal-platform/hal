@@ -58,7 +58,7 @@ class OrganizationController implements ControllerInterface
             'organization' => $organization,
 
             'applications' => $applications,
-            'permissions' => $this->getPermissions($organization)
+            'permissions' => $this->getPermissions($organization),
         ]);
     }
 

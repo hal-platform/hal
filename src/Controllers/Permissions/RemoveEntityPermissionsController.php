@@ -111,7 +111,7 @@ class RemoveEntityPermissionsController implements ControllerInterface
             'permissions' => $permissions,
 
             'form' => $form,
-            'errors' => $this->errors()
+            'errors' => $this->errors(),
         ]);
     }
 
@@ -201,7 +201,7 @@ class RemoveEntityPermissionsController implements ControllerInterface
         }
 
         $form = [
-            'permissions' => is_array($p) ? $p : []
+            'permissions' => is_array($p) ? $p : [],
         ];
 
         return $form;

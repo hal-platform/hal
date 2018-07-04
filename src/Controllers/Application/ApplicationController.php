@@ -51,7 +51,7 @@ class ApplicationController implements ControllerInterface
         return $this->withTemplate($request, $response, $this->template, [
             'application' => $application,
 
-            'permissions' => $this->getPermissions($application)
+            'permissions' => $this->getPermissions($application),
         ]);
     }
 

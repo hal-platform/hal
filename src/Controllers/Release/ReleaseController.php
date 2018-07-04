@@ -65,7 +65,7 @@ class ReleaseController implements ControllerInterface
             'release' => $release,
 
             'events' => $events,
-            'meta' => $metadata
+            'meta' => $metadata,
         ]);
     }
 }

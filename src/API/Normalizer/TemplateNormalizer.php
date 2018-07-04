@@ -79,18 +79,18 @@ class TemplateNormalizer implements ResourceNormalizerInterface
         $data = [
             'id' => $template->id(),
             'type' => $template->type(),
-            'name' => $template->name()
+            'name' => $template->name(),
         ];
 
         $links = [
-            'self' => $this->link($template)
+            'self' => $this->link($template),
         ];
 
         $targets = $this->targetRepository->findBy(['template' => $template->id()]);
 
         $resource = new HypermediaResource($data, $links, [
             'environment' => $template->environment(),
-            'targets' => $targets
+            'targets' => $targets,
         ]);
 
         $resource->withEmbedded($embed);

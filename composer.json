@@ -16,8 +16,9 @@
     },
 
     "scripts": {
-        "sniff": "phpcs --colors --runtime-set ignore_warnings_on_exit true src",
-        "analyze": "phpstan analyse --configuration=phpstan.neon -l 5 src",
+        "sniff": "phpcs --runtime-set ignore_warnings_on_exit true",
+        "sniff-nowarn": "phpcs -n",
+        "analyze": "phpstan analyse --configuration=phpstan.neon -l 4 src",
         "lint": "vendor/bin/phplint --no-cache --ansi src"
     },
 

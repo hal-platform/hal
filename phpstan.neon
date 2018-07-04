@@ -2,3 +2,7 @@ parameters:
     excludes_analyse:
         - %rootDir%/../../../src/Controllers/API/*
         - %rootDir%/../../../src/API/*
+
+    ignoreErrors:
+        - '#does not accept Doctrine\\Common\\Persistence\\ObjectRepository#'
+        - '#Doctrine\\ORM\\EntityRepository but returns Doctrine\\Common\\Persistence\\ObjectRepository#'

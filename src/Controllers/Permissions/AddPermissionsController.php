@@ -35,7 +35,7 @@ class AddPermissionsController implements ControllerInterface
 
     private const AVAILABLE_TYPES = [
         UserPermissionEnum::TYPE_ADMIN,
-        UserPermissionEnum::TYPE_SUPER
+        UserPermissionEnum::TYPE_SUPER,
     ];
 
     /**
@@ -116,7 +116,7 @@ class AddPermissionsController implements ControllerInterface
             'user_authorizations' => $authorizations,
             'user_permissions' => $permissions,
 
-            'available_types' => self::AVAILABLE_TYPES
+            'available_types' => self::AVAILABLE_TYPES,
         ]);
     }
 

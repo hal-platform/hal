@@ -120,7 +120,7 @@ class StartBuildController implements ControllerInterface
             'gitref' => $data['gitref'] ?? '',
 
             'metadata_names' => $data['metadata_names'] ?? [],
-            'metadata_values' => $data['metadata_values'] ?? []
+            'metadata_values' => $data['metadata_values'] ?? [],
         ];
     }
 
@@ -145,7 +145,7 @@ class StartBuildController implements ControllerInterface
         if (!$environment) {
             return [
                 'can_deploy' => false,
-                'available_targets' => []
+                'available_targets' => [],
             ];
         }
 
@@ -155,7 +155,7 @@ class StartBuildController implements ControllerInterface
 
         return [
             'can_deploy' => $canPush,
-            'available_targets' => $available
+            'available_targets' => $available,
         ];
     }
 }

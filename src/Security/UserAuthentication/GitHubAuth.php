@@ -117,7 +117,7 @@ class GitHubAuth implements UserAuthenticationInterface
 
         $identity = $this->identityRepo->findOneBy([
             'provider' => $idp,
-            'providerUniqueID' => $ro->getId()
+            'providerUniqueID' => $ro->getId(),
         ]);
 
         if ($identity instanceof UserIdentity) {
@@ -159,7 +159,7 @@ class GitHubAuth implements UserAuthenticationInterface
         });
 
         return $requestData + [
-            'external' => $uri
+            'external' => $uri,
         ];
     }
 
@@ -174,7 +174,7 @@ class GitHubAuth implements UserAuthenticationInterface
         $client = $this->getClient($idp);
 
         $requestData = [
-            'code' => $code
+            'code' => $code,
         ];
 
         try {
@@ -270,11 +270,11 @@ class GitHubAuth implements UserAuthenticationInterface
         $data = [
             'clientId' => $id,
             'clientSecret' => $secret,
-            'redirectUri' => $this->callbackFactory->getFullCallbackURL()
+            'redirectUri' => $this->callbackFactory->getFullCallbackURL(),
         ];
 
         $provider = new GitHubProvider($data, [
-            'httpClient' => $this->guzzle
+            'httpClient' => $this->guzzle,
         ]);
 
         return $provider;

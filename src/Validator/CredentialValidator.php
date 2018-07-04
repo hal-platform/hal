@@ -41,11 +41,6 @@ class CredentialValidator
     private const ERR_INVALID_PATH = 'Private Key Path must be a path to a private key file';
 
     /**
-     * @var EntityRepository
-     */
-    private $credentialRepo;
-
-    /**
      * @var Encryption
      */
     private $encryption;
@@ -56,7 +51,6 @@ class CredentialValidator
      */
     public function __construct(EntityManagerInterface $em, Encryption $encryption)
     {
-        $this->credentialRepo = $em->getRepository(Credential::class);
         $this->encryption = $encryption;
     }
 

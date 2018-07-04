@@ -55,7 +55,7 @@ class EncryptedConfigurationController implements ControllerInterface
 
         return $this->withTemplate($request, $response, $this->template, [
             'application' => $application,
-            'encrypteds' => $encrypteds
+            'encrypteds' => $encrypteds,
         ]);
     }
 

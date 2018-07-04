@@ -70,7 +70,7 @@ class ApplicationNormalizer implements ResourceNormalizerInterface
 
         $data = [
             'id' => $application->id(),
-            'name' => $application->name()
+            'name' => $application->name(),
         ];
 
         $links = [
@@ -82,18 +82,18 @@ class ApplicationNormalizer implements ResourceNormalizerInterface
             'page' => new Hyperlink(
                 ['application', ['application' => $application->id()]],
                 $application->name(),
-                'text/html'
+                'text/html',
             ),
             'status_page' => new Hyperlink(
                 ['application.dashboard', ['application' => $application->id()]],
                 sprintf('%s Status', $application->name()),
-                'text/html'
-            )
+                'text/html',
+            ),
         ];
 
         if ($hyperlink = $this->getVCSURL($application)) {
             $links += [
-                'github_page' => $hyperlink
+                'github_page' => $hyperlink,
             ];
         }
 

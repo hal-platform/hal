@@ -52,7 +52,6 @@ HTML;
     /**
      * @var EntityRepository
      */
-    private $userRepo;
     private $idpRepo;
 
     /**
@@ -86,7 +85,6 @@ HTML;
     ) {
         $this->template = $template;
 
-        $this->userRepo = $em->getRepository(User::class);
         $this->idpRepo = $em->getRepository(UserIdentityProvider::class);
         $this->em = $em;
 
@@ -112,7 +110,7 @@ HTML;
             'form' => $form,
             'errors' => array_merge($this->userValidator->errors(), $this->identityValidator->errors()),
 
-            'id_providers' => $this->idpRepo->findAll()
+            'id_providers' => $this->idpRepo->findAll(),
         ]);
     }
 
@@ -165,7 +163,7 @@ HTML;
             'signin.setup',
             [
                 'user' => $user->id(),
-                'setup_token' => $identity->parameter(Parameters::ID_INTERNAL_SETUP_TOKEN)
+                'setup_token' => $identity->parameter(Parameters::ID_INTERNAL_SETUP_TOKEN),
             ]
         );
 
@@ -188,7 +186,7 @@ HTML;
             'name' => $request->getParsedBody()['name'] ?? '',
             'id_provider' => $request->getParsedBody()['id_provider'] ?? '',
 
-            'internal_username' => $request->getParsedBody()['internal_username'] ?? ''
+            'internal_username' => $request->getParsedBody()['internal_username'] ?? '',
         ];
 
         return $form;

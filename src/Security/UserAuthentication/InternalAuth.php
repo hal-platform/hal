@@ -111,7 +111,7 @@ class InternalAuth implements UserAuthenticationInterface
 
         $identity = $this->identityRepo->findOneBy([
             'provider' => $idp,
-            'providerUniqueID' => $username
+            'providerUniqueID' => $username,
         ]);
 
         if (!$identity instanceof UserIdentity) {

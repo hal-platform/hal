@@ -56,7 +56,7 @@ class AuthorizationHydrator
             $hash = UserAuthorizations::hash($permission->application(), $permission->organization(), $permission->environment());
             $type = $permission->type();
 
-            if ($tiers[$type][$hash] ?? [] && $perm[$type] ?? []) {
+            if (isset($tiers[$type][$hash]) && isset($perm[$type])) {
                 $perm[$type][] = $permission;
             }
         }

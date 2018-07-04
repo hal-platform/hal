@@ -53,7 +53,7 @@ class EncryptedController implements ControllerInterface
             'encrypted' => $encrypted,
 
             'decrypted' => $decrypted,
-            'decryption_error' => ($decrypted === null)
+            'decryption_error' => ($decrypted === null),
         ]);
     }
 

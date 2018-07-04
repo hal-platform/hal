@@ -120,7 +120,7 @@ class AddEnvironmentController implements ControllerInterface
     {
         $form = [
             'name' => $request->getParsedBody()['name'] ?? '',
-            'is_production' => $request->getParsedBody()['is_production'] ?? ''
+            'is_production' => $request->getParsedBody()['is_production'] ?? '',
         ];
 
         return $form;

@@ -106,14 +106,14 @@ class HalExtension extends AbstractExtension
             }),
             new TwigTest('organization', function ($entity) {
                 return $entity instanceof Organization;
-            })
+            }),
         ];
     }
 
 
     /**
-     * @param string $needle
-     * @param string $haystack
+     * @param mixed $needle
+     * @param mixed $haystack
      *
      * @return int
      */
@@ -160,14 +160,14 @@ class HalExtension extends AbstractExtension
     }
 
     /**
-     * @param string $entity
+     * @param mixed $entity
      *
      * @return string
      */
     public function formatShortGUID($entity)
     {
         if (is_object($entity) && is_callable([$entity, 'id'])) {
-            $entity = $entity->id();
+            $entity = call_user_func([$entity, 'id']);
         }
 
         return substr($entity, 0, 8);
