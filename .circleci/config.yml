@@ -16,11 +16,6 @@ attach_workspace: &attach_workspace
     attach_workspace:
         at: '.'
 
-persist_workspace: &persist_workspace
-    persist_to_workspace:
-        root: '.'
-        paths: [ '.' ]
-
 workflows:
 
     version: 2
@@ -37,8 +32,6 @@ workflows:
                 requires: [ install_php_dependencies ]
             - linting:
                 requires: [ install_php_dependencies ]
-            - security_tests:
-                requires: [ install_php_dependencies ]
 
             - install_npm_dependencies:
                 requires: [ fetch_code ]
@@ -47,12 +40,17 @@ workflows:
             - frontend_build:
                 requires: [ install_npm_dependencies ]
 
+            - security_tests:
+                requires: [ unit_tests, frontend_build ]
+
 jobs:
     fetch_code:
         <<: *defaults
         steps:
             - checkout
-            - *persist_workspace
+            - persist_to_workspace:
+                root: '.'
+                paths: [ '.' ]
 
     install_php_dependencies:
         <<: *defaults
@@ -72,7 +70,9 @@ jobs:
                 key: 'v1-php-deps-{{ checksum "composer.lock" }}'
                 paths: [ 'vendor' ]
 
-            - *persist_workspace
+            - persist_to_workspace:
+                root: '.'
+                paths: [ 'vendor' ]
 
     install_npm_dependencies:
         <<: *frontend_defaults
@@ -90,7 +90,9 @@ jobs:
                 key: 'v1-npm-deps-{{ checksum "yarn.lock" }}'
                 paths: [ './node_modules' ]
 
-            - *persist_workspace
+            - persist_to_workspace:
+                root: '.'
+                paths: [ 'node_modules' ]
 
     unit_tests:
         <<: *defaults
@@ -116,7 +118,7 @@ jobs:
             - *attach_workspace
             - run:
                 name: 'Run static analysis'
-                command: 'composer run-script analyze'
+                command: 'php -d memory_limit=-1 vendor/bin/phpstan analyse --configuration=phpstan.neon -l 4 src'
 
     linting:
         <<: *defaults
