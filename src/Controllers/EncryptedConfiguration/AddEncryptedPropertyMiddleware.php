@@ -8,7 +8,6 @@
 namespace Hal\UI\Controllers\EncryptedConfiguration;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\Core\Crypto\Encryption;
 use Hal\Core\Entity\Application;
 use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
@@ -46,7 +45,6 @@ class AddEncryptedPropertyMiddleware implements MiddlewareInterface
 
     /**
      * @param EntityManagerInterface $em
-     * @param Encryption $encrypter
      * @param EncryptedPropertyValidator $validator
      * @param URI $uri
      */

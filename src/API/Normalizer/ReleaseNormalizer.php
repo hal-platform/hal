@@ -68,7 +68,7 @@ class ReleaseNormalizer implements ResourceNormalizerInterface
             'page' => new Hyperlink(
                 ['api.release', ['release' => $release->id()]],
                 '',
-                'text/html',
+                'text/html'
             ),
         ];
 

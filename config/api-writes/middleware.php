@@ -17,7 +17,6 @@ return function (ContainerConfigurator $container) {
 
     $s
         (TokenMiddleware::class)
-            ->call('setLoggerMessageFactory', [ref('mcp_logger_factory')])
         (APIRateLimitingMiddleware::class)
     ;
 

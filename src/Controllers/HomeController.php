@@ -73,7 +73,7 @@ class HomeController implements ControllerInterface
             ],
             [
                 'created' => 'DESC',
-            ],
+            ]
         );
     }
 

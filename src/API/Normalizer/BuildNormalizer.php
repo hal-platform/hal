@@ -111,7 +111,7 @@ class BuildNormalizer implements ResourceNormalizerInterface
             'page' => new Hyperlink(
                 ['build', ['build' => $build->id()]],
                 '',
-                'text/html',
+                'text/html'
             ),
         ];
 
@@ -132,7 +132,7 @@ class BuildNormalizer implements ResourceNormalizerInterface
                 'start_release_page' => new Hyperlink(
                     ['release.start', ['build' => $build->id()]],
                     '',
-                    'text/html',
+                    'text/html'
                 ),
             ];
         }

@@ -2,13 +2,13 @@
 
 namespace Hal\UI;
 
+use Hal\Core\DI;
 use Hal\UI\CachedContainer;
 use PHPUnit\Framework\TestCase;
-use QL\Panthor\Bootstrap\DI;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Dotenv\Dotenv;
 
-class ContainerIntegrationTest extends TestCase
+class DIContainerCompilesTest extends TestCase
 {
     private $rootPath;
     private $envFile;
@@ -16,7 +16,7 @@ class ContainerIntegrationTest extends TestCase
     public function setUp()
     {
         $this->rootPath = realpath(__DIR__ . '/../..');
-        $this->envFile = "{$this->rootPath}/config/.env.dev.dist";
+        $this->envFile = "{$this->rootPath}/config/.env.default";
 
         putenv("PANTHOR_APPROOT={$this->rootPath}");
         putenv("HAL_DB_USER=postgres");
@@ -43,7 +43,7 @@ class ContainerIntegrationTest extends TestCase
             'file' => "{$this->rootPath}/src/CachedContainer.php"
         ];
 
-        $container = DI::getDI($this->rootPath, $options);
+        $container = DI::getDI([$this->rootPath . '/config'], $options);
 
         $this->assertInstanceOf(ContainerInterface::class, $container);
     }

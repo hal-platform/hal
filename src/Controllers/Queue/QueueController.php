@@ -62,7 +62,7 @@ class QueueController implements ControllerInterface
             ],
             [
                 'created' => 'DESC',
-            ],
+            ]
         );
     }
 }

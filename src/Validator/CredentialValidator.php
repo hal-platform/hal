@@ -7,7 +7,6 @@
 
 namespace Hal\UI\Validator;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Crypto\Encryption;
 use Hal\Core\Entity\Credential;
 use Hal\Core\Entity\Credential\AWSRoleCredential;
@@ -45,10 +44,9 @@ class CredentialValidator
     private $encryption;
 
     /**
-     * @param EntityManagerInterface $em
      * @param Encryption $encryption
      */
-    public function __construct(EntityManagerInterface $em, Encryption $encryption)
+    public function __construct(Encryption $encryption)
     {
         $this->encryption = $encryption;
     }
