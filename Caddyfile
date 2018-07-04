@@ -1,0 +1,11 @@
+hal.localhost {
+    root ./public
+
+    rewrite {
+      to {path} {path}/  /index.php
+    }
+
+    fastcgi / 127.0.0.1:9000 php
+
+    tls self_signed
+}
