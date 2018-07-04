@@ -7,11 +7,11 @@
 
 namespace Hal\UI\Controllers\EncryptedConfiguration;
 
+use Hal\Core\Crypto\Encryption;
+use Hal\Core\Entity\EncryptedProperty;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Crypto\Encryption;
-use Hal\Core\Entity\EncryptedProperty;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 

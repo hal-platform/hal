@@ -43,7 +43,7 @@ class TimeFormatter
      *
      * @return string
      */
-    public function html5(TimePoint $time = null, $format = '')
+    public function html5(?TimePoint $time = null, $format = '')
     {
         $format = $format ?: self::OUTPUT_FORMAT_DATE;
 
@@ -71,7 +71,7 @@ class TimeFormatter
      *
      * @return string
      */
-    public function html5duration(TimePoint $start, TimePoint $end = null)
+    public function html5duration(TimePoint $start, ?TimePoint $end = null)
     {
         if (!$end) {
             $end = $this->clock->read();
@@ -105,7 +105,7 @@ class TimeFormatter
      *
      * @return string
      */
-    private function relative(TimePoint $time, TimePoint $from = null)
+    private function relative(TimePoint $time, ?TimePoint $from = null)
     {
         if (!$from) {
             $from = $this->clock->read();

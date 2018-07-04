@@ -9,7 +9,6 @@ namespace Hal\UI\Controllers\TargetTemplate;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\AWS\AWSAuthenticator;
-use Hal\Core\Entity\Target;
 use Hal\Core\Entity\TargetTemplate;
 use Hal\Core\Parameters;
 use Hal\Core\Type\TargetEnum;

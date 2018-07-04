@@ -9,8 +9,8 @@ namespace Hal\UI\Controllers\Release;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Application;
-use Hal\Core\Entity\Target;
 use Hal\Core\Entity\JobType\Release;
+use Hal\Core\Entity\Target;
 use Hal\Core\Repository\JobType\ReleaseRepository;
 use Hal\UI\Controllers\PaginationTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;

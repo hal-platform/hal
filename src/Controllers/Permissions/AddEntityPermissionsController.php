@@ -10,24 +10,23 @@ namespace Hal\UI\Controllers\Permissions;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\Core\Type\UserPermissionEnum;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Organization;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\User\UserPermission;
+use Hal\Core\Type\UserPermissionEnum;
 use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Security\AuthorizationService;
-use Hal\UI\Security\UserAuthorizations;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use QL\MCP\Common\GUID;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\URI;
-use QL\MCP\Common\GUID;
 
 class AddEntityPermissionsController implements ControllerInterface
 {
@@ -247,7 +246,7 @@ class AddEntityPermissionsController implements ControllerInterface
 
         // separate anything that looks like a guid into IDs.
         // This allows users to add permission by username, or by picking a username in a dropdown.
-        list($ids, $names) = $this->parseSubmittedUsers($users);
+        [$ids, $names] = $this->parseSubmittedUsers($users);
 
         $total = count($ids) + count($names);
         $verified = $this->findUsers($ids, $names);

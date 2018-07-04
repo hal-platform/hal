@@ -96,8 +96,7 @@ jobs:
 
             - run:
                 name: 'Install node dependencies'
-                command: |
-                    yarn install
+                command: 'yarn install'
 
             - save_cache:
                 key: 'v1-npm-deps-{{ checksum "yarn.lock" }}'
@@ -129,10 +128,7 @@ jobs:
             - *attach_workspace
             - run:
                 name: 'Run static analysis'
-                command: |
-                    vendor/bin/phpstan analyse \
-                    -c phpstan.neon -l 2 \
-                    src
+                command: 'composer run-script analyze'
 
     linting:
         <<: *defaults
@@ -141,11 +137,11 @@ jobs:
 
             - run:
                 name: 'Run syntax check'
-                command: 'vendor/bin/phplint --no-cache --ansi src'
+                command: 'composer run-script lint'
 
             - run:
                 name: 'Run code formatting check'
-                command: 'vendor/bin/phpcs -n --colors src'
+                command: 'composer run-script sniff'
 
     security_tests:
         <<: *frontend_defaults
@@ -159,12 +155,8 @@ jobs:
             - run:
                 name: 'Run snyk'
                 command: |
-                    if [ "${OPEN_SOURCE}" == "1" ] ; then
-                       $(yarn global bin)/snyk test
-                       $(yarn global bin)/snyk monitor
-                    else
-                        echo "Detected private repo. Skipping step."
-                    fi
+                   $(yarn global bin)/snyk test
+                   $(yarn global bin)/snyk monitor
 
     frontend_linting:
         <<: *frontend_defaults
@@ -182,5 +174,4 @@ jobs:
             - *attach_workspace
             - run:
                 name: 'Run javascript and sass compile'
-                command: |
-                    yarn run build
+                command: 'yarn run build'

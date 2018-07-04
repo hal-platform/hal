@@ -7,10 +7,9 @@
 
 namespace Hal\UI\Security;
 
-use Hal\Core\Entity\User;
 use Hal\Core\Entity\System\UserIdentityProvider;
+use Hal\Core\Entity\User;
 use Hal\Core\Type\IdentityProviderEnum;
-use Hal\UI\Security\UserAuthenticationInterface;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Psr\Http\Message\ServerRequestInterface;
 

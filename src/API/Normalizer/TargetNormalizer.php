@@ -12,7 +12,6 @@ use Hal\Core\Type\TargetEnum;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResourceNormalizerInterface;
-use Hal\Core\Entity\Target;
 
 class TargetNormalizer implements ResourceNormalizerInterface
 {

@@ -7,7 +7,6 @@
 
 namespace Hal\UI\Twig;
 
-use Exception;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Parameters;
@@ -170,7 +169,7 @@ class GitHubExtension extends AbstractExtension
 
         $key = md5($application->id() . $build->reference());
 
-        if (null !== ($latest = $this->getFromCache($key))) {
+        if (($latest = $this->getFromCache($key)) !== null) {
             return $latest;
         }
 

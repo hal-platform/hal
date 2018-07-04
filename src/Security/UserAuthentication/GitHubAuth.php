@@ -16,7 +16,6 @@ use Hal\Core\Entity\User\UserIdentity;
 use Hal\Core\Parameters;
 use Hal\Core\Type\IdentityProviderEnum;
 use Hal\UI\Security\UserAuthenticationInterface;
-use Hal\UI\Service\UserIdentityService;
 use Hal\UI\Utility\OptionTrait;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use League\OAuth2\Client\Grant\Exception\InvalidGrantException;

@@ -7,7 +7,6 @@
 
 namespace Hal\UI\Controllers\Queue;
 
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Repository\JobType\BuildRepository;

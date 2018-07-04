@@ -8,7 +8,6 @@
 namespace Hal\UI\Controllers\User;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\User;
 use Hal\Core\Repository\UserRepository;
 use Hal\UI\Controllers\PaginationTrait;

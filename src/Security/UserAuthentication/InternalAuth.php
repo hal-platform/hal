@@ -9,9 +9,9 @@ namespace Hal\UI\Security\UserAuthentication;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\User\UserIdentity;
-use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Parameters;
 use Hal\Core\Type\IdentityProviderEnum;
 use Hal\UI\Security\UserAuthenticationInterface;

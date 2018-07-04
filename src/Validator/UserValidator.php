@@ -7,8 +7,6 @@
 
 namespace Hal\UI\Validator;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\User;
 use Psr\Http\Message\ServerRequestInterface;
 

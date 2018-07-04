@@ -8,13 +8,13 @@
 namespace Hal\UI\Controllers\User\FavoriteApplications;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\User;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\Application;
-use Hal\Core\Entity\User;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\JSON;
 use QL\Panthor\Utility\URI;

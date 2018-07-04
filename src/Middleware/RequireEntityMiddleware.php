@@ -8,24 +8,20 @@
 namespace Hal\UI\Middleware;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\Core\Entity\{
-    Application,
-    Credential,
-    EncryptedProperty,
-    Environment,
-    Job,
-    Organization,
-    Target,
-    TargetTemplate,
-    User
-};
-// use Hal\Core\Entity\Job\JobArtifact;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Credential;
+use Hal\Core\Entity\EncryptedProperty;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\Job;
 use Hal\Core\Entity\Job\JobEvent;
-// use Hal\Core\Entity\Job\JobMeta;
 use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Entity\JobType\Release;
+use Hal\Core\Entity\Organization;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Entity\System\VersionControlProvider;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\TargetTemplate;
+use Hal\Core\Entity\User;
 use Hal\Core\Entity\User\UserPermission;
 use Hal\Core\Entity\User\UserToken;
 use Psr\Http\Message\ResponseInterface;

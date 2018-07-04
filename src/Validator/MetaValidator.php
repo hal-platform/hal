@@ -7,10 +7,8 @@
 
 namespace Hal\UI\Validator;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Job;
 use Hal\Core\Entity\Job\JobMeta;
-use QL\MCP\Common\Clock;
 
 class MetaValidator
 {

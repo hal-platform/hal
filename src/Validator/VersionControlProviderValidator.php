@@ -10,7 +10,6 @@ namespace Hal\UI\Validator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\System\VersionControlProvider;
-use Hal\Core\Type\VCSProviderEnum;
 use Hal\UI\Validator\VersionControl\VersionControlValidatorInterface;
 use Psr\Http\Message\ServerRequestInterface;
 

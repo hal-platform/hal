@@ -9,8 +9,8 @@ namespace Hal\UI\Controllers\Admin;
 
 use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Predis\Collection\Iterator\Keyspace;
 use Predis\Client as Predis;
+use Predis\Collection\Iterator\Keyspace;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\MiddlewareInterface;

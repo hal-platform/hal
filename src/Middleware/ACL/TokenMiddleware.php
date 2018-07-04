@@ -15,8 +15,8 @@ use Hal\UI\Controllers\APITrait;
 use Hal\UI\Security\UserSessionHandler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\HTTPProblem\ProblemRendererInterface;
+use QL\Panthor\MiddlewareInterface;
 
 /**
  * Possible error codes for oauth token failure:

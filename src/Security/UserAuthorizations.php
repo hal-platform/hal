@@ -7,11 +7,11 @@
 
 namespace Hal\UI\Security;
 
-use JsonSerializable;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Environment;
 use Hal\Core\Entity\Organization;
 use Hal\Core\Type\UserPermissionEnum;
+use JsonSerializable;
 
 /**
  * Easily cacheable convenience container for user permissions and authorizations.

@@ -11,12 +11,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Environment;
-use Hal\Core\Entity\User;
 use Hal\Core\Entity\JobType\Build;
+use Hal\Core\Entity\User;
 use Hal\Core\Parameters;
 use Hal\Core\Type\JobStatusEnum;
-use Hal\UI\Security\AuthorizationService;
 use Hal\Core\VersionControl\VCSFactory;
+use Hal\UI\Security\AuthorizationService;
 use QL\MCP\Common\GUID;
 
 class BuildValidator
@@ -130,7 +130,7 @@ class BuildValidator
             return null;
         }
 
-        list($reference, $commit) = $ref;
+        [$reference, $commit] = $ref;
         if ($reference === 'commit') {
             $reference = $commit;
         }

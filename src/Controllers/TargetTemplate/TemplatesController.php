@@ -8,7 +8,6 @@
 namespace Hal\UI\Controllers\TargetTemplate;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\Core\Entity\Environment;
 use Hal\Core\Entity\TargetTemplate;
 use Hal\Core\Repository\TargetTemplateRepository;
 use Hal\Core\Utility\SortingTrait;

@@ -9,8 +9,8 @@ namespace Hal\UI\Controllers;
 
 use Psr\Http\Message\ResponseInterface;
 use QL\Panthor\ControllerInterface;
-use QL\Panthor\TemplateInterface;
 use QL\Panthor\HTTP\NewBodyTrait;
+use QL\Panthor\TemplateInterface;
 
 /**
  * Render a template and do nothing else.

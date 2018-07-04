@@ -13,7 +13,6 @@ use Hal\Core\AWS\AWSAuthenticator;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Credential;
 use Hal\Core\Entity\Environment;
-use Hal\Core\Entity\Target;
 use Hal\Core\Entity\TargetTemplate;
 use Hal\Core\Parameters;
 use Hal\Core\Repository\EnvironmentRepository;

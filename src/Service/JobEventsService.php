@@ -9,11 +9,10 @@ namespace Hal\UI\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Predis\Client as Predis;
 use Hal\Core\Entity\Job;
 use Hal\Core\Entity\Job\JobEvent;
+use Predis\Client as Predis;
 use QL\MCP\Common\Clock;
-use QL\MCP\Common\Time\TimePoint;
 use QL\Panthor\Utility\JSON;
 
 /**

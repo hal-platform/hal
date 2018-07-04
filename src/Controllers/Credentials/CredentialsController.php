@@ -9,10 +9,10 @@ namespace Hal\UI\Controllers\Credentials;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Credential;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\Credential;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 

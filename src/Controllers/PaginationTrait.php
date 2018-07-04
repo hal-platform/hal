@@ -9,7 +9,6 @@ namespace Hal\UI\Controllers;
 
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Hal\UI\API\Hyperlink;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 trait PaginationTrait

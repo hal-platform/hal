@@ -7,8 +7,8 @@
 
 namespace Hal\UI\Controllers\Auth;
 
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;

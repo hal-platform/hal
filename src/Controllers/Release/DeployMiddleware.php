@@ -9,9 +9,9 @@ namespace Hal\UI\Controllers\Release;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\Core\Entity\Target;
 use Hal\Core\Entity\Environment;
 use Hal\Core\Entity\JobType\Build;
+use Hal\Core\Entity\Target;
 use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;

@@ -10,7 +10,6 @@ namespace Hal\UI\VersionControl;
 use Hal\Core\Entity\Application;
 use Hal\Core\Parameters;
 use Hal\Core\VersionControl\VCSFactory;
-use Hal\Core\VersionControl\VCSClientInterface;
 
 class BuildableRefs
 {

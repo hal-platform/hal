@@ -9,13 +9,12 @@ namespace Hal\UI\Validator;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\Core\Entity\User\UserIdentity;
 use Hal\Core\Entity\System\UserIdentityProvider;
+use Hal\Core\Entity\User\UserIdentity;
 use Hal\Core\Parameters;
-use Hal\Core\Type\IdentityProviderEnum;
+use Psr\Http\Message\ServerRequestInterface;
 use QL\MCP\Common\Clock;
 use QL\MCP\Common\GUID;
-use Psr\Http\Message\ServerRequestInterface;
 
 class UserIdentityValidator
 {

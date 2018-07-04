@@ -7,21 +7,21 @@
 
 namespace Hal\UI\Security\UserAuthentication;
 
-use Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Exception;
+use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\User\UserIdentity;
-use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Parameters;
 use Hal\Core\Type\IdentityProviderEnum;
 use Hal\UI\Security\UserAuthenticationInterface;
 use Hal\UI\Utility\OptionTrait;
 use Hal\UI\Validator\ValidatorErrorTrait;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\Ldap\Exception\LdapException;
 use Symfony\Component\Ldap\Ldap;
 use Symfony\Component\Ldap\LdapInterface;
-use Symfony\Component\Ldap\Exception\LdapException;
 
 class LDAPAuth implements UserAuthenticationInterface
 {

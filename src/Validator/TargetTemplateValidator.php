@@ -13,7 +13,6 @@ use Hal\Core\Entity\Environment;
 use Hal\Core\Entity\Target;
 use Hal\Core\Entity\TargetTemplate;
 use Hal\Core\Parameters;
-use Hal\Core\Type\TargetEnum;
 use Hal\UI\Validator\Targets\TargetValidatorInterface;
 use Psr\Http\Message\ServerRequestInterface;
 

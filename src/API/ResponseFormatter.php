@@ -8,7 +8,6 @@
 namespace Hal\UI\API;
 
 use Hal\Core\Utility\CachingTrait;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\HTTP\NewBodyTrait;
 use QL\Panthor\Utility\URI;

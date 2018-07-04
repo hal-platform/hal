@@ -16,9 +16,9 @@ use Hal\UI\Security\AuthorizationService;
 use Hal\UI\Security\UserAuthorizations;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use QL\MCP\Common\Clock;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use QL\MCP\Common\Clock;
 
 class UserController implements ControllerInterface
 {

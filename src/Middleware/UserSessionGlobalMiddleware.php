@@ -7,7 +7,6 @@
 
 namespace Hal\UI\Middleware;
 
-use Hal\Core\Entity\User;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
@@ -16,7 +15,6 @@ use Hal\UI\Security\UserSessionHandler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\MiddlewareInterface;
-use QL\Panthor\Session\SessionInterface;
 use QL\Panthor\Utility\URI;
 
 /**

@@ -8,8 +8,8 @@
 namespace Hal\UI\Twig;
 
 use Hal\UI\Security\CSRFManager;
-use Twig\TwigFunction;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 class SecurityExtension extends AbstractExtension
 {

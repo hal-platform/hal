@@ -9,17 +9,16 @@ namespace Hal\UI\Controllers\Build;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\Core\Entity\Target;
-use Hal\Core\Entity\ScheduledAction;
 use Hal\Core\Entity\Job\JobMeta;
 use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Entity\JobType\Release;
+use Hal\Core\Entity\ScheduledAction;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Service\JobEventsService;
-use QL\Panthor\ControllerInterface;
-use QL\Panthor\TemplateInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use QL\Panthor\ControllerInterface;
+use QL\Panthor\TemplateInterface;
 
 class BuildController implements ControllerInterface
 {

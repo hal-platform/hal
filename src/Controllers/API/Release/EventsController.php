@@ -7,13 +7,13 @@
 
 namespace Hal\UI\Controllers\API\Release;
 
+use Hal\Core\Entity\JobType\Release;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Service\JobEventsService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\JobType\Release;
 use QL\Panthor\ControllerInterface;
 
 class EventsController implements ControllerInterface

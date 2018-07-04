@@ -9,7 +9,6 @@ namespace Hal\UI\Middleware;
 
 use Hal\UI\Controllers\APITrait;
 use Neomerx\Cors\Analyzer;
-use Neomerx\Cors\Contracts\AnalyzerInterface;
 use Neomerx\Cors\Contracts\AnalysisResultInterface;
 use Neomerx\Cors\Contracts\Strategies\SettingsStrategyInterface;
 use Psr\Http\Message\ResponseInterface;

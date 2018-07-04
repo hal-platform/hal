@@ -9,8 +9,8 @@ namespace Hal\UI\Controllers\Build;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Application;
-use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Repository\EnvironmentRepository;
 use Hal\Core\Repository\JobType\BuildRepository;
 use Hal\UI\Controllers\PaginationTrait;

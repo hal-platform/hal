@@ -9,10 +9,10 @@ namespace Hal\UI\Controllers\API\Queue;
 
 use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Entity\JobType\Release;
-use Hal\UI\API\Normalizer\BuildNormalizer;
-use Hal\UI\API\Normalizer\ReleaseNormalizer;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
+use Hal\UI\API\Normalizer\BuildNormalizer;
+use Hal\UI\API\Normalizer\ReleaseNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Service\JobQueueService;

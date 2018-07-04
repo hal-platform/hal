@@ -10,17 +10,17 @@ namespace Hal\UI\Controllers\Target;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\AWS\AWSAuthenticator;
-use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Credential;
 use Hal\Core\Entity\Target;
 use Hal\Core\Entity\TargetTemplate;
 use Hal\Core\Parameters;
 use Hal\Core\Type\TargetEnum;
-use QL\Panthor\ControllerInterface;
-use QL\Panthor\TemplateInterface;
+use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use QL\Panthor\ControllerInterface;
+use QL\Panthor\TemplateInterface;
 
 class EditTargetController implements ControllerInterface
 {

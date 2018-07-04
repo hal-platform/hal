@@ -7,7 +7,6 @@
 
 namespace Hal\UI\Service;
 
-use Closure;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -139,7 +138,7 @@ class JobQueueService
      *
      * @return Criteria
      */
-    private function getCriteria(array $statuses = [], TimePoint $before = null, TimePoint $after = null)
+    private function getCriteria(array $statuses = [], ?TimePoint $before = null, ?TimePoint $after = null)
     {
         $criteria = new Criteria(null, ['created' => 'DESC']);
 

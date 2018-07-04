@@ -9,12 +9,12 @@ namespace Hal\UI\API\Normalizer;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\TargetTemplate;
 use Hal\Core\Utility\SortingTrait;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResourceNormalizerInterface;
-use Hal\Core\Entity\Target;
-use Hal\Core\Entity\TargetTemplate;
 
 class TemplateNormalizer implements ResourceNormalizerInterface
 {

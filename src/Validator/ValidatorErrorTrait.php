@@ -58,7 +58,7 @@ trait ValidatorErrorTrait
      *
      * @return void
      */
-    private function addError(string $msg, string $field = null): void
+    private function addError(string $msg, ?string $field = null): void
     {
         if (!$field) {
             $field = 'all';

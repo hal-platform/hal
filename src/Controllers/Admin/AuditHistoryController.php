@@ -8,13 +8,13 @@
 namespace Hal\UI\Controllers\Admin;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\Core\Entity\AuditEvent;
+use Hal\Core\Repository\AuditEventRepository;
 use Hal\UI\Controllers\PaginationTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\SharedStaticConfiguration;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\AuditEvent;
-use Hal\Core\Repository\AuditEventRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 

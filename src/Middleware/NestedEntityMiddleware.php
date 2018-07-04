@@ -7,16 +7,14 @@
 
 namespace Hal\UI\Middleware;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\{
-    Application,
-    EncryptedProperty,
-    Target,
-    User
-};
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\EncryptedProperty;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\User;
 use Hal\Core\Entity\User\UserPermission;
 use Hal\Core\Entity\User\UserToken;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\MiddlewareInterface;
 
 /**

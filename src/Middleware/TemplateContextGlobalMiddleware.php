@@ -9,8 +9,8 @@ namespace Hal\UI\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Panthor\Twig\Context;
 use QL\Panthor\MiddlewareInterface;
+use QL\Panthor\Twig\Context;
 
 class TemplateContextGlobalMiddleware implements MiddlewareInterface
 {

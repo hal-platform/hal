@@ -8,8 +8,6 @@
 namespace Hal\UI\Controllers\Organization;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Hal\Core\Entity\Organization;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\User\UserPermission;
@@ -20,6 +18,8 @@ use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Security\AuthorizationService;
 use Hal\UI\Validator\OrganizationValidator;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\URI;

@@ -8,12 +8,11 @@
 namespace Hal\UI\Validator;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Hal\Core\Crypto\Encryption;
 use Hal\Core\Entity\Credential;
-use Hal\Core\Entity\Credential\PrivateKeyCredential;
 use Hal\Core\Entity\Credential\AWSRoleCredential;
 use Hal\Core\Entity\Credential\AWSStaticCredential;
+use Hal\Core\Entity\Credential\PrivateKeyCredential;
 use Hal\Core\Type\CredentialEnum;
 
 class CredentialValidator

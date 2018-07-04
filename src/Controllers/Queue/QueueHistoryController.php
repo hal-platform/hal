@@ -11,7 +11,6 @@ use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Service\JobQueueService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\MCP\Common\Time\TimePoint;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 

@@ -7,15 +7,11 @@
 
 namespace Hal\UI\Controllers\Admin;
 
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\Core\Entity\Environment;
-use Hal\Core\Entity\User;
-use Hal\Core\Entity\User\UserIdentity;
-use Hal\Core\Entity\User\UserPermission;
+use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\System\SystemSetting;
 use Hal\Core\Entity\System\UserIdentityProvider;
-use Hal\Core\Entity\System\VersionControlProvider;
+use Hal\Core\Entity\User\UserPermission;
 use Hal\Core\Parameters;
 use Hal\Core\Type\IdentityProviderEnum;
 use Hal\Core\Type\UserPermissionEnum;
@@ -25,7 +21,6 @@ use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Validator\EnvironmentValidator;
-use Hal\UI\Validator\IdentityValidator;
 use Hal\UI\Validator\UserIdentityProviderValidator;
 use Hal\UI\Validator\UserIdentityValidator;
 use Hal\UI\Validator\UserValidator;
@@ -36,6 +31,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\URI;
+use const PASSWORD_BCRYPT;
 use function password_hash;
 
 class HalBootstrapController implements ControllerInterface
@@ -235,7 +231,7 @@ class HalBootstrapController implements ControllerInterface
      */
     private function addAdmin(UserIdentityProvider $idp, $username, $password)
     {
-        $hashed = password_hash($password, \PASSWORD_BCRYPT, [
+        $hashed = password_hash($password, PASSWORD_BCRYPT, [
             'cost' => 10,
         ]);
 

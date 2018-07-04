@@ -7,10 +7,10 @@
 
 namespace Hal\UI\API\Normalizer;
 
+use Hal\Core\Entity\User;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResourceNormalizerInterface;
-use Hal\Core\Entity\User;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Security\AuthorizationService;
 

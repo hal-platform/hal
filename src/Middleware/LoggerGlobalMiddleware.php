@@ -9,8 +9,8 @@ namespace Hal\UI\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\MCP\Logger\MessageInterface;
 use QL\MCP\Logger\MessageFactoryInterface;
+use QL\MCP\Logger\MessageInterface;
 use QL\Panthor\MiddlewareInterface;
 
 /**

@@ -24,6 +24,7 @@ use QL\MCP\Common\Clock;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\URI;
+use const PASSWORD_BCRYPT;
 use function password_hash;
 
 class SignInSetupController implements ControllerInterface
@@ -159,7 +160,7 @@ class SignInSetupController implements ControllerInterface
             return null;
         }
 
-        $hashed = password_hash($data['new_password'], \PASSWORD_BCRYPT, [
+        $hashed = password_hash($data['new_password'], PASSWORD_BCRYPT, [
             'cost' => 10,
         ]);
 

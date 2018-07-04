@@ -7,8 +7,8 @@
 
 namespace Hal\UI\Controllers\Auth;
 
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Entity\User;
 use Hal\UI\Controllers\RedirectableControllerTrait;
@@ -20,7 +20,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\HTTP\CookieHandler;
 use QL\Panthor\MiddlewareInterface;
-use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\URI;
 
 class SignInCallbackHandler implements MiddlewareInterface

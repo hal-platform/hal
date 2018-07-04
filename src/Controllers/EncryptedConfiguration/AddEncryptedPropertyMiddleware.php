@@ -8,7 +8,8 @@
 namespace Hal\UI\Controllers\EncryptedConfiguration;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use Hal\Core\Crypto\Encryption;
+use Hal\Core\Entity\Application;
 use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
@@ -16,11 +17,6 @@ use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Validator\EncryptedPropertyValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Crypto\Encryption;
-use Hal\Core\Entity\Application;
-use Hal\Core\Entity\EncryptedProperty;
-use Hal\Core\Entity\Environment;
-use Hal\Core\Repository\EnvironmentRepository;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
 

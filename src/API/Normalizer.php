@@ -7,8 +7,6 @@
 
 namespace Hal\UI\API;
 
-use InvalidArgumentException;
-
 class Normalizer implements NormalizerInterface
 {
     /**

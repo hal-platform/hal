@@ -7,8 +7,6 @@
 
 namespace Hal\UI;
 
-use InvalidArgumentException;
-
 class SharedStaticConfiguration
 {
     public const MASSIVE_PAGE_SIZE = 500;

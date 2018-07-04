@@ -11,7 +11,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Repository\JobType\BuildRepository;
-use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;

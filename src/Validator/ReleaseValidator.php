@@ -10,15 +10,14 @@ namespace Hal\UI\Validator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Application;
-use Hal\Core\Entity\Target;
 use Hal\Core\Entity\Environment;
-use Hal\Core\Entity\ScheduledAction;
-use Hal\Core\Entity\User;
 use Hal\Core\Entity\JobType\Build;
 use Hal\Core\Entity\JobType\Release;
+use Hal\Core\Entity\ScheduledAction;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\User;
 use Hal\Core\Type\JobStatusEnum;
 use Hal\Core\Type\ScheduledActionStatusEnum;
-use Hal\Core\Repository\TargetRepository;
 use Hal\UI\Security\AuthorizationService;
 
 class ReleaseValidator

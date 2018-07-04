@@ -7,8 +7,6 @@
 
 namespace Hal\UI\API;
 
-use JsonSerializable;
-
 class Hyperlink
 {
     /**

@@ -7,18 +7,18 @@
 
 namespace Hal\UI\Twig;
 
-use Hal\Core\Entity\JobType\Build;
-use Hal\Core\Entity\JobType\Release;
 use Hal\Core\Entity\Credential;
 use Hal\Core\Entity\Job\JobEvent;
+use Hal\Core\Entity\JobType\Build;
+use Hal\Core\Entity\JobType\Release;
 use Hal\Core\Entity\Organization;
-use Hal\Core\Entity\Target;
 use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Entity\System\VersionControlProvider;
+use Hal\Core\Entity\Target;
 use Hal\Core\Type\CredentialEnum;
+use Hal\Core\Type\IdentityProviderEnum;
 use Hal\Core\Type\JobEventStageEnum;
 use Hal\Core\Type\TargetEnum;
-use Hal\Core\Type\IdentityProviderEnum;
 use Hal\Core\Type\VCSProviderEnum;
 use Hal\UI\Utility\TimeFormatter;
 use Twig\Extension\AbstractExtension;

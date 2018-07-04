@@ -10,7 +10,6 @@ namespace Hal\UI\Validator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\System\UserIdentityProvider;
-use Hal\Core\Type\IdentityProviderEnum;
 use Hal\UI\Validator\IdentityProviders\IdentityProviderValidatorInterface;
 use Psr\Http\Message\ServerRequestInterface;
 

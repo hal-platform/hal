@@ -9,8 +9,8 @@ namespace Hal\UI\Controllers\Target;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\Core\Entity\Application;
-use Hal\Core\Entity\Target;
 use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\Target;
 use Hal\Core\Repository\EnvironmentRepository;
 use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;

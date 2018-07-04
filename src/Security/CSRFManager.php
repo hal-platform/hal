@@ -85,7 +85,7 @@ class CSRFManager
             ->modify('-' . self::CSRF_VALID_AGE);
 
         foreach ($this->loadedCSRFs as $i => $loaded) {
-            list ($csrf, $created) = $loaded;
+            [$csrf, $created] = $loaded;
             $created = $this->clock->fromString($created);
 
             $isExpiryValid = ($goodAfter->compare($created) === -1);

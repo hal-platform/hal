@@ -78,7 +78,7 @@ trait ValidatorTrait
      */
     private function validateRegex($value, $regex): bool
     {
-        if (1 !== preg_match($regex, $value)) {
+        if (preg_match($regex, $value) !== 1) {
             return false;
         }
 

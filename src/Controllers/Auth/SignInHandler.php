@@ -9,9 +9,8 @@ namespace Hal\UI\Controllers\Auth;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\Core\Entity\User;
 use Hal\Core\Entity\System\UserIdentityProvider;
-use Hal\Core\Type\IdentityProviderEnum;
+use Hal\Core\Entity\User;
 use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;

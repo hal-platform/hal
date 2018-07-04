@@ -7,12 +7,12 @@
 
 namespace Hal\UI\Controllers\API\Release;
 
+use Hal\Core\Entity\JobType\Release;
 use Hal\UI\API\Normalizer\ReleaseNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\JobType\Release;
 use QL\Panthor\ControllerInterface;
 
 class ReleaseController implements ControllerInterface

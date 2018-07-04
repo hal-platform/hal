@@ -7,9 +7,9 @@
 
 namespace Hal\UI\Service;
 
+use Hal\Core\Entity\Application;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\Application;
 use QL\Panthor\HTTP\CookieHandler;
 use QL\Panthor\Utility\JSON;
 

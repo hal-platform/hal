@@ -8,6 +8,9 @@
 namespace Hal\UI\Controllers\Build;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\JobType\Build;
+use Hal\Core\Entity\User;
 use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
@@ -18,9 +21,6 @@ use Hal\UI\Validator\MetaValidator;
 use Hal\UI\Validator\ReleaseValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\Application;
-use Hal\Core\Entity\User;
-use Hal\Core\Entity\JobType\Build;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
 

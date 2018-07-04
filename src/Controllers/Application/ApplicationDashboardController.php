@@ -9,18 +9,18 @@ namespace Hal\UI\Controllers\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\JobType\Build;
+use Hal\Core\Entity\Target;
+use Hal\Core\Repository\EnvironmentRepository;
+use Hal\Core\Repository\JobType\BuildRepository;
+use Hal\Core\Utility\SortingTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Service\StickyEnvironmentService;
 use Hal\UI\SharedStaticConfiguration;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\Application;
-use Hal\Core\Entity\Target;
-use Hal\Core\Entity\Environment;
-use Hal\Core\Entity\JobType\Build;
-use Hal\Core\Repository\JobType\BuildRepository;
-use Hal\Core\Repository\EnvironmentRepository;
-use Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 

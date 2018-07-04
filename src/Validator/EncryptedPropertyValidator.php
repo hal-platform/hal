@@ -9,10 +9,10 @@ namespace Hal\UI\Validator;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Crypto\Encryption;
 use Hal\Core\Entity\Application;
 use Hal\Core\Entity\EncryptedProperty;
 use Hal\Core\Entity\Environment;
-use Hal\Core\Crypto\Encryption;
 
 /**
  * Validates an Encrypted Property

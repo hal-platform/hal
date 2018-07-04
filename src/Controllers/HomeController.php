@@ -14,7 +14,6 @@ use Hal\Core\Entity\Application;
 use Hal\Core\Entity\Job;
 use Hal\Core\Entity\User;
 use Hal\Core\Type\JobStatusEnum;
-use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;

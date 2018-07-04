@@ -13,10 +13,10 @@ use Hal\Core\Entity\Job\JobMeta;
 use Hal\Core\Entity\JobType\Release;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Service\JobEventsService;
-use QL\Panthor\ControllerInterface;
-use QL\Panthor\TemplateInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use QL\Panthor\ControllerInterface;
+use QL\Panthor\TemplateInterface;
 
 class ReleaseController implements ControllerInterface
 {

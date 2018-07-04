@@ -11,8 +11,8 @@ use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\HTTP\CookieHandler;
+use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
 
 class SettingsMiddleware implements MiddlewareInterface

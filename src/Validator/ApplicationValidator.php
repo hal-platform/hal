@@ -10,7 +10,6 @@ namespace Hal\UI\Validator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\Core\Entity\Application;
-use Hal\Core\Entity\Application\GitHubApplication;
 use Hal\Core\Entity\Organization;
 use Hal\Core\Entity\System\VersionControlProvider;
 use Hal\Core\Parameters;

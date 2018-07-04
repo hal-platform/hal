@@ -9,16 +9,16 @@ namespace Hal\UI\Controllers\User;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\User\UserIdentity;
-use Hal\Core\Entity\System\UserIdentityProvider;
 use Hal\Core\Parameters;
 use Hal\UI\Controllers\CSRFTrait;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Validator\UserValidator;
 use Hal\UI\Validator\UserIdentityValidator;
+use Hal\UI\Validator\UserValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
