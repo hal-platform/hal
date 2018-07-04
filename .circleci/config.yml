@@ -21,16 +21,6 @@ persist_workspace: &persist_workspace
         root: '.'
         paths: [ '.' ]
 
-enterprise_setup: &enterprise_setup
-    run:
-        name: 'Prepare Enterprise Setup'
-        command: |
-            if [ "${OPEN_SOURCE}" == "1" ] ; then
-                echo "Detected open source repo. Skipping step."
-            else
-                curl -sLk "https://git/pages/circleci/prepare-environment/prepare.sh" | bash -
-            fi
-
 workflows:
 
     version: 2
@@ -67,7 +57,6 @@ jobs:
     install_php_dependencies:
         <<: *defaults
         steps:
-            - *enterprise_setup
             - *attach_workspace
 
             - restore_cache:
@@ -88,7 +77,6 @@ jobs:
     install_npm_dependencies:
         <<: *frontend_defaults
         steps:
-            - *enterprise_setup
             - *attach_workspace
 
             - restore_cache:
