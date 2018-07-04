@@ -145,8 +145,8 @@ jobs:
             - run:
                 name: 'Run snyk'
                 command: |
-                   $(yarn global bin)/snyk test
                    $(yarn global bin)/snyk monitor
+                   $(yarn global bin)/snyk test || true
 
     frontend_linting:
         <<: *frontend_defaults
