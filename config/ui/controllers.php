@@ -2,7 +2,7 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use QL\Panthor\Twig\LazyTwig;
+use function Hal\UI\twig;
 
 return function (ContainerConfigurator $container) {
     $s = $container->services();
@@ -49,10 +49,26 @@ return function (ContainerConfigurator $container) {
         ('signin.setup.page', \Hal\UI\Controllers\Auth\SignInSetupController::class)
             ->arg('$template', twig('auth/signin_setup.twig'))
     ;
-};
 
-function twig($template) {
-    return inline(LazyTwig::class)
-        ->arg('$template', $template)
-        ->autowire();
-}
+    $s
+        ('user.page', \Hal\UI\Controllers\User\UserController::class)
+            ->arg('$template', twig('user/user.twig'))
+        ('users.page', \Hal\UI\Controllers\User\UsersController::class)
+            ->arg('$template', twig('user/users.twig'))
+        ('user.add.page', \Hal\UI\Controllers\User\AddUserController::class)
+            ->arg('$template', twig('user/add_user.twig'))
+        ('user.edit.page', \Hal\UI\Controllers\User\EditUserController::class)
+            ->arg('$template', twig('user/edit_user.twig'))
+        ('user.disable.handler', \Hal\UI\Controllers\User\DisableUserHandler::class)
+        ('user.regenerate_setup.handler', \Hal\UI\Controllers\User\RegenerateSetupTokenHandler::class)
+
+        ('user.settings.page', \Hal\UI\Controllers\User\SettingsController::class)
+            ->arg('$template', twig('user/settings.twig'))
+        ('user.settings.middleware', \Hal\UI\Controllers\User\SettingsMiddleware::class)
+            ->arg('$preferencesExpiry', '%cookie.preferences.ttl%')
+
+        ('user.token.add.handler', \Hal\UI\Controllers\User\Token\AddTokenHandler::class)
+        ('user.token.remove.handler', \Hal\UI\Controllers\User\Token\RemoveTokenHandler::class)
+
+    ;
+};

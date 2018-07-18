@@ -47,7 +47,7 @@
                     <tr>
                         <th colspan="4" class="table-mid-header">
                             <a href="{{ uriFor('environment', {'environment': environment.id}) }}">{{ environment.name }}</a>
-                            <a href="{{ uriFor('target.add', {'application': application.id}, {'environment': environment.id}) }}" style="float: right" >Add More Targets</a>
+                            <a href="{{ uriFor('targets.add', {'application': application.id}, {'environment': environment.id}) }}" style="float: right" >Add More Targets</a>
                         </th>
                     </tr>
 
@@ -94,7 +94,7 @@
 
     <p>
         {% if can_edit %}
-            <a class="btn" href="{{ uriFor('target.add', {'application': application.id}) }}">Add Deployment Target</a>
+            <a class="btn" href="{{ uriFor('targets.add', {'application': application.id}) }}">Add Deployment Target</a>
         {% else %}
             {{ macros.disabled_button('Add Deployment Target') }}
         {% endif %}

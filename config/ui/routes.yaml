@@ -175,10 +175,10 @@ parameters:
             route: '/applications'
             stack: ['m.signed_in', 'applications.page']
 
-        application.add:
+        applications.add:
             method: ['GET', 'POST']
             route: '/applications/add'
-            stack: [ 'm.signed_in', 'm.require_csrf', 'application.add.page']
+            stack: [ 'm.signed_in', 'm.require_csrf', 'applications.add.page']
 
         application.management:
             route: '/applications/{application:%r.guid%}'
@@ -224,10 +224,10 @@ parameters:
                     method: 'GET'
                     route: '/targets'
                     stack: ['targets.page']
-                target.add:
+                targets.add:
                     method: ['GET', 'POST']
                     route: '/targets/add'
-                    stack: ['m.is_owner', 'm.require_csrf', 'target.add.middleware', 'target.add.page']
+                    stack: ['m.is_owner', 'm.require_csrf', 'targets.add.middleware', 'targets.add.page']
 
                 target.management:
                     route: '/targets/{target:%r.guid%}'
@@ -286,10 +286,10 @@ parameters:
                     route: ''
                     stack: ['templates.page']
 
-                template.add:
+                templates.add:
                     method: ['GET', 'POST']
                     route: '/add'
-                    stack: ['m.is_admin', 'm.require_csrf', 'template.add.page']
+                    stack: ['m.is_admin', 'm.require_csrf', 'templates.add.page']
 
                 template.management:
                     route: '/{template:%r.guid%}'
@@ -570,10 +570,10 @@ parameters:
                     route: '/credentials'
                     stack: ['credentials.page']
 
-                credential.add:
+                credentials.add:
                     method: ['GET', 'POST']
                     route: '/credentials/add'
-                    stack: ['m.require_csrf', 'm.is_super', 'credential.add.page']
+                    stack: ['m.require_csrf', 'm.is_super', 'credentials.add.page']
 
                 credential.management:
                     route: '/credentials/{credential:%r.guid%}'

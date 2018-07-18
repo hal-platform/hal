@@ -35,7 +35,7 @@
             <li>
                 <h6>Environment</h6>
                 {{ selected_environment.name }}
-                <a href="{{ uriFor('target.add', {'application': application.id}) }}">Change environment</a>
+                <a href="{{ uriFor('targets.add', {'application': application.id}) }}">Change environment</a>
             </li>
         {% endif %}
     </ul>
@@ -48,7 +48,7 @@
 
     <p>
         {% for env in environments %}
-            <a class="btn" href="{{ uriFor('target.add', {'application': application.id}, {'environment': env.id}) }}">
+            <a class="btn" href="{{ uriFor('targets.add', {'application': application.id}, {'environment': env.id}) }}">
                 {% if env.isProduction %}
                     {{ macros.icon('key') }}
                 {% endif %}
@@ -63,7 +63,7 @@
     {{ form_macros.form_errors(errors, is_csrf_error) }}
 
     <form method="post" class="js-target-form">
-        {{ form_macros.csrf_input('target.add') }}
+        {{ form_macros.csrf_input('targets.add') }}
 
         <ul class="form-fields form-wrapper">
             <li>

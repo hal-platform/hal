@@ -110,7 +110,7 @@ HTML;
         // Clear cached query for buildable environments
         $this->environmentRepo->clearBuildableEnvironmentsByApplication($application);
 
-        $formPage = $this->uri->uriFor('target.add', ['application' => $application->id()], ['environment' => $target->environment()->id()]);
+        $formPage = $this->uri->uriFor('targets.add', ['application' => $application->id()], ['environment' => $target->environment()->id()]);
 
         $this->withFlashSuccess($request, self::MSG_SUCCESS, sprintf(self::MSG_MORE_LIKE_THIS, $formPage));
         return $this->withRedirectRoute($response, $this->uri, 'targets', ['application' => $application->id()]);

@@ -14,7 +14,7 @@
 
     <p>
         {% if is_admin %}
-            <a class="btn" href="{{ uriFor('template.add') }}">Add Template</a>
+            <a class="btn" href="{{ uriFor('templates.add') }}">Add Template</a>
         {% else %}
             {{ macros.disabled_button('Add Template') }}
         {% endif %}

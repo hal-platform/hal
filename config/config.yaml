@@ -8,7 +8,6 @@ imports:
     - resource: 'services.php'
     - resource: 'parameters.yaml'
 
-    - resource: 'ui/*.yaml'
     - resource: 'ui/*.php'
     - resource: 'api/*.php'
     - resource: 'api-internal/*.php'
@@ -17,3 +16,4 @@ imports:
     - resource: 'api/routes.yaml'
     - resource: 'api-writes/routes.yaml'
     - resource: 'api-internal/routes.yaml'
+    - resource: 'ui/routes.yaml'

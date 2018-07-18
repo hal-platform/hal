@@ -48,7 +48,7 @@
     {% endif %}
 
     <p>
-        <a class="btn" href="{{ uriFor('application.add') }}">Add Application</a>
+        <a class="btn" href="{{ uriFor('applications.add') }}">Add Application</a>
         {% if is_admin %}
             <a class="btn btn--action" href="{{ uriFor('organization.edit', {'organization': organization.id}) }}">Edit Organization</a>
         {% else %}
