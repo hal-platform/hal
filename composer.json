@@ -12,7 +12,10 @@
     },
 
     "autoload": {
-        "psr-4": { "Hal\\UI\\": "src" }
+        "psr-4": { "Hal\\UI\\": "src" },
+        "files": [
+            "src/functions.php"
+        ]
     },
 
     "scripts": {
