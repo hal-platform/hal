@@ -2,6 +2,7 @@ parameters:
     excludes_analyse:
         - %rootDir%/../../../src/Controllers/API/*
         - %rootDir%/../../../src/API/*
+        - %rootDir%/../../../src/functions.php
 
     ignoreErrors:
         - '#does not accept Doctrine\\Common\\Persistence\\ObjectRepository#'
