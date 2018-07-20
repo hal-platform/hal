@@ -12,19 +12,15 @@ RUN apt-get update && \
     apt-get install -y \
         bzip2 \
         curl \
-        git \
-        sqlite \
         supervisor \
-        \
         apt-transport-https \
         ca-certificates \
-        lsb-release \
     && \
     curl -sS \
         -o /etc/apt/trusted.gpg.d/php.gpg \
         https://packages.sury.org/php/apt.gpg \
     && \
-    echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee \
+    echo "deb https://packages.sury.org/php/ stretch main" | tee \
         /etc/apt/sources.list.d/php.list \
     && \
     apt-get update && \
@@ -40,7 +36,14 @@ RUN apt-get update && \
         php${PHP_VERSION}-sodium \
         php${PHP_VERSION}-sqlite3 \
         php${PHP_VERSION}-xml \
-        && rm -rf "/var/lib/apt/lists/*"
+    && rm -rf "/var/lib/apt/lists/*"
+
+# Install optional dependencies
+RUN apt-get update && \
+    apt-get install -y \
+        git \
+        sqlite \
+    && rm -rf "/var/lib/apt/lists/*"
 
 # Install composer
 RUN curl -sSo /tmp/composer-setup.php \
