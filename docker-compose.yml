@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+
+  web:
+    build:
+      context: .
+      dockerfile: ./docker/ui.Dockerfile
+      args:
+        - hal_ver=master
+    ports:
+      - 80:8000
+    links:
+      - postgres:postgres
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_USERNAME: hal
+      DB_PASSWORD: hal
+      DB_PORT: 5432
+      DB_PREFIX: hal_
+
+  postgres:
+    image: postgres:9.6.2-alpine
+    volumes:
+      - /var/lib/postgresql/data
+    restart: always
+    environment:
+      POSTGRES_USER: hal
+      POSTGRES_DB: hal
