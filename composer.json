@@ -72,6 +72,7 @@
         "symfony/dotenv":               "~4.0",
         "symfony/finder":               "~4.0",
         "symfony/ldap":                 "~4.0",
+        "symfony/process":              "~4.0",
         "symfony/proxy-manager-bridge": "~4.0",
         "symfony/yaml":                 "~4.0",
 
@@ -81,7 +82,6 @@
         "league/oauth2-github": "~2.0.0"
     },
     "require-dev": {
-        "symfony/process":    "~4.0",
         "symfony/var-dumper": "~4.0",
 
         "overtrue/phplint":          "~1.0",
