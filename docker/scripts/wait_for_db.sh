@@ -46,8 +46,8 @@ check_database_connection() {
     while [[ "$SECONDS" -lt "$timeout" ]]; do
         set +e
         ${prog} >/dev/null 2>&1
-        set -e
         exit_status=$?
+        set -e
         if [ ${exit_status} -eq 0 ]; then
             echo "Succesfully connected to database"
             return
