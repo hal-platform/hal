@@ -4,22 +4,27 @@ services:
 
   web:
     build:
-      context: .
-      dockerfile: ./docker/ui.Dockerfile
+      context: ./docker
+      dockerfile: ./ui.Dockerfile
       args:
-        - hal_ver=master
+        - hal_version=master
     ports:
       - 80:8000
     links:
       - postgres:postgres
+      - redis:redis
     depends_on:
       - postgres
+      - redis
     environment:
+      DB_DRIVER: pgsql
       DB_HOST: postgres
+      DB_PORT: 5432
       DB_USERNAME: hal
       DB_PASSWORD: hal
-      DB_PORT: 5432
-      DB_PREFIX: hal_
+      DB_DATABASE: hal
+      # APP_URL: http://hal.localhost
+      # REDIS_HOST: redis
 
   postgres:
     image: postgres:9.6.2-alpine
@@ -28,4 +33,11 @@ services:
     restart: always
     environment:
       POSTGRES_USER: hal
+      POSTGRES_PASSWORD: hal
       POSTGRES_DB: hal
+
+  redis:
+    image: redis:4.0.10-alpine
+    volumes:
+      - /data
+    restart: always

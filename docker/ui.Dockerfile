@@ -1,10 +1,59 @@
+# STAGE 1
+###############################################################################
+
+FROM node:10.7.0-stretch as frontend_build
+
+ARG hal_version=master
+ARG archive_url
+
+ENV hal_version ${hal_version:-master}
+ENV archive_url ${archive_url:-https://api.github.com/repos/hal-platform/hal/tarball/${hal_version}}
+
+WORKDIR /app
+
+RUN curl -sSLo code.tgz \
+    ${archive_url} && \
+    tar -xzf code.tgz --strip-components=1 && \
+    rm -r code.tgz
+
+RUN yarn install \
+    --production \
+    --no-progress \
+    && \
+        yarn run deploy \
+    && \
+        rm -rf ./node_modules
+
+# STAGE 2
+###############################################################################
+
+FROM halplatform/php:frontend as backend_build
+
+# Install optional dependencies
+RUN apt-get update && \
+    apt-get install -y \
+        git \
+    && rm -rf "/var/lib/apt/lists/*"
+
+WORKDIR /app
+
+COPY --from=frontend_build /app .
+
+RUN composer install \
+    --no-dev --optimize-autoloader
+
+# Force install of phinx
+RUN ./vendor/bin/hal-phinx list
+
+# STAGE 3
+###############################################################################
+
 FROM nginx:1.15.1
 
 EXPOSE 8000
 CMD ["/sbin/entrypoint.sh"]
 
 ENV PHP_VERSION      7.1
-ENV COMPOSER_VERSION 1.6.3
 ENV DEBIAN_FRONTEND  noninteractive
 
 # Install system and php dependencies
@@ -24,10 +73,13 @@ RUN apt-get update && \
         /etc/apt/sources.list.d/php.list \
     && \
     apt-get update && \
+    mkdir -p /usr/share/man/man1 && \
+    mkdir -p /usr/share/man/man7 && \
     apt-get install -y \
         php${PHP_VERSION} \
         php${PHP_VERSION}-curl \
         php${PHP_VERSION}-fpm \
+        php${PHP_VERSION}-ldap \
         php${PHP_VERSION}-mbstring \
         php${PHP_VERSION}-mysql \
         php${PHP_VERSION}-opcache \
@@ -36,30 +88,16 @@ RUN apt-get update && \
         php${PHP_VERSION}-sodium \
         php${PHP_VERSION}-sqlite3 \
         php${PHP_VERSION}-xml \
+        php${PHP_VERSION}-zip \
     && rm -rf "/var/lib/apt/lists/*"
 
 # Install optional dependencies
 RUN apt-get update && \
     apt-get install -y \
-        git \
         sqlite \
+        postgresql-client \
+        mysql-client \
     && rm -rf "/var/lib/apt/lists/*"
-
-# Install composer
-RUN curl -sSo /tmp/composer-setup.php \
-        https://getcomposer.org/installer \
-        && \
-    curl -sSo /tmp/composer-setup.sig \
-        https://composer.github.io/installer.sig \
-        && \
-    php -r "if (hash('SHA384', file_get_contents('/tmp/composer-setup.php')) !== trim(file_get_contents('/tmp/composer-setup.sig'))) { unlink('/tmp/composer-setup.php'); echo 'Invalid installer' . PHP_EOL; exit(1); }" \
-        && \
-    php /tmp/composer-setup.php \
-        --version=${COMPOSER_VERSION} \
-        --filename=composer \
-        --install-dir=bin \
-        && \
-    rm -f "/tmp/composer-setup.*"
 
 RUN ln -sf /dev/stdout /var/log/php${PHP_VERSION}-fpm.log
 
@@ -69,27 +107,34 @@ RUN touch /var/run/nginx.pid && \
     touch /var/run/fpm.pid && \
     chown -R www-data:root /var/run/fpm.pid
 
-RUN mkdir -p /app && \
-    mkdir -p /usr/share/nginx/cache && \
+WORKDIR /app
+
+COPY --from=backend_build /bin/composer /bin/composer
+
+COPY --chown=www-data:root \
+    --from=backend_build /app .
+
+RUN mkdir -p /usr/share/nginx/cache && \
     mkdir -p /var/cache/nginx && \
     mkdir -p /var/lib/nginx && \
     chown -R www-data:root \
-        /app \
         /usr/share/nginx/cache \
         /var/cache/nginx \
         /var/lib/nginx/ \
         /etc/php/${PHP_VERSION}/fpm/pool.d
 
-WORKDIR /app
 USER www-data
 
+COPY scripts/wait_for_db.sh /bin/wait_for_db.sh
+COPY scripts/entrypoint.sh  /sbin/entrypoint.sh
+
 COPY conf/fpm.conf          /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
-COPY ui-entrypoint.sh       /sbin/entrypoint.sh
 
 COPY conf/nginx.conf        /etc/nginx/nginx.conf
 COPY conf/nginx.site.conf   /etc/nginx/conf.d/default.conf
 
 COPY conf/supervisord.conf  /etc/supervisor/supervisord.conf
+COPY conf/.env.docker       /.env.default
 
 USER root
 
