@@ -3,21 +3,19 @@
 
 namespace Hal\Bin;
 
+use QL\Panthor\Bootstrap\RouteLoader;
 use Symfony\Component\Finder\Finder;
+use Twig\Environment;
 
 $root = realpath(__DIR__ . '/../');
-putenv("PANTHOR_APPROOT=${root}");
+putenv("HAL_ROOT=${root}");
 
-if (!$container = @include "${root}/config/bootstrap.php") {
-    echo "An error occured while attempting to cache twig templates.\n";
-    exit(1);
-};
+$container = require "${root}/config/bootstrap.php";
 
 $app = $container->get('slim');
-$routes = $container->get('slim.router.loader');
-$routes($app);
+$container->get(RouteLoader::class)($app);
 
-$twig = $container->get('twig.environment');
+$twig = $container->get(Environment::class);
 $twigDir = $container->getParameter('twig.template.dir');
 $twigCacheDir = $container->getParameter('twig.cache.dir');
 

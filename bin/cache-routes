@@ -3,17 +3,16 @@
 
 namespace Hal\Bin;
 
-$root = realpath(__DIR__ . '/../');
-putenv("PANTHOR_APPROOT=${root}");
-putenv("HAL_ROUTES_DISABLE_CACHE_ON=0");
+use QL\Panthor\Bootstrap\RouteLoader;
 
-if (!$container = @include "${root}/config/bootstrap.php") {
-    echo "An error occured while attempting to cache routes.\n";
-    exit(1);
-};
+$root = realpath(__DIR__ . '/../');
+putenv("HAL_ROOT=${root}");
+putenv("PANTHOR_ROUTES_DISABLE_CACHE_ON=false");
+
+$container = require "${root}/config/bootstrap.php";
 
 $app = $container->get('slim');
-$routes = $container->get('slim.router.loader');
+$routes = $container->get(RouteLoader::class);
 $routes($app);
 
 $router = $container->get('router');
