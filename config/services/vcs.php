@@ -22,16 +22,17 @@ return function (ContainerConfigurator $container) {
         ('vcs.cache_type', 'memory')
         ('vcs.github_cache.namespace', 'github')
         ('vcs.github_cache.namespace_delimiter', '.')
-        ('vcs.factory_adapters', [
-            'gh' => ref(GitHubAdapter::class),
-            'ghe' => ref(GitHubEnterpriseAdapter::Class)
-        ])
+        // ('vcs.factory_adapters', [
+        //     'gh' => GitHubAdapter::class,
+        //     'ghe' => GitHubEnterpriseAdapter::class
+        // ])
     ;
 
     // Main clients
     $s
         (VCSFactory::class)
-            ->arg('$adapters', '%vcs.factory_adapters%')
+            ->call('addAdapter', ['gh', ref(GitHubAdapter::class)])
+            ->call('addAdapter', ['ghe', ref(GitHubEnterpriseAdapter::class)])
 
         (GitHubAdapter::class)
             ->arg('$httpClientBuilder', ref('github.http_builder'))

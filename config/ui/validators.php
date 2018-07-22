@@ -33,29 +33,29 @@ return function (ContainerConfigurator $container) {
     $p = $container->parameters();
 
     $p
-        ('validator_types.target', [
-            'cd' => ref(CodeDeployValidator::class),
-            'eb' => ref(ElasticBeanstalkValidator::class),
-            'rsync' => ref(RSyncValidator::class),
-            's3' => ref(S3Validator::class),
-            'script' => ref(ScriptValidator::class),
-        ])
-        ('validator_types.target_template', [
-            'cd' => ref('validator.target_tempate.cd'),
-            'eb' => ref('validator.target_tempate.eb'),
-            'rsync' => ref('validator.target_tempate.rsync'),
-            's3' => ref('validator.target_tempate.s3'),
-            'script' => ref('validator.target_tempate.script'),
-        ])
-        ('validator_types.vcs', [
-            'ghe' => ref(GitHubEnterpriseValidator::class),
-        ])
-        ('validator_types.idp', [
-            'gh' => ref(IDPGitHubValidator::class),
-            'ghe' => ref(IDPGitHubEnterpriseValidator::class),
-            'ldap' => ref(LDAPValidator::class),
-            'internal' => ref(InternalValidator::class),
-        ])
+        // ('validator_types.target', [
+        //     'cd' => CodeDeployValidator::class,
+        //     'eb' => ElasticBeanstalkValidator::class,
+        //     'rsync' => RSyncValidator::class,
+        //     's3' => S3Validator::class,
+        //     'script' => ScriptValidator::class,
+        // ])
+        // ('validator_types.target_template', [
+        //     'cd' => 'validator.target_tempate.cd',
+        //     'eb' => 'validator.target_tempate.eb',
+        //     'rsync' => 'validator.target_tempate.rsync',
+        //     's3' => 'validator.target_tempate.s3',
+        //     'script' => 'validator.target_tempate.script',
+        // ])
+        // ('validator_types.vcs', [
+        //     'ghe' => GitHubEnterpriseValidator::class,
+        // ])
+        // ('validator_types.idp', [
+        //     'gh' => IDPGitHubValidator::class,
+        //     'ghe' => IDPGitHubEnterpriseValidator::class,
+        //     'ldap' => LDAPValidator::class,
+        //     'internal' => InternalValidator::class,
+        // ])
     ;
 
     $s
@@ -79,7 +79,11 @@ return function (ContainerConfigurator $container) {
 
     $s
         (TargetValidator::class)
-            ->arg('$typeValidators', '%validator_types.target%')
+            ->call('addTypeValidator', ['cd', ref(CodeDeployValidator::class)])
+            ->call('addTypeValidator', ['eb', ref(ElasticBeanstalkValidator::class)])
+            ->call('addTypeValidator', ['rsync', ref(RSyncValidator::class)])
+            ->call('addTypeValidator', ['s3', ref(S3Validator::class)])
+            ->call('addTypeValidator', ['script', ref(ScriptValidator::class)])
         (CodeDeployValidator::class)
         (ElasticBeanstalkValidator::class)
         (RSyncValidator::class)
@@ -89,30 +93,37 @@ return function (ContainerConfigurator $container) {
 
     $s
         (TargetTemplateValidator::class)
-            ->arg('$typeValidators', '%validator_types.target_template%')
-        ('validator.target_tempate.cd', CodeDeployValidator::class)
-            ->arg('$s3validator', ref('validator.target_tempate.s3'))
+            ->call('addTypeValidator', ['cd', ref('validator.target_template.cd')])
+            ->call('addTypeValidator', ['eb', ref('validator.target_template.eb')])
+            ->call('addTypeValidator', ['rsync', ref('validator.target_template.rsync')])
+            ->call('addTypeValidator', ['s3', ref('validator.target_template.s3')])
+            ->call('addTypeValidator', ['script', ref('validator.target_template.script')])
+        ('validator.target_template.cd', CodeDeployValidator::class)
+            ->arg('$s3validator', ref('validator.target_template.s3'))
             ->call('withFlag', ['ALLOW_OPTIONAL'])
-        ('validator.target_tempate.eb', ElasticBeanstalkValidator::class)
-            ->arg('$s3validator', ref('validator.target_tempate.s3'))
+        ('validator.target_template.eb', ElasticBeanstalkValidator::class)
+            ->arg('$s3validator', ref('validator.target_template.s3'))
             ->call('withFlag', ['ALLOW_OPTIONAL'])
-        ('validator.target_tempate.rsync', RSyncValidator::class)
+        ('validator.target_template.rsync', RSyncValidator::class)
             ->call('withFlag', ['ALLOW_OPTIONAL'])
-        ('validator.target_tempate.s3', S3Validator::class)
+        ('validator.target_template.s3', S3Validator::class)
             ->call('withFlag', ['ALLOW_OPTIONAL'])
-        ('validator.target_tempate.rsync', ScriptValidator::class)
+        ('validator.target_template.script', ScriptValidator::class)
             ->call('withFlag', ['ALLOW_OPTIONAL'])
     ;
 
     $s
         (VersionControlProviderValidator::class)
-            ->arg('$typeValidators', '%validator_types.vcs%')
+            ->call('addTypeValidator', ['ghe', ref(GitHubEnterpriseValidator::class)])
         (GitHubEnterpriseValidator::class)
     ;
 
     $s
         (UserIdentityProviderValidator::class)
-            ->arg('$typeValidators', '%validator_types.idp%')
+            ->call('addTypeValidator', ['gh', ref(IDPGitHubValidator::class)])
+            ->call('addTypeValidator', ['ghe', ref(IDPGitHubEnterpriseValidator::class)])
+            ->call('addTypeValidator', ['ldap', ref(LDAPValidator::class)])
+            ->call('addTypeValidator', ['internal', ref(InternalValidator::class)])
         (IDPGitHubValidator::class)
         (IDPGitHubEnterpriseValidator::class)
         (LDAPValidator::class)
