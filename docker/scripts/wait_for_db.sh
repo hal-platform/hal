@@ -109,7 +109,7 @@ configure_db_migrater() {
         "${migration_table}" > ./phinx.yml
 
     if [ "${db_driver}" == "pgsql" ] ; then
-        get_postgres_config
+        get_postgres_config \
             "$db_host" \
             "$db_port" \
             "$db_database" \

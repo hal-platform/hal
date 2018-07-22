@@ -91,7 +91,7 @@ dddebug() {
 }
 
 start() {
-    wait_for_db.sh \
+    /bin/wait_for_db.sh \
         --driver "${DB_DRIVER}" \
         --host "${DB_HOST}" \
         --port "${DB_PORT}" \

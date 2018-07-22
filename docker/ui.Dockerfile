@@ -117,6 +117,8 @@ COPY --chown=www-data:root \
 RUN mkdir -p /usr/share/nginx/cache && \
     mkdir -p /var/cache/nginx && \
     mkdir -p /var/lib/nginx && \
+    chown www-data:root \
+        /app && \
     chown -R www-data:root \
         /usr/share/nginx/cache \
         /var/cache/nginx \
