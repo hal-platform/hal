@@ -24,6 +24,7 @@ services:
       DB_PASSWORD: hal
       DB_DATABASE: hal
       # APP_URL: http://hal.localhost
+      # APP_SECRET: 64-char hex
       # REDIS_HOST: redis
 
   postgres:

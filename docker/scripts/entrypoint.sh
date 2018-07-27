@@ -33,33 +33,37 @@ migrate_db() {
 }
 
 configure_hal() {
-    local readonly defaultfile="/.env.default"
+    local readonly default_file="/.env.default"
     local readonly envfile="/app/config/.env"
 
     local readonly root_path="/app"
-    local readonly base_url=${APP_URL:-http://localhost}
+    local readonly app_url=${APP_URL:-http://localhost}
+    local readonly app_secret=${APP_SECRET:-$(php -r 'echo \bin2hex(\random_bytes(64));')}
 
     local readonly database_username="${DB_USERNAME}"
     local readonly database_password="${DB_PASSWORD}"
     local readonly database_host="${DB_HOST}"
     local readonly database_port="${DB_PORT}"
     local readonly database_name="${DB_DATABASE}"
-    local readonly database_driver="pdo_${DB_DRIVER}"
+    local readonly database_driver="${DB_DRIVER}"
     local readonly redis_host="${REDIS_HOST:-redis}"
 
-    if [[ -f "${defaultfile}" && ! -f "${envfile}" ]]; then
-        echo "Copying default env file from ${defaultfile} to ${envfile}"
-        cp "${defaultfile}" "${envfile}"
+    if [[ -f "${default_file}" && ! -f "${envfile}" ]]; then
+        echo "Copying default env file from ${default_file} to ${envfile}"
+        cp "${default_file}" "${envfile}"
     fi
 
     sed 's,{{root_path}},'"${root_path}"',g' -i ${envfile}
-    sed 's,{{base_url}},'"${base_url}"',g' -i ${envfile}
+    sed 's,{{app_url}},'"${app_url}"',g' -i ${envfile}
+    sed 's,{{app_secret}},'"${app_secret}"',g' -i ${envfile}
+
     sed 's,{{database_username}},'"${database_username}"',g' -i ${envfile}
     sed 's,{{database_password}},'"${database_password}"',g' -i ${envfile}
     sed 's,{{database_host}},'"${database_host}"',g' -i ${envfile}
     sed 's,{{database_port}},'"${database_port}"',g' -i ${envfile}
     sed 's,{{database_name}},'"${database_name}"',g' -i ${envfile}
     sed 's,{{database_driver}},'"${database_driver}"',g' -i ${envfile}
+
 
     sed 's,{{redis_host}},'"${redis_host}"',g' -i ${envfile}
 }
@@ -83,12 +87,6 @@ start_supervisor() {
     supervisord -n -c /etc/supervisor/supervisord.conf
 }
 
-dddebug() {
-    [ ! -d ./public ] && mkdir ./public
-    echo "<?php \
-    phpinfo();" > ./public/index.php
-}
-
 start() {
     /bin/wait_for_db.sh \
         --driver "${DB_DRIVER}" \
@@ -103,7 +101,6 @@ start() {
 
     initialize_hal
     configure_hal
-    # dddebug
     start_supervisor
 }
 
