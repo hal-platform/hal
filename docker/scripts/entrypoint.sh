@@ -64,7 +64,6 @@ configure_hal() {
     sed 's,{{redis_host}},'"${redis_host}"',g' -i ${envfile}
 }
 
-
 initialize_hal() {
     echo "Initializing Hal container ..."
 

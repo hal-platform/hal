@@ -134,7 +134,7 @@ configure_db_migrater() {
 get_phinx_config() {
     echo "
 paths:
-    migrations: '%%PHINX_CONFIG_DIR%%/migrations'
+    migrations: '%%PHINX_CONFIG_DIR%%/vendor/hal/hal-core/migrations'
 
 migration_base_class: 'Hal\Core\Database\PhinxMigration'
 

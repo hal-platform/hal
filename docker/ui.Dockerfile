@@ -43,7 +43,7 @@ RUN composer install \
     --no-dev --optimize-autoloader
 
 # Force install of phinx
-RUN ./vendor/bin/hal-phinx list
+RUN ./vendor/bin/hal-phinx
 
 # STAGE 3
 ###############################################################################
