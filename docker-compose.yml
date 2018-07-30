@@ -27,6 +27,25 @@ services:
       # APP_SECRET: 64-char hex
       # REDIS_HOST: redis
 
+  agent:
+    build:
+      context: ./docker
+      dockerfile: ./agent.Dockerfile
+      args:
+        - hal_version=master
+    ports:
+      - 4646
+    links:
+      - postgres:postgres
+      - redis:redis
+      - web:web
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - /var/lib/nomad
+    restart: always
+
   postgres:
     image: postgres:9.6.2-alpine
     volumes:
